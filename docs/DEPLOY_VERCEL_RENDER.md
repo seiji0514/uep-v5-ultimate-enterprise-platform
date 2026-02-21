@@ -161,10 +161,24 @@ Vercel の URL が決まったら、以下を追加:
 - Render の `CORS_ORIGINS` に Vercel の URL を追加
 - 末尾にスラッシュ不要、複数はカンマ区切り
 
-### ログインできない
+### ログインできない（「ログインに失敗しました」）
 
-- Render のバックエンドが起動しているか確認（スリープ後は初回アクセスで遅延あり）
-- 認証のデモユーザーは `backend/auth/routes.py` の `_init_demo_users` で定義
+**1. 認証情報を確認**
+- ユーザー名: `kaho0525` / パスワード: `kaho052514`
+- または ユーザー名: `developer` / パスワード: `dev123`
+
+**2. 「サーバーに接続できません」と表示される場合**
+- **Vercel** → Settings → Environment Variables で `REACT_APP_API_URL` が設定されているか確認
+- 値: `https://uep-backend.onrender.com`（Render のサービス名に合わせて変更）
+- 環境変数変更後は **Redeploy** が必要
+
+- **Render** のバックエンドが起動しているか確認（無料枠は15分でスリープ、初回アクセスで50〜100秒かかる場合あり）
+- Render の URL に直接アクセスしてヘルスチェック: `https://uep-backend.onrender.com/health`
+
+**3. CORS エラーの場合（ブラウザ F12 → Console で確認）**
+- **Render** → Environment で `CORS_ORIGINS` に Vercel の URL を追加
+- 例: `https://uep-v5-ultimate-enterprise-platform.vercel.app`
+- 複数ある場合はカンマ区切り、末尾にスラッシュ不要
 
 ### ログイン後、白画面のまま
 

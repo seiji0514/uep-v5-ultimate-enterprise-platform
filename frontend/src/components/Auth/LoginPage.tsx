@@ -40,7 +40,17 @@ export const LoginPage: React.FC = () => {
         requestAnimationFrame(() => navigate('/', { replace: true }));
       });
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'ログインに失敗しました');
+      let message = 'ログインに失敗しました';
+      if (!err.response) {
+        message = 'サーバーに接続できません。バックエンド（Render）が起動中か、数秒後に再試行してください。';
+      } else if (err.response.status === 401) {
+        message = 'ユーザー名またはパスワードが正しくありません。';
+      } else if (err.response?.data?.detail) {
+        message = typeof err.response.data.detail === 'string'
+          ? err.response.data.detail
+          : JSON.stringify(err.response.data.detail);
+      }
+      setError(message);
       setLoading(false);
     }
   };
