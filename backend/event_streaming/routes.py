@@ -12,8 +12,14 @@ from auth.jwt_auth import get_current_active_user
 from .cqrs import Command, Query, cqrs_bus
 from .event_sourcing import DomainEvent, EventSourcingHandler, EventStore
 from .kafka_client import KafkaClient
-from .models import (CommandCreate, DomainEventCreate, EventConsume,
-                     EventPublish, QueryCreate, TopicCreate)
+from .models import (
+    CommandCreate,
+    DomainEventCreate,
+    EventConsume,
+    EventPublish,
+    QueryCreate,
+    TopicCreate,
+)
 
 router = APIRouter(prefix="/api/v1/events", tags=["イベントストリーミング"])
 

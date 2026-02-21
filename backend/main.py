@@ -39,9 +39,12 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 # コアモジュールのインポート
 from core.config import settings
 from core.database import get_db, init_db
-from core.error_handler import (general_exception_handler,
-                                http_exception_handler, uep_exception_handler,
-                                validation_exception_handler)
+from core.error_handler import (
+    general_exception_handler,
+    http_exception_handler,
+    uep_exception_handler,
+    validation_exception_handler,
+)
 from core.exceptions import UEPException
 from core.rate_limit import limiter
 from core.security import SecurityHeadersMiddleware, csrf_protection
@@ -60,8 +63,10 @@ if env_file.exists():
 
 from auth.jwt_auth import get_current_active_user, get_current_user
 from auth.rbac import require_permission, require_role
+
 # 認証・認可モジュールのインポート
 from auth.routes import router as auth_router
+
 # データレイクモジュールのインポート
 from data_lake.routes import router as data_lake_router
 
@@ -82,13 +87,16 @@ from ai_dev.routes import router as ai_dev_router
 from cloud_infra.routes import router as cloud_infra_router
 from generative_ai.routes import router as generative_ai_router
 from idop.routes import router as idop_router
+
 # Phase 2: コアシステム層のインポート
 from mlops.routes import router as mlops_router
 from monitoring.logging import logging_handler
 from monitoring.metrics import metrics_collector
+
 # 監視・オブザーバビリティモジュールのインポート
 from monitoring.routes import router as monitoring_router
 from monitoring.tracing import tracing_handler
+
 # セキュリティモジュールのインポート
 from security.routes import router as security_router
 from security.zero_trust import zero_trust_policy
@@ -108,14 +116,19 @@ except ImportError as e:
 
 # Chaos Engineering（障害シミュレーション・レジリエンス検証）
 from chaos.routes import router as chaos_router
+
 # Level 3: エコシステムモジュール
 from ecosystem.routes import router as ecosystem_router
+
 # Level 5: グローバルエンタープライズモジュール
 from global_enterprise.routes import router as global_enterprise_router
+
 # Level 4: インダストリーリーダーモジュール
 from industry_leader.routes import router as industry_leader_router
+
 # Level 2: プラットフォームモジュール
 from platform_level.routes import router as platform_router
+
 # 統合ビジネスプラットフォーム（業務効率化・人材・顧客対応の3システム統合）
 from unified_business_platform.routes import router as unified_business_router
 

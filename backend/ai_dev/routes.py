@@ -11,8 +11,13 @@ from auth.rbac import require_permission
 from .code_generation import code_generator
 from .code_review import CodeReview, code_reviewer
 from .documentation import documentation_generator
-from .models import (CodeGenerateRequest, CodeReviewRequest,
-                     DocumentationRequest, TestRunRequest, TestSuiteCreate)
+from .models import (
+    CodeGenerateRequest,
+    CodeReviewRequest,
+    DocumentationRequest,
+    TestRunRequest,
+    TestSuiteCreate,
+)
 from .test_automation import test_automation
 
 router = APIRouter(prefix="/api/v1/ai-dev", tags=["AI支援開発"])

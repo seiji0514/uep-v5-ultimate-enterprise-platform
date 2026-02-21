@@ -9,9 +9,13 @@ from fastapi import APIRouter, Depends
 from auth.jwt_auth import get_current_active_user
 from auth.rbac import require_permission
 
-from .config import (COMPLIANCE_CHECKLIST, DISASTER_RECOVERY_CONFIG,
-                     HIGH_AVAILABILITY_CONFIG, MULTI_REGION_CONFIG,
-                     ZERO_DOWNTIME_DEPLOYMENT_CONFIG)
+from .config import (
+    COMPLIANCE_CHECKLIST,
+    DISASTER_RECOVERY_CONFIG,
+    HIGH_AVAILABILITY_CONFIG,
+    MULTI_REGION_CONFIG,
+    ZERO_DOWNTIME_DEPLOYMENT_CONFIG,
+)
 
 router = APIRouter(
     prefix="/api/v1/global-enterprise", tags=["Global Enterprise (Level 5)"]

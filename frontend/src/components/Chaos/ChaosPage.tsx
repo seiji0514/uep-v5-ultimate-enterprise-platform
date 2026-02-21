@@ -15,9 +15,8 @@ import {
   Alert,
   CircularProgress,
   Chip,
-  Divider,
 } from '@mui/material';
-import { BugReport, Speed, Error as ErrorIcon, Shuffle } from '@mui/icons-material';
+import { Speed, Error as ErrorIcon, Shuffle } from '@mui/icons-material';
 import { chaosApi, ChaosStatus } from '../../api/chaos';
 
 export const ChaosPage: React.FC = () => {

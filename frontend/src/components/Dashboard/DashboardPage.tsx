@@ -22,7 +22,6 @@ import {
   Groups,
   Star,
   Public,
-  Dashboard as DashboardIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';

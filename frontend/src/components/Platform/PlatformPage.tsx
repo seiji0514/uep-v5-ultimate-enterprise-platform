@@ -26,7 +26,6 @@ import {
   Business,
   CardMembership,
   Store,
-  Settings,
 } from '@mui/icons-material';
 import { platformApi, Level2Overview, Tenant, SubscriptionPlan, ApiListing } from '../../api/platform';
 

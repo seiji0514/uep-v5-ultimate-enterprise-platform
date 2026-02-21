@@ -9,11 +9,17 @@ from fastapi import APIRouter, Depends
 from auth.jwt_auth import get_current_active_user
 from auth.rbac import require_permission
 
-from .config import (BUSINESS_DOMAIN_CONFIG, CUTTING_EDGE_AI_CONFIG,
-                     GLOBAL_CDN_CONFIG, GOVERNANCE_WORKFLOW_CONFIG,
-                     INDUSTRY_STANDARD_SPEC, MCP_A2A_CONFIG,
-                     MULTILINGUAL_CONFIG, ON_DEVICE_AI_CONFIG,
-                     REASONING_AI_CONFIG)
+from .config import (
+    BUSINESS_DOMAIN_CONFIG,
+    CUTTING_EDGE_AI_CONFIG,
+    GLOBAL_CDN_CONFIG,
+    GOVERNANCE_WORKFLOW_CONFIG,
+    INDUSTRY_STANDARD_SPEC,
+    MCP_A2A_CONFIG,
+    MULTILINGUAL_CONFIG,
+    ON_DEVICE_AI_CONFIG,
+    REASONING_AI_CONFIG,
+)
 
 router = APIRouter(prefix="/api/v1/industry-leader", tags=["Industry Leader (Level 4)"])
 

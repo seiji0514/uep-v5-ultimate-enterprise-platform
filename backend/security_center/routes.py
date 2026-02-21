@@ -9,10 +9,13 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from auth.jwt_auth import get_current_active_user
 from auth.rbac import require_role
 
-from .incident_response import (Incident, IncidentSeverity, IncidentStatus,
-                                incident_response)
-from .models import (IncidentCreate, IncidentUpdate, RiskCreate,
-                     SecurityEventCreate)
+from .incident_response import (
+    Incident,
+    IncidentSeverity,
+    IncidentStatus,
+    incident_response,
+)
+from .models import IncidentCreate, IncidentUpdate, RiskCreate, SecurityEventCreate
 from .monitoring import SecurityEvent, ThreatLevel, security_monitor
 from .risk_analysis import Risk, RiskLevel, risk_analyzer
 

@@ -11,8 +11,12 @@ from auth.rbac import require_permission
 
 from .cicd import CICDPipelineModel, CICDStatus, PipelineStage, cicd_pipeline
 from .devops import Application, Environment, devops_manager
-from .models import (ApplicationCreate, ApplicationDeploy, CICDPipelineCreate,
-                     CICDTrigger)
+from .models import (
+    ApplicationCreate,
+    ApplicationDeploy,
+    CICDPipelineCreate,
+    CICDTrigger,
+)
 
 router = APIRouter(prefix="/api/v1/idop", tags=["IDOP"])
 

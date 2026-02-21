@@ -43,13 +43,13 @@ import { useAuth } from '../../contexts/AuthContext';
 
 const DRAWER_WIDTH = 240;
 
-interface MenuItem {
+interface NavItem {
   text: string;
   icon: React.ReactNode;
   path: string;
 }
 
-const menuItems: MenuItem[] = [
+const menuItems: NavItem[] = [
   { text: 'ダッシュボード', icon: <Dashboard />, path: '/' },
   { text: 'MLOps', icon: <Science />, path: '/mlops' },
   { text: '生成AI', icon: <Psychology />, path: '/generative-ai' },

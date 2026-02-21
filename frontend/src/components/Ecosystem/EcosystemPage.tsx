@@ -27,7 +27,6 @@ import {
 import {
   Groups,
   Store,
-  Extension,
   Storage,
   Forum,
   Description,

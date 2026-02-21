@@ -5,9 +5,6 @@ import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
-  Grid,
-  Card,
-  CardContent,
   Table,
   TableBody,
   TableCell,
@@ -51,6 +48,7 @@ export const IDOPPage: React.FC = () => {
 
   useEffect(() => {
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tabValue]);
 
   const loadData = async () => {

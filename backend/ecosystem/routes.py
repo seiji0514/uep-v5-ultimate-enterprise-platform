@@ -9,10 +9,21 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from auth.jwt_auth import get_current_active_user
 from auth.rbac import require_permission
 
-from .models import (ForumComment, ForumCommentCreate, ForumPost,
-                     ForumPostCreate, MarketplaceItem, MarketplaceItemCreate,
-                     Partner, PartnerApproval, PartnerCreate, Plugin,
-                     PluginCreate, SharedModel, SharedModelCreate)
+from .models import (
+    ForumComment,
+    ForumCommentCreate,
+    ForumPost,
+    ForumPostCreate,
+    MarketplaceItem,
+    MarketplaceItemCreate,
+    Partner,
+    PartnerApproval,
+    PartnerCreate,
+    Plugin,
+    PluginCreate,
+    SharedModel,
+    SharedModelCreate,
+)
 from .store import ecosystem_store
 
 router = APIRouter(prefix="/api/v1/ecosystem", tags=["Ecosystem (Level 3)"])

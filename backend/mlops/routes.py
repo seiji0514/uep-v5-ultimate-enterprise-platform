@@ -11,8 +11,14 @@ from auth.rbac import require_permission
 
 from .experiment_tracking import Experiment, experiment_tracker
 from .model_registry import MLModel, ModelStatus, model_registry
-from .models import (ExperimentCreate, ExperimentUpdate, ModelCreate,
-                     ModelVersionCreate, PipelineCreate, PipelineExecute)
+from .models import (
+    ExperimentCreate,
+    ExperimentUpdate,
+    ModelCreate,
+    ModelVersionCreate,
+    PipelineCreate,
+    PipelineExecute,
+)
 from .pipeline import MLPipeline, PipelineStatus, pipeline_executor
 
 router = APIRouter(prefix="/api/v1/mlops", tags=["MLOps"])

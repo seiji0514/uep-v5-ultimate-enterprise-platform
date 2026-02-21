@@ -10,8 +10,14 @@ from auth.jwt_auth import get_current_active_user
 from .catalog import DataCatalogEntry, catalog
 from .governance import DataGovernancePolicy, governance
 from .minio_client import MinIOClient
-from .models import (BucketCreate, BucketResponse, CatalogCreate,
-                     CatalogUpdate, GovernancePolicyCreate, ObjectInfo)
+from .models import (
+    BucketCreate,
+    BucketResponse,
+    CatalogCreate,
+    CatalogUpdate,
+    GovernancePolicyCreate,
+    ObjectInfo,
+)
 
 router = APIRouter(prefix="/api/v1/data-lake", tags=["データレイク"])
 

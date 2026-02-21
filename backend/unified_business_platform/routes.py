@@ -14,13 +14,20 @@ from auth.rbac import require_permission
 from . import events, metrics
 from .audit import AuditAction, audit_logger
 from .customer_support import chatbot_manager, ticket_manager
-from .hr import (disability_support_manager, onboarding_manager,
-                 skill_matching_manager)
-from .models import (ApprovalRequestCreate, ChatMessageCreate,
-                     DisabilitySupportCreate, OnboardingFromTemplateRequest,
-                     OnboardingTaskCreate, RegisterSkillsRequest, RPAJobCreate,
-                     SkillMatchingRequest, TicketCreate, TicketStatusUpdate,
-                     WorkflowCreate)
+from .hr import disability_support_manager, onboarding_manager, skill_matching_manager
+from .models import (
+    ApprovalRequestCreate,
+    ChatMessageCreate,
+    DisabilitySupportCreate,
+    OnboardingFromTemplateRequest,
+    OnboardingTaskCreate,
+    RegisterSkillsRequest,
+    RPAJobCreate,
+    SkillMatchingRequest,
+    TicketCreate,
+    TicketStatusUpdate,
+    WorkflowCreate,
+)
 from .workflow import rpa_manager, workflow_manager
 
 router = APIRouter(prefix="/api/v1/unified-business", tags=["統合ビジネスプラットフォーム"])

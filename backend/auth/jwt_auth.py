@@ -6,8 +6,7 @@ import os
 from datetime import datetime, timedelta
 from typing import Any, Dict, Optional
 
-from fastapi import (Depends, HTTPException, WebSocket, WebSocketException,
-                     status)
+from fastapi import Depends, HTTPException, WebSocket, WebSocketException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext

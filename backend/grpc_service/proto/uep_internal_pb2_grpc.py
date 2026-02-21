@@ -2,8 +2,9 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from grpc_service.proto import \
-    uep_internal_pb2 as grpc__service_dot_proto_dot_uep__internal__pb2
+from grpc_service.proto import (
+    uep_internal_pb2 as grpc__service_dot_proto_dot_uep__internal__pb2,
+)
 
 
 class UepInternalServiceStub(object):

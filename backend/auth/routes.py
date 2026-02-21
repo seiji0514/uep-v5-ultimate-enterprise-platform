@@ -7,10 +7,19 @@ from typing import Any, Dict
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
-from .jwt_auth import (ACCESS_TOKEN_EXPIRE_MINUTES, JWTAuth,
-                       get_current_active_user, get_current_user)
-from .models import (LoginRequest, PasswordChangeRequest, TokenResponse,
-                     UserCreate, UserResponse)
+from .jwt_auth import (
+    ACCESS_TOKEN_EXPIRE_MINUTES,
+    JWTAuth,
+    get_current_active_user,
+    get_current_user,
+)
+from .models import (
+    LoginRequest,
+    PasswordChangeRequest,
+    TokenResponse,
+    UserCreate,
+    UserResponse,
+)
 from .rbac import RBAC
 
 router = APIRouter(prefix="/api/v1/auth", tags=["認証"])

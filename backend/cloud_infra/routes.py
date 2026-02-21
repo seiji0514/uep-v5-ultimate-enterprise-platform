@@ -10,12 +10,25 @@ from auth.jwt_auth import get_current_active_user
 from auth.rbac import require_permission
 
 from .iac import IaCProvider, IaCTemplate, iac_manager
-from .infrastructure import (InfrastructureResource, ResourceStatus,
-                             ResourceType, infrastructure_manager)
-from .models import (DeploymentCreate, DeploymentUpdate, IaCDeploy,
-                     IaCTemplateCreate, ResourceCreate)
-from .orchestration import (Deployment, DeploymentStatus,
-                            OrchestrationPlatform, orchestration_manager)
+from .infrastructure import (
+    InfrastructureResource,
+    ResourceStatus,
+    ResourceType,
+    infrastructure_manager,
+)
+from .models import (
+    DeploymentCreate,
+    DeploymentUpdate,
+    IaCDeploy,
+    IaCTemplateCreate,
+    ResourceCreate,
+)
+from .orchestration import (
+    Deployment,
+    DeploymentStatus,
+    OrchestrationPlatform,
+    orchestration_manager,
+)
 
 router = APIRouter(prefix="/api/v1/cloud-infra", tags=["クラウドインフラ"])
 

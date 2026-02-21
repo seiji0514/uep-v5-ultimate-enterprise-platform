@@ -8,8 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from .accessibility import chat as accessibility_chat
 from .agents import agent_orchestrator
 from .matching import match_jobs
-from .models import (AgentTaskRequest, ChatRequest, MatchingRequest,
-                     UXEvaluationRequest)
+from .models import AgentTaskRequest, ChatRequest, MatchingRequest, UXEvaluationRequest
 from .ux_evaluation import EVALUATION_ITEMS, evaluate_url
 
 # 認証はオプション（障害者求職者が利用しやすいよう公開APIも検討）
