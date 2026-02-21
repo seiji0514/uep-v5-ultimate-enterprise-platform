@@ -66,6 +66,8 @@ data/
 *.json
 !package.json
 !package-lock.json
+!tsconfig.json
+!**/tsconfig.json
 
 # MinIO data
 minio_data/
