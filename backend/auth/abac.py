@@ -2,8 +2,10 @@
 ABAC（属性ベースアクセス制御）モジュール
 属性に基づくアクセス制御
 """
-from typing import Dict, Any, Optional, List
-from fastapi import HTTPException, status, Depends
+from typing import Any, Dict, List, Optional
+
+from fastapi import Depends, HTTPException, status
+
 from .jwt_auth import get_current_user
 
 
@@ -14,7 +16,7 @@ class ABAC:
     def check_attribute_access(
         user_attributes: Dict[str, Any],
         resource_attributes: Dict[str, Any],
-        policy: Dict[str, Any]
+        policy: Dict[str, Any],
     ) -> bool:
         """
         属性ベースのアクセス制御をチェック
@@ -50,21 +52,18 @@ class ABAC:
         return True
 
     @staticmethod
-    def check_resource_ownership(
-        user_id: str,
-        resource_owner_id: str
-    ) -> bool:
+    def check_resource_ownership(user_id: str, resource_owner_id: str) -> bool:
         """リソースの所有権をチェック"""
         return user_id == resource_owner_id
 
 
-def check_attribute_access(
-    resource_attributes: Dict[str, Any],
-    policy: Dict[str, Any]
-):
+def check_attribute_access(resource_attributes: Dict[str, Any], policy: Dict[str, Any]):
     """属性ベースアクセス制御デコレータ"""
+
     def decorator(func):
-        async def wrapper(*args, current_user: dict = Depends(get_current_user), **kwargs):
+        async def wrapper(
+            *args, current_user: dict = Depends(get_current_user), **kwargs
+        ):
             user_attributes = {
                 "user_id": current_user.get("username"),
                 "department": current_user.get("department"),
@@ -72,12 +71,16 @@ def check_attribute_access(
                 "roles": current_user.get("roles", []),
             }
 
-            if not ABAC.check_attribute_access(user_attributes, resource_attributes, policy):
+            if not ABAC.check_attribute_access(
+                user_attributes, resource_attributes, policy
+            ):
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
-                    detail="Access denied based on attributes"
+                    detail="Access denied based on attributes",
                 )
 
             return await func(*args, current_user=current_user, **kwargs)
+
         return wrapper
+
     return decorator

@@ -2,11 +2,12 @@
 OAuth2/OIDC認証モジュール
 OAuth2とOpenID Connectの実装
 """
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
+
+import httpx
 from fastapi import HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel
-import httpx
 
 
 class OAuth2Provider:
@@ -19,7 +20,7 @@ class OAuth2Provider:
         authorization_url: str,
         token_url: str,
         userinfo_url: Optional[str] = None,
-        redirect_uri: str = "http://localhost:8000/auth/callback"
+        redirect_uri: str = "http://localhost:8000/auth/callback",
     ):
         self.client_id = client_id
         self.client_secret = client_secret
@@ -59,7 +60,7 @@ class OAuth2Provider:
             if response.status_code != 200:
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Failed to exchange code for token"
+                    detail="Failed to exchange code for token",
                 )
 
             return response.json()
@@ -69,19 +70,18 @@ class OAuth2Provider:
         if not self.userinfo_url:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Userinfo URL not configured"
+                detail="Userinfo URL not configured",
             )
 
         async with httpx.AsyncClient() as client:
             response = await client.get(
-                self.userinfo_url,
-                headers={"Authorization": f"Bearer {access_token}"}
+                self.userinfo_url, headers={"Authorization": f"Bearer {access_token}"}
             )
 
             if response.status_code != 200:
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Failed to get user info"
+                    detail="Failed to get user info",
                 )
 
             return response.json()
@@ -89,6 +89,7 @@ class OAuth2Provider:
 
 class TokenResponse(BaseModel):
     """トークンレスポンスモデル"""
+
     access_token: str
     token_type: str = "bearer"
     expires_in: int

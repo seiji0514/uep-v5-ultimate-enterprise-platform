@@ -1,9 +1,9 @@
 """
 Level 2 プラットフォーム - インメモリストア
 """
-from typing import Dict, List, Optional
-from datetime import datetime
 import uuid
+from datetime import datetime
+from typing import Dict, List, Optional
 
 
 class PlatformStore:
@@ -18,10 +18,38 @@ class PlatformStore:
     def _init_demo_data(self):
         """デモ用初期データ"""
         plans = [
-            {"id": "free", "name": "Free", "price_monthly": 0, "features": ["基本API", "1GBストレージ"], "api_calls_limit": 1000, "storage_gb": 1},
-            {"id": "starter", "name": "Starter", "price_monthly": 9900, "features": ["全API", "10GBストレージ", "サポート"], "api_calls_limit": 10000, "storage_gb": 10},
-            {"id": "pro", "name": "Pro", "price_monthly": 49900, "features": ["全API", "100GBストレージ", "優先サポート", "SLA 99.9%"], "api_calls_limit": 100000, "storage_gb": 100},
-            {"id": "enterprise", "name": "Enterprise", "price_monthly": 199000, "features": ["全API", "無制限", "専用サポート", "SLA 99.99%", "カスタム統合"], "api_calls_limit": -1, "storage_gb": 1000},
+            {
+                "id": "free",
+                "name": "Free",
+                "price_monthly": 0,
+                "features": ["基本API", "1GBストレージ"],
+                "api_calls_limit": 1000,
+                "storage_gb": 1,
+            },
+            {
+                "id": "starter",
+                "name": "Starter",
+                "price_monthly": 9900,
+                "features": ["全API", "10GBストレージ", "サポート"],
+                "api_calls_limit": 10000,
+                "storage_gb": 10,
+            },
+            {
+                "id": "pro",
+                "name": "Pro",
+                "price_monthly": 49900,
+                "features": ["全API", "100GBストレージ", "優先サポート", "SLA 99.9%"],
+                "api_calls_limit": 100000,
+                "storage_gb": 100,
+            },
+            {
+                "id": "enterprise",
+                "name": "Enterprise",
+                "price_monthly": 199000,
+                "features": ["全API", "無制限", "専用サポート", "SLA 99.99%", "カスタム統合"],
+                "api_calls_limit": -1,
+                "storage_gb": 1000,
+            },
         ]
         for p in plans:
             self.plans[p["id"]] = p
@@ -57,7 +85,10 @@ class PlatformStore:
         data["id"] = tid
         data["status"] = "active"
         data["created_at"] = datetime.utcnow().isoformat()
-        data["resource_limits"] = {"api_calls": plan["api_calls_limit"], "storage_gb": plan["storage_gb"]}
+        data["resource_limits"] = {
+            "api_calls": plan["api_calls_limit"],
+            "storage_gb": plan["storage_gb"],
+        }
         self.tenants[tid] = data
         return data
 

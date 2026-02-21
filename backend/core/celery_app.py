@@ -3,6 +3,7 @@ Celery設定モジュール
 非同期タスク処理
 """
 from celery import Celery
+
 from core.config import settings
 
 # Celeryアプリケーションの作成
@@ -14,8 +15,8 @@ celery_app = Celery(
         "core.tasks",
         "mlops.tasks",
         "generative_ai.tasks",
-        "security_center.tasks"
-    ]
+        "security_center.tasks",
+    ],
 )
 
 # Celery設定

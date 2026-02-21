@@ -3,12 +3,13 @@ CQRSモジュール
 Command Query Responsibility Segregationパターンの実装
 イベントストリーミング（Kafka）と連携し、コマンド実行時にイベントを発行
 """
-from typing import Dict, Any, Optional, Callable
-from abc import ABC, abstractmethod
-from pydantic import BaseModel
-from datetime import datetime
-import uuid
 import logging
+import uuid
+from abc import ABC, abstractmethod
+from datetime import datetime
+from typing import Any, Callable, Dict, Optional
+
+from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +25,7 @@ def set_cqrs_kafka_client(client):
 
 class Command(BaseModel):
     """コマンド（書き込み操作）"""
+
     command_id: str
     command_type: str
     aggregate_id: Optional[str] = None
@@ -34,6 +36,7 @@ class Command(BaseModel):
 
 class Query(BaseModel):
     """クエリ（読み取り操作）"""
+
     query_id: str
     query_type: str
     query_params: Dict[str, Any]
@@ -67,19 +70,11 @@ class CQRSBus:
         self._command_handlers: Dict[str, CommandHandler] = {}
         self._query_handlers: Dict[str, QueryHandler] = {}
 
-    def register_command_handler(
-        self,
-        command_type: str,
-        handler: CommandHandler
-    ):
+    def register_command_handler(self, command_type: str, handler: CommandHandler):
         """コマンドハンドラーを登録"""
         self._command_handlers[command_type] = handler
 
-    def register_query_handler(
-        self,
-        query_type: str,
-        handler: QueryHandler
-    ):
+    def register_query_handler(self, query_type: str, handler: QueryHandler):
         """クエリハンドラーを登録"""
         self._query_handlers[query_type] = handler
 
@@ -87,7 +82,9 @@ class CQRSBus:
         """コマンドを実行し、成功時に Kafka へイベント発行（CQRS + イベントストリーミング連携）"""
         handler = self._command_handlers.get(command.command_type)
         if not handler:
-            raise ValueError(f"No handler registered for command type: {command.command_type}")
+            raise ValueError(
+                f"No handler registered for command type: {command.command_type}"
+            )
 
         result = await handler.handle(command)
 
@@ -115,7 +112,9 @@ class CQRSBus:
         """クエリを実行"""
         handler = self._query_handlers.get(query.query_type)
         if not handler:
-            raise ValueError(f"No handler registered for query type: {query.query_type}")
+            raise ValueError(
+                f"No handler registered for query type: {query.query_type}"
+            )
 
         return await handler.handle(query)
 
@@ -130,14 +129,14 @@ class UserCommandHandler(CommandHandler):
             return {
                 "status": "success",
                 "message": "User created",
-                "user_id": command.command_data.get("user_id")
+                "user_id": command.command_data.get("user_id"),
             }
         elif command.command_type == "update_user":
             # ユーザー更新処理
             return {
                 "status": "success",
                 "message": "User updated",
-                "user_id": command.aggregate_id
+                "user_id": command.aggregate_id,
             }
         else:
             raise ValueError(f"Unknown command type: {command.command_type}")
@@ -154,16 +153,16 @@ class UserQueryHandler(QueryHandler):
             return {
                 "user_id": user_id,
                 "username": "example_user",
-                "email": "user@example.com"
+                "email": "user@example.com",
             }
         elif query.query_type == "list_users":
             # ユーザー一覧取得処理
             return {
                 "users": [
                     {"user_id": "1", "username": "user1"},
-                    {"user_id": "2", "username": "user2"}
+                    {"user_id": "2", "username": "user2"},
                 ],
-                "total": 2
+                "total": 2,
             }
         else:
             raise ValueError(f"Unknown query type: {query.query_type}")

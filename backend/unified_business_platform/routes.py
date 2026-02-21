@@ -3,25 +3,25 @@
 業務効率化・DX / 人材・組織 / 顧客対応・CX の3システム統合
 実用的最高難易度: メトリクス・監査・イベント統合
 """
-from fastapi import APIRouter, Depends, HTTPException, status
-from typing import List, Dict, Any, Optional
 import time
-from .models import (
-    WorkflowCreate, ApprovalRequestCreate, RPAJobCreate,
-    DisabilitySupportCreate, OnboardingTaskCreate, OnboardingFromTemplateRequest,
-    SkillMatchingRequest, RegisterSkillsRequest, TicketCreate, ChatMessageCreate,
-    TicketStatusUpdate,
-)
-from .workflow import workflow_manager, rpa_manager
-from .hr import (
-    disability_support_manager, onboarding_manager, skill_matching_manager,
-)
-from .customer_support import ticket_manager, chatbot_manager
-from . import metrics
-from .audit import audit_logger, AuditAction
-from . import events
+from typing import Any, Dict, List, Optional
+
+from fastapi import APIRouter, Depends, HTTPException, status
+
 from auth.jwt_auth import get_current_active_user
 from auth.rbac import require_permission
+
+from . import events, metrics
+from .audit import AuditAction, audit_logger
+from .customer_support import chatbot_manager, ticket_manager
+from .hr import (disability_support_manager, onboarding_manager,
+                 skill_matching_manager)
+from .models import (ApprovalRequestCreate, ChatMessageCreate,
+                     DisabilitySupportCreate, OnboardingFromTemplateRequest,
+                     OnboardingTaskCreate, RegisterSkillsRequest, RPAJobCreate,
+                     SkillMatchingRequest, TicketCreate, TicketStatusUpdate,
+                     WorkflowCreate)
+from .workflow import rpa_manager, workflow_manager
 
 router = APIRouter(prefix="/api/v1/unified-business", tags=["統合ビジネスプラットフォーム"])
 
@@ -31,6 +31,7 @@ def _user_id(user: Dict[str, Any]) -> str:
 
 
 # ========== サマリー・ヘルスチェック ==========
+
 
 @router.get("/audit-logs", response_model=List[Dict[str, Any]])
 @require_permission("read")
@@ -84,6 +85,7 @@ async def get_platform_summary(
 
 # ========== 業務効率化・DX ==========
 
+
 @router.get("/workflows", response_model=List[Dict[str, Any]])
 @require_permission("read")
 async def list_workflows(
@@ -108,7 +110,13 @@ async def create_workflow(
         steps=data.steps,
     )
     metrics.workflow_created_total.labels(workflow_type=data.workflow_type).inc()
-    audit_logger.log(AuditAction.WORKFLOW_CREATE, _user_id(current_user), "workflow", w["id"], {"name": data.name})
+    audit_logger.log(
+        AuditAction.WORKFLOW_CREATE,
+        _user_id(current_user),
+        "workflow",
+        w["id"],
+        {"name": data.name},
+    )
     events.publish_workflow_event("workflow.created", w["id"], {"name": data.name})
     return w
 
@@ -137,7 +145,13 @@ async def create_approval_request(
         category=data.category,
     )
     metrics.approval_requests_total.labels(status="pending").inc()
-    audit_logger.log(AuditAction.APPROVAL_CREATE, _user_id(current_user), "approval_request", r["id"], {"title": data.title})
+    audit_logger.log(
+        AuditAction.APPROVAL_CREATE,
+        _user_id(current_user),
+        "approval_request",
+        r["id"],
+        {"title": data.title},
+    )
     events.publish_approval_event("approval.created", r["id"], {"title": data.title})
     return r
 
@@ -161,8 +175,18 @@ async def approve_request(
         raise HTTPException(status_code=404, detail="Request not found")
     metrics.approval_requests_total.labels(status=result["status"]).inc()
     act = AuditAction.APPROVAL_APPROVE if approved else AuditAction.APPROVAL_REJECT
-    audit_logger.log(act, _user_id(current_user), "approval_request", request_id, {"approved": approved})
-    events.publish_approval_event("approval.approved" if approved else "approval.rejected", request_id, {"approved": approved})
+    audit_logger.log(
+        act,
+        _user_id(current_user),
+        "approval_request",
+        request_id,
+        {"approved": approved},
+    )
+    events.publish_approval_event(
+        "approval.approved" if approved else "approval.rejected",
+        request_id,
+        {"approved": approved},
+    )
     return result
 
 
@@ -188,7 +212,13 @@ async def create_rpa_job(
         schedule=data.schedule,
         config=data.config,
     )
-    audit_logger.log(AuditAction.RPA_JOB_CREATE, _user_id(current_user), "rpa_job", j["id"], {"name": data.name})
+    audit_logger.log(
+        AuditAction.RPA_JOB_CREATE,
+        _user_id(current_user),
+        "rpa_job",
+        j["id"],
+        {"name": data.name},
+    )
     return j
 
 
@@ -204,13 +234,24 @@ async def run_rpa_job(
     if result is None:
         raise HTTPException(status_code=404, detail="Job not found")
     dur = time.perf_counter() - t0
-    metrics.rpa_jobs_executed_total.labels(task_type=result.get("task_type", "unknown"), status=result["status"]).inc()
-    metrics.rpa_job_duration_seconds.labels(task_type=result.get("task_type", "unknown")).observe(dur)
-    audit_logger.log(AuditAction.RPA_JOB_RUN, _user_id(current_user), "rpa_job", job_id, {"status": result["status"]})
+    metrics.rpa_jobs_executed_total.labels(
+        task_type=result.get("task_type", "unknown"), status=result["status"]
+    ).inc()
+    metrics.rpa_job_duration_seconds.labels(
+        task_type=result.get("task_type", "unknown")
+    ).observe(dur)
+    audit_logger.log(
+        AuditAction.RPA_JOB_RUN,
+        _user_id(current_user),
+        "rpa_job",
+        job_id,
+        {"status": result["status"]},
+    )
     return result
 
 
 # ========== 人材・組織 ==========
+
 
 @router.get("/hr/disability-supports", response_model=List[Dict[str, Any]])
 @require_permission("read")
@@ -246,7 +287,13 @@ async def register_disability_support(
         notes=data.notes,
     )
     metrics.disability_supports_total.inc()
-    audit_logger.log(AuditAction.DISABILITY_SUPPORT_REGISTER, _user_id(current_user), "disability_support", s.get("id", data.employee_id), {"employee_id": data.employee_id})
+    audit_logger.log(
+        AuditAction.DISABILITY_SUPPORT_REGISTER,
+        _user_id(current_user),
+        "disability_support",
+        s.get("id", data.employee_id),
+        {"employee_id": data.employee_id},
+    )
     return s
 
 
@@ -275,7 +322,13 @@ async def create_onboarding_task(
         assignee_id=data.assignee_id,
     )
     metrics.onboarding_tasks_total.labels(status="pending").inc()
-    audit_logger.log(AuditAction.ONBOARDING_TASK_CREATE, _user_id(current_user), "onboarding_task", t["id"], {"task_name": data.task_name})
+    audit_logger.log(
+        AuditAction.ONBOARDING_TASK_CREATE,
+        _user_id(current_user),
+        "onboarding_task",
+        t["id"],
+        {"task_name": data.task_name},
+    )
     return t
 
 
@@ -303,7 +356,13 @@ async def complete_onboarding_task(
     if result is None:
         raise HTTPException(status_code=404, detail="Task not found")
     metrics.onboarding_tasks_total.labels(status="completed").inc()
-    audit_logger.log(AuditAction.ONBOARDING_TASK_COMPLETE, _user_id(current_user), "onboarding_task", task_id, {})
+    audit_logger.log(
+        AuditAction.ONBOARDING_TASK_COMPLETE,
+        _user_id(current_user),
+        "onboarding_task",
+        task_id,
+        {},
+    )
     return result
 
 
@@ -334,11 +393,18 @@ async def find_skill_matches(
         experience_level=data.experience_level,
     )
     metrics.skill_matches_total.inc()
-    audit_logger.log(AuditAction.SKILL_MATCHING, _user_id(current_user), "skill_matching", "query", {"required_skills": data.required_skills})
+    audit_logger.log(
+        AuditAction.SKILL_MATCHING,
+        _user_id(current_user),
+        "skill_matching",
+        "query",
+        {"required_skills": data.required_skills},
+    )
     return r
 
 
 # ========== 顧客対応・CX ==========
+
 
 @router.get("/customer/tickets", response_model=List[Dict[str, Any]])
 @require_permission("read")
@@ -369,7 +435,13 @@ async def create_ticket(
         category=data.category,
     )
     metrics.tickets_total.labels(priority=data.priority.value, status="open").inc()
-    audit_logger.log(AuditAction.TICKET_CREATE, _user_id(current_user), "ticket", t["id"], {"subject": data.subject})
+    audit_logger.log(
+        AuditAction.TICKET_CREATE,
+        _user_id(current_user),
+        "ticket",
+        t["id"],
+        {"subject": data.subject},
+    )
     events.publish_ticket_event("ticket.created", t["id"], {"subject": data.subject})
     return t
 
@@ -389,7 +461,13 @@ async def update_ticket_status(
     )
     if result is None:
         raise HTTPException(status_code=404, detail="Ticket not found")
-    audit_logger.log(AuditAction.TICKET_UPDATE, _user_id(current_user), "ticket", ticket_id, {"status": data.status})
+    audit_logger.log(
+        AuditAction.TICKET_UPDATE,
+        _user_id(current_user),
+        "ticket",
+        ticket_id,
+        {"status": data.status},
+    )
     events.publish_ticket_event("ticket.updated", ticket_id, {"status": data.status})
     return result
 
@@ -406,5 +484,11 @@ async def chat(
         customer_id=data.customer_id,
     )
     metrics.chatbot_requests_total.inc()
-    audit_logger.log(AuditAction.CHATBOT_QUERY, _user_id(current_user), "chatbot", data.ticket_id or "standalone", {"ticket_id": data.ticket_id})
+    audit_logger.log(
+        AuditAction.CHATBOT_QUERY,
+        _user_id(current_user),
+        "chatbot",
+        data.ticket_id or "standalone",
+        {"ticket_id": data.ticket_id},
+    )
     return r

@@ -1,13 +1,16 @@
 """
 統合ダッシュボードAPIエンドポイント
 """
+from typing import Any, Dict
+
 from fastapi import APIRouter, Depends
-from typing import Dict, Any
-from .unified_dashboard import unified_dashboard
-from .security_dashboard import security_dashboard
-from .mlops_dashboard import mlops_dashboard
+
 from auth.jwt_auth import get_current_active_user
 from auth.rbac import require_permission
+
+from .mlops_dashboard import mlops_dashboard
+from .security_dashboard import security_dashboard
+from .unified_dashboard import unified_dashboard
 
 router = APIRouter(prefix="/api/v1/dashboards", tags=["ダッシュボード"])
 

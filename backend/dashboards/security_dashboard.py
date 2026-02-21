@@ -1,10 +1,11 @@
 """
 統合セキュリティダッシュボードモジュール
 """
-from typing import Dict, Any
 from datetime import datetime, timedelta
-from security_center.monitoring import security_monitor
+from typing import Any, Dict
+
 from security_center.incident_response import incident_response
+from security_center.monitoring import security_monitor
 from security_center.risk_analysis import risk_analyzer
 
 
@@ -35,7 +36,7 @@ class SecurityDashboard:
                     "id": e.id,
                     "type": e.event_type,
                     "threat_level": e.threat_level.value,
-                    "timestamp": e.timestamp.isoformat()
+                    "timestamp": e.timestamp.isoformat(),
                 }
                 for e in recent_events
             ],
@@ -43,15 +44,17 @@ class SecurityDashboard:
                 {
                     "name": r.name,
                     "level": r.risk_level.value,
-                    "score": r.likelihood * r.impact
+                    "score": r.likelihood * r.impact,
                 }
                 for r in risk_analyzer.list_risks()[:5]
             ],
             "incident_summary": {
                 "open": len([i for i in active_incidents if i.status.value == "open"]),
-                "investigating": len([i for i in active_incidents if i.status.value == "investigating"]),
-                "resolved_today": 0
-            }
+                "investigating": len(
+                    [i for i in active_incidents if i.status.value == "investigating"]
+                ),
+                "resolved_today": 0,
+            },
         }
 
 

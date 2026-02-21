@@ -1,9 +1,10 @@
 """
 Level 3 エコシステム - インメモリストア
 """
-from typing import Dict, List, Optional
-from datetime import datetime
 import uuid
+from datetime import datetime
+from typing import Dict, List, Optional
+
 from .models import PartnerStatus
 
 
@@ -105,11 +106,15 @@ class EcosystemStore:
             items = [p for p in items if p["status"] == status]
         return sorted(items, key=lambda x: x["created_at"], reverse=True)
 
-    def approve_partner(self, partner_id: str, approved: bool, notes: Optional[str] = None) -> Optional[dict]:
+    def approve_partner(
+        self, partner_id: str, approved: bool, notes: Optional[str] = None
+    ) -> Optional[dict]:
         p = self.partners.get(partner_id)
         if not p:
             return None
-        p["status"] = PartnerStatus.APPROVED.value if approved else PartnerStatus.REJECTED.value
+        p["status"] = (
+            PartnerStatus.APPROVED.value if approved else PartnerStatus.REJECTED.value
+        )
         p["approved_at"] = datetime.utcnow().isoformat() if approved else None
         if notes:
             p["approval_notes"] = notes

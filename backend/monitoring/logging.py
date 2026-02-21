@@ -2,19 +2,24 @@
 ログ管理モジュール
 構造化ログの収集と送信（JSON形式、機密情報マスキング）
 """
-import logging
 import json
-import re
-import httpx
-from typing import Dict, Any, Optional
-from datetime import datetime
+import logging
 import os
+import re
+from datetime import datetime
+from typing import Any, Dict, Optional
 
+import httpx
 
 # 機密情報マスキング用パターン
 _SENSITIVE_PATTERNS = [
-    (re.compile(r'(password|passwd|secret|token|api_key)\s*[:=]\s*["\']?[^"\'\s]+', re.I), r'\1=***MASKED***'),
-    (re.compile(r'Bearer\s+[A-Za-z0-9\-_.]+'), 'Bearer ***MASKED***'),
+    (
+        re.compile(
+            r'(password|passwd|secret|token|api_key)\s*[:=]\s*["\']?[^"\'\s]+', re.I
+        ),
+        r"\1=***MASKED***",
+    ),
+    (re.compile(r"Bearer\s+[A-Za-z0-9\-_.]+"), "Bearer ***MASKED***"),
 ]
 
 
@@ -61,8 +66,7 @@ class LogstashHandler(logging.Handler):
         """
         super().__init__()
         self.logstash_url = logstash_url or os.getenv(
-            "LOGSTASH_URL",
-            "http://logstash:8080"
+            "LOGSTASH_URL", "http://logstash:8080"
         )
         self.client = httpx.AsyncClient(timeout=5.0)
 
@@ -97,6 +101,7 @@ class LogstashHandler(logging.Handler):
             # ここでは簡易実装のため同期送信
             try:
                 import asyncio
+
                 asyncio.create_task(self._send_log(log_data))
             except:
                 pass  # エラー時は無視
@@ -106,10 +111,7 @@ class LogstashHandler(logging.Handler):
     async def _send_log(self, log_data: Dict[str, Any]):
         """ログをLogstashに送信"""
         try:
-            await self.client.post(
-                self.logstash_url,
-                json=log_data
-            )
+            await self.client.post(self.logstash_url, json=log_data)
         except Exception:
             pass  # エラー時は無視
 
@@ -148,10 +150,7 @@ class LoggingHandler:
         **kwargs
     ):
         """情報ログを記録"""
-        extra = {
-            "service": self.service_name,
-            **kwargs
-        }
+        extra = {"service": self.service_name, **kwargs}
         if user_id:
             extra["user_id"] = user_id
         if request_id:
@@ -168,10 +167,7 @@ class LoggingHandler:
         **kwargs
     ):
         """エラーログを記録"""
-        extra = {
-            "service": self.service_name,
-            **kwargs
-        }
+        extra = {"service": self.service_name, **kwargs}
         if user_id:
             extra["user_id"] = user_id
         if request_id:
@@ -190,10 +186,7 @@ class LoggingHandler:
         **kwargs
     ):
         """警告ログを記録"""
-        extra = {
-            "service": self.service_name,
-            **kwargs
-        }
+        extra = {"service": self.service_name, **kwargs}
         if user_id:
             extra["user_id"] = user_id
         if request_id:

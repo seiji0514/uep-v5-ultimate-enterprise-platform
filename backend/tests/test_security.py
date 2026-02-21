@@ -3,8 +3,8 @@
 """
 import pytest
 from fastapi.testclient import TestClient
-from main import app
 
+from main import app
 
 client = TestClient(app)
 
@@ -21,9 +21,6 @@ def test_security_headers():
 
 def test_cors_headers():
     """CORSヘッダーをテスト"""
-    response = client.options(
-        "/health",
-        headers={"Origin": "http://localhost:3000"}
-    )
+    response = client.options("/health", headers={"Origin": "http://localhost:3000"})
 
     assert response.status_code == 200

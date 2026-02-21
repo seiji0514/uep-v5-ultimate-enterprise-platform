@@ -1,12 +1,14 @@
 """
 生成AI関連のデータモデル
 """
+from typing import Any, Dict, Optional
+
 from pydantic import BaseModel
-from typing import Optional, Dict, Any
 
 
 class GenerateRequest(BaseModel):
     """テキスト生成リクエスト"""
+
     prompt: str
     model: str = "gpt-3.5-turbo"
     max_tokens: int = 1000
@@ -15,6 +17,7 @@ class GenerateRequest(BaseModel):
 
 class RAGRequest(BaseModel):
     """RAGリクエスト"""
+
     query: str
     collection: Optional[str] = None
     context: Optional[str] = None
@@ -22,6 +25,7 @@ class RAGRequest(BaseModel):
 
 class ReasoningRequest(BaseModel):
     """推論リクエスト"""
+
     problem: Optional[str] = None  # 後方互換
     question: Optional[str] = None  # フロントエンド互換
     reasoning_type: str = "cot"

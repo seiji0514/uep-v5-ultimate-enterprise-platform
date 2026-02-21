@@ -1,9 +1,9 @@
 """
 UEP v5.0 - データレイクモジュール
 """
-from .minio_client import MinIOClient
 from .catalog import DataCatalog
 from .governance import DataGovernance
+from .minio_client import MinIOClient
 
 __all__ = [
     "MinIOClient",

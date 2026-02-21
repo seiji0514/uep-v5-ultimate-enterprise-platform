@@ -2,14 +2,16 @@
 データガバナンスモジュール
 データのライフサイクル管理、アクセス制御
 """
-from typing import Dict, Any, List, Optional
 from datetime import datetime, timedelta
 from enum import Enum
+from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel
 
 
 class RetentionPolicy(str, Enum):
     """保持ポリシー"""
+
     IMMEDIATE = "immediate"  # 即座に削除
     DAYS_7 = "7days"
     DAYS_30 = "30days"
@@ -20,6 +22,7 @@ class RetentionPolicy(str, Enum):
 
 class AccessLevel(str, Enum):
     """アクセスレベル"""
+
     PUBLIC = "public"  # 全員アクセス可能
     INTERNAL = "internal"  # 内部のみ
     RESTRICTED = "restricted"  # 制限付き
@@ -28,6 +31,7 @@ class AccessLevel(str, Enum):
 
 class DataGovernancePolicy(BaseModel):
     """データガバナンスポリシー"""
+
     id: str
     name: str
     description: Optional[str] = None
@@ -68,7 +72,7 @@ class DataGovernance:
                 allowed_roles=["admin", "developer"],
                 encryption_required=True,
                 created_at=now,
-                updated_at=now
+                updated_at=now,
             ),
             DataGovernancePolicy(
                 id="default-processed-data",
@@ -79,7 +83,7 @@ class DataGovernance:
                 access_level=AccessLevel.INTERNAL,
                 allowed_roles=["admin", "developer", "operator"],
                 created_at=now,
-                updated_at=now
+                updated_at=now,
             ),
             DataGovernancePolicy(
                 id="default-ml-models",
@@ -91,7 +95,7 @@ class DataGovernance:
                 allowed_roles=["admin", "developer"],
                 encryption_required=True,
                 created_at=now,
-                updated_at=now
+                updated_at=now,
             ),
         ]
 
@@ -111,7 +115,9 @@ class DataGovernance:
         """ポリシー一覧を取得"""
         return list(self._policies.values())
 
-    def find_policy_for_bucket(self, bucket_name: str) -> Optional[DataGovernancePolicy]:
+    def find_policy_for_bucket(
+        self, bucket_name: str
+    ) -> Optional[DataGovernancePolicy]:
         """バケットに適用されるポリシーを検索"""
         for policy in self._policies.values():
             if self._match_pattern(bucket_name, policy.bucket_pattern):
@@ -129,7 +135,7 @@ class DataGovernance:
         self,
         bucket_name: str,
         user_roles: List[str],
-        required_level: Optional[AccessLevel] = None
+        required_level: Optional[AccessLevel] = None,
     ) -> bool:
         """アクセス権限をチェック"""
         policy = self.find_policy_for_bucket(bucket_name)
@@ -155,9 +161,7 @@ class DataGovernance:
         return True
 
     def get_retention_date(
-        self,
-        bucket_name: str,
-        created_date: datetime
+        self, bucket_name: str, created_date: datetime
     ) -> Optional[datetime]:
         """保持期限日を取得"""
         policy = self.find_policy_for_bucket(bucket_name)

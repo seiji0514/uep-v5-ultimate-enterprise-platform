@@ -1,24 +1,22 @@
 """
 インクルーシブ雇用AIプラットフォーム - APIルート
 """
-from fastapi import APIRouter, Depends, HTTPException
-from typing import Dict, Any
+from typing import Any, Dict
 
-from .models import (
-    MatchingRequest,
-    ChatRequest,
-    UXEvaluationRequest,
-    AgentTaskRequest,
-)
-from .matching import match_jobs
-from .agents import agent_orchestrator
-from .ux_evaluation import evaluate_url, EVALUATION_ITEMS
+from fastapi import APIRouter, Depends, HTTPException
+
 from .accessibility import chat as accessibility_chat
+from .agents import agent_orchestrator
+from .matching import match_jobs
+from .models import (AgentTaskRequest, ChatRequest, MatchingRequest,
+                     UXEvaluationRequest)
+from .ux_evaluation import EVALUATION_ITEMS, evaluate_url
 
 # 認証はオプション（障害者求職者が利用しやすいよう公開APIも検討）
 try:
     from auth.jwt_auth import get_current_active_user
     from auth.rbac import require_permission
+
     AUTH_AVAILABLE = True
 except ImportError:
     AUTH_AVAILABLE = False

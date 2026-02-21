@@ -3,9 +3,9 @@ APIレート制限のテスト
 """
 import pytest
 from fastapi.testclient import TestClient
-from main import app
-from core.rate_limit import limiter
 
+from core.rate_limit import limiter
+from main import app
 
 client = TestClient(app)
 

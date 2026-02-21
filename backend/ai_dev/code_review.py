@@ -1,13 +1,16 @@
 """
 コードレビュー支援モジュール
 """
-from typing import Dict, Any, List, Optional
+from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel
+
 from generative_ai.llm_integration import llm_client
 
 
 class CodeIssue(BaseModel):
     """コードの問題"""
+
     severity: str  # info, warning, error
     line_number: Optional[int] = None
     message: str
@@ -16,6 +19,7 @@ class CodeIssue(BaseModel):
 
 class CodeReview(BaseModel):
     """コードレビュー"""
+
     overall_score: float  # 0.0 - 1.0
     issues: List[CodeIssue] = []
     suggestions: List[str] = []
@@ -31,7 +35,7 @@ class CodeReviewer:
         language: str = "python",
         check_style: bool = True,
         check_security: bool = True,
-        check_performance: bool = True
+        check_performance: bool = True,
     ) -> CodeReview:
         """
         コードをレビュー
@@ -76,11 +80,13 @@ class CodeReviewer:
 
         # 簡易的なパース（実際の実装ではより詳細な解析が必要）
         if "問題" in review_text or "issue" in review_text.lower():
-            issues.append(CodeIssue(
-                severity="warning",
-                message="コードレビューで問題が検出されました",
-                suggestion="詳細なレビュー結果を確認してください"
-            ))
+            issues.append(
+                CodeIssue(
+                    severity="warning",
+                    message="コードレビューで問題が検出されました",
+                    suggestion="詳細なレビュー結果を確認してください",
+                )
+            )
 
         if "改善" in review_text or "improve" in review_text.lower():
             suggestions.append("コードの改善を検討してください")
@@ -92,13 +98,11 @@ class CodeReviewer:
             overall_score=score,
             issues=issues,
             suggestions=suggestions,
-            summary=review_text[:500]  # 最初の500文字をサマリーとして使用
+            summary=review_text[:500],  # 最初の500文字をサマリーとして使用
         )
 
     async def suggest_improvements(
-        self,
-        code: str,
-        language: str = "python"
+        self, code: str, language: str = "python"
     ) -> List[str]:
         """
         改善提案を生成
@@ -124,7 +128,9 @@ class CodeReviewer:
         suggestions = []
         for line in improvements_text.split("\n"):
             line = line.strip()
-            if line and (line.startswith("-") or line.startswith("•") or line[0].isdigit()):
+            if line and (
+                line.startswith("-") or line.startswith("•") or line[0].isdigit()
+            ):
                 suggestions.append(line.lstrip("- •1234567890. "))
 
         return suggestions if suggestions else ["コードの品質向上を検討してください"]

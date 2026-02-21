@@ -1,8 +1,8 @@
 """
 UEP v5.0 - 最適化モジュール
 """
-from .performance import PerformanceOptimizer
 from .caching import CacheManager
+from .performance import PerformanceOptimizer
 
 __all__ = [
     "PerformanceOptimizer",

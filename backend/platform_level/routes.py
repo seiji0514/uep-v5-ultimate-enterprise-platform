@@ -2,20 +2,25 @@
 Level 2 プラットフォーム - APIルート
 マルチテナント、SaaS化、APIマーケットプレイス
 """
+from typing import Any, Dict, List, Optional
+
 from fastapi import APIRouter, Depends, HTTPException, status
-from typing import List, Optional, Dict, Any
-from .models import TenantCreate, Tenant, SubscriptionPlan, ApiListing
-from .store import platform_store
-from .config import SELF_SERVICE_CONFIG, MULTI_TENANT_CONFIG
+
 from auth.jwt_auth import get_current_active_user
 from auth.rbac import require_permission
+
+from .config import MULTI_TENANT_CONFIG, SELF_SERVICE_CONFIG
+from .models import ApiListing, SubscriptionPlan, Tenant, TenantCreate
+from .store import platform_store
 
 router = APIRouter(prefix="/api/v1/platform", tags=["Platform (Level 2)"])
 
 
 @router.get("/overview")
 @require_permission("read")
-async def get_level2_overview(current_user: Dict[str, Any] = Depends(get_current_active_user)):
+async def get_level2_overview(
+    current_user: Dict[str, Any] = Depends(get_current_active_user)
+):
     """Level 2 プラットフォーム概要"""
     return {
         "level": 2,
@@ -51,7 +56,9 @@ async def create_tenant(tenant: TenantCreate):
 
 @router.get("/tenants/{tenant_id}", response_model=Tenant)
 @require_permission("read")
-async def get_tenant(tenant_id: str, current_user: Dict[str, Any] = Depends(get_current_active_user)):
+async def get_tenant(
+    tenant_id: str, current_user: Dict[str, Any] = Depends(get_current_active_user)
+):
     """テナント詳細"""
     t = platform_store.get_tenant(tenant_id)
     if not t:
@@ -78,13 +85,17 @@ async def list_api_marketplace(
 
 @router.get("/self-service-config")
 @require_permission("read")
-async def get_self_service_config(current_user: Dict[str, Any] = Depends(get_current_active_user)):
+async def get_self_service_config(
+    current_user: Dict[str, Any] = Depends(get_current_active_user)
+):
     """セルフサービスプロビジョニング設定"""
     return SELF_SERVICE_CONFIG
 
 
 @router.get("/multi-tenant-config")
 @require_permission("read")
-async def get_multi_tenant_config(current_user: Dict[str, Any] = Depends(get_current_active_user)):
+async def get_multi_tenant_config(
+    current_user: Dict[str, Any] = Depends(get_current_active_user)
+):
     """マルチテナント設定"""
     return MULTI_TENANT_CONFIG

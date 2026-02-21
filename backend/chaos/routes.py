@@ -5,21 +5,24 @@ Chaos Engineering API
 """
 import asyncio
 import random
+from typing import Optional
+
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
-from typing import Optional
 
 router = APIRouter(prefix="/api/v1/chaos", tags=["Chaos Engineering"])
 
 
 class ChaosDelayRequest(BaseModel):
     """遅延注入リクエスト"""
+
     delay_ms: int = 100
     jitter_ms: Optional[int] = 0  # ランダム揺らぎ（0=なし）
 
 
 class ChaosErrorRequest(BaseModel):
     """エラー注入リクエスト"""
+
     error_rate: float = 1.0  # 0.0～1.0（1.0=100%エラー）
     status_code: int = 500
 

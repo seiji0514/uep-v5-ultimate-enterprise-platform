@@ -2,10 +2,12 @@
 Celeryタスク定義
 非同期処理タスク
 """
-from celery import shared_task
-from core.celery_app import celery_app
-from typing import Dict, Any
 import time
+from typing import Any, Dict
+
+from celery import shared_task
+
+from core.celery_app import celery_app
 
 
 @shared_task(name="core.tasks.send_notification")
@@ -28,7 +30,7 @@ def send_notification(user_id: str, message: str, notification_type: str = "info
         "status": "sent",
         "user_id": user_id,
         "message": message,
-        "type": notification_type
+        "type": notification_type,
     }
 
 
@@ -47,11 +49,7 @@ def process_data(data: Dict[str, Any], processing_type: str = "default"):
     # データ処理（簡易実装）
     print(f"Processing data: {processing_type}")
     time.sleep(2)  # シミュレーション
-    return {
-        "status": "processed",
-        "data": data,
-        "type": processing_type
-    }
+    return {"status": "processed", "data": data, "type": processing_type}
 
 
 @shared_task(name="core.tasks.generate_report")
@@ -73,5 +71,5 @@ def generate_report(report_type: str, parameters: Dict[str, Any]):
         "status": "completed",
         "report_type": report_type,
         "parameters": parameters,
-        "report_url": f"/reports/{report_type}/{time.time()}"
+        "report_url": f"/reports/{report_type}/{time.time()}",
     }

@@ -2,10 +2,11 @@
 アクセシビリティ特化AI
 音声・簡易UI対応のチャット応答
 """
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
 
 try:
     from generative_ai.llm_integration import llm_client
+
     LLM_AVAILABLE = True
 except ImportError:
     LLM_AVAILABLE = False
@@ -24,7 +25,9 @@ ACCESSIBILITY_RESPONSES = {
 }
 
 
-async def chat(message: str, voice_input: bool = False, simple_ui: bool = False) -> Dict[str, Any]:
+async def chat(
+    message: str, voice_input: bool = False, simple_ui: bool = False
+) -> Dict[str, Any]:
     """
     アクセシビリティ特化AIチャット
     - 簡潔な応答（読み上げ・簡易UI向け）

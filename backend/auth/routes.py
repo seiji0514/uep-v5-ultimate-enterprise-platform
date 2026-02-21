@@ -2,14 +2,19 @@
 認証・認可APIエンドポイント
 """
 from datetime import timedelta
+from typing import Any, Dict
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
-from .models import UserCreate, UserResponse, LoginRequest, TokenResponse, PasswordChangeRequest
-from .jwt_auth import JWTAuth, get_current_user, get_current_active_user, ACCESS_TOKEN_EXPIRE_MINUTES
+
+from .jwt_auth import (ACCESS_TOKEN_EXPIRE_MINUTES, JWTAuth,
+                       get_current_active_user, get_current_user)
+from .models import (LoginRequest, PasswordChangeRequest, TokenResponse,
+                     UserCreate, UserResponse)
 from .rbac import RBAC
-from typing import Dict, Any
 
 router = APIRouter(prefix="/api/v1/auth", tags=["認証"])
+
 
 # 簡易的なユーザーストレージ（実際の実装ではデータベースを使用）
 # デモ用のユーザーデータ（パスワードハッシュは遅延評価）
@@ -24,43 +29,60 @@ def _init_demo_users():
                 "full_name": "管理者",
                 "department": "IT",
                 "roles": ["admin"],
-                "permissions": ["read", "write", "delete", "admin", "manage_users", "manage_roles", "manage_ecosystem"],
+                "permissions": [
+                    "read",
+                    "write",
+                    "delete",
+                    "admin",
+                    "manage_users",
+                    "manage_roles",
+                    "manage_ecosystem",
+                ],
                 "is_active": True,
                 "security_level": 5,
             },
-        "developer": {
-            "username": "developer",
-            "email": "developer@example.com",
-            "hashed_password": JWTAuth.get_password_hash("dev123"),
-            "full_name": "開発者",
-            "department": "開発部",
-            "roles": ["developer"],
-            "permissions": ["read", "write", "manage_mlops", "manage_ai", "manage_ecosystem"],
-            "is_active": True,
-            "security_level": 3,
-        },
-        "viewer": {
-            "username": "viewer",
-            "email": "viewer@example.com",
-            "hashed_password": JWTAuth.get_password_hash("view123"),
-            "full_name": "閲覧者",
-            "department": "一般",
-            "roles": ["viewer"],
-            "permissions": ["read"],
-            "is_active": True,
-            "security_level": 1,
-        },
+            "developer": {
+                "username": "developer",
+                "email": "developer@example.com",
+                "hashed_password": JWTAuth.get_password_hash("dev123"),
+                "full_name": "開発者",
+                "department": "開発部",
+                "roles": ["developer"],
+                "permissions": [
+                    "read",
+                    "write",
+                    "manage_mlops",
+                    "manage_ai",
+                    "manage_ecosystem",
+                ],
+                "is_active": True,
+                "security_level": 3,
+            },
+            "viewer": {
+                "username": "viewer",
+                "email": "viewer@example.com",
+                "hashed_password": JWTAuth.get_password_hash("view123"),
+                "full_name": "閲覧者",
+                "department": "一般",
+                "roles": ["viewer"],
+                "permissions": ["read"],
+                "is_active": True,
+                "security_level": 1,
+            },
         }
     except Exception as e:
         # 初期化エラー時は空の辞書を返す
         import traceback
+
         print(f"Error: Failed to initialize demo users: {e}")
         traceback.print_exc()
         return {}
 
+
 # 遅延初期化（モジュール読み込み時のエラーを防ぐため）
 _demo_users_cache: Dict[str, Dict[str, Any]] = {}
 _users_initialized = False
+
 
 def get_demo_users() -> Dict[str, Dict[str, Any]]:
     """デモユーザーを取得（必要時に初期化）"""
@@ -70,25 +92,31 @@ def get_demo_users() -> Dict[str, Dict[str, Any]]:
             _demo_users_cache = _init_demo_users()
             _users_initialized = True
             import logging
-            logging.getLogger(__name__).info(f"Demo users loaded: {list(_demo_users_cache.keys())}")
+
+            logging.getLogger(__name__).info(
+                f"Demo users loaded: {list(_demo_users_cache.keys())}"
+            )
         except Exception as e:
             # 初期化エラー時は空の辞書を返す
-            import traceback
             import logging
+            import traceback
+
             logging.getLogger(__name__).error(f"Failed to initialize demo users: {e}")
             traceback.print_exc()
             _demo_users_cache = {}
     return _demo_users_cache
 
 
-@router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED
+)
 async def register(user_data: UserCreate):
     """ユーザー登録"""
     users = get_demo_users()
     if user_data.username in users:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Username already registered"
+            detail="Username already registered",
         )
 
     hashed_password = JWTAuth.get_password_hash(user_data.password)
@@ -138,8 +166,7 @@ async def login(login_data: LoginRequest):
 
     if not user["is_active"]:
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Inactive user"
+            status_code=status.HTTP_403_FORBIDDEN, detail="Inactive user"
         )
 
     # JWTトークンを生成
@@ -153,7 +180,7 @@ async def login(login_data: LoginRequest):
             "department": user["department"],
             "security_level": user["security_level"],
         },
-        expires_delta=access_token_expires
+        expires_delta=access_token_expires,
     )
 
     return TokenResponse(
@@ -167,7 +194,7 @@ async def login(login_data: LoginRequest):
             department=user["department"],
             roles=user["roles"],
             is_active=user["is_active"],
-        )
+        ),
     )
 
 
@@ -199,7 +226,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
             "roles": user["roles"],
             "permissions": user["permissions"],
         },
-        expires_delta=access_token_expires
+        expires_delta=access_token_expires,
     )
 
     return TokenResponse(
@@ -213,19 +240,20 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
             department=user["department"],
             roles=user["roles"],
             is_active=user["is_active"],
-        )
+        ),
     )
 
 
 @router.get("/me", response_model=UserResponse)
-async def get_current_user_info(current_user: Dict[str, Any] = Depends(get_current_active_user)):
+async def get_current_user_info(
+    current_user: Dict[str, Any] = Depends(get_current_active_user)
+):
     """現在のユーザー情報を取得"""
     users = get_demo_users()
     user = users.get(current_user["username"])
     if not user:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
         )
 
     return UserResponse(
@@ -242,25 +270,27 @@ async def get_current_user_info(current_user: Dict[str, Any] = Depends(get_curre
 @router.post("/change-password")
 async def change_password(
     password_data: PasswordChangeRequest,
-    current_user: Dict[str, Any] = Depends(get_current_active_user)
+    current_user: Dict[str, Any] = Depends(get_current_active_user),
 ):
     """パスワード変更"""
     users = get_demo_users()
     user = users.get(current_user["username"])
     if not user:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
         )
 
-    if not JWTAuth.verify_password(password_data.current_password, user["hashed_password"]):
+    if not JWTAuth.verify_password(
+        password_data.current_password, user["hashed_password"]
+    ):
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Incorrect current password"
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect current password"
         )
 
     users = get_demo_users()
     if current_user["username"] in users:
-        users[current_user["username"]]["hashed_password"] = JWTAuth.get_password_hash(password_data.new_password)
+        users[current_user["username"]]["hashed_password"] = JWTAuth.get_password_hash(
+            password_data.new_password
+        )
 
     return {"message": "Password changed successfully"}

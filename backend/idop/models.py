@@ -1,12 +1,14 @@
 """
 IDOP関連のデータモデル
 """
+from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel
-from typing import Optional, Dict, Any, List
 
 
 class CICDPipelineCreate(BaseModel):
     """CI/CDパイプライン作成モデル"""
+
     name: str
     repository: str
     branch: str = "main"
@@ -16,11 +18,13 @@ class CICDPipelineCreate(BaseModel):
 
 class CICDTrigger(BaseModel):
     """CI/CDトリガーモデル"""
+
     commit_hash: Optional[str] = None
 
 
 class ApplicationCreate(BaseModel):
     """アプリケーション作成モデル"""
+
     name: str
     repository: str
     description: Optional[str] = None
@@ -29,6 +33,7 @@ class ApplicationCreate(BaseModel):
 
 class ApplicationDeploy(BaseModel):
     """アプリケーションデプロイモデル"""
+
     environment: str
     version: str
     config: Optional[Dict[str, Any]] = None

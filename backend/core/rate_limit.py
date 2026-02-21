@@ -2,11 +2,13 @@
 APIレート制限モジュール
 slowapiを使用した高度なレート制限
 """
-from slowapi import Limiter
-from slowapi.util import get_remote_address
-from slowapi.errors import RateLimitExceeded
-from fastapi import Request
 from typing import Callable
+
+from fastapi import Request
+from slowapi import Limiter
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
+
 from core.config import settings
 
 
@@ -23,7 +25,7 @@ limiter = Limiter(
     key_func=get_limiter_key,
     default_limits=[f"{settings.RATE_LIMIT_PER_MINUTE}/minute"],
     storage_uri=settings.REDIS_URL if settings.RATE_LIMIT_ENABLED else "memory://",
-    headers_enabled=True
+    headers_enabled=True,
 )
 
 
@@ -37,6 +39,8 @@ def rate_limit(calls: int = 60, period: int = 60):
         async def endpoint():
             return {"message": "OK"}
     """
+
     def decorator(func: Callable):
         return limiter.limit(f"{calls}/{period}seconds")(func)
+
     return decorator

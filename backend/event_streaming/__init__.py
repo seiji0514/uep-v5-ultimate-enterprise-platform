@@ -1,9 +1,9 @@
 """
 UEP v5.0 - イベントストリーミングモジュール
 """
-from .kafka_client import KafkaClient
-from .event_sourcing import EventStore, EventSourcingHandler
 from .cqrs import CommandHandler, QueryHandler
+from .event_sourcing import EventSourcingHandler, EventStore
+from .kafka_client import KafkaClient
 
 __all__ = [
     "KafkaClient",

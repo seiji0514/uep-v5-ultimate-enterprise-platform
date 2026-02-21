@@ -2,26 +2,26 @@
 データベース接続管理モジュール
 SQLAlchemy + SQLite/PostgreSQL統合
 """
-from sqlalchemy import create_engine, MetaData
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, Session
-from sqlalchemy.pool import QueuePool, StaticPool
-from typing import Generator
 from contextlib import contextmanager
+from typing import Generator
+
+from sqlalchemy import MetaData, create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.pool import QueuePool, StaticPool
+
 
 # core.config を遅延インポート（循環参照回避）
 def _get_database_url() -> str:
     from core.config import settings
+
     return settings.DATABASE_URL
+
 
 DATABASE_URL = _get_database_url()
 
 # SQLiteの場合は接続プール設定を簡素化
-_engine_kwargs = dict(
-    pool_pre_ping=True,
-    echo=False,
-    future=True
-)
+_engine_kwargs = dict(pool_pre_ping=True, echo=False, future=True)
 if DATABASE_URL.startswith("sqlite"):
     _engine_kwargs["connect_args"] = {"check_same_thread": False}
     _engine_kwargs["poolclass"] = StaticPool
@@ -35,10 +35,7 @@ engine = create_engine(DATABASE_URL, **_engine_kwargs)
 
 # セッションファクトリ
 SessionLocal = sessionmaker(
-    autocommit=False,
-    autoflush=False,
-    bind=engine,
-    expire_on_commit=False
+    autocommit=False, autoflush=False, bind=engine, expire_on_commit=False
 )
 
 # ベースクラス

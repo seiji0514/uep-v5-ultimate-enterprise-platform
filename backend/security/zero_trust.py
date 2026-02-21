@@ -2,14 +2,16 @@
 ゼロトラストアーキテクチャモジュール
 すべての通信を検証・認証
 """
-from typing import Dict, Any, Optional, List
 from datetime import datetime, timedelta
 from enum import Enum
+from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel
 
 
 class TrustLevel(str, Enum):
     """信頼レベル"""
+
     UNTRUSTED = "untrusted"
     LOW = "low"
     MEDIUM = "medium"
@@ -19,6 +21,7 @@ class TrustLevel(str, Enum):
 
 class ZeroTrustPolicyModel(BaseModel):
     """ゼロトラストポリシーモデル"""
+
     id: str
     name: str
     description: Optional[str] = None
@@ -56,7 +59,7 @@ class ZeroTrustPolicy:
                 required_roles=["admin"],
                 mfa_required=True,
                 created_at=now,
-                updated_at=now
+                updated_at=now,
             ),
             ZeroTrustPolicyModel(
                 id="default-api",
@@ -66,7 +69,7 @@ class ZeroTrustPolicy:
                 required_trust_level=TrustLevel.MEDIUM,
                 required_permissions=["read"],
                 created_at=now,
-                updated_at=now
+                updated_at=now,
             ),
             ZeroTrustPolicyModel(
                 id="default-security",
@@ -77,7 +80,7 @@ class ZeroTrustPolicy:
                 required_roles=["admin", "security"],
                 mfa_required=True,
                 created_at=now,
-                updated_at=now
+                updated_at=now,
             ),
         ]
 
@@ -88,7 +91,7 @@ class ZeroTrustPolicy:
         self,
         resource_path: str,
         user_attributes: Dict[str, Any],
-        request_attributes: Dict[str, Any]
+        request_attributes: Dict[str, Any],
     ) -> tuple[bool, Optional[str]]:
         """
         アクセスを評価
@@ -109,8 +112,16 @@ class ZeroTrustPolicy:
 
         # 信頼レベルのチェック
         user_trust_level = self._calculate_user_trust_level(user_attributes)
-        if self._compare_trust_levels(user_trust_level, applicable_policy.required_trust_level) < 0:
-            return False, f"Insufficient trust level. Required: {applicable_policy.required_trust_level}"
+        if (
+            self._compare_trust_levels(
+                user_trust_level, applicable_policy.required_trust_level
+            )
+            < 0
+        ):
+            return (
+                False,
+                f"Insufficient trust level. Required: {applicable_policy.required_trust_level}",
+            )
 
         # ロールチェック
         if applicable_policy.required_roles:
@@ -121,16 +132,28 @@ class ZeroTrustPolicy:
         # パーミッションチェック
         if applicable_policy.required_permissions:
             user_permissions = user_attributes.get("permissions", [])
-            if not any(perm in applicable_policy.required_permissions for perm in user_permissions):
-                return False, f"Required permissions: {applicable_policy.required_permissions}"
+            if not any(
+                perm in applicable_policy.required_permissions
+                for perm in user_permissions
+            ):
+                return (
+                    False,
+                    f"Required permissions: {applicable_policy.required_permissions}",
+                )
 
         # IPチェック
         client_ip = request_attributes.get("ip")
         if client_ip:
-            if applicable_policy.ip_blacklist and client_ip in applicable_policy.ip_blacklist:
+            if (
+                applicable_policy.ip_blacklist
+                and client_ip in applicable_policy.ip_blacklist
+            ):
                 return False, "IP address is blacklisted"
 
-            if applicable_policy.ip_whitelist and client_ip not in applicable_policy.ip_whitelist:
+            if (
+                applicable_policy.ip_whitelist
+                and client_ip not in applicable_policy.ip_whitelist
+            ):
                 return False, "IP address is not whitelisted"
 
         # MFAチェック
@@ -141,7 +164,9 @@ class ZeroTrustPolicy:
 
         return True, None
 
-    def _find_applicable_policy(self, resource_path: str) -> Optional[ZeroTrustPolicyModel]:
+    def _find_applicable_policy(
+        self, resource_path: str
+    ) -> Optional[ZeroTrustPolicyModel]:
         """適用可能なポリシーを検索"""
         for policy in self._policies.values():
             if self._match_pattern(resource_path, policy.resource_pattern):
@@ -151,14 +176,19 @@ class ZeroTrustPolicy:
     def _match_pattern(self, path: str, pattern: str) -> bool:
         """パターンマッチング"""
         import fnmatch
+
         return fnmatch.fnmatch(path, pattern)
 
-    def _calculate_user_trust_level(self, user_attributes: Dict[str, Any]) -> TrustLevel:
+    def _calculate_user_trust_level(
+        self, user_attributes: Dict[str, Any]
+    ) -> TrustLevel:
         """ユーザーの信頼レベルを計算"""
         # 簡易的な実装
         if user_attributes.get("mfa_verified"):
             return TrustLevel.VERIFIED
-        elif user_attributes.get("roles") and "admin" in user_attributes.get("roles", []):
+        elif user_attributes.get("roles") and "admin" in user_attributes.get(
+            "roles", []
+        ):
             return TrustLevel.HIGH
         elif user_attributes.get("roles"):
             return TrustLevel.MEDIUM

@@ -1,12 +1,14 @@
 """
 クラウドインフラ関連のデータモデル
 """
+from typing import Any, Dict, Optional
+
 from pydantic import BaseModel
-from typing import Optional, Dict, Any
 
 
 class ResourceCreate(BaseModel):
     """リソース作成モデル"""
+
     name: str
     resource_type: str
     provider: str
@@ -17,6 +19,7 @@ class ResourceCreate(BaseModel):
 
 class IaCTemplateCreate(BaseModel):
     """IaCテンプレート作成モデル"""
+
     name: str
     provider: str
     template_content: str
@@ -26,11 +29,13 @@ class IaCTemplateCreate(BaseModel):
 
 class IaCDeploy(BaseModel):
     """IaCデプロイモデル"""
+
     variables: Optional[Dict[str, Any]] = None
 
 
 class DeploymentCreate(BaseModel):
     """デプロイメント作成モデル"""
+
     name: str
     platform: str
     image: str
@@ -41,5 +46,6 @@ class DeploymentCreate(BaseModel):
 
 class DeploymentUpdate(BaseModel):
     """デプロイメント更新モデル"""
+
     image: Optional[str] = None
     config: Optional[Dict[str, Any]] = None

@@ -59,10 +59,26 @@ CUTTING_EDGE_AI_CONFIG = {
 REASONING_AI_CONFIG = {
     "description": "推論モデルと高速モデルの自動ルーティング",
     "features": [
-        {"name": "タスク難度判定", "status": "integrated", "description": "入力の複雑度・安全性に応じた難易度スコア算出"},
-        {"name": "モデル自動ルーティング", "status": "integrated", "description": "難度・安全性に応じて推論モデル/高速モデルを自動選択"},
-        {"name": "推論モデルAPI連携", "status": "integrated", "description": "推論特化型モデル（o1系）との連携インターフェース"},
-        {"name": "コスト・精度トレードオフ最適化", "status": "designed", "description": "推論コストと精度のバランス最適化"},
+        {
+            "name": "タスク難度判定",
+            "status": "integrated",
+            "description": "入力の複雑度・安全性に応じた難易度スコア算出",
+        },
+        {
+            "name": "モデル自動ルーティング",
+            "status": "integrated",
+            "description": "難度・安全性に応じて推論モデル/高速モデルを自動選択",
+        },
+        {
+            "name": "推論モデルAPI連携",
+            "status": "integrated",
+            "description": "推論特化型モデル（o1系）との連携インターフェース",
+        },
+        {
+            "name": "コスト・精度トレードオフ最適化",
+            "status": "designed",
+            "description": "推論コストと精度のバランス最適化",
+        },
     ],
     "routing_strategy": "常時稼働ではなく、タスク難度・安全性に応じて自動ルーティング",
 }
@@ -71,8 +87,16 @@ REASONING_AI_CONFIG = {
 MCP_A2A_CONFIG = {
     "description": "Model Context Protocol と Agent-to-Agent プロトコルによるエージェント基盤",
     "protocols": [
-        {"name": "MCP (Model Context Protocol)", "status": "integrated", "description": "AIシステム間のコンテキスト共有の標準"},
-        {"name": "A2A (Agent-to-Agent)", "status": "integrated", "description": "エージェント間の認証・通信プロトコル"},
+        {
+            "name": "MCP (Model Context Protocol)",
+            "status": "integrated",
+            "description": "AIシステム間のコンテキスト共有の標準",
+        },
+        {
+            "name": "A2A (Agent-to-Agent)",
+            "status": "integrated",
+            "description": "エージェント間の認証・通信プロトコル",
+        },
     ],
     "features": [
         {"name": "企業内AI接続ガバナンス", "status": "integrated"},
@@ -85,9 +109,21 @@ MCP_A2A_CONFIG = {
 GOVERNANCE_WORKFLOW_CONFIG = {
     "description": "AI利用のログ・リスク評価・ワークフローを統合したガバナンス基盤",
     "features": [
-        {"name": "AI利用ログ記録", "status": "integrated", "description": "推論・学習の全ログを記録・監査可能"},
-        {"name": "リスク評価", "status": "integrated", "description": "EU AI Act リスクレベルに応じた評価"},
-        {"name": "ワークフロー自動設計", "status": "integrated", "description": "リスクレベルに応じた承認フロー自動生成"},
+        {
+            "name": "AI利用ログ記録",
+            "status": "integrated",
+            "description": "推論・学習の全ログを記録・監査可能",
+        },
+        {
+            "name": "リスク評価",
+            "status": "integrated",
+            "description": "EU AI Act リスクレベルに応じた評価",
+        },
+        {
+            "name": "ワークフロー自動設計",
+            "status": "integrated",
+            "description": "リスクレベルに応じた承認フロー自動生成",
+        },
         {"name": "コンプライアンスチェック", "status": "integrated", "description": "規制要件の自動検証"},
     ],
     "compliance": ["EU AI Act", "GDPR", "国内AIガイドライン"],
@@ -101,7 +137,11 @@ ON_DEVICE_AI_CONFIG = {
         {"layer": "サーバ側AI", "purpose": "組織知・集約分析", "status": "integrated"},
     ],
     "features": [
-        {"name": "データルーティング", "status": "integrated", "description": "個人/組織の区分に応じた自動振り分け"},
+        {
+            "name": "データルーティング",
+            "status": "integrated",
+            "description": "個人/組織の区分に応じた自動振り分け",
+        },
         {"name": "モデル圧縮・量子化", "status": "integrated", "description": "オンデバイス向け軽量化"},
         {"name": "オフライン推論", "status": "integrated", "description": "ネットワーク不要での推論"},
     ],

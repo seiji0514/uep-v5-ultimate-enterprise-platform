@@ -2,14 +2,16 @@
 セキュリティミドルウェア
 CSRF保護、セキュリティヘッダーなど
 """
+import hashlib
+import hmac
+import secrets
+import time
+from typing import Callable, Dict, List
+
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse
-from typing import Callable, Dict, List
-import secrets
-import hmac
-import hashlib
-import time
+
 from core.config import settings
 
 
@@ -23,10 +25,14 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["X-Frame-Options"] = "DENY"
         response.headers["X-XSS-Protection"] = "1; mode=block"
-        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
-        
+        response.headers[
+            "Strict-Transport-Security"
+        ] = "max-age=31536000; includeSubDomains"
+
         # `/docs`と`/redoc`のパスではCSPを緩和（Swagger UI用）
-        if request.url.path.startswith("/docs") or request.url.path.startswith("/redoc"):
+        if request.url.path.startswith("/docs") or request.url.path.startswith(
+            "/redoc"
+        ):
             # Swagger UI用のCSP（cdn.jsdelivr.netを許可、ソースマップも許可）
             response.headers["Content-Security-Policy"] = (
                 "default-src 'self'; "
@@ -46,11 +52,11 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
                 "font-src 'self' data:; "
                 "connect-src 'self'"
             )
-        
+
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
-        response.headers["Permissions-Policy"] = (
-            "geolocation=(), microphone=(), camera=()"
-        )
+        response.headers[
+            "Permissions-Policy"
+        ] = "geolocation=(), microphone=(), camera=()"
 
         return response
 
@@ -106,16 +112,20 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
 
         # 古いリクエストを削除
         self.clients[client_id] = [
-            req_time for req_time in self.clients[client_id]
+            req_time
+            for req_time in self.clients[client_id]
             if current_time - req_time < self.period
         ]
 
         # レート制限チェック
         if len(self.clients[client_id]) >= self.calls:
             from core.exceptions import RateLimitError
+
             raise RateLimitError(
                 message=f"Rate limit exceeded. Maximum {self.calls} requests per {self.period} seconds.",
-                retry_after=int(self.period - (current_time - self.clients[client_id][0]))
+                retry_after=int(
+                    self.period - (current_time - self.clients[client_id][0])
+                ),
             )
 
         # リクエストを記録

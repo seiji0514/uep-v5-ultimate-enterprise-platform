@@ -2,9 +2,9 @@
 統合ビジネスプラットフォーム - イベント発行
 実用的最高難易度: イベント駆動設計・Kafka統合
 """
-from typing import Dict, Any, Optional
-from datetime import datetime
 import logging
+from datetime import datetime
+from typing import Any, Dict, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +18,8 @@ def _get_kafka_client():
     if _kafka_client is not None:
         return _kafka_client
     try:
-        from event_streaming.kafka_client import KafkaClient, KAFKA_AVAILABLE
+        from event_streaming.kafka_client import KAFKA_AVAILABLE, KafkaClient
+
         if KAFKA_AVAILABLE:
             _kafka_client = KafkaClient()
             return _kafka_client
@@ -52,7 +53,9 @@ def publish_event(
         return False
 
 
-def publish_workflow_event(event_type: str, workflow_id: str, data: Dict[str, Any]) -> bool:
+def publish_workflow_event(
+    event_type: str, workflow_id: str, data: Dict[str, Any]
+) -> bool:
     """ワークフローイベントを発行"""
     return publish_event(
         topic="unified-business-workflow",
@@ -62,7 +65,9 @@ def publish_workflow_event(event_type: str, workflow_id: str, data: Dict[str, An
     )
 
 
-def publish_approval_event(event_type: str, request_id: str, data: Dict[str, Any]) -> bool:
+def publish_approval_event(
+    event_type: str, request_id: str, data: Dict[str, Any]
+) -> bool:
     """承認イベントを発行"""
     return publish_event(
         topic="unified-business-approval",

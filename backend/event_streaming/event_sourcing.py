@@ -2,15 +2,18 @@
 Event Sourcingモジュール
 イベントソーシングパターンの実装
 """
-from typing import Dict, Any, List, Optional
 from datetime import datetime
-from pydantic import BaseModel
 from enum import Enum
+from typing import Any, Dict, List, Optional
+
+from pydantic import BaseModel
+
 from .kafka_client import KafkaClient
 
 
 class EventType(str, Enum):
     """イベントタイプ"""
+
     CREATED = "created"
     UPDATED = "updated"
     DELETED = "deleted"
@@ -19,6 +22,7 @@ class EventType(str, Enum):
 
 class DomainEvent(BaseModel):
     """ドメインイベント"""
+
     event_id: str
     aggregate_id: str
     aggregate_type: str
@@ -66,41 +70,41 @@ class EventStore:
                 "event_data": event.event_data,
                 "timestamp": event.timestamp.isoformat(),
                 "version": event.version,
-                "metadata": event.metadata
+                "metadata": event.metadata,
             },
-            key=event.aggregate_id
+            key=event.aggregate_id,
         )
 
     def get_events(
         self,
         aggregate_type: str,
         aggregate_id: Optional[str] = None,
-        max_events: int = 100
+        max_events: int = 100,
     ) -> List[DomainEvent]:
         """イベントを取得"""
         topic = self._get_topic_name(aggregate_type)
         group_id = f"event-store-{aggregate_type}"
 
         messages = self.kafka_client.consume_events(
-            topic=topic,
-            group_id=group_id,
-            max_messages=max_events
+            topic=topic, group_id=group_id, max_messages=max_events
         )
 
         events = []
         for msg in messages:
             value = msg["value"]
             if aggregate_id is None or value.get("aggregate_id") == aggregate_id:
-                events.append(DomainEvent(
-                    event_id=value["event_id"],
-                    aggregate_id=value["aggregate_id"],
-                    aggregate_type=value["aggregate_type"],
-                    event_type=value["event_type"],
-                    event_data=value["event_data"],
-                    timestamp=datetime.fromisoformat(value["timestamp"]),
-                    version=value["version"],
-                    metadata=value.get("metadata")
-                ))
+                events.append(
+                    DomainEvent(
+                        event_id=value["event_id"],
+                        aggregate_id=value["aggregate_id"],
+                        aggregate_type=value["aggregate_type"],
+                        event_type=value["event_type"],
+                        event_data=value["event_data"],
+                        timestamp=datetime.fromisoformat(value["timestamp"]),
+                        version=value["version"],
+                        metadata=value.get("metadata"),
+                    )
+                )
 
         # バージョン順にソート
         events.sort(key=lambda e: e.version)
@@ -129,7 +133,7 @@ class EventSourcingHandler:
                 "id": event.aggregate_id,
                 "type": event.aggregate_type,
                 "version": 0,
-                "state": {}
+                "state": {},
             }
 
         aggregate = self._aggregates[aggregate_key]
@@ -154,14 +158,11 @@ class EventSourcingHandler:
                 state["state"] = event.event_data["state"]
 
     def rebuild_aggregate(
-        self,
-        aggregate_type: str,
-        aggregate_id: str
+        self, aggregate_type: str, aggregate_id: str
     ) -> Optional[Dict[str, Any]]:
         """イベント履歴から集約を再構築"""
         events = self.event_store.get_events(
-            aggregate_type=aggregate_type,
-            aggregate_id=aggregate_id
+            aggregate_type=aggregate_type, aggregate_id=aggregate_id
         )
 
         if not events:
@@ -172,7 +173,7 @@ class EventSourcingHandler:
             "id": aggregate_id,
             "type": aggregate_type,
             "version": 0,
-            "state": {}
+            "state": {},
         }
 
         # すべてのイベントを適用
@@ -183,9 +184,7 @@ class EventSourcingHandler:
         return aggregate
 
     def get_aggregate_state(
-        self,
-        aggregate_type: str,
-        aggregate_id: str
+        self, aggregate_type: str, aggregate_id: str
     ) -> Optional[Dict[str, Any]]:
         """集約状態を取得"""
         aggregate_key = f"{aggregate_type}:{aggregate_id}"

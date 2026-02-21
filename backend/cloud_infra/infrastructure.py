@@ -2,15 +2,17 @@
 インフラ管理モジュール
 クラウド設計・運用
 """
-from typing import Dict, Any, List, Optional
+import uuid
 from datetime import datetime
 from enum import Enum
+from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel
-import uuid
 
 
 class ResourceType(str, Enum):
     """リソースタイプ"""
+
     COMPUTE = "compute"
     STORAGE = "storage"
     NETWORK = "network"
@@ -20,6 +22,7 @@ class ResourceType(str, Enum):
 
 class ResourceStatus(str, Enum):
     """リソースステータス"""
+
     PENDING = "pending"
     CREATING = "creating"
     RUNNING = "running"
@@ -30,6 +33,7 @@ class ResourceStatus(str, Enum):
 
 class InfrastructureResource(BaseModel):
     """インフラリソース"""
+
     id: str
     name: str
     resource_type: ResourceType
@@ -56,7 +60,7 @@ class InfrastructureManager:
         provider: str,
         region: str,
         config: Optional[Dict[str, Any]] = None,
-        tags: Optional[Dict[str, str]] = None
+        tags: Optional[Dict[str, str]] = None,
     ) -> InfrastructureResource:
         """リソースを作成"""
         resource_id = str(uuid.uuid4())
@@ -71,7 +75,7 @@ class InfrastructureManager:
             tags=tags or {},
             status=ResourceStatus.CREATING,
             created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow()
+            updated_at=datetime.utcnow(),
         )
 
         self._resources[resource_id] = resource
@@ -90,7 +94,7 @@ class InfrastructureManager:
         self,
         resource_type: Optional[ResourceType] = None,
         provider: Optional[str] = None,
-        status: Optional[ResourceStatus] = None
+        status: Optional[ResourceStatus] = None,
     ) -> List[InfrastructureResource]:
         """リソース一覧を取得"""
         resources = list(self._resources.values())
@@ -110,7 +114,7 @@ class InfrastructureManager:
         self,
         resource_id: str,
         config: Optional[Dict[str, Any]] = None,
-        tags: Optional[Dict[str, str]] = None
+        tags: Optional[Dict[str, str]] = None,
     ) -> Optional[InfrastructureResource]:
         """リソースを更新"""
         resource = self._resources.get(resource_id)

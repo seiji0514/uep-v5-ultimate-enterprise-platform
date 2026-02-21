@@ -3,6 +3,7 @@ GraphQL ルーター
 FastAPI への GraphQL エンドポイント登録
 """
 from strawberry.fastapi import GraphQLRouter
+
 from .schema import schema
 
 # GraphQL ルーター（app.include_router で prefix="/graphql" としてマウント）

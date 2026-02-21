@@ -1,15 +1,17 @@
 """
 リスク分析モジュール
 """
-from typing import Dict, Any, List, Optional
+import uuid
 from datetime import datetime
 from enum import Enum
+from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel
-import uuid
 
 
 class RiskLevel(str, Enum):
     """リスクレベル"""
+
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
@@ -18,6 +20,7 @@ class RiskLevel(str, Enum):
 
 class Risk(BaseModel):
     """リスク"""
+
     id: str
     name: str
     description: str
@@ -54,7 +57,7 @@ class RiskAnalyzer:
                 impact=0.9,
                 mitigation="暗号化とアクセス制御の強化",
                 created_at=now,
-                updated_at=now
+                updated_at=now,
             ),
             Risk(
                 id=str(uuid.uuid4()),
@@ -66,7 +69,7 @@ class RiskAnalyzer:
                 impact=0.7,
                 mitigation="冗長化と自動フェイルオーバーの実装",
                 created_at=now,
-                updated_at=now
+                updated_at=now,
             ),
         ]
 
@@ -93,7 +96,7 @@ class RiskAnalyzer:
         category: str,
         likelihood: float,
         impact: float,
-        mitigation: Optional[str] = None
+        mitigation: Optional[str] = None,
     ) -> Risk:
         """リスクを登録"""
         risk_level = self.calculate_risk_score(likelihood, impact)
@@ -108,7 +111,7 @@ class RiskAnalyzer:
             impact=impact,
             mitigation=mitigation,
             created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow()
+            updated_at=datetime.utcnow(),
         )
 
         self._risks[risk.id] = risk
@@ -119,9 +122,7 @@ class RiskAnalyzer:
         return self._risks.get(risk_id)
 
     def list_risks(
-        self,
-        category: Optional[str] = None,
-        risk_level: Optional[RiskLevel] = None
+        self, category: Optional[str] = None, risk_level: Optional[RiskLevel] = None
     ) -> List[Risk]:
         """リスク一覧を取得"""
         risks = list(self._risks.values())
@@ -142,8 +143,12 @@ class RiskAnalyzer:
         critical_risks = len([r for r in risks if r.risk_level == RiskLevel.CRITICAL])
         high_risks = len([r for r in risks if r.risk_level == RiskLevel.HIGH])
 
-        avg_likelihood = sum(r.likelihood for r in risks) / total_risks if total_risks > 0 else 0
-        avg_impact = sum(r.impact for r in risks) / total_risks if total_risks > 0 else 0
+        avg_likelihood = (
+            sum(r.likelihood for r in risks) / total_risks if total_risks > 0 else 0
+        )
+        avg_impact = (
+            sum(r.impact for r in risks) / total_risks if total_risks > 0 else 0
+        )
 
         return {
             "total_risks": total_risks,
@@ -152,7 +157,7 @@ class RiskAnalyzer:
             "average_likelihood": avg_likelihood,
             "average_impact": avg_impact,
             "overall_risk_score": avg_likelihood * avg_impact,
-            "risk_level": self.calculate_risk_score(avg_likelihood, avg_impact).value
+            "risk_level": self.calculate_risk_score(avg_likelihood, avg_impact).value,
         }
 
 

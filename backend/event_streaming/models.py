@@ -1,13 +1,15 @@
 """
 イベントストリーミング関連のデータモデル
 """
-from pydantic import BaseModel
-from typing import Optional, Dict, Any, List
 from datetime import datetime
+from typing import Any, Dict, List, Optional
+
+from pydantic import BaseModel
 
 
 class TopicCreate(BaseModel):
     """トピック作成モデル"""
+
     name: str
     num_partitions: int = 1
     replication_factor: int = 1
@@ -15,6 +17,7 @@ class TopicCreate(BaseModel):
 
 class EventPublish(BaseModel):
     """イベント発行モデル"""
+
     topic: str
     event_type: str
     data: Dict[str, Any]
@@ -23,6 +26,7 @@ class EventPublish(BaseModel):
 
 class EventConsume(BaseModel):
     """イベント消費モデル"""
+
     topic: str
     group_id: str
     max_messages: int = 10
@@ -31,6 +35,7 @@ class EventConsume(BaseModel):
 
 class DomainEventCreate(BaseModel):
     """ドメインイベント作成モデル"""
+
     aggregate_id: str
     aggregate_type: str
     event_type: str
@@ -40,6 +45,7 @@ class DomainEventCreate(BaseModel):
 
 class CommandCreate(BaseModel):
     """コマンド作成モデル"""
+
     command_type: str
     aggregate_id: Optional[str] = None
     command_data: Dict[str, Any]
@@ -47,5 +53,6 @@ class CommandCreate(BaseModel):
 
 class QueryCreate(BaseModel):
     """クエリ作成モデル"""
+
     query_type: str
     query_params: Dict[str, Any]

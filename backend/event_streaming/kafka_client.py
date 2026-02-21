@@ -10,9 +10,10 @@ warnings.filterwarnings("ignore", message=".*kafka.*")
 logging.getLogger("kafka").setLevel(logging.ERROR)
 
 try:
-    from kafka import KafkaProducer, KafkaConsumer, KafkaAdminClient
+    from kafka import KafkaAdminClient, KafkaConsumer, KafkaProducer
     from kafka.admin import NewTopic
     from kafka.errors import KafkaError
+
     KAFKA_AVAILABLE = True
 except ImportError as e:
     # Kafkaが利用できない場合は警告を出さずに続行（ログレベルをERRORに設定済み）
@@ -23,19 +24,17 @@ except ImportError as e:
     NewTopic = None
     KafkaError = Exception
 
-from typing import List, Optional, Dict, Any
 import json
 import os
 from datetime import datetime
+from typing import Any, Dict, List, Optional
 
 
 class KafkaClient:
     """Kafkaクライアントクラス"""
 
     def __init__(
-        self,
-        bootstrap_servers: Optional[str] = None,
-        client_id: Optional[str] = None
+        self, bootstrap_servers: Optional[str] = None, client_id: Optional[str] = None
     ):
         """
         Kafkaクライアントを初期化
@@ -45,8 +44,7 @@ class KafkaClient:
             client_id: クライアントID
         """
         self.bootstrap_servers = bootstrap_servers or os.getenv(
-            "KAFKA_BOOTSTRAP_SERVERS",
-            "kafka:9092"
+            "KAFKA_BOOTSTRAP_SERVERS", "kafka:9092"
         )
         self.client_id = client_id or "uep-v5-client"
 
@@ -57,24 +55,27 @@ class KafkaClient:
     def _get_producer(self) -> KafkaProducer:
         """Producerを取得（必要に応じて作成）"""
         if not KAFKA_AVAILABLE:
-            raise RuntimeError("Kafka is not available. Please install kafka-python and six packages.")
+            raise RuntimeError(
+                "Kafka is not available. Please install kafka-python and six packages."
+            )
         if self._producer is None:
             self._producer = KafkaProducer(
                 bootstrap_servers=self.bootstrap_servers,
-                value_serializer=lambda v: json.dumps(v).encode('utf-8'),
-                key_serializer=lambda k: k.encode('utf-8') if k else None,
-                client_id=self.client_id
+                value_serializer=lambda v: json.dumps(v).encode("utf-8"),
+                key_serializer=lambda k: k.encode("utf-8") if k else None,
+                client_id=self.client_id,
             )
         return self._producer
 
     def _get_admin(self) -> KafkaAdminClient:
         """AdminClientを取得（必要に応じて作成）"""
         if not KAFKA_AVAILABLE:
-            raise RuntimeError("Kafka is not available. Please install kafka-python and six packages.")
+            raise RuntimeError(
+                "Kafka is not available. Please install kafka-python and six packages."
+            )
         if self._admin is None:
             self._admin = KafkaAdminClient(
-                bootstrap_servers=self.bootstrap_servers,
-                client_id=self.client_id
+                bootstrap_servers=self.bootstrap_servers, client_id=self.client_id
             )
         return self._admin
 
@@ -88,10 +89,7 @@ class KafkaClient:
             raise Exception(f"Failed to list topics: {str(e)}")
 
     def create_topic(
-        self,
-        topic_name: str,
-        num_partitions: int = 1,
-        replication_factor: int = 1
+        self, topic_name: str, num_partitions: int = 1, replication_factor: int = 1
     ) -> bool:
         """トピックを作成"""
         try:
@@ -99,7 +97,7 @@ class KafkaClient:
             topic = NewTopic(
                 name=topic_name,
                 num_partitions=num_partitions,
-                replication_factor=replication_factor
+                replication_factor=replication_factor,
             )
             admin.create_topics([topic])
             return True
@@ -122,7 +120,7 @@ class KafkaClient:
         topic: str,
         event_type: str,
         data: Dict[str, Any],
-        key: Optional[str] = None
+        key: Optional[str] = None,
     ) -> bool:
         """イベントを発行"""
         try:
@@ -131,7 +129,7 @@ class KafkaClient:
                 "event_type": event_type,
                 "data": data,
                 "timestamp": datetime.utcnow().isoformat(),
-                "version": "1.0"
+                "version": "1.0",
             }
 
             future = producer.send(topic, value=event, key=key)
@@ -146,7 +144,7 @@ class KafkaClient:
         topic: str,
         group_id: str,
         auto_offset_reset: str = "earliest",
-        max_messages: int = 10
+        max_messages: int = 10,
     ) -> List[Dict[str, Any]]:
         """イベントを消費"""
         try:
@@ -154,23 +152,25 @@ class KafkaClient:
                 topic,
                 bootstrap_servers=self.bootstrap_servers,
                 group_id=group_id,
-                value_deserializer=lambda m: json.loads(m.decode('utf-8')),
-                key_deserializer=lambda k: k.decode('utf-8') if k else None,
+                value_deserializer=lambda m: json.loads(m.decode("utf-8")),
+                key_deserializer=lambda k: k.decode("utf-8") if k else None,
                 auto_offset_reset=auto_offset_reset,
                 enable_auto_commit=True,
-                consumer_timeout_ms=5000  # 5秒でタイムアウト
+                consumer_timeout_ms=5000,  # 5秒でタイムアウト
             )
 
             messages = []
             for message in consumer:
-                messages.append({
-                    "topic": message.topic,
-                    "partition": message.partition,
-                    "offset": message.offset,
-                    "key": message.key,
-                    "value": message.value,
-                    "timestamp": message.timestamp
-                })
+                messages.append(
+                    {
+                        "topic": message.topic,
+                        "partition": message.partition,
+                        "offset": message.offset,
+                        "key": message.key,
+                        "value": message.value,
+                        "timestamp": message.timestamp,
+                    }
+                )
                 if len(messages) >= max_messages:
                     break
 
@@ -192,7 +192,9 @@ class KafkaClient:
             return {
                 "name": topic_name,
                 "partitions": len(topic_metadata.partitions),
-                "replication_factor": len(topic_metadata.partitions[0].replicas) if topic_metadata.partitions else 0
+                "replication_factor": len(topic_metadata.partitions[0].replicas)
+                if topic_metadata.partitions
+                else 0,
             }
         except KafkaError as e:
             raise Exception(f"Failed to get topic info: {str(e)}")

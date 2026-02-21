@@ -2,13 +2,15 @@
 JWT認証モジュール
 JWTトークンの生成・検証を実装
 """
+import os
 from datetime import datetime, timedelta
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
+
+from fastapi import (Depends, HTTPException, WebSocket, WebSocketException,
+                     status)
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from fastapi import Depends, HTTPException, status, WebSocket, WebSocketException
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-import os
 
 # パスワードハッシュ化の設定
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -36,15 +38,15 @@ class JWTAuth:
         # bcryptの72バイト制限に対応
         if password is None:
             raise ValueError("Password cannot be None")
-        
+
         # 文字列をバイトに変換して長さチェック
         if isinstance(password, str):
-            password_bytes = password.encode('utf-8')
+            password_bytes = password.encode("utf-8")
             if len(password_bytes) > 72:
                 # 72バイトを超える場合は切り詰め
                 password_bytes = password_bytes[:72]
-                password = password_bytes.decode('utf-8', errors='ignore')
-        
+                password = password_bytes.decode("utf-8", errors="ignore")
+
         try:
             return pwd_context.hash(password)
         except (ValueError, AttributeError) as e:
@@ -52,24 +54,27 @@ class JWTAuth:
             error_msg = str(e)
             if "longer than 72 bytes" in error_msg:
                 # 72バイトを超える場合
-                password_bytes = password.encode('utf-8')[:72]
-                password = password_bytes.decode('utf-8', errors='ignore')
+                password_bytes = password.encode("utf-8")[:72]
+                password = password_bytes.decode("utf-8", errors="ignore")
                 return pwd_context.hash(password)
             elif "__about__" in error_msg or "bcrypt" in error_msg.lower():
                 # bcrypt互換性エラーの場合、直接bcryptを使用
                 import bcrypt
-                password_bytes = password.encode('utf-8')
+
+                password_bytes = password.encode("utf-8")
                 if len(password_bytes) > 72:
                     password_bytes = password_bytes[:72]
                 salt = bcrypt.gensalt()
                 hashed = bcrypt.hashpw(password_bytes, salt)
-                return hashed.decode('utf-8')
+                return hashed.decode("utf-8")
             else:
                 # その他のエラーは再発生
                 raise
 
     @staticmethod
-    def create_access_token(data: Dict[str, Any], expires_delta: Optional[timedelta] = None) -> str:
+    def create_access_token(
+        data: Dict[str, Any], expires_delta: Optional[timedelta] = None
+    ) -> str:
         """アクセストークンの生成"""
         to_encode = data.copy()
         if expires_delta:
@@ -96,7 +101,7 @@ class JWTAuth:
 
 
 async def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security)
+    credentials: HTTPAuthorizationCredentials = Depends(security),
 ) -> Dict[str, Any]:
     """現在のユーザー情報を取得（JWTトークンから）"""
     token = credentials.credentials
@@ -131,7 +136,9 @@ async def get_current_user_websocket(websocket: WebSocket) -> Optional[Dict[str,
     """WebSocket用のユーザー認証"""
     try:
         # クエリパラメータまたはヘッダーからトークンを取得
-        token = websocket.query_params.get("token") or websocket.headers.get("Authorization", "").replace("Bearer ", "")
+        token = websocket.query_params.get("token") or websocket.headers.get(
+            "Authorization", ""
+        ).replace("Bearer ", "")
 
         if not token:
             return None
@@ -147,7 +154,7 @@ async def get_current_user_websocket(websocket: WebSocket) -> Optional[Dict[str,
         return {
             "username": username,
             "email": payload.get("email"),
-            "is_active": payload.get("is_active", True)
+            "is_active": payload.get("is_active", True),
         }
     except JWTError:
         return None

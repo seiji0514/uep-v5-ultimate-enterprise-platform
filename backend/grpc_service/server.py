@@ -5,15 +5,16 @@ gRPC サーバー
 セットアップ: pip install grpcio-tools
 生成: python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. grpc_service/proto/uep_internal.proto
 """
-import grpc
-from concurrent import futures
 import os
 import sys
+from concurrent import futures
+
+import grpc
 
 # プロト生成コードのインポート（grpc_service/proto/ に生成される）
 try:
-    from .proto import uep_internal_pb2
-    from .proto import uep_internal_pb2_grpc
+    from .proto import uep_internal_pb2, uep_internal_pb2_grpc
+
     GRPC_AVAILABLE = True
 except ImportError:
     GRPC_AVAILABLE = False

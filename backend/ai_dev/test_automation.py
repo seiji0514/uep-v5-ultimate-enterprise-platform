@@ -1,15 +1,17 @@
 """
 テスト自動化モジュール
 """
-from typing import Dict, Any, List, Optional
+import uuid
 from datetime import datetime
 from enum import Enum
+from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel
-import uuid
 
 
 class TestStatus(str, Enum):
     """テストステータス"""
+
     PENDING = "pending"
     RUNNING = "running"
     PASSED = "passed"
@@ -19,6 +21,7 @@ class TestStatus(str, Enum):
 
 class TestCase(BaseModel):
     """テストケース"""
+
     id: str
     name: str
     description: Optional[str] = None
@@ -41,7 +44,7 @@ class TestAutomation:
         self,
         name: str,
         description: Optional[str] = None,
-        test_cases: Optional[List[Dict[str, Any]]] = None
+        test_cases: Optional[List[Dict[str, Any]]] = None,
     ) -> Dict[str, Any]:
         """テストスイートを作成"""
         suite_id = str(uuid.uuid4())
@@ -51,16 +54,14 @@ class TestAutomation:
             "name": name,
             "description": description,
             "test_cases": test_cases or [],
-            "created_at": datetime.utcnow().isoformat()
+            "created_at": datetime.utcnow().isoformat(),
         }
 
         self._test_suites[suite_id] = suite
         return suite
 
     async def run_tests(
-        self,
-        suite_id: str,
-        test_cases: Optional[List[str]] = None
+        self, suite_id: str, test_cases: Optional[List[str]] = None
     ) -> Dict[str, Any]:
         """テストを実行"""
         suite = self._test_suites.get(suite_id)
@@ -78,7 +79,7 @@ class TestAutomation:
             "suite_name": suite["name"],
             "status": TestStatus.RUNNING,
             "test_results": {},
-            "started_at": datetime.utcnow().isoformat()
+            "started_at": datetime.utcnow().isoformat(),
         }
 
         passed = 0
@@ -86,14 +87,16 @@ class TestAutomation:
 
         # テストを実行（簡易実装）
         for case_id in cases_to_run:
-            case = next((tc for tc in suite["test_cases"] if tc.get("id") == case_id), None)
+            case = next(
+                (tc for tc in suite["test_cases"] if tc.get("id") == case_id), None
+            )
             if case:
                 # テスト実行（実際の実装では実際にテストを実行）
                 test_status = TestStatus.PASSED  # 簡易実装
                 results["test_results"][case_id] = {
                     "name": case.get("name", ""),
                     "status": test_status.value,
-                    "execution_time": 0.5
+                    "execution_time": 0.5,
                 }
 
                 if test_status == TestStatus.PASSED:

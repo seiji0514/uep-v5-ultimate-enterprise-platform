@@ -2,14 +2,16 @@
 分散トレーシングモジュール
 OpenTelemetryを使用したトレーシング
 """
+import os
+from typing import Any, Dict, Optional
+
 from opentelemetry import trace
-from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import \
+    OTLPSpanExporter
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
-from opentelemetry.sdk.resources import Resource
-from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-from typing import Optional, Dict, Any
-import os
 
 
 class TracingHandler:
@@ -30,24 +32,17 @@ class TracingHandler:
         """トレーサーを初期化"""
         try:
             # リソースを設定
-            resource = Resource.create({
-                "service.name": self.service_name,
-                "service.version": "5.0.0"
-            })
+            resource = Resource.create(
+                {"service.name": self.service_name, "service.version": "5.0.0"}
+            )
 
             # トレーサープロバイダーを作成
             self.tracer_provider = TracerProvider(resource=resource)
 
             # OTLPエクスポーターを設定（Jaeger等と互換）
-            otlp_endpoint = os.getenv(
-                "OTLP_ENDPOINT",
-                "http://localhost:4317"
-            )
+            otlp_endpoint = os.getenv("OTLP_ENDPOINT", "http://localhost:4317")
 
-            otlp_exporter = OTLPSpanExporter(
-                endpoint=otlp_endpoint,
-                insecure=True
-            )
+            otlp_exporter = OTLPSpanExporter(endpoint=otlp_endpoint, insecure=True)
 
             # スパンプロセッサーを追加
             span_processor = BatchSpanProcessor(otlp_exporter)

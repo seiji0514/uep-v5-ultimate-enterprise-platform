@@ -1,7 +1,8 @@
 """
 ドキュメント生成モジュール
 """
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
+
 from generative_ai.llm_integration import llm_client
 
 
@@ -9,9 +10,7 @@ class DocumentationGenerator:
     """ドキュメント生成クラス"""
 
     async def generate_api_docs(
-        self,
-        code: str,
-        language: str = "python"
+        self, code: str, language: str = "python"
     ) -> Dict[str, Any]:
         """
         APIドキュメントを生成
@@ -35,7 +34,7 @@ APIドキュメント（エンドポイント、パラメータ、レスポン�
         return {
             "api_documentation": result.get("text", ""),
             "language": language,
-            "source_code": code
+            "source_code": code,
         }
 
     async def generate_readme(
@@ -43,7 +42,7 @@ APIドキュメント（エンドポイント、パラメータ、レスポン�
         project_name: str,
         description: str,
         features: Optional[list] = None,
-        installation: Optional[str] = None
+        installation: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
         READMEを生成
@@ -75,15 +74,10 @@ README.md:"""
 
         result = await llm_client.generate(prompt, max_tokens=2000)
 
-        return {
-            "readme": result.get("text", ""),
-            "project_name": project_name
-        }
+        return {"readme": result.get("text", ""), "project_name": project_name}
 
     async def generate_code_comments(
-        self,
-        code: str,
-        language: str = "python"
+        self, code: str, language: str = "python"
     ) -> Dict[str, Any]:
         """
         コードコメントを生成
@@ -107,7 +101,7 @@ README.md:"""
         return {
             "commented_code": result.get("text", ""),
             "language": language,
-            "original_code": code
+            "original_code": code,
         }
 
 

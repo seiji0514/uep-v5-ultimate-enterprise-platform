@@ -2,15 +2,17 @@
 DevOps管理モジュール
 開発から運用まで
 """
-from typing import Dict, Any, List, Optional
+import uuid
 from datetime import datetime
 from enum import Enum
+from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel
-import uuid
 
 
 class Environment(str, Enum):
     """環境"""
+
     DEVELOPMENT = "development"
     STAGING = "staging"
     PRODUCTION = "production"
@@ -18,6 +20,7 @@ class Environment(str, Enum):
 
 class Application(BaseModel):
     """アプリケーション"""
+
     id: str
     name: str
     description: Optional[str] = None
@@ -43,7 +46,7 @@ class DevOpsManager:
         repository: str,
         created_by: str,
         description: Optional[str] = None,
-        environments: Optional[List[Environment]] = None
+        environments: Optional[List[Environment]] = None,
     ) -> Application:
         """アプリケーションを登録"""
         app_id = str(uuid.uuid4())
@@ -56,7 +59,7 @@ class DevOpsManager:
             environments=environments or [Environment.DEVELOPMENT],
             created_at=datetime.utcnow(),
             updated_at=datetime.utcnow(),
-            created_by=created_by
+            created_by=created_by,
         )
 
         self._applications[app_id] = application
@@ -67,7 +70,7 @@ class DevOpsManager:
         application_id: str,
         environment: Environment,
         version: str,
-        config: Optional[Dict[str, Any]] = None
+        config: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """アプリケーションをデプロイ"""
         application = self._applications.get(application_id)
@@ -84,7 +87,7 @@ class DevOpsManager:
             "version": version,
             "status": "deploying",
             "config": config or {},
-            "created_at": datetime.utcnow().isoformat()
+            "created_at": datetime.utcnow().isoformat(),
         }
 
         self._deployments[deployment_id] = deployment

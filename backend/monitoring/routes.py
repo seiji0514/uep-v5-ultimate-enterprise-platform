@@ -1,23 +1,24 @@
 """
 監視APIエンドポイント
 """
-from fastapi import APIRouter, Depends, HTTPException, status, Request
-from typing import Dict, Any, Optional
-from datetime import datetime, timedelta
-from .metrics import metrics_collector
-from .logging import logging_handler
-from .tracing import tracing_handler
-from auth.jwt_auth import get_current_active_user
-import httpx
 import os
+from datetime import datetime, timedelta
+from typing import Any, Dict, Optional
+
+import httpx
+from fastapi import APIRouter, Depends, HTTPException, Request, status
+
+from auth.jwt_auth import get_current_active_user
+
+from .logging import logging_handler
+from .metrics import metrics_collector
+from .tracing import tracing_handler
 
 router = APIRouter(prefix="/api/v1/monitoring", tags=["監視"])
 
 
 @router.get("/metrics")
-async def get_metrics(
-    current_user: Dict[str, Any] = Depends(get_current_active_user)
-):
+async def get_metrics(current_user: Dict[str, Any] = Depends(get_current_active_user)):
     """Prometheus形式のメトリクスを取得"""
     return metrics_collector.get_metrics()
 
@@ -31,8 +32,10 @@ async def health_check():
         "services": {
             "backend": "healthy",
             "prometheus": await _check_service("http://prometheus:9090/-/healthy"),
-            "elasticsearch": await _check_service("http://elasticsearch:9200/_cluster/health"),
-        }
+            "elasticsearch": await _check_service(
+                "http://elasticsearch:9200/_cluster/health"
+            ),
+        },
     }
 
 
@@ -55,7 +58,7 @@ async def get_logs(
     start_time: Optional[str] = None,
     end_time: Optional[str] = None,
     limit: int = 100,
-    current_user: Dict[str, Any] = Depends(get_current_active_user)
+    current_user: Dict[str, Any] = Depends(get_current_active_user),
 ):
     """ログを取得（Elasticsearchから）"""
     try:
@@ -65,22 +68,16 @@ async def get_logs(
         query = {
             "size": limit,
             "sort": [{"timestamp": {"order": "desc"}}],
-            "query": {
-                "bool": {
-                    "must": []
-                }
-            }
+            "query": {"bool": {"must": []}},
         }
 
         if service:
-            query["query"]["bool"]["must"].append({
-                "term": {"service": service}
-            })
+            query["query"]["bool"]["must"].append({"term": {"service": service}})
 
         if level:
-            query["query"]["bool"]["must"].append({
-                "term": {"log_level": level.upper()}
-            })
+            query["query"]["bool"]["must"].append(
+                {"term": {"log_level": level.upper()}}
+            )
 
         if start_time or end_time:
             time_range = {}
@@ -88,14 +85,11 @@ async def get_logs(
                 time_range["gte"] = start_time
             if end_time:
                 time_range["lte"] = end_time
-            query["query"]["bool"]["must"].append({
-                "range": {"timestamp": time_range}
-            })
+            query["query"]["bool"]["must"].append({"range": {"timestamp": time_range}})
 
         async with httpx.AsyncClient(timeout=10.0) as client:
             response = await client.post(
-                f"{elasticsearch_url}/uep-logs-*/_search",
-                json=query
+                f"{elasticsearch_url}/uep-logs-*/_search", json=query
             )
 
             if response.status_code == 200:
@@ -105,17 +99,16 @@ async def get_logs(
                 return {
                     "logs": logs,
                     "total": data.get("hits", {}).get("total", {}).get("value", 0),
-                    "count": len(logs)
+                    "count": len(logs),
                 }
             else:
                 raise HTTPException(
                     status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail="Failed to fetch logs from Elasticsearch"
+                    detail="Failed to fetch logs from Elasticsearch",
                 )
     except Exception as e:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e)
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
         )
 
 
@@ -124,7 +117,7 @@ async def get_traces(
     service: Optional[str] = None,
     trace_id: Optional[str] = None,
     limit: int = 100,
-    current_user: Dict[str, Any] = Depends(get_current_active_user)
+    current_user: Dict[str, Any] = Depends(get_current_active_user),
 ):
     """トレースを取得"""
     # 実際の実装ではJaegerやZipkinから取得
@@ -132,26 +125,26 @@ async def get_traces(
     return {
         "message": "Tracing data retrieval not fully implemented",
         "service": service,
-        "trace_id": trace_id
+        "trace_id": trace_id,
     }
 
 
 @router.get("/stats")
-async def get_stats(
-    current_user: Dict[str, Any] = Depends(get_current_active_user)
-):
+async def get_stats(current_user: Dict[str, Any] = Depends(get_current_active_user)):
     """統計情報を取得"""
     return {
         "metrics": {
             "total_requests": "N/A",  # Prometheusから取得
             "active_users": "N/A",
-            "error_rate": "N/A"
+            "error_rate": "N/A",
         },
         "services": {
             "backend": "running",
             "prometheus": await _check_service("http://prometheus:9090/-/healthy"),
-            "elasticsearch": await _check_service("http://elasticsearch:9200/_cluster/health"),
+            "elasticsearch": await _check_service(
+                "http://elasticsearch:9200/_cluster/health"
+            ),
             "kibana": await _check_service("http://kibana:5601/api/status"),
         },
-        "timestamp": datetime.utcnow().isoformat()
+        "timestamp": datetime.utcnow().isoformat(),
     }

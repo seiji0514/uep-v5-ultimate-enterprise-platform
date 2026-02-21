@@ -2,9 +2,9 @@
 人材・組織 モジュール
 障害者雇用支援、オンボーディング、スキルマッチング
 """
-from typing import Dict, Any, List, Optional
-from datetime import datetime
 import uuid
+from datetime import datetime
+from typing import Any, Dict, List, Optional
 
 
 class DisabilitySupportManager:
@@ -14,11 +14,15 @@ class DisabilitySupportManager:
         self._supports: Dict[str, Dict[str, Any]] = {}
         self._employees: Dict[str, Dict[str, Any]] = {}
 
-    def register_support(self, employee_id: str, disability_type: str,
-                         accommodations: List[str],
-                         disability_grade: Optional[str] = None,
-                         remote_work_eligible: bool = True,
-                         notes: Optional[str] = None) -> Dict[str, Any]:
+    def register_support(
+        self,
+        employee_id: str,
+        disability_type: str,
+        accommodations: List[str],
+        disability_grade: Optional[str] = None,
+        remote_work_eligible: bool = True,
+        notes: Optional[str] = None,
+    ) -> Dict[str, Any]:
         """配慮事項を登録"""
         support_id = str(uuid.uuid4())
         support = {
@@ -65,9 +69,14 @@ class OnboardingManager:
             ],
         }
 
-    def create_task(self, employee_id: str, task_name: str, category: str,
-                    due_date: Optional[str] = None,
-                    assignee_id: Optional[str] = None) -> Dict[str, Any]:
+    def create_task(
+        self,
+        employee_id: str,
+        task_name: str,
+        category: str,
+        due_date: Optional[str] = None,
+        assignee_id: Optional[str] = None,
+    ) -> Dict[str, Any]:
         """オンボーディングタスクを作成"""
         task_id = str(uuid.uuid4())
         task = {
@@ -85,7 +94,9 @@ class OnboardingManager:
         self._tasks[task_id] = task
         return task
 
-    def create_from_template(self, employee_id: str, template: str = "standard") -> List[Dict[str, Any]]:
+    def create_from_template(
+        self, employee_id: str, template: str = "standard"
+    ) -> List[Dict[str, Any]]:
         """テンプレートからオンボーディングタスクを一括作成"""
         tasks = []
         for t in self._templates.get(template, []):
@@ -120,8 +131,9 @@ class SkillMatchingManager:
     def __init__(self):
         self._employees: Dict[str, Dict[str, Any]] = {}
 
-    def register_employee_skills(self, employee_id: str, skills: List[str],
-                                 experience_level: str = "mid") -> Dict[str, Any]:
+    def register_employee_skills(
+        self, employee_id: str, skills: List[str], experience_level: str = "mid"
+    ) -> Dict[str, Any]:
         """社員スキルを登録"""
         if employee_id not in self._employees:
             self._employees[employee_id] = {
@@ -136,9 +148,12 @@ class SkillMatchingManager:
         emp["updated_at"] = datetime.utcnow().isoformat()
         return emp
 
-    def find_matches(self, required_skills: List[str],
-                     preferred_skills: Optional[List[str]] = None,
-                     experience_level: Optional[str] = None) -> List[Dict[str, Any]]:
+    def find_matches(
+        self,
+        required_skills: List[str],
+        preferred_skills: Optional[List[str]] = None,
+        experience_level: Optional[str] = None,
+    ) -> List[Dict[str, Any]]:
         """スキルマッチング"""
         matches = []
         for emp_id, emp in self._employees.items():
@@ -147,14 +162,18 @@ class SkillMatchingManager:
             if matches_count >= len(required_skills) * 0.5:  # 50%以上一致
                 score = matches_count / len(required_skills) * 100
                 if preferred_skills:
-                    preferred_match = sum(1 for s in preferred_skills if s in emp_skills)
+                    preferred_match = sum(
+                        1 for s in preferred_skills if s in emp_skills
+                    )
                     score += preferred_match * 10
-                matches.append({
-                    "employee_id": emp_id,
-                    "skills": emp["skills"],
-                    "match_score": min(score, 100),
-                    "experience_level": emp.get("experience_level", ""),
-                })
+                matches.append(
+                    {
+                        "employee_id": emp_id,
+                        "skills": emp["skills"],
+                        "match_score": min(score, 100),
+                        "experience_level": emp.get("experience_level", ""),
+                    }
+                )
         return sorted(matches, key=lambda x: x["match_score"], reverse=True)
 
 

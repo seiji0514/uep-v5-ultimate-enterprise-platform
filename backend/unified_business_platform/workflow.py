@@ -3,12 +3,14 @@
 ワークフロー自動化、RPA、申請・承認フロー
 実用的最高難易度: 多段階承認・条件分岐
 """
-from typing import Dict, Any, List, Optional
-from datetime import datetime
 import uuid
+from datetime import datetime
+from typing import Any, Dict, List, Optional
 
 
-def _get_approval_route(amount: Optional[float], category: Optional[str]) -> List[Dict[str, Any]]:
+def _get_approval_route(
+    amount: Optional[float], category: Optional[str]
+) -> List[Dict[str, Any]]:
     """
     条件分岐: 金額・カテゴリに応じた承認ルートを決定
     実用的最高難易度: ビジネスルールエンジン
@@ -32,14 +34,19 @@ def _get_approval_route(amount: Optional[float], category: Optional[str]) -> Lis
 
 class WorkflowManager:
     """ワークフロー管理"""
-    
+
     def __init__(self):
         self._workflows: Dict[str, Dict[str, Any]] = {}
         self._approval_requests: Dict[str, Dict[str, Any]] = {}
-    
-    def create_workflow(self, name: str, workflow_type: str, initiator_id: str,
-                        description: Optional[str] = None,
-                        steps: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
+
+    def create_workflow(
+        self,
+        name: str,
+        workflow_type: str,
+        initiator_id: str,
+        description: Optional[str] = None,
+        steps: Optional[List[Dict[str, Any]]] = None,
+    ) -> Dict[str, Any]:
         """ワークフローを作成"""
         workflow_id = str(uuid.uuid4())
         workflow = {
@@ -55,14 +62,19 @@ class WorkflowManager:
         }
         self._workflows[workflow_id] = workflow
         return workflow
-    
+
     def list_workflows(self) -> List[Dict[str, Any]]:
         """ワークフロー一覧"""
         return list(self._workflows.values())
-    
-    def create_approval_request(self, workflow_id: str, title: str, content: str,
-                                 amount: Optional[float] = None,
-                                 category: Optional[str] = None) -> Dict[str, Any]:
+
+    def create_approval_request(
+        self,
+        workflow_id: str,
+        title: str,
+        content: str,
+        amount: Optional[float] = None,
+        category: Optional[str] = None,
+    ) -> Dict[str, Any]:
         """申請・承認リクエストを作成（条件分岐で多段階承認ルートを自動決定）"""
         request_id = str(uuid.uuid4())
         approval_route = _get_approval_route(amount, category)
@@ -82,9 +94,14 @@ class WorkflowManager:
         }
         self._approval_requests[request_id] = request
         return request
-    
-    def approve_request(self, request_id: str, approver_id: str, approved: bool,
-                        comment: Optional[str] = None) -> Optional[Dict[str, Any]]:
+
+    def approve_request(
+        self,
+        request_id: str,
+        approver_id: str,
+        approved: bool,
+        comment: Optional[str] = None,
+    ) -> Optional[Dict[str, Any]]:
         """申請を承認/却下（多段階承認対応）"""
         if request_id not in self._approval_requests:
             return None
@@ -92,13 +109,15 @@ class WorkflowManager:
         route = req.get("approval_route", [{"stage": 1}])
         current = req.get("current_stage", 1)
 
-        req["approvals"].append({
-            "stage": current,
-            "approver_id": approver_id,
-            "approved": approved,
-            "comment": comment,
-            "timestamp": datetime.utcnow().isoformat(),
-        })
+        req["approvals"].append(
+            {
+                "stage": current,
+                "approver_id": approver_id,
+                "approved": approved,
+                "comment": comment,
+                "timestamp": datetime.utcnow().isoformat(),
+            }
+        )
 
         if not approved:
             req["status"] = "rejected"
@@ -110,7 +129,7 @@ class WorkflowManager:
 
         req["updated_at"] = datetime.utcnow().isoformat()
         return req
-    
+
     def list_approval_requests(self) -> List[Dict[str, Any]]:
         """申請一覧"""
         return list(self._approval_requests.values())
@@ -118,13 +137,17 @@ class WorkflowManager:
 
 class RPAManager:
     """RPAジョブ管理"""
-    
+
     def __init__(self):
         self._jobs: Dict[str, Dict[str, Any]] = {}
-    
-    def create_job(self, name: str, task_type: str,
-                   schedule: Optional[str] = None,
-                   config: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+
+    def create_job(
+        self,
+        name: str,
+        task_type: str,
+        schedule: Optional[str] = None,
+        config: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
         """RPAジョブを作成"""
         job_id = str(uuid.uuid4())
         job = {
@@ -140,11 +163,11 @@ class RPAManager:
         }
         self._jobs[job_id] = job
         return job
-    
+
     def list_jobs(self) -> List[Dict[str, Any]]:
         """RPAジョブ一覧"""
         return list(self._jobs.values())
-    
+
     def run_job(self, job_id: str) -> Optional[Dict[str, Any]]:
         """RPAジョブを実行"""
         if job_id not in self._jobs:

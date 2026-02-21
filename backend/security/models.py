@@ -1,23 +1,27 @@
 """
 セキュリティ関連のデータモデル
 """
+from typing import Any, Dict, Optional
+
 from pydantic import BaseModel
-from typing import Optional, Dict, Any
 
 
 class SecretCreate(BaseModel):
     """シークレット作成モデル"""
+
     data: Dict[str, Any]
 
 
 class SecretResponse(BaseModel):
     """シークレットレスポンスモデル"""
+
     path: str
     name: str
 
 
 class PolicyCreate(BaseModel):
     """ポリシー作成モデル"""
+
     id: str
     name: str
     description: Optional[str] = None
@@ -28,6 +32,7 @@ class PolicyCreate(BaseModel):
 
 class PolicyUpdate(BaseModel):
     """ポリシー更新モデル"""
+
     name: Optional[str] = None
     description: Optional[str] = None
     rules: Optional[Dict[str, Any]] = None

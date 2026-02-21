@@ -2,9 +2,9 @@
 統合ビジネスプラットフォーム - 監査ログ
 実用的最高難易度: セキュリティ・コンプライアンス統合
 """
-from typing import Dict, Any, List, Optional
 from datetime import datetime
 from enum import Enum
+from typing import Any, Dict, List, Optional
 
 
 class AuditAction(str, Enum):
@@ -53,7 +53,7 @@ class AuditLogger:
         }
         self._logs.append(entry)
         if len(self._logs) > self._max_entries:
-            self._logs = self._logs[-self._max_entries:]
+            self._logs = self._logs[-self._max_entries :]
         return entry
 
     def get_logs(

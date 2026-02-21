@@ -3,7 +3,8 @@
 """
 import pytest
 from sqlalchemy.orm import Session
-from core.database import get_db, SessionLocal, init_db
+
+from core.database import SessionLocal, get_db, init_db
 
 
 def test_database_connection():

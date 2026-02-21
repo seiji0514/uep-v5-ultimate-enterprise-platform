@@ -2,13 +2,13 @@
 mTLS (相互TLS認証) モジュール
 サービス間通信のセキュア化
 """
-from typing import Dict, Any, Optional
-from cryptography import x509
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.primitives import hashes
-from datetime import datetime, timedelta
 import os
+from datetime import datetime, timedelta
+from typing import Any, Dict, Optional
+
+from cryptography import x509
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.asymmetric import rsa
 
 
 class MTLSManager:
@@ -20,9 +20,7 @@ class MTLSManager:
         os.makedirs(self.cert_dir, exist_ok=True)
 
     def generate_certificate_authority(
-        self,
-        common_name: str = "UEP CA",
-        validity_days: int = 365
+        self, common_name: str = "UEP CA", validity_days: int = 365
     ) -> Dict[str, Any]:
         """
         証明書発行局（CA）を生成
@@ -35,49 +33,46 @@ class MTLSManager:
             CA証明書と秘密鍵の情報
         """
         # 秘密鍵を生成
-        private_key = rsa.generate_private_key(
-            public_exponent=65537,
-            key_size=2048
-        )
+        private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
 
         # 証明書を作成
-        subject = issuer = x509.Name([
-            x509.NameAttribute(x509.NameOID.COUNTRY_NAME, "JP"),
-            x509.NameAttribute(x509.NameOID.STATE_OR_PROVINCE_NAME, "Tokyo"),
-            x509.NameAttribute(x509.NameOID.LOCALITY_NAME, "Tokyo"),
-            x509.NameAttribute(x509.NameOID.ORGANIZATION_NAME, "UEP"),
-            x509.NameAttribute(x509.NameOID.COMMON_NAME, common_name),
-        ])
+        subject = issuer = x509.Name(
+            [
+                x509.NameAttribute(x509.NameOID.COUNTRY_NAME, "JP"),
+                x509.NameAttribute(x509.NameOID.STATE_OR_PROVINCE_NAME, "Tokyo"),
+                x509.NameAttribute(x509.NameOID.LOCALITY_NAME, "Tokyo"),
+                x509.NameAttribute(x509.NameOID.ORGANIZATION_NAME, "UEP"),
+                x509.NameAttribute(x509.NameOID.COMMON_NAME, common_name),
+            ]
+        )
 
-        cert = x509.CertificateBuilder().subject_name(
-            subject
-        ).issuer_name(
-            issuer
-        ).public_key(
-            private_key.public_key()
-        ).serial_number(
-            x509.random_serial_number()
-        ).not_valid_before(
-            datetime.utcnow()
-        ).not_valid_after(
-            datetime.utcnow() + timedelta(days=validity_days)
-        ).add_extension(
-            x509.BasicConstraints(ca=True, path_length=None),
-            critical=True,
-        ).sign(private_key, hashes.SHA256())
+        cert = (
+            x509.CertificateBuilder()
+            .subject_name(subject)
+            .issuer_name(issuer)
+            .public_key(private_key.public_key())
+            .serial_number(x509.random_serial_number())
+            .not_valid_before(datetime.utcnow())
+            .not_valid_after(datetime.utcnow() + timedelta(days=validity_days))
+            .add_extension(
+                x509.BasicConstraints(ca=True, path_length=None),
+                critical=True,
+            )
+            .sign(private_key, hashes.SHA256())
+        )
 
         # PEM形式に変換
         cert_pem = cert.public_bytes(serialization.Encoding.PEM)
         key_pem = private_key.private_bytes(
             encoding=serialization.Encoding.PEM,
             format=serialization.PrivateFormat.PKCS8,
-            encryption_algorithm=serialization.NoEncryption()
+            encryption_algorithm=serialization.NoEncryption(),
         )
 
         return {
             "certificate": cert_pem.decode(),
             "private_key": key_pem.decode(),
-            "common_name": common_name
+            "common_name": common_name,
         }
 
     def generate_server_certificate(
@@ -85,7 +80,7 @@ class MTLSManager:
         ca_cert: x509.Certificate,
         ca_key: rsa.RSAPrivateKey,
         common_name: str,
-        validity_days: int = 365
+        validity_days: int = 365,
     ) -> Dict[str, Any]:
         """
         サーバー証明書を生成
@@ -100,59 +95,54 @@ class MTLSManager:
             サーバー証明書と秘密鍵の情報
         """
         # 秘密鍵を生成
-        private_key = rsa.generate_private_key(
-            public_exponent=65537,
-            key_size=2048
-        )
+        private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
 
         # 証明書を作成
-        subject = x509.Name([
-            x509.NameAttribute(x509.NameOID.COUNTRY_NAME, "JP"),
-            x509.NameAttribute(x509.NameOID.STATE_OR_PROVINCE_NAME, "Tokyo"),
-            x509.NameAttribute(x509.NameOID.LOCALITY_NAME, "Tokyo"),
-            x509.NameAttribute(x509.NameOID.ORGANIZATION_NAME, "UEP"),
-            x509.NameAttribute(x509.NameOID.COMMON_NAME, common_name),
-        ])
+        subject = x509.Name(
+            [
+                x509.NameAttribute(x509.NameOID.COUNTRY_NAME, "JP"),
+                x509.NameAttribute(x509.NameOID.STATE_OR_PROVINCE_NAME, "Tokyo"),
+                x509.NameAttribute(x509.NameOID.LOCALITY_NAME, "Tokyo"),
+                x509.NameAttribute(x509.NameOID.ORGANIZATION_NAME, "UEP"),
+                x509.NameAttribute(x509.NameOID.COMMON_NAME, common_name),
+            ]
+        )
 
-        cert = x509.CertificateBuilder().subject_name(
-            subject
-        ).issuer_name(
-            ca_cert.subject
-        ).public_key(
-            private_key.public_key()
-        ).serial_number(
-            x509.random_serial_number()
-        ).not_valid_before(
-            datetime.utcnow()
-        ).not_valid_after(
-            datetime.utcnow() + timedelta(days=validity_days)
-        ).add_extension(
-            x509.SubjectAlternativeName([
-                x509.DNSName(common_name),
-                x509.DNSName(f"*.{common_name}"),
-            ]),
-            critical=False,
-        ).sign(ca_key, hashes.SHA256())
+        cert = (
+            x509.CertificateBuilder()
+            .subject_name(subject)
+            .issuer_name(ca_cert.subject)
+            .public_key(private_key.public_key())
+            .serial_number(x509.random_serial_number())
+            .not_valid_before(datetime.utcnow())
+            .not_valid_after(datetime.utcnow() + timedelta(days=validity_days))
+            .add_extension(
+                x509.SubjectAlternativeName(
+                    [
+                        x509.DNSName(common_name),
+                        x509.DNSName(f"*.{common_name}"),
+                    ]
+                ),
+                critical=False,
+            )
+            .sign(ca_key, hashes.SHA256())
+        )
 
         # PEM形式に変換
         cert_pem = cert.public_bytes(serialization.Encoding.PEM)
         key_pem = private_key.private_bytes(
             encoding=serialization.Encoding.PEM,
             format=serialization.PrivateFormat.PKCS8,
-            encryption_algorithm=serialization.NoEncryption()
+            encryption_algorithm=serialization.NoEncryption(),
         )
 
         return {
             "certificate": cert_pem.decode(),
             "private_key": key_pem.decode(),
-            "common_name": common_name
+            "common_name": common_name,
         }
 
-    def verify_certificate(
-        self,
-        cert_pem: str,
-        ca_cert_pem: str
-    ) -> bool:
+    def verify_certificate(self, cert_pem: str, ca_cert_pem: str) -> bool:
         """
         証明書を検証
 

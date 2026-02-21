@@ -2,13 +2,15 @@
 GraphQL スキーマ
 REST API の一部を GraphQL で提供
 """
-import strawberry
 from typing import List, Optional
+
+import strawberry
 
 
 @strawberry.type
 class User:
     """ユーザー型"""
+
     username: str
     email: str
     full_name: Optional[str] = None
@@ -20,6 +22,7 @@ class User:
 @strawberry.type
 class Service:
     """サービス型"""
+
     name: str
     url: str
     status: str
@@ -28,6 +31,7 @@ class Service:
 @strawberry.type
 class HealthStatus:
     """ヘルスステータス型"""
+
     status: str
     version: str
     service: str
@@ -56,9 +60,19 @@ class Query:
         """登録サービス一覧"""
         return [
             Service(name="backend-api", url="http://backend:8000", status="active"),
-            Service(name="mlops-service", url="http://mlops-service:8003", status="pending"),
-            Service(name="generative-ai-service", url="http://generative-ai-service:8004", status="pending"),
-            Service(name="security-service", url="http://security-service:8005", status="pending"),
+            Service(
+                name="mlops-service", url="http://mlops-service:8003", status="pending"
+            ),
+            Service(
+                name="generative-ai-service",
+                url="http://generative-ai-service:8004",
+                status="pending",
+            ),
+            Service(
+                name="security-service",
+                url="http://security-service:8005",
+                status="pending",
+            ),
         ]
 
 

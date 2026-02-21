@@ -2,15 +2,18 @@
 AIエージェント基盤
 マッチング・相談・評価エージェントのオーケストレーション
 """
-from typing import Dict, Any, List
+from typing import Any, Dict, List
+
 from .matching import match_jobs
-from .models import MatchingRequest, WorkStyle, DisabilityType
+from .models import DisabilityType, MatchingRequest, WorkStyle
 
 
 class AgentOrchestrator:
     """エージェントオーケストレーター"""
 
-    async def execute(self, task_type: str, query: str, context: Dict[str, Any] | None = None) -> Dict[str, Any]:
+    async def execute(
+        self, task_type: str, query: str, context: Dict[str, Any] | None = None
+    ) -> Dict[str, Any]:
         """
         タスクタイプに応じてエージェントを起動
         matching: マッチングエージェント
@@ -32,7 +35,9 @@ class AgentOrchestrator:
                 "message": f"未対応のタスクタイプ: {task_type}",
             }
 
-    async def _matching_agent(self, query: str, context: Dict[str, Any]) -> Dict[str, Any]:
+    async def _matching_agent(
+        self, query: str, context: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """マッチングエージェント"""
         # クエリからスキル等を簡易抽出（実際はLLMで解析）
         skills = context.get("skills", [])
@@ -61,7 +66,9 @@ class AgentOrchestrator:
             "count": len(jobs),
         }
 
-    async def _consultation_agent(self, query: str, context: Dict[str, Any]) -> Dict[str, Any]:
+    async def _consultation_agent(
+        self, query: str, context: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """相談エージェント（就労相談・制度案内）"""
         # 簡易応答（実際はLLM連携）
         responses = {
@@ -81,7 +88,9 @@ class AgentOrchestrator:
             "answer": answer,
         }
 
-    async def _evaluation_agent(self, query: str, context: Dict[str, Any]) -> Dict[str, Any]:
+    async def _evaluation_agent(
+        self, query: str, context: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """評価エージェント（UX評価のトリガー）"""
         url = context.get("url") or query
         if not url.startswith("http"):

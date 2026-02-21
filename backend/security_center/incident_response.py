@@ -1,15 +1,17 @@
 """
 インシデント対応モジュール
 """
-from typing import Dict, Any, List, Optional
+import uuid
 from datetime import datetime
 from enum import Enum
+from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel
-import uuid
 
 
 class IncidentSeverity(str, Enum):
     """インシデント重大度"""
+
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
@@ -18,6 +20,7 @@ class IncidentSeverity(str, Enum):
 
 class IncidentStatus(str, Enum):
     """インシデントステータス"""
+
     OPEN = "open"
     INVESTIGATING = "investigating"
     CONTAINED = "contained"
@@ -27,6 +30,7 @@ class IncidentStatus(str, Enum):
 
 class Incident(BaseModel):
     """インシデント"""
+
     id: str
     title: str
     description: str
@@ -59,7 +63,7 @@ class IncidentResponse:
                     "2. データ漏洩の停止",
                     "3. 影響を受けたシステムの隔離",
                     "4. 関係者への通知",
-                    "5. フォレンジック調査の実施"
+                    "5. フォレンジック調査の実施",
                 ]
             },
             "malware": {
@@ -68,7 +72,7 @@ class IncidentResponse:
                     "2. ネットワークからの隔離",
                     "3. マルウェアの除去",
                     "4. システムの復旧",
-                    "5. 再発防止策の実施"
+                    "5. 再発防止策の実施",
                 ]
             },
             "intrusion": {
@@ -77,9 +81,9 @@ class IncidentResponse:
                     "2. アクセスの遮断",
                     "3. 影響範囲の評価",
                     "4. システムのセキュア化",
-                    "5. 監視の強化"
+                    "5. 監視の強化",
                 ]
-            }
+            },
         }
 
     def create_incident(
@@ -88,7 +92,7 @@ class IncidentResponse:
         description: str,
         severity: IncidentSeverity,
         affected_systems: Optional[List[str]] = None,
-        incident_type: Optional[str] = None
+        incident_type: Optional[str] = None,
     ) -> Incident:
         """インシデントを作成"""
         incident_id = str(uuid.uuid4())
@@ -101,7 +105,7 @@ class IncidentResponse:
             affected_systems=affected_systems or [],
             created_at=datetime.utcnow(),
             updated_at=datetime.utcnow(),
-            metadata={"type": incident_type} if incident_type else None
+            metadata={"type": incident_type} if incident_type else None,
         )
 
         self._incidents[incident_id] = incident
@@ -121,7 +125,7 @@ class IncidentResponse:
             incident.metadata["automated_response"] = {
                 "playbook": incident_type,
                 "steps": playbook["steps"],
-                "executed_at": datetime.utcnow().isoformat()
+                "executed_at": datetime.utcnow().isoformat(),
             }
 
     def update_incident(
@@ -129,7 +133,7 @@ class IncidentResponse:
         incident_id: str,
         status: Optional[IncidentStatus] = None,
         assigned_to: Optional[str] = None,
-        resolution: Optional[str] = None
+        resolution: Optional[str] = None,
     ) -> Optional[Incident]:
         """インシデントを更新"""
         incident = self._incidents.get(incident_id)
@@ -157,7 +161,7 @@ class IncidentResponse:
     def list_incidents(
         self,
         severity: Optional[IncidentSeverity] = None,
-        status: Optional[IncidentStatus] = None
+        status: Optional[IncidentStatus] = None,
     ) -> List[Incident]:
         """インシデント一覧を取得"""
         incidents = list(self._incidents.values())

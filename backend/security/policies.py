@@ -1,13 +1,15 @@
 """
 セキュリティポリシー管理モジュール
 """
-from typing import Dict, Any, List, Optional
 from datetime import datetime
+from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel
 
 
 class SecurityPolicy(BaseModel):
     """セキュリティポリシー"""
+
     id: str
     name: str
     description: Optional[str] = None
@@ -39,24 +41,21 @@ class SecurityPolicyManager:
                 rules={
                     "require_tls": True,
                     "min_tls_version": "1.2",
-                    "require_mtls": False
+                    "require_mtls": False,
                 },
                 enabled=True,
                 created_at=now,
-                updated_at=now
+                updated_at=now,
             ),
             SecurityPolicy(
                 id="default-rate-limit",
                 name="デフォルトレート制限ポリシー",
                 description="APIレート制限",
                 policy_type="rate_limit",
-                rules={
-                    "requests_per_minute": 100,
-                    "burst_size": 20
-                },
+                rules={"requests_per_minute": 100, "burst_size": 20},
                 enabled=True,
                 created_at=now,
-                updated_at=now
+                updated_at=now,
             ),
             SecurityPolicy(
                 id="default-password",
@@ -68,11 +67,11 @@ class SecurityPolicyManager:
                     "require_uppercase": True,
                     "require_lowercase": True,
                     "require_numbers": True,
-                    "require_special_chars": True
+                    "require_special_chars": True,
                 },
                 enabled=True,
                 created_at=now,
-                updated_at=now
+                updated_at=now,
             ),
         ]
 
@@ -90,9 +89,7 @@ class SecurityPolicyManager:
         return self._policies.get(policy_id)
 
     def list_policies(
-        self,
-        policy_type: Optional[str] = None,
-        enabled_only: bool = False
+        self, policy_type: Optional[str] = None, enabled_only: bool = False
     ) -> List[SecurityPolicy]:
         """ポリシー一覧を取得"""
         policies = list(self._policies.values())
@@ -105,20 +102,14 @@ class SecurityPolicyManager:
 
         return policies
 
-    def update_policy(
-        self,
-        policy_id: str,
-        **kwargs
-    ) -> Optional[SecurityPolicy]:
+    def update_policy(self, policy_id: str, **kwargs) -> Optional[SecurityPolicy]:
         """ポリシーを更新"""
         policy = self._policies.get(policy_id)
         if not policy:
             return None
 
         # 更新可能なフィールドを更新
-        update_fields = {
-            "name", "description", "rules", "enabled"
-        }
+        update_fields = {"name", "description", "rules", "enabled"}
 
         for key, value in kwargs.items():
             if key in update_fields:

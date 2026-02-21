@@ -2,11 +2,12 @@
 MinIOクライアントモジュール
 MinIOへの接続と操作を実装
 """
-from minio import Minio
-from minio.error import S3Error
-from typing import List, Optional, Dict, Any
 import os
 from io import BytesIO
+from typing import Any, Dict, List, Optional
+
+from minio import Minio
+from minio.error import S3Error
 
 
 class MinIOClient:
@@ -17,7 +18,7 @@ class MinIOClient:
         endpoint: Optional[str] = None,
         access_key: Optional[str] = None,
         secret_key: Optional[str] = None,
-        secure: bool = False
+        secure: bool = False,
     ):
         """
         MinIOクライアントを初期化
@@ -38,7 +39,7 @@ class MinIOClient:
             self.endpoint,
             access_key=self.access_key,
             secret_key=self.secret_key,
-            secure=self.secure
+            secure=self.secure,
         )
 
     def list_buckets(self) -> List[Dict[str, Any]]:
@@ -48,7 +49,9 @@ class MinIOClient:
             return [
                 {
                     "name": bucket.name,
-                    "creation_date": bucket.creation_date.isoformat() if bucket.creation_date else None
+                    "creation_date": bucket.creation_date.isoformat()
+                    if bucket.creation_date
+                    else None,
                 }
                 for bucket in buckets
             ]
@@ -83,24 +86,21 @@ class MinIOClient:
             raise Exception(f"Failed to check bucket existence: {str(e)}")
 
     def list_objects(
-        self,
-        bucket_name: str,
-        prefix: Optional[str] = None,
-        recursive: bool = True
+        self, bucket_name: str, prefix: Optional[str] = None, recursive: bool = True
     ) -> List[Dict[str, Any]]:
         """オブジェクト一覧を取得"""
         try:
             objects = self.client.list_objects(
-                bucket_name,
-                prefix=prefix,
-                recursive=recursive
+                bucket_name, prefix=prefix, recursive=recursive
             )
             return [
                 {
                     "name": obj.object_name,
                     "size": obj.size,
-                    "last_modified": obj.last_modified.isoformat() if obj.last_modified else None,
-                    "etag": obj.etag
+                    "last_modified": obj.last_modified.isoformat()
+                    if obj.last_modified
+                    else None,
+                    "etag": obj.etag,
                 }
                 for obj in objects
             ]
@@ -112,7 +112,7 @@ class MinIOClient:
         bucket_name: str,
         object_name: str,
         file_data: bytes,
-        content_type: Optional[str] = None
+        content_type: Optional[str] = None,
     ) -> bool:
         """ファイルをアップロード"""
         try:
@@ -122,7 +122,7 @@ class MinIOClient:
                 object_name,
                 file_stream,
                 length=len(file_data),
-                content_type=content_type or "application/octet-stream"
+                content_type=content_type or "application/octet-stream",
             )
             return True
         except S3Error as e:
@@ -151,9 +151,11 @@ class MinIOClient:
             return {
                 "name": object_name,
                 "size": stat.size,
-                "last_modified": stat.last_modified.isoformat() if stat.last_modified else None,
+                "last_modified": stat.last_modified.isoformat()
+                if stat.last_modified
+                else None,
                 "etag": stat.etag,
-                "content_type": stat.content_type
+                "content_type": stat.content_type,
             }
         except S3Error as e:
             raise Exception(f"Failed to get object info: {str(e)}")

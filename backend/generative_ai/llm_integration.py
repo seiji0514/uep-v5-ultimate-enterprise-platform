@@ -2,15 +2,17 @@
 LLM統合モジュール
 大規模言語モデルの統合
 """
-from typing import Dict, Any, List, Optional
-from enum import Enum
-from pydantic import BaseModel
-import httpx
 import os
+from enum import Enum
+from typing import Any, Dict, List, Optional
+
+import httpx
+from pydantic import BaseModel
 
 
 class LLMProvider(str, Enum):
     """LLMプロバイダー"""
+
     OPENAI = "openai"
     ANTHROPIC = "anthropic"
     GOOGLE = "google"
@@ -47,7 +49,7 @@ class LLMClient:
         model: str = "gpt-3.5-turbo",
         max_tokens: int = 1000,
         temperature: float = 0.7,
-        **kwargs
+        **kwargs,
     ) -> Dict[str, Any]:
         """
         テキストを生成
@@ -63,24 +65,23 @@ class LLMClient:
             生成結果
         """
         if self.provider == LLMProvider.OPENAI:
-            return await self._generate_openai(prompt, model, max_tokens, temperature, **kwargs)
+            return await self._generate_openai(
+                prompt, model, max_tokens, temperature, **kwargs
+            )
         elif self.provider == LLMProvider.LOCAL:
-            return await self._generate_local(prompt, model, max_tokens, temperature, **kwargs)
+            return await self._generate_local(
+                prompt, model, max_tokens, temperature, **kwargs
+            )
         else:
             # その他のプロバイダーは簡易実装
             return {
                 "text": f"[{self.provider}] Generated response for: {prompt[:50]}...",
                 "model": model,
-                "provider": self.provider.value
+                "provider": self.provider.value,
             }
 
     async def _generate_openai(
-        self,
-        prompt: str,
-        model: str,
-        max_tokens: int,
-        temperature: float,
-        **kwargs
+        self, prompt: str, model: str, max_tokens: int, temperature: float, **kwargs
     ) -> Dict[str, Any]:
         """OpenAI APIを使用して生成"""
         try:
@@ -89,15 +90,15 @@ class LLMClient:
                     f"{self.base_url}/chat/completions",
                     headers={
                         "Authorization": f"Bearer {self.api_key}",
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
                     },
                     json={
                         "model": model,
                         "messages": [{"role": "user", "content": prompt}],
                         "max_tokens": max_tokens,
                         "temperature": temperature,
-                        **kwargs
-                    }
+                        **kwargs,
+                    },
                 )
 
                 if response.status_code == 200:
@@ -106,30 +107,25 @@ class LLMClient:
                         "text": data["choices"][0]["message"]["content"],
                         "model": model,
                         "provider": "openai",
-                        "usage": data.get("usage", {})
+                        "usage": data.get("usage", {}),
                     }
                 else:
                     return {
                         "text": f"Error: {response.status_code}",
                         "model": model,
                         "provider": "openai",
-                        "error": response.text
+                        "error": response.text,
                     }
         except Exception as e:
             return {
                 "text": f"Error: {str(e)}",
                 "model": model,
                 "provider": "openai",
-                "error": str(e)
+                "error": str(e),
             }
 
     async def _generate_local(
-        self,
-        prompt: str,
-        model: str,
-        max_tokens: int,
-        temperature: float,
-        **kwargs
+        self, prompt: str, model: str, max_tokens: int, temperature: float, **kwargs
     ) -> Dict[str, Any]:
         """ローカルLLMを使用して生成"""
         try:
@@ -141,8 +137,8 @@ class LLMClient:
                         "model": model,
                         "max_tokens": max_tokens,
                         "temperature": temperature,
-                        **kwargs
-                    }
+                        **kwargs,
+                    },
                 )
 
                 if response.status_code == 200:
@@ -150,24 +146,26 @@ class LLMClient:
                     return {
                         "text": data.get("text", ""),
                         "model": model,
-                        "provider": "local"
+                        "provider": "local",
                     }
                 else:
                     return {
                         "text": f"Error: {response.status_code}",
                         "model": model,
                         "provider": "local",
-                        "error": response.text
+                        "error": response.text,
                     }
         except Exception as e:
             return {
                 "text": f"Error: {str(e)}",
                 "model": model,
                 "provider": "local",
-                "error": str(e)
+                "error": str(e),
             }
 
-    async def embed(self, text: str, model: str = "text-embedding-ada-002") -> List[float]:
+    async def embed(
+        self, text: str, model: str = "text-embedding-ada-002"
+    ) -> List[float]:
         """テキストを埋め込みベクトルに変換"""
         # 簡易実装
         return [0.0] * 1536  # ダミーベクトル

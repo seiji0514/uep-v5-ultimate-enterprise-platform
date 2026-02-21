@@ -2,18 +2,17 @@
 Vaultクライアントモジュール
 HashiCorp Vaultへの接続と操作を実装
 """
-import hvac
-from typing import Dict, Any, Optional, List
 import os
+from typing import Any, Dict, List, Optional
+
+import hvac
 
 
 class VaultClient:
     """Vaultクライアントクラス"""
 
     def __init__(
-        self,
-        vault_url: Optional[str] = None,
-        vault_token: Optional[str] = None
+        self, vault_url: Optional[str] = None, vault_token: Optional[str] = None
     ):
         """
         Vaultクライアントを初期化
@@ -60,11 +59,7 @@ class VaultClient:
             print(f"Failed to read secret: {e}")
             return None
 
-    def write_secret(
-        self,
-        path: str,
-        data: Dict[str, Any]
-    ) -> bool:
+    def write_secret(self, path: str, data: Dict[str, Any]) -> bool:
         """
         シークレットを書き込み
 
@@ -79,14 +74,12 @@ class VaultClient:
             # KV v2エンジンの場合
             if path.startswith("secret/data/"):
                 self.client.secrets.kv.v2.create_or_update_secret(
-                    path=path.replace("secret/data/", ""),
-                    secret=data
+                    path=path.replace("secret/data/", ""), secret=data
                 )
             else:
                 # KV v1エンジンの場合
                 self.client.secrets.kv.v1.create_or_update_secret(
-                    path=path,
-                    secret=data
+                    path=path, secret=data
                 )
             return True
         except Exception as e:
@@ -127,9 +120,7 @@ class VaultClient:
             return []
 
     def generate_dynamic_credentials(
-        self,
-        role: str,
-        mount_point: str = "database"
+        self, role: str, mount_point: str = "database"
     ) -> Optional[Dict[str, Any]]:
         """
         動的認証情報を生成（データベース等）
@@ -143,8 +134,7 @@ class VaultClient:
         """
         try:
             response = self.client.secrets.database.generate_credentials(
-                name=role,
-                mount_point=mount_point
+                name=role, mount_point=mount_point
             )
             return response.get("data", {})
         except Exception as e:

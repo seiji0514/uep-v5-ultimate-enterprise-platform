@@ -2,19 +2,49 @@
 当事者視点のUX評価ツール
 企業サイト・採用システムのアクセシビリティを評価
 """
-from typing import List, Dict, Any
-from .models import UXEvaluationRequest
+from typing import Any, Dict, List
 
+from .models import UXEvaluationRequest
 
 # WCAG 2.1 に基づく当事者視点チェック項目
 EVALUATION_ITEMS = [
-    {"id": "contrast", "name": "コントラスト比", "description": "文字と背景のコントラスト比（4.5:1以上推奨）", "weight": 0.2},
-    {"id": "alt_text", "name": "代替テキスト", "description": "画像のalt属性の適切な設定", "weight": 0.15},
-    {"id": "keyboard", "name": "キーボード操作", "description": "キーボードのみでの操作可能性", "weight": 0.2},
-    {"id": "focus", "name": "フォーカス表示", "description": "フォーカスインジケーターの可視性", "weight": 0.15},
+    {
+        "id": "contrast",
+        "name": "コントラスト比",
+        "description": "文字と背景のコントラスト比（4.5:1以上推奨）",
+        "weight": 0.2,
+    },
+    {
+        "id": "alt_text",
+        "name": "代替テキスト",
+        "description": "画像のalt属性の適切な設定",
+        "weight": 0.15,
+    },
+    {
+        "id": "keyboard",
+        "name": "キーボード操作",
+        "description": "キーボードのみでの操作可能性",
+        "weight": 0.2,
+    },
+    {
+        "id": "focus",
+        "name": "フォーカス表示",
+        "description": "フォーカスインジケーターの可視性",
+        "weight": 0.15,
+    },
     {"id": "heading", "name": "見出し構造", "description": "適切な見出し階層（h1-h6）", "weight": 0.1},
-    {"id": "form_labels", "name": "フォームラベル", "description": "入力欄とラベルの関連付け", "weight": 0.1},
-    {"id": "readable", "name": "読みやすさ", "description": "フォントサイズ・行間・簡潔な表現", "weight": 0.1},
+    {
+        "id": "form_labels",
+        "name": "フォームラベル",
+        "description": "入力欄とラベルの関連付け",
+        "weight": 0.1,
+    },
+    {
+        "id": "readable",
+        "name": "読みやすさ",
+        "description": "フォントサイズ・行間・簡潔な表現",
+        "weight": 0.1,
+    },
 ]
 
 
@@ -34,16 +64,19 @@ def evaluate_url(request: UXEvaluationRequest) -> Dict[str, Any]:
             continue
         # デモ用: 擬似スコア（実際はURLをクロールして評価）
         import random
+
         random.seed(hash(request.url) % (2**32) + hash(item["id"]))
         score = round(random.uniform(0.5, 1.0), 2)
-        results.append({
-            "id": item["id"],
-            "name": item["name"],
-            "description": item["description"],
-            "score": score,
-            "status": "pass" if score >= 0.7 else "fail",
-            "recommendation": _get_recommendation(item["id"], score),
-        })
+        results.append(
+            {
+                "id": item["id"],
+                "name": item["name"],
+                "description": item["description"],
+                "score": score,
+                "status": "pass" if score >= 0.7 else "fail",
+                "recommendation": _get_recommendation(item["id"], score),
+            }
+        )
         total_score += score * item["weight"]
         total_weight += item["weight"]
 

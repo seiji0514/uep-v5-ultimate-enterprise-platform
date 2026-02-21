@@ -2,9 +2,9 @@
 障害者雇用マッチング
 求職者と求人のマッチングロジック
 """
-from typing import List, Dict, Any, Optional
-from .models import MatchingRequest, DisabilityType, WorkStyle
+from typing import Any, Dict, List, Optional
 
+from .models import DisabilityType, MatchingRequest, WorkStyle
 
 # デモ用求人データ
 DEMO_JOBS = [
@@ -104,7 +104,11 @@ def match_jobs(request: MatchingRequest) -> List[Dict[str, Any]]:
                     score += 0.1
                     break
 
-        job_copy = {**job, "match_score": round(min(score, 1.0), 2), "match_reasons": reasons}
+        job_copy = {
+            **job,
+            "match_score": round(min(score, 1.0), 2),
+            "match_reasons": reasons,
+        }
         results.append(job_copy)
 
     results.sort(key=lambda x: x["match_score"], reverse=True)

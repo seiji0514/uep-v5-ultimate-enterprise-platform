@@ -2,15 +2,17 @@
 オーケストレーションモジュール
 コンテナ化・オーケストレーション
 """
-from typing import Dict, Any, List, Optional
+import uuid
 from datetime import datetime
 from enum import Enum
+from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel
-import uuid
 
 
 class OrchestrationPlatform(str, Enum):
     """オーケストレーションプラットフォーム"""
+
     KUBERNETES = "kubernetes"
     DOCKER_COMPOSE = "docker-compose"
     NOMAD = "nomad"
@@ -19,6 +21,7 @@ class OrchestrationPlatform(str, Enum):
 
 class DeploymentStatus(str, Enum):
     """デプロイメントステータス"""
+
     PENDING = "pending"
     DEPLOYING = "deploying"
     RUNNING = "running"
@@ -29,6 +32,7 @@ class DeploymentStatus(str, Enum):
 
 class Deployment(BaseModel):
     """デプロイメント"""
+
     id: str
     name: str
     platform: OrchestrationPlatform
@@ -55,7 +59,7 @@ class OrchestrationManager:
         image: str,
         replicas: int = 1,
         config: Optional[Dict[str, Any]] = None,
-        namespace: str = "default"
+        namespace: str = "default",
     ) -> Deployment:
         """デプロイメントを作成"""
         deployment_id = str(uuid.uuid4())
@@ -70,7 +74,7 @@ class OrchestrationManager:
             namespace=namespace,
             status=DeploymentStatus.DEPLOYING,
             created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow()
+            updated_at=datetime.utcnow(),
         )
 
         self._deployments[deployment_id] = deployment
@@ -82,9 +86,7 @@ class OrchestrationManager:
         return deployment
 
     def scale_deployment(
-        self,
-        deployment_id: str,
-        replicas: int
+        self, deployment_id: str, replicas: int
     ) -> Optional[Deployment]:
         """デプロイメントをスケール"""
         deployment = self._deployments.get(deployment_id)
@@ -109,7 +111,7 @@ class OrchestrationManager:
         self,
         platform: Optional[OrchestrationPlatform] = None,
         namespace: Optional[str] = None,
-        status: Optional[DeploymentStatus] = None
+        status: Optional[DeploymentStatus] = None,
     ) -> List[Deployment]:
         """デプロイメント一覧を取得"""
         deployments = list(self._deployments.values())
@@ -129,7 +131,7 @@ class OrchestrationManager:
         self,
         deployment_id: str,
         image: Optional[str] = None,
-        config: Optional[Dict[str, Any]] = None
+        config: Optional[Dict[str, Any]] = None,
     ) -> Optional[Deployment]:
         """デプロイメントを更新"""
         deployment = self._deployments.get(deployment_id)

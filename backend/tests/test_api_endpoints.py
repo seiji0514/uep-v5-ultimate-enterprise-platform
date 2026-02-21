@@ -3,8 +3,8 @@ APIエンドポイントの包括的なテスト
 """
 import pytest
 from fastapi.testclient import TestClient
-from main import app
 
+from main import app
 
 client = TestClient(app)
 

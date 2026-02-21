@@ -2,9 +2,9 @@
 顧客対応・CX モジュール
 問い合わせ管理、チケット、カスタマーサポート、チャットボット
 """
-from typing import Dict, Any, List, Optional
-from datetime import datetime
 import uuid
+from datetime import datetime
+from typing import Any, Dict, List, Optional
 
 
 class TicketManager:
@@ -14,9 +14,14 @@ class TicketManager:
         self._tickets: Dict[str, Dict[str, Any]] = {}
         self._messages: Dict[str, List[Dict[str, Any]]] = {}
 
-    def create_ticket(self, customer_id: str, subject: str, description: str,
-                      priority: str = "medium",
-                      category: Optional[str] = None) -> Dict[str, Any]:
+    def create_ticket(
+        self,
+        customer_id: str,
+        subject: str,
+        description: str,
+        priority: str = "medium",
+        category: Optional[str] = None,
+    ) -> Dict[str, Any]:
         """チケットを作成"""
         ticket_id = str(uuid.uuid4())
         ticket = {
@@ -35,8 +40,9 @@ class TicketManager:
         self._messages[ticket_id] = []
         return ticket
 
-    def list_tickets(self, status: Optional[str] = None,
-                     customer_id: Optional[str] = None) -> List[Dict[str, Any]]:
+    def list_tickets(
+        self, status: Optional[str] = None, customer_id: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
         """チケット一覧"""
         tickets = list(self._tickets.values())
         if status:
@@ -45,8 +51,9 @@ class TicketManager:
             tickets = [t for t in tickets if t["customer_id"] == customer_id]
         return tickets
 
-    def update_ticket_status(self, ticket_id: str, status: str,
-                             assigned_to: Optional[str] = None) -> Optional[Dict[str, Any]]:
+    def update_ticket_status(
+        self, ticket_id: str, status: str, assigned_to: Optional[str] = None
+    ) -> Optional[Dict[str, Any]]:
         """チケットステータスを更新"""
         if ticket_id not in self._tickets:
             return None
@@ -57,8 +64,9 @@ class TicketManager:
         ticket["updated_at"] = datetime.utcnow().isoformat()
         return ticket
 
-    def add_message(self, ticket_id: str, message: str, sender: str,
-                    is_ai: bool = False) -> Optional[Dict[str, Any]]:
+    def add_message(
+        self, ticket_id: str, message: str, sender: str, is_ai: bool = False
+    ) -> Optional[Dict[str, Any]]:
         """チケットにメッセージを追加"""
         if ticket_id not in self._tickets:
             return None
@@ -96,8 +104,12 @@ class ChatbotManager:
                 return response
         return self._responses["default"]
 
-    def chat(self, message: str, ticket_id: Optional[str] = None,
-             customer_id: Optional[str] = None) -> Dict[str, Any]:
+    def chat(
+        self,
+        message: str,
+        ticket_id: Optional[str] = None,
+        customer_id: Optional[str] = None,
+    ) -> Dict[str, Any]:
         """チャット応答"""
         response = self.get_response(message)
         return {

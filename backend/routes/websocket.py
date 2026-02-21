@@ -2,11 +2,13 @@
 WebSocketエンドポイント
 リアルタイム通信
 """
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends
-from typing import Optional
 from datetime import datetime
-from core.websocket import connection_manager
+from typing import Optional
+
+from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect
+
 from auth.jwt_auth import get_current_user_websocket
+from core.websocket import connection_manager
 
 router = APIRouter(prefix="/ws", tags=["WebSocket"])
 
@@ -25,9 +27,9 @@ async def websocket_endpoint(websocket: WebSocket, room: str = "default"):
                     "type": "message",
                     "room": room,
                     "data": data,
-                    "timestamp": str(datetime.utcnow())
+                    "timestamp": str(datetime.utcnow()),
                 },
-                room=room
+                room=room,
             )
     except WebSocketDisconnect:
         connection_manager.disconnect(websocket, room=room)
@@ -37,7 +39,7 @@ async def websocket_endpoint(websocket: WebSocket, room: str = "default"):
 async def user_websocket_endpoint(
     websocket: WebSocket,
     user_id: str,
-    current_user: Optional[dict] = Depends(get_current_user_websocket)
+    current_user: Optional[dict] = Depends(get_current_user_websocket),
 ):
     """ユーザー専用WebSocketエンドポイント"""
     await connection_manager.connect(websocket, room=f"user_{user_id}", user_id=user_id)
@@ -51,18 +53,20 @@ async def user_websocket_endpoint(
                     "type": "user_message",
                     "user_id": user_id,
                     "data": data,
-                    "timestamp": str(datetime.utcnow())
+                    "timestamp": str(datetime.utcnow()),
                 },
-                user_id=user_id
+                user_id=user_id,
             )
     except WebSocketDisconnect:
-        connection_manager.disconnect(websocket, room=f"user_{user_id}", user_id=user_id)
+        connection_manager.disconnect(
+            websocket, room=f"user_{user_id}", user_id=user_id
+        )
 
 
 @router.websocket("/notifications")
 async def notifications_websocket_endpoint(
     websocket: WebSocket,
-    current_user: Optional[dict] = Depends(get_current_user_websocket)
+    current_user: Optional[dict] = Depends(get_current_user_websocket),
 ):
     """通知用WebSocketエンドポイント"""
     user_id = current_user.get("username") if current_user else "anonymous"
@@ -75,9 +79,9 @@ async def notifications_websocket_endpoint(
                 {
                     "type": "notification",
                     "data": data,
-                    "timestamp": str(datetime.utcnow())
+                    "timestamp": str(datetime.utcnow()),
                 },
-                websocket
+                websocket,
             )
     except WebSocketDisconnect:
         connection_manager.disconnect(websocket, room="notifications", user_id=user_id)

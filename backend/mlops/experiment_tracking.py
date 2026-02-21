@@ -2,14 +2,16 @@
 実験追跡モジュール
 ML実験の追跡と管理
 """
-from typing import Dict, Any, List, Optional
-from datetime import datetime
-from pydantic import BaseModel
 import uuid
+from datetime import datetime
+from typing import Any, Dict, List, Optional
+
+from pydantic import BaseModel
 
 
 class Experiment(BaseModel):
     """実験"""
+
     id: str
     name: str
     description: Optional[str] = None
@@ -36,7 +38,7 @@ class ExperimentTracker:
         created_by: str,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, Any]] = None,
-        tags: Optional[List[str]] = None
+        tags: Optional[List[str]] = None,
     ) -> Experiment:
         """実験を作成"""
         experiment_id = str(uuid.uuid4())
@@ -49,7 +51,7 @@ class ExperimentTracker:
             tags=tags or [],
             created_at=datetime.utcnow(),
             updated_at=datetime.utcnow(),
-            created_by=created_by
+            created_by=created_by,
         )
 
         self._experiments[experiment_id] = experiment
@@ -89,18 +91,13 @@ class ExperimentTracker:
         return self._experiments.get(experiment_id)
 
     def list_experiments(
-        self,
-        tags: Optional[List[str]] = None,
-        status: Optional[str] = None
+        self, tags: Optional[List[str]] = None, status: Optional[str] = None
     ) -> List[Experiment]:
         """実験一覧を取得"""
         experiments = list(self._experiments.values())
 
         if tags:
-            experiments = [
-                e for e in experiments
-                if any(tag in e.tags for tag in tags)
-            ]
+            experiments = [e for e in experiments if any(tag in e.tags for tag in tags)]
 
         if status:
             experiments = [e for e in experiments if e.status == status]
@@ -121,14 +118,16 @@ class ExperimentTracker:
                     "id": e.id,
                     "name": e.name,
                     "parameters": e.parameters,
-                    "metrics": e.metrics
+                    "metrics": e.metrics,
                 }
                 for e in experiments
             ],
-            "best_metric": self._find_best_metric(experiments)
+            "best_metric": self._find_best_metric(experiments),
         }
 
-    def _find_best_metric(self, experiments: List[Experiment]) -> Optional[Dict[str, Any]]:
+    def _find_best_metric(
+        self, experiments: List[Experiment]
+    ) -> Optional[Dict[str, Any]]:
         """最良のメトリクスを検索"""
         if not experiments:
             return None
@@ -147,7 +146,7 @@ class ExperimentTracker:
             return {
                 "experiment_id": best.id,
                 "experiment_name": best.name,
-                "metrics": best.metrics
+                "metrics": best.metrics,
             }
 
         return None

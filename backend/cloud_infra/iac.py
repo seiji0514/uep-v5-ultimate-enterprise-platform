@@ -1,15 +1,17 @@
 """
 IaC (Infrastructure as Code) モジュール
 """
-from typing import Dict, Any, List, Optional
+import uuid
 from datetime import datetime
 from enum import Enum
+from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel
-import uuid
 
 
 class IaCProvider(str, Enum):
     """IaCプロバイダー"""
+
     TERRAFORM = "terraform"
     ANSIBLE = "ansible"
     CLOUDFORMATION = "cloudformation"
@@ -18,6 +20,7 @@ class IaCProvider(str, Enum):
 
 class IaCTemplate(BaseModel):
     """IaCテンプレート"""
+
     id: str
     name: str
     description: Optional[str] = None
@@ -44,7 +47,7 @@ class IaCManager:
         template_content: str,
         created_by: str,
         description: Optional[str] = None,
-        variables: Optional[Dict[str, Any]] = None
+        variables: Optional[Dict[str, Any]] = None,
     ) -> IaCTemplate:
         """テンプレートを作成"""
         template_id = str(uuid.uuid4())
@@ -58,16 +61,14 @@ class IaCManager:
             variables=variables or {},
             created_at=datetime.utcnow(),
             updated_at=datetime.utcnow(),
-            created_by=created_by
+            created_by=created_by,
         )
 
         self._templates[template_id] = template
         return template
 
     def deploy_template(
-        self,
-        template_id: str,
-        variables: Optional[Dict[str, Any]] = None
+        self, template_id: str, variables: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
         """テンプレートをデプロイ"""
         template = self._templates.get(template_id)
@@ -86,7 +87,7 @@ class IaCManager:
             "provider": template.provider.value,
             "variables": deployment_variables,
             "status": "deploying",
-            "created_at": datetime.utcnow().isoformat()
+            "created_at": datetime.utcnow().isoformat(),
         }
 
         self._deployments[deployment_id] = deployment
@@ -101,7 +102,9 @@ class IaCManager:
         """テンプレートを取得"""
         return self._templates.get(template_id)
 
-    def list_templates(self, provider: Optional[IaCProvider] = None) -> List[IaCTemplate]:
+    def list_templates(
+        self, provider: Optional[IaCProvider] = None
+    ) -> List[IaCTemplate]:
         """テンプレート一覧を取得"""
         templates = list(self._templates.values())
 

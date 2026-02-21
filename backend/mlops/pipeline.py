@@ -2,15 +2,17 @@
 MLパイプラインモジュール
 MLパイプラインの設計と実装
 """
-from typing import Dict, Any, List, Optional, Callable
-from enum import Enum
-from datetime import datetime
-from pydantic import BaseModel
 import uuid
+from datetime import datetime
+from enum import Enum
+from typing import Any, Callable, Dict, List, Optional
+
+from pydantic import BaseModel
 
 
 class PipelineStatus(str, Enum):
     """パイプラインステータス"""
+
     PENDING = "pending"
     RUNNING = "running"
     SUCCESS = "success"
@@ -20,6 +22,7 @@ class PipelineStatus(str, Enum):
 
 class PipelineStage(BaseModel):
     """パイプラインステージ"""
+
     id: str
     name: str
     stage_type: str  # data_preprocessing, training, evaluation, deployment
@@ -33,6 +36,7 @@ class PipelineStage(BaseModel):
 
 class MLPipeline(BaseModel):
     """MLパイプライン"""
+
     id: str
     name: str
     description: Optional[str] = None
@@ -58,7 +62,7 @@ class PipelineExecutor:
         name: str,
         stages: List[Dict[str, Any]],
         created_by: str,
-        description: Optional[str] = None
+        description: Optional[str] = None,
     ) -> MLPipeline:
         """パイプラインを作成"""
         pipeline_id = str(uuid.uuid4())
@@ -69,7 +73,7 @@ class PipelineExecutor:
                 name=stage["name"],
                 stage_type=stage["stage_type"],
                 config=stage.get("config", {}),
-                dependencies=stage.get("dependencies", [])
+                dependencies=stage.get("dependencies", []),
             )
             for stage in stages
         ]
@@ -81,7 +85,7 @@ class PipelineExecutor:
             stages=pipeline_stages,
             created_at=datetime.utcnow(),
             updated_at=datetime.utcnow(),
-            created_by=created_by
+            created_by=created_by,
         )
 
         self._pipelines[pipeline_id] = pipeline
@@ -102,7 +106,7 @@ class PipelineExecutor:
             "pipeline_id": pipeline_id,
             "status": PipelineStatus.RUNNING,
             "started_at": datetime.utcnow(),
-            "stages": {}
+            "stages": {},
         }
 
         # ステージを順次実行
@@ -113,7 +117,9 @@ class PipelineExecutor:
 
                 # 依存関係をチェック
                 for dep_id in stage.dependencies:
-                    dep_stage = next((s for s in pipeline.stages if s.id == dep_id), None)
+                    dep_stage = next(
+                        (s for s in pipeline.stages if s.id == dep_id), None
+                    )
                     if dep_stage and dep_stage.status != PipelineStatus.SUCCESS:
                         raise ValueError(f"Dependency {dep_id} not completed")
 
@@ -125,7 +131,7 @@ class PipelineExecutor:
                 self._executions[execution_id]["stages"][stage.id] = {
                     "status": PipelineStatus.SUCCESS,
                     "started_at": stage.started_at.isoformat(),
-                    "completed_at": stage.completed_at.isoformat()
+                    "completed_at": stage.completed_at.isoformat(),
                 }
 
             pipeline.status = PipelineStatus.SUCCESS

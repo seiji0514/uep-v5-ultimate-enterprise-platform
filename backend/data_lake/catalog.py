@@ -2,14 +2,18 @@
 データカタログモジュール
 データのメタデータ管理
 """
-from typing import Dict, Any, List, Optional
 from datetime import datetime
-from pydantic import BaseModel, Field
+from typing import Any, Dict
+from typing import List
 from typing import List as ListType
+from typing import Optional
+
+from pydantic import BaseModel, Field
 
 
 class DataCatalogEntry(BaseModel):
     """データカタログエントリ"""
+
     id: str
     name: str
     description: Optional[str] = None
@@ -47,7 +51,7 @@ class DataCatalog:
         schema: Optional[Dict[str, Any]] = None,
         tags: Optional[List[str]] = None,
         metadata: Optional[Dict[str, Any]] = None,
-        size: int = 0
+        size: int = 0,
     ) -> DataCatalogEntry:
         """データカタログに登録"""
         catalog_id = f"{bucket_name}/{object_name}"
@@ -67,7 +71,7 @@ class DataCatalog:
             created_at=now,
             updated_at=now,
             size=size,
-            metadata=metadata
+            metadata=metadata,
         )
 
         self._catalog[catalog_id] = entry
@@ -81,7 +85,7 @@ class DataCatalog:
         self,
         data_type: Optional[str] = None,
         owner: Optional[str] = None,
-        tags: Optional[List[str]] = None
+        tags: Optional[List[str]] = None,
     ) -> List[DataCatalogEntry]:
         """カタログエントリ一覧を取得"""
         entries = list(self._catalog.values())
@@ -97,20 +101,14 @@ class DataCatalog:
 
         return entries
 
-    def update(
-        self,
-        catalog_id: str,
-        **kwargs
-    ) -> Optional[DataCatalogEntry]:
+    def update(self, catalog_id: str, **kwargs) -> Optional[DataCatalogEntry]:
         """カタログエントリを更新"""
         entry = self._catalog.get(catalog_id)
         if not entry:
             return None
 
         # 更新可能なフィールドを更新
-        update_fields = {
-            "name", "description", "schema", "tags", "metadata"
-        }
+        update_fields = {"name", "description", "schema", "tags", "metadata"}
 
         for key, value in kwargs.items():
             if key in update_fields:
@@ -135,9 +133,9 @@ class DataCatalog:
 
         for entry in self._catalog.values():
             if (
-                query_lower in entry.name.lower() or
-                (entry.description and query_lower in entry.description.lower()) or
-                any(query_lower in tag.lower() for tag in entry.tags)
+                query_lower in entry.name.lower()
+                or (entry.description and query_lower in entry.description.lower())
+                or any(query_lower in tag.lower() for tag in entry.tags)
             ):
                 results.append(entry)
 

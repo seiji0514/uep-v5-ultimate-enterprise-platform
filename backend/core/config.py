@@ -2,11 +2,12 @@
 設定管理モジュール
 Pydantic Settingsを使用した設定管理
 """
-from pydantic_settings import BaseSettings
-from pydantic import Field, field_validator
-from typing import List, Optional
 import os
 from pathlib import Path
+from typing import List, Optional
+
+from pydantic import Field, field_validator
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -23,33 +24,27 @@ class Settings(BaseSettings):
     PORT: int = Field(default=8000, env="PORT")
 
     # データベース設定（ローカル開発はSQLite、本番はPostgreSQL推奨）
-    DATABASE_URL: str = Field(
-        default="sqlite:///./uep_db.sqlite",
-        env="DATABASE_URL"
-    )
+    DATABASE_URL: str = Field(default="sqlite:///./uep_db.sqlite", env="DATABASE_URL")
     DB_POOL_SIZE: int = Field(default=20, env="DB_POOL_SIZE")
     DB_MAX_OVERFLOW: int = Field(default=40, env="DB_MAX_OVERFLOW")
 
     # Redis設定
-    REDIS_URL: str = Field(
-        default="redis://localhost:6379/0",
-        env="REDIS_URL"
-    )
+    REDIS_URL: str = Field(default="redis://localhost:6379/0", env="REDIS_URL")
     REDIS_PASSWORD: Optional[str] = Field(default=None, env="REDIS_PASSWORD")
 
     # セキュリティ設定
     SECRET_KEY: str = Field(
-        default="change-this-secret-key-in-production",
-        env="SECRET_KEY"
+        default="change-this-secret-key-in-production", env="SECRET_KEY"
     )
     ALGORITHM: str = Field(default="HS256", env="ALGORITHM")
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(default=30, env="ACCESS_TOKEN_EXPIRE_MINUTES")
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(
+        default=30, env="ACCESS_TOKEN_EXPIRE_MINUTES"
+    )
     REFRESH_TOKEN_EXPIRE_DAYS: int = Field(default=7, env="REFRESH_TOKEN_EXPIRE_DAYS")
 
     # CORS設定
     CORS_ORIGINS: List[str] = Field(
-        default=["http://localhost:3000", "http://localhost:8000"],
-        env="CORS_ORIGINS"
+        default=["http://localhost:3000", "http://localhost:8000"], env="CORS_ORIGINS"
     )
 
     # APIレート制限設定
@@ -60,8 +55,7 @@ class Settings(BaseSettings):
     # ロギング設定
     LOG_LEVEL: str = Field(default="INFO", env="LOG_LEVEL")
     LOG_FORMAT: str = Field(
-        default="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        env="LOG_FORMAT"
+        default="%(asctime)s - %(name)s - %(levelname)s - %(message)s", env="LOG_FORMAT"
     )
     LOGSTASH_URL: Optional[str] = Field(default=None, env="LOGSTASH_URL")
 
@@ -73,31 +67,28 @@ class Settings(BaseSettings):
     CSRF_ENABLED: bool = Field(default=True, env="CSRF_ENABLED")
     CSRF_SECRET: Optional[str] = Field(default=None, env="CSRF_SECRET")
     ALLOWED_HOSTS: List[str] = Field(
-        default=["localhost", "127.0.0.1"],
-        env="ALLOWED_HOSTS"
+        default=["localhost", "127.0.0.1"], env="ALLOWED_HOSTS"
     )
 
     # ファイルアップロード設定
-    MAX_UPLOAD_SIZE: int = Field(default=100 * 1024 * 1024, env="MAX_UPLOAD_SIZE")  # 100MB
+    MAX_UPLOAD_SIZE: int = Field(
+        default=100 * 1024 * 1024, env="MAX_UPLOAD_SIZE"
+    )  # 100MB
     ALLOWED_EXTENSIONS: List[str] = Field(
-        default=["jpg", "jpeg", "png", "pdf", "doc", "docx"],
-        env="ALLOWED_EXTENSIONS"
+        default=["jpg", "jpeg", "png", "pdf", "doc", "docx"], env="ALLOWED_EXTENSIONS"
     )
 
     # Celery設定（非同期処理）
     CELERY_BROKER_URL: str = Field(
-        default="redis://localhost:6379/1",
-        env="CELERY_BROKER_URL"
+        default="redis://localhost:6379/1", env="CELERY_BROKER_URL"
     )
     CELERY_RESULT_BACKEND: str = Field(
-        default="redis://localhost:6379/2",
-        env="CELERY_RESULT_BACKEND"
+        default="redis://localhost:6379/2", env="CELERY_RESULT_BACKEND"
     )
 
     # Kafka設定
     KAFKA_BOOTSTRAP_SERVERS: str = Field(
-        default="localhost:9092",
-        env="KAFKA_BOOTSTRAP_SERVERS"
+        default="localhost:9092", env="KAFKA_BOOTSTRAP_SERVERS"
     )
 
     # MinIO設定

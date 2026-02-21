@@ -1,8 +1,8 @@
 """
 UEP v5.0 - 監視・オブザーバビリティモジュール
 """
-from .metrics import MetricsCollector
 from .logging import LoggingHandler
+from .metrics import MetricsCollector
 from .tracing import TracingHandler
 
 __all__ = [

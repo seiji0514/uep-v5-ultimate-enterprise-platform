@@ -10,6 +10,7 @@ from fastapi.testclient import TestClient
 def client():
     """TestClient を取得"""
     from main import app
+
     return TestClient(app)
 
 

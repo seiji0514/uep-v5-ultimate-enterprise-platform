@@ -1,12 +1,14 @@
 """
 統合セキュリティコマンドセンター関連のデータモデル
 """
+from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel
-from typing import Optional, Dict, Any, List
 
 
 class SecurityEventCreate(BaseModel):
     """セキュリティイベント作成モデル"""
+
     event_type: str
     threat_level: str
     source: str
@@ -17,6 +19,7 @@ class SecurityEventCreate(BaseModel):
 
 class IncidentCreate(BaseModel):
     """インシデント作成モデル"""
+
     title: str
     description: str
     severity: str
@@ -26,6 +29,7 @@ class IncidentCreate(BaseModel):
 
 class IncidentUpdate(BaseModel):
     """インシデント更新モデル"""
+
     status: Optional[str] = None
     assigned_to: Optional[str] = None
     resolution: Optional[str] = None
@@ -33,6 +37,7 @@ class IncidentUpdate(BaseModel):
 
 class RiskCreate(BaseModel):
     """リスク作成モデル"""
+
     name: str
     description: str
     category: str

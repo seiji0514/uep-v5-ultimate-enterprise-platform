@@ -1,15 +1,17 @@
 """
 セキュリティ監視モジュール
 """
-from typing import Dict, Any, List, Optional
+import uuid
 from datetime import datetime
 from enum import Enum
+from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel
-import uuid
 
 
 class ThreatLevel(str, Enum):
     """脅威レベル"""
+
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
@@ -18,6 +20,7 @@ class ThreatLevel(str, Enum):
 
 class SecurityEvent(BaseModel):
     """セキュリティイベント"""
+
     id: str
     event_type: str  # intrusion, malware, data_breach, etc.
     threat_level: ThreatLevel
@@ -44,7 +47,7 @@ class SecurityMonitor:
         source: str,
         target: str,
         description: str,
-        metadata: Optional[Dict[str, Any]] = None
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> SecurityEvent:
         """セキュリティイベントを記録"""
         event_id = str(uuid.uuid4())
@@ -57,7 +60,7 @@ class SecurityMonitor:
             target=target,
             description=description,
             timestamp=datetime.utcnow(),
-            metadata=metadata
+            metadata=metadata,
         )
 
         self._events[event_id] = event
@@ -76,7 +79,7 @@ class SecurityMonitor:
             "threat_level": event.threat_level.value,
             "message": f"Security alert: {event.description}",
             "timestamp": event.timestamp.isoformat(),
-            "acknowledged": False
+            "acknowledged": False,
         }
         self._alerts.append(alert)
 
@@ -84,7 +87,7 @@ class SecurityMonitor:
         self,
         event_type: Optional[str] = None,
         threat_level: Optional[ThreatLevel] = None,
-        status: Optional[str] = None
+        status: Optional[str] = None,
     ) -> List[SecurityEvent]:
         """イベント一覧を取得"""
         events = list(self._events.values())

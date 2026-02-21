@@ -1,15 +1,17 @@
 """
 CI/CDパイプラインモジュール
 """
-from typing import Dict, Any, List, Optional
+import uuid
 from datetime import datetime
 from enum import Enum
+from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel
-import uuid
 
 
 class PipelineStage(str, Enum):
     """パイプラインステージ"""
+
     BUILD = "build"
     TEST = "test"
     DEPLOY = "deploy"
@@ -18,6 +20,7 @@ class PipelineStage(str, Enum):
 
 class CICDStatus(str, Enum):
     """CI/CDステータス"""
+
     PENDING = "pending"
     RUNNING = "running"
     SUCCESS = "success"
@@ -27,6 +30,7 @@ class CICDStatus(str, Enum):
 
 class CICDPipelineModel(BaseModel):
     """CI/CDパイプラインモデル"""
+
     id: str
     name: str
     repository: str
@@ -34,7 +38,7 @@ class CICDPipelineModel(BaseModel):
     stages: List[PipelineStage] = [
         PipelineStage.BUILD,
         PipelineStage.TEST,
-        PipelineStage.DEPLOY
+        PipelineStage.DEPLOY,
     ]
     status: CICDStatus = CICDStatus.PENDING
     config: Dict[str, Any] = {}
@@ -58,7 +62,7 @@ class CICDPipeline:
         branch: str = "main",
         stages: Optional[List[PipelineStage]] = None,
         created_by: str = "system",
-        config: Optional[Dict[str, Any]] = None
+        config: Optional[Dict[str, Any]] = None,
     ) -> CICDPipelineModel:
         """パイプラインを作成"""
         pipeline_id = str(uuid.uuid4())
@@ -68,21 +72,20 @@ class CICDPipeline:
             name=name,
             repository=repository,
             branch=branch,
-            stages=stages or [
-                PipelineStage.BUILD,
-                PipelineStage.TEST,
-                PipelineStage.DEPLOY
-            ],
+            stages=stages
+            or [PipelineStage.BUILD, PipelineStage.TEST, PipelineStage.DEPLOY],
             config=config or {},
             created_at=datetime.utcnow(),
             updated_at=datetime.utcnow(),
-            created_by=created_by
+            created_by=created_by,
         )
 
         self._pipelines[pipeline_id] = pipeline
         return pipeline
 
-    def trigger_pipeline(self, pipeline_id: str, commit_hash: Optional[str] = None) -> Dict[str, Any]:
+    def trigger_pipeline(
+        self, pipeline_id: str, commit_hash: Optional[str] = None
+    ) -> Dict[str, Any]:
         """パイプラインをトリガー"""
         pipeline = self._pipelines.get(pipeline_id)
         if not pipeline:
@@ -97,7 +100,7 @@ class CICDPipeline:
             "commit_hash": commit_hash or "unknown",
             "status": CICDStatus.RUNNING,
             "stages": {},
-            "started_at": datetime.utcnow().isoformat()
+            "started_at": datetime.utcnow().isoformat(),
         }
 
         self._runs[run_id] = run
@@ -107,12 +110,14 @@ class CICDPipeline:
             for stage in pipeline.stages:
                 run["stages"][stage.value] = {
                     "status": CICDStatus.RUNNING,
-                    "started_at": datetime.utcnow().isoformat()
+                    "started_at": datetime.utcnow().isoformat(),
                 }
 
                 # ステージ実行（簡易実装）
                 run["stages"][stage.value]["status"] = CICDStatus.SUCCESS
-                run["stages"][stage.value]["completed_at"] = datetime.utcnow().isoformat()
+                run["stages"][stage.value][
+                    "completed_at"
+                ] = datetime.utcnow().isoformat()
 
             run["status"] = CICDStatus.SUCCESS
             run["completed_at"] = datetime.utcnow().isoformat()

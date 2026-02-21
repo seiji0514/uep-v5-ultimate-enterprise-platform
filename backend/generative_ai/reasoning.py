@@ -2,13 +2,16 @@
 推論エンジンモジュール
 Chain of Thought (CoT) 推論の実装
 """
-from typing import List, Dict, Any, Optional
+from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel
+
 from .llm_integration import LLMClient
 
 
 class ReasoningStep(BaseModel):
     """推論ステップ"""
+
     step_number: int
     thought: str
     reasoning: str
@@ -28,9 +31,7 @@ class ReasoningEngine:
         self.llm_client = llm_client
 
     async def chain_of_thought(
-        self,
-        problem: str,
-        max_steps: int = 5
+        self, problem: str, max_steps: int = 5
     ) -> Dict[str, Any]:
         """
         Chain of Thought推論を実行
@@ -57,9 +58,7 @@ class ReasoningEngine:
 推論:"""
 
             result = await self.llm_client.generate(
-                prompt,
-                max_tokens=500,
-                temperature=0.7
+                prompt, max_tokens=500, temperature=0.7
             )
 
             reasoning_text = result.get("text", "")
@@ -68,7 +67,7 @@ class ReasoningEngine:
             step = ReasoningStep(
                 step_number=step_num,
                 thought=f"ステップ{step_num}の思考",
-                reasoning=reasoning_text
+                reasoning=reasoning_text,
             )
 
             steps.append(step)
@@ -95,13 +94,11 @@ class ReasoningEngine:
             "problem": problem,
             "steps": [step.dict() for step in steps],
             "final_answer": final_result.get("text", ""),
-            "total_steps": len(steps)
+            "total_steps": len(steps),
         }
 
     async def solve_problem(
-        self,
-        problem: str,
-        reasoning_type: str = "cot"
+        self, problem: str, reasoning_type: str = "cot"
     ) -> Dict[str, Any]:
         """
         問題を解決
@@ -121,20 +118,23 @@ class ReasoningEngine:
             return {
                 "problem": problem,
                 "answer": result.get("text", ""),
-                "reasoning_type": "direct"
+                "reasoning_type": "direct",
             }
 
 
 # グローバルインスタンス（遅延初期化で循環インポートを回避）
 _reasoning_engine_cache = None
 
+
 def get_reasoning_engine() -> ReasoningEngine:
     """推論エンジンを取得（遅延初期化）"""
     global _reasoning_engine_cache
     if _reasoning_engine_cache is None:
         from .llm_integration import llm_client
+
         _reasoning_engine_cache = ReasoningEngine(llm_client)
     return _reasoning_engine_cache
+
 
 # 後方互換性のため（モジュール読み込み時は初期化しない）
 reasoning_engine = None

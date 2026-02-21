@@ -2,15 +2,17 @@
 高度なキャッシング戦略モジュール
 Redisベースのマルチレベルキャッシング
 """
-from typing import Optional, Any, Callable, Dict
-from functools import wraps
-import json
 import hashlib
+import json
+import logging
 import pickle
 from datetime import datetime, timedelta
+from functools import wraps
+from typing import Any, Callable, Dict, Optional
+
 import redis
+
 from core.config import settings
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +30,7 @@ class CacheStrategy:
                 socket_connect_timeout=5,
                 socket_timeout=5,
                 retry_on_timeout=True,
-                health_check_interval=30
+                health_check_interval=30,
             )
             # 接続テスト
             self.redis_client.ping()
@@ -41,11 +43,7 @@ class CacheStrategy:
 
     def _generate_key(self, prefix: str, *args, **kwargs) -> str:
         """キャッシュキーを生成"""
-        key_data = {
-            "prefix": prefix,
-            "args": args,
-            "kwargs": kwargs
-        }
+        key_data = {"prefix": prefix, "args": args, "kwargs": kwargs}
         key_string = json.dumps(key_data, sort_keys=True, default=str)
         return f"{prefix}:{hashlib.md5(key_string.encode()).hexdigest()}"
 
@@ -67,7 +65,7 @@ class CacheStrategy:
         key: str,
         value: Any,
         ttl: Optional[int] = None,
-        tags: Optional[list] = None
+        tags: Optional[list] = None,
     ):
         """キャッシュに設定"""
         try:
@@ -131,8 +129,7 @@ class CacheStrategy:
             else:
                 if pattern:
                     self._memory_cache = {
-                        k: v for k, v in self._memory_cache.items()
-                        if pattern in k
+                        k: v for k, v in self._memory_cache.items() if pattern in k
                     }
                 else:
                     self._memory_cache.clear()
@@ -150,9 +147,13 @@ class CacheStrategy:
                     "hits": info.get("keyspace_hits", 0),
                     "misses": info.get("keyspace_misses", 0),
                     "hit_rate": (
-                        info.get("keyspace_hits", 0) /
-                        (info.get("keyspace_hits", 0) + info.get("keyspace_misses", 1))
-                    ) * 100
+                        info.get("keyspace_hits", 0)
+                        / (
+                            info.get("keyspace_hits", 0)
+                            + info.get("keyspace_misses", 1)
+                        )
+                    )
+                    * 100,
                 }
             else:
                 return {
@@ -160,7 +161,7 @@ class CacheStrategy:
                     "total_keys": len(self._memory_cache),
                     "hits": 0,
                     "misses": 0,
-                    "hit_rate": 0
+                    "hit_rate": 0,
                 }
         except Exception as e:
             logger.error(f"Cache stats error: {e}")
@@ -171,11 +172,7 @@ class CacheStrategy:
 cache_strategy = CacheStrategy()
 
 
-def cached(
-    ttl: int = 300,
-    key_prefix: str = "cache",
-    tags: Optional[list] = None
-):
+def cached(ttl: int = 300, key_prefix: str = "cache", tags: Optional[list] = None):
     """
     関数結果をキャッシュするデコレータ
 
@@ -184,6 +181,7 @@ def cached(
         def get_user(user_id: int):
             return db.query(User).filter(User.id == user_id).first()
     """
+
     def decorator(func: Callable):
         @wraps(func)
         async def async_wrapper(*args, **kwargs):
@@ -221,6 +219,7 @@ def cached(
 
         # 非同期関数かどうかでラッパーを選択
         import asyncio
+
         if asyncio.iscoroutinefunction(func):
             return async_wrapper
         else:

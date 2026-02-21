@@ -2,15 +2,17 @@
 MLモデルレジストリモジュール
 MLモデルの管理・デプロイ・監視
 """
-from typing import Dict, Any, List, Optional
+import uuid
 from datetime import datetime
 from enum import Enum
+from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel
-import uuid
 
 
 class ModelStatus(str, Enum):
     """モデルステータス"""
+
     DEVELOPMENT = "development"
     STAGING = "staging"
     PRODUCTION = "production"
@@ -19,8 +21,9 @@ class ModelStatus(str, Enum):
 
 class ModelVersion(BaseModel):
     """モデルバージョン"""
+
     model_config = {"protected_namespaces": ()}
-    
+
     version: str
     model_path: str
     metrics: Dict[str, float]
@@ -32,8 +35,9 @@ class ModelVersion(BaseModel):
 
 class MLModel(BaseModel):
     """MLモデル"""
+
     model_config = {"protected_namespaces": ()}
-    
+
     id: str
     name: str
     description: Optional[str] = None
@@ -59,7 +63,7 @@ class ModelRegistry:
         model_type: str,
         framework: str,
         created_by: str,
-        description: Optional[str] = None
+        description: Optional[str] = None,
     ) -> MLModel:
         """モデルを登録"""
         model_id = str(uuid.uuid4())
@@ -72,7 +76,7 @@ class ModelRegistry:
             framework=framework,
             created_at=datetime.utcnow(),
             updated_at=datetime.utcnow(),
-            created_by=created_by
+            created_by=created_by,
         )
 
         self._models[model_id] = model
@@ -85,7 +89,7 @@ class ModelRegistry:
         model_path: str,
         metrics: Dict[str, float],
         created_by: str,
-        metadata: Optional[Dict[str, Any]] = None
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> ModelVersion:
         """モデルバージョンを登録"""
         model = self._models.get(model_id)
@@ -98,7 +102,7 @@ class ModelRegistry:
             metrics=metrics,
             created_at=datetime.utcnow(),
             created_by=created_by,
-            metadata=metadata
+            metadata=metadata,
         )
 
         model.versions.append(model_version)
@@ -108,10 +112,7 @@ class ModelRegistry:
         return model_version
 
     def promote_version(
-        self,
-        model_id: str,
-        version: str,
-        target_status: ModelStatus
+        self, model_id: str, version: str, target_status: ModelStatus
     ) -> bool:
         """モデルバージョンをプロモート"""
         model = self._models.get(model_id)
@@ -134,9 +135,7 @@ class ModelRegistry:
         return self._models.get(model_id)
 
     def list_models(
-        self,
-        model_type: Optional[str] = None,
-        status: Optional[ModelStatus] = None
+        self, model_type: Optional[str] = None, status: Optional[ModelStatus] = None
     ) -> List[MLModel]:
         """モデル一覧を取得"""
         models = list(self._models.values())
@@ -146,8 +145,10 @@ class ModelRegistry:
 
         if status:
             models = [
-                m for m in models
-                if m.current_version and any(
+                m
+                for m in models
+                if m.current_version
+                and any(
                     v.version == m.current_version and v.status == status
                     for v in m.versions
                 )
@@ -156,10 +157,7 @@ class ModelRegistry:
         return models
 
     def deploy_model(
-        self,
-        model_id: str,
-        version: str,
-        deployment_config: Dict[str, Any]
+        self, model_id: str, version: str, deployment_config: Dict[str, Any]
     ) -> Dict[str, Any]:
         """モデルをデプロイ"""
         model = self._models.get(model_id)
@@ -179,7 +177,7 @@ class ModelRegistry:
             "version": version,
             "status": "deployed",
             "endpoint": f"/api/v1/mlops/models/{model_id}/predict",
-            "created_at": datetime.utcnow().isoformat()
+            "created_at": datetime.utcnow().isoformat(),
         }
 
 

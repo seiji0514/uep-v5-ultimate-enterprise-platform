@@ -1,8 +1,10 @@
 """
 コード生成支援モジュール
 """
-from typing import Dict, Any, Optional, List
+from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel
+
 from generative_ai.llm_integration import llm_client
 
 
@@ -14,7 +16,7 @@ class CodeGenerator:
         description: str,
         language: str = "python",
         framework: Optional[str] = None,
-        requirements: Optional[List[str]] = None
+        requirements: Optional[List[str]] = None,
     ) -> Dict[str, Any]:
         """
         コードを生成
@@ -28,7 +30,9 @@ class CodeGenerator:
         Returns:
             生成されたコード
         """
-        requirements_text = "\n".join([f"- {req}" for req in requirements]) if requirements else ""
+        requirements_text = (
+            "\n".join([f"- {req}" for req in requirements]) if requirements else ""
+        )
         framework_text = f" using {framework}" if framework else ""
 
         prompt = f"""以下の要件に基づいて{language}{framework_text}のコードを生成してください。
@@ -46,14 +50,11 @@ class CodeGenerator:
             "code": result.get("text", ""),
             "language": language,
             "framework": framework,
-            "description": description
+            "description": description,
         }
 
     async def generate_test_code(
-        self,
-        code: str,
-        language: str = "python",
-        test_framework: Optional[str] = None
+        self, code: str, language: str = "python", test_framework: Optional[str] = None
     ) -> Dict[str, Any]:
         """
         テストコードを生成
@@ -81,14 +82,14 @@ class CodeGenerator:
             "test_code": result.get("text", ""),
             "language": language,
             "test_framework": test_framework,
-            "target_code": code
+            "target_code": code,
         }
 
     async def refactor_code(
         self,
         code: str,
         language: str = "python",
-        improvements: Optional[List[str]] = None
+        improvements: Optional[List[str]] = None,
     ) -> Dict[str, Any]:
         """
         コードをリファクタリング
@@ -101,7 +102,11 @@ class CodeGenerator:
         Returns:
             リファクタリングされたコード
         """
-        improvements_text = "\n".join([f"- {imp}" for imp in improvements]) if improvements else "コードの品質を向上"
+        improvements_text = (
+            "\n".join([f"- {imp}" for imp in improvements])
+            if improvements
+            else "コードの品質を向上"
+        )
 
         prompt = f"""以下の{language}コードをリファクタリングしてください。
 
@@ -119,7 +124,7 @@ class CodeGenerator:
             "refactored_code": result.get("text", ""),
             "language": language,
             "original_code": code,
-            "improvements": improvements
+            "improvements": improvements,
         }
 
 

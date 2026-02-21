@@ -2,19 +2,18 @@
 Level 3 エコシステム - APIルート
 パートナー統合、コミュニティ機能、業界標準
 """
+from typing import Any, Dict, List, Optional
+
 from fastapi import APIRouter, Depends, HTTPException, status
-from typing import List, Optional
-from .models import (
-    PartnerCreate, Partner, PartnerApproval,
-    MarketplaceItemCreate, MarketplaceItem,
-    PluginCreate, Plugin,
-    SharedModelCreate, SharedModel,
-    ForumPostCreate, ForumPost, ForumCommentCreate, ForumComment,
-)
-from .store import ecosystem_store
+
 from auth.jwt_auth import get_current_active_user
 from auth.rbac import require_permission
-from typing import Dict, Any
+
+from .models import (ForumComment, ForumCommentCreate, ForumPost,
+                     ForumPostCreate, MarketplaceItem, MarketplaceItemCreate,
+                     Partner, PartnerApproval, PartnerCreate, Plugin,
+                     PluginCreate, SharedModel, SharedModelCreate)
+from .store import ecosystem_store
 
 router = APIRouter(prefix="/api/v1/ecosystem", tags=["Ecosystem (Level 3)"])
 
@@ -75,7 +74,9 @@ async def list_marketplace_items(
     return ecosystem_store.list_marketplace_items(category=category)
 
 
-@router.post("/marketplace", response_model=MarketplaceItem, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/marketplace", response_model=MarketplaceItem, status_code=status.HTTP_201_CREATED
+)
 @require_permission("manage_ecosystem")
 async def create_marketplace_item(
     item: MarketplaceItemCreate,
@@ -139,7 +140,9 @@ async def list_shared_models(
     return ecosystem_store.list_shared_models(model_type=model_type)
 
 
-@router.post("/shared-models", response_model=SharedModel, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/shared-models", response_model=SharedModel, status_code=status.HTTP_201_CREATED
+)
 @require_permission("manage_ecosystem")
 async def share_model(
     model: SharedModelCreate,
@@ -175,7 +178,9 @@ async def list_forum_posts(
     return ecosystem_store.list_forum_posts(category=category)
 
 
-@router.post("/forum/posts", response_model=ForumPost, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/forum/posts", response_model=ForumPost, status_code=status.HTTP_201_CREATED
+)
 @require_permission("read")
 async def create_forum_post(
     post: ForumPostCreate,
@@ -209,7 +214,11 @@ async def list_forum_comments(
     return ecosystem_store.list_forum_comments(post_id)
 
 
-@router.post("/forum/posts/{post_id}/comments", response_model=ForumComment, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/forum/posts/{post_id}/comments",
+    response_model=ForumComment,
+    status_code=status.HTTP_201_CREATED,
+)
 @require_permission("read")
 async def create_forum_comment(
     post_id: str,
@@ -260,7 +269,9 @@ async def get_standard_api_spec():
 
 @router.get("/overview")
 @require_permission("read")
-async def get_ecosystem_overview(current_user: Dict[str, Any] = Depends(get_current_active_user)):
+async def get_ecosystem_overview(
+    current_user: Dict[str, Any] = Depends(get_current_active_user)
+):
     """エコシステム概要（Level 3）"""
     return {
         "level": 3,

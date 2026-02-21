@@ -1,13 +1,15 @@
 """
 統合管理ダッシュボードモジュール
 """
-from typing import Dict, Any, List
 from datetime import datetime
+from typing import Any, Dict, List
+
 from pydantic import BaseModel
 
 
 class DashboardWidget(BaseModel):
     """ダッシュボードウィジェット"""
+
     id: str
     widget_type: str  # metric, chart, table, etc.
     title: str
@@ -25,7 +27,7 @@ class UnifiedDashboard:
                 "total_services": 7,
                 "active_services": 7,
                 "total_users": 3,
-                "system_health": "healthy"
+                "system_health": "healthy",
             },
             "services": [
                 {"name": "MLOps", "status": "active", "uptime": "99.9%"},
@@ -39,22 +41,22 @@ class UnifiedDashboard:
                 "api_requests_today": 1250,
                 "active_pipelines": 5,
                 "deployed_models": 12,
-                "security_events": 3
+                "security_events": 3,
             },
             "recent_activities": [
                 {
                     "timestamp": datetime.utcnow().isoformat(),
                     "service": "MLOps",
                     "action": "Model deployed",
-                    "user": "admin"
+                    "user": "admin",
                 },
                 {
                     "timestamp": datetime.utcnow().isoformat(),
                     "service": "生成AI",
                     "action": "RAG query processed",
-                    "user": "developer"
-                }
-            ]
+                    "user": "developer",
+                },
+            ],
         }
 
 

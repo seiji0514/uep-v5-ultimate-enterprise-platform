@@ -2,11 +2,13 @@
 WebSocketサポートモジュール
 リアルタイム通信
 """
-from fastapi import WebSocket, WebSocketDisconnect, Depends
-from typing import Dict, List, Set
-import json
 import asyncio
+import json
 from datetime import datetime
+from typing import Dict, List, Set
+
+from fastapi import Depends, WebSocket, WebSocketDisconnect
+
 from auth.jwt_auth import get_current_user_websocket
 
 
@@ -17,7 +19,9 @@ class ConnectionManager:
         self.active_connections: Dict[str, Set[WebSocket]] = {}
         self.user_connections: Dict[str, Set[WebSocket]] = {}
 
-    async def connect(self, websocket: WebSocket, room: str = "default", user_id: str = None):
+    async def connect(
+        self, websocket: WebSocket, room: str = "default", user_id: str = None
+    ):
         """WebSocket接続を確立"""
         await websocket.accept()
 
@@ -30,7 +34,9 @@ class ConnectionManager:
                 self.user_connections[user_id] = set()
             self.user_connections[user_id].add(websocket)
 
-    def disconnect(self, websocket: WebSocket, room: str = "default", user_id: str = None):
+    def disconnect(
+        self, websocket: WebSocket, room: str = "default", user_id: str = None
+    ):
         """WebSocket接続を切断"""
         if room in self.active_connections:
             self.active_connections[room].discard(websocket)
