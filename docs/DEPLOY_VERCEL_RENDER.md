@@ -177,8 +177,10 @@ Vercel の URL が決まったら、以下を追加:
 
 **3. CORS エラーの場合（ブラウザ F12 → Console で確認）**
 - **Render** → Environment で `CORS_ORIGINS` に Vercel の URL を追加
-- 例: `https://uep-v5-ultimate-enterprise-platform.vercel.app`
-- 複数ある場合はカンマ区切り、末尾にスラッシュ不要
+- **形式**: カンマ区切り文字列（推奨）
+  - 例: `https://uep-v5-ultimate-enterprise-platform.vercel.app`
+  - 複数: `https://a.vercel.app,https://b.vercel.app`
+- 末尾にスラッシュ不要、前後にスペース・改行を入れない
 
 ### ログイン後、白画面のまま
 

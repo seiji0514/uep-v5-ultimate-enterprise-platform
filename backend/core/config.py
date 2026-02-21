@@ -2,9 +2,10 @@
 設定管理モジュール
 Pydantic Settingsを使用した設定管理
 """
+import json
 import os
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings
@@ -42,9 +43,11 @@ class Settings(BaseSettings):
     )
     REFRESH_TOKEN_EXPIRE_DAYS: int = Field(default=7, env="REFRESH_TOKEN_EXPIRE_DAYS")
 
-    # CORS設定
-    CORS_ORIGINS: List[str] = Field(
-        default=["http://localhost:3000", "http://localhost:8000"], env="CORS_ORIGINS"
+    # CORS設定（カンマ区切り文字列 or JSON配列をサポート。Unionで生文字列を許可）
+    CORS_ORIGINS: Union[str, List[str]] = Field(
+        default=["http://localhost:3000", "http://localhost:8000"],
+        env="CORS_ORIGINS",
+        description="カンマ区切り: https://a.com,https://b.com または JSON: [\"https://a.com\"]",
     )
 
     # APIレート制限設定
@@ -112,9 +115,23 @@ class Settings(BaseSettings):
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod
     def parse_cors_origins(cls, v):
-        """CORS_ORIGINSをリストに変換"""
+        """CORS_ORIGINSをリストに変換（カンマ区切り or JSON配列）"""
+        if v is None:
+            return ["http://localhost:3000", "http://localhost:8000"]
+        if isinstance(v, list):
+            return v
         if isinstance(v, str):
-            return [origin.strip() for origin in v.split(",")]
+            s = v.strip()
+            if not s:
+                return ["http://localhost:3000", "http://localhost:8000"]
+            # JSON配列形式を試行（Render等で["url"]と設定した場合）
+            if s.startswith("["):
+                try:
+                    return json.loads(s)
+                except json.JSONDecodeError:
+                    pass
+            # カンマ区切り
+            return [origin.strip() for origin in s.split(",") if origin.strip()]
         return v
 
     @field_validator("ALLOWED_HOSTS", mode="before")
