@@ -1,0 +1,45 @@
+面談当日の起動手順
+
+ステップ1: システムの起動（面談開始5分前）
+
+実行後の確認:
+1. バックエンドウィンドウが開き、http://localhost:8000で起動していることを確認
+2. フロントエンドウィンドウが開き、http://localhost:3000で起動していることを確認
+3. エラーメッセージがないことを確認
+
+個別起動
+
+バックエンド:
+
+cmd
+start-backend.bat
+
+起動確認:http://localhost:8000/health にアクセス
+Swagger UI確認:http://localhost:8000/docs にアクセス
+
+フロントエンド（別のコマンドプロンプト）:
+cd c:\uep-v5-ultimate-enterprise-platform\frontend
+npm start
+
+初回セットアップ（依存パッケージのインストールが必要な場合）
+
+cd c:\uep-v5-ultimate-enterprise-platform\frontend
+npm install
+npm start
+
+起動確認:http://localhost:3000  にアクセス
+
+---
+
+ステップ2: ブラウザの準備
+
+1.ブラウザを開く
+   - ChromeまたはEdgeを推奨
+   - 複数のタブを開いておく:
+     - http://localhost:3000 (フロントエンド)
+     - http://localhost:8000/docs(Swagger UI)
+     - http://localhost:8000/health(ヘルスチェック)
+
+2. ログイン画面を開く
+   - http://localhost:3000 にアクセス
+   - ログイン情報を入力できる状態にしておく

@@ -1,0 +1,45 @@
+# Prometheus アラートルール
+# UEP v5.0 監視強化 - アラート条件
+groups:
+  - name: uep-backend
+    rules:
+      - alert: HighErrorRate
+        expr: |
+          sum(rate(http_requests_total{status=~"5.."}[5m])) 
+          / sum(rate(http_requests_total[5m])) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "5xx エラー率が 5% を超えています"
+          description: "直近5分間の5xxエラー率が {{ $value | humanizePercentage }} です"
+
+      - alert: HighLatency
+        expr: |
+          histogram_quantile(0.99, 
+            sum(rate(http_request_duration_seconds_bucket[5m])) by (le)
+          ) > 1
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "p99 レイテンシが 1秒を超えています"
+
+      - alert: ServiceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "サービスがダウンしています"
+          description: "{{ $labels.job }} のヘルスチェックが失敗しています"
+
+      - alert: HighMemoryUsage
+        expr: |
+          (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) 
+          / node_memory_MemTotal_bytes > 0.8
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "メモリ使用率が 80% を超えています"

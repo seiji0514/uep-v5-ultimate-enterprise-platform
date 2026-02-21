@@ -1,0 +1,31 @@
+# UEP v5.0 - Render デプロイ設定
+# https://render.com/docs/blueprint-spec
+# ダッシュボードから「New」→「Blueprint」でこのファイルを指定してデプロイ
+
+services:
+  - type: web
+    name: uep-backend
+    runtime: python
+
+    # バックエンドディレクトリをルートに
+    rootDir: backend
+
+    # ビルド
+    buildCommand: pip install -r requirements.txt
+
+    # 起動（Render が PORT を自動設定）
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+
+    # 環境変数（本番では Render ダッシュボードで設定推奨）
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: DEBUG
+        value: "false"
+      # DATABASE_URL 未設定時は SQLite を使用（無料枠・データは再起動でリセット）
+      # 永続化が必要な場合は Render ダッシュボードで PostgreSQL を追加し DATABASE_URL を設定
+      # Redis なしでメモリレート制限を使用
+      - key: RATE_LIMIT_ENABLED
+        value: "false"
+      - key: SECRET_KEY
+        generateValue: true

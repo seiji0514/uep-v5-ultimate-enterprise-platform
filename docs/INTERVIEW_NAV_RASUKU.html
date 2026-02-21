@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>面談用ナビ - 株式会社ラスク</title>
+  <style>
+    body { font-family: "Yu Gothic", "Meiryo", sans-serif; max-width: 720px; margin: 0 auto; padding: 1rem; line-height: 1.5; font-size: 0.95rem; }
+    h1 { font-size: 1.3rem; border-bottom: 2px solid #333; padding-bottom: 0.4rem; }
+    h2 { font-size: 1.15rem; margin-top: 1.5rem; color: #333; border-bottom: 1px solid #ccc; }
+    h3 { font-size: 1rem; margin-top: 1rem; color: #555; }
+    nav { background: #e8f4f8; padding: 0.8rem; border-radius: 4px; margin-bottom: 1.5rem; border-left: 4px solid #0066cc; }
+    nav ul { list-style: none; padding: 0; margin: 0; }
+    nav li { margin: 0.3rem 0; }
+    nav a { color: #0066cc; text-decoration: none; }
+    nav a:hover { text-decoration: underline; }
+    .q { font-weight: bold; color: #333; }
+    .hl { background: #fff9e6; padding: 0 0.2rem; }
+    .term { background: #f8f9fa; padding: 0.6rem 0.8rem; margin: 0.5rem 0; border-radius: 4px; border-left: 3px solid #0066cc; }
+    .term-name { font-weight: bold; color: #0066cc; }
+    p, ul { margin: 0.4rem 0; padding-left: 1.2rem; }
+    ul { padding-left: 1.5rem; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 1rem 0; }
+  </style>
+</head>
+<body>
+
+<h1>面談用ナビ - 株式会社ラスク</h1>
+<p><em>汎用版（どの企業・職種でも対応）は <a href="INTERVIEW_NAV_汎用.html">INTERVIEW_NAV_汎用.html</a> を参照</em></p>
+
+<nav>
+  <p><strong>▼ クリックで該当箇所に移動</strong></p>
+  <ul>
+    <li><a href="#rasuku-point">0. ラスクのポイント</a></li>
+    <li><a href="#terms">1. AI用語集（面談で聞かれやすい用語）</a></li>
+    <li><a href="#aisatsu">2. 挨拶・締め</a></li>
+    <li><a href="#jikoshokai">3. 自己紹介・転職理由</a></li>
+    <li><a href="#choshoshosho">4. 長所・短所</a></li>
+    <li><a href="#question">5. 質問への回答</a></li>
+    <li><a href="#experience">6. ITエンジニア実務経験・チーム開発について</a></li>
+    <li><a href="#demo">7. デモ手順</a></li>
+  </ul>
+</nav>
+
+<div id="rasuku-point">
+  <h2>0. ラスクのポイント</h2>
+  <p><strong>貴社の特色</strong> <span class="hl">AX（エーエックス、AI Transformation）</span>／AI（エーアイ）駆動開発／自社AIサービス（シニア向けデジタルデバイド解消）／プライム案件・直請け／要件定義～設計～開発～テストまで一貫／フルリモート・フレックス</p>
+  <p><strong>面接で強調</strong> AX（エーエックス）・AI駆動開発への共感／シニア向けデジタルデバイド解消サービスへの貢献意欲／アクセシビリティ専門性の活用／完全リモート・通院配慮があれば対応可</p>
+</div>
+
+<hr>
+
+<div id="terms">
+  <h2>1. AI用語集（面談で聞かれやすい用語）</h2>
+  <p><em>前回面談でAI用語の意味を聞かれたため、ラスク面談で使用されそうな用語をピックアップ。意味と使い方を記載。</em></p>
+
+  <div class="term">
+    <span class="term-name">AX（エーエックス、AI Transformation）</span>
+    <p><strong>意味:</strong> AIによるビジネス変革。企業がAIを活用して業務・プロダクト・組織を変革すること。ラスクのキーワード。</p>
+    <p><strong>使い方:</strong> 「貴社が推進するAXに強く共感しております。AI駆動開発の最前線で貢献したいです。」</p>
+  </div>
+
+  <div class="term">
+    <span class="term-name">RAG（ラグ、Retrieval-Augmented Generation）</span>
+    <p><strong>意味:</strong> 検索拡張生成。外部の知識ベース（ドキュメント・DB（ディービー））を検索し、その結果をLLM（エルエルエム）の入力に加えて回答を生成する手法。ハルシネーション（幻覚）を減らせる。</p>
+    <p><strong>使い方:</strong> 「RAG（ラグ）パターンでLangChain（ラングチェーン）とChromaDB（クローマディービー）を組み合わせ、社内ドキュメント検索システムを実装しました。」</p>
+  </div>
+
+  <div class="term">
+    <span class="term-name">CoT（コット、Chain-of-Thought）推論</span>
+    <p><strong>意味:</strong> 思考の連鎖。LLM（エルエルエム）に「段階的に考えて」と促し、中間の推論ステップを踏ませてから結論を出す手法。複雑な問題で精度が上がる。</p>
+    <p><strong>使い方:</strong> 「CoT（コット）推論をプロンプトに組み込み、論理的な回答を導くように設計しました。」</p>
+  </div>
+
+  <div class="term">
+    <span class="term-name">LLM（エルエルエム、Large Language Model）</span>
+    <p><strong>意味:</strong> 大規模言語モデル。GPT-4（ジーピーティーフォー）、Claude（クロード）、Gemini（ジェミニ）など、大量のテキストで学習したAIモデル。テキスト生成・理解・推論が可能。</p>
+    <p><strong>使い方:</strong> 「LLM（エルエルエム）統合としてOpenAI API（オープンエーアイエーピーアイ）と連携し、自然言語での問い合わせに対応する機能を実装しました。」</p>
+  </div>
+
+  <div class="term">
+    <span class="term-name">MLOps（エムエルオプス、Machine Learning Operations）</span>
+    <p><strong>意味:</strong> ML（エムエル）モデルの開発から本番運用までを一貫して管理する仕組み。実験管理、モデルバージョニング、デプロイ、監視を含む。</p>
+    <p><strong>使い方:</strong> 「MLflow（エムエルフロー）で実験管理とモデルレジストリを構築し、Prometheus（プロメテウス）/Grafana（グラファナ）で監視基盤を整えました。」</p>
+  </div>
+
+  <div class="term">
+    <span class="term-name">LLMOps（エルエルエムオプス）</span>
+    <p><strong>意味:</strong> LLM（エルエルエム）の運用管理。プロンプト管理、バージョニング、A/Bテスト、コスト・レイテンシ監視など。</p>
+    <p><strong>使い方:</strong> 「LLMOps（エルエルエムオプス）としてRAG（ラグ）パイプラインの監視と、推論レイテンシ10ms未満の最適化を実施しました。」</p>
+  </div>
+
+  <div class="term">
+    <span class="term-name">生成AI（セイセイエーアイ、Generative AI）</span>
+    <p><strong>意味:</strong> テキスト・画像・音声などを「生成」するAI。ChatGPT（チャットジーピーティー）、画像生成AIなど。従来の分類・予測型AIと区別される。</p>
+    <p><strong>使い方:</strong> 「生成AIを活用し、RAG（ラグ）とCoT（コット）推論で社内ナレッジ検索システムを構築しました。」</p>
+  </div>
+
+  <div class="term">
+    <span class="term-name">AIエージェント（エーアイエージェント）</span>
+    <p><strong>意味:</strong> 自律的にタスクを実行するAI。ツール呼び出し、複数ステップの推論、外部API（エーピーアイ）連携などを行う。MCP（エムシーピー）/A2A（エーツーエー）はエージェント間連携。</p>
+    <p><strong>使い方:</strong> 「AIエージェントとして、タスクに応じてツールを選択し実行する仕組みを実装しました。」</p>
+  </div>
+
+  <div class="term">
+    <span class="term-name">推論AI（スイロンエーアイ、Inference AI）</span>
+    <p><strong>意味:</strong> 学習済みモデルを使って予測・生成を行うフェーズ。学習（training）と対比される。タスク難度に応じたモデルルーティングも含む。</p>
+    <p><strong>使い方:</strong> 「推論AIとして、簡単な質問は軽量モデル、複雑な質問はGPT-4（ジーピーティーフォー）に振り分けるルーティングを実装しました。」</p>
+  </div>
+
+  <div class="term">
+    <span class="term-name">MCP（エムシーピー、Model Context Protocol）</span>
+    <p><strong>意味:</strong> AIモデルが外部ツール・データソースにアクセスするための標準プロトコル。Anthropic（アンスロピック）等が提唱。</p>
+    <p><strong>使い方:</strong> 「MCP（エムシーピー）により、LLM（エルエルエム）が外部API（エーピーアイ）やデータベースに安全にアクセスできるようにしました。」</p>
+  </div>
+
+  <div class="term">
+    <span class="term-name">A2A（エーツーエー、Agent-to-Agent）</span>
+    <p><strong>意味:</strong> エージェント間連携。複数のAIエージェントが役割分担して協調動作する仕組み。</p>
+    <p><strong>使い方:</strong> 「A2Aで、検索エージェントと要約エージェントを連携させ、効率的な情報処理を実現しました。」</p>
+  </div>
+
+  <div class="term">
+    <span class="term-name">デジタルデバイド（デジタルデバイド）</span>
+    <p><strong>意味:</strong> デジタル技術へのアクセス・活用能力の格差。シニア層などがITに不慣れで取り残される問題。ラスクのシニア向けサービスと直結。</p>
+    <p><strong>使い方:</strong> 「貴社のシニア向けデジタルデバイド解消サービスに、アクセシビリティの専門知識で貢献したいです。」</p>
+  </div>
+
+  <div class="term">
+    <span class="term-name">アクセシビリティ（アクセシビリティ）</span>
+    <p><strong>意味:</strong> 誰もが使いやすい設計。障害者・高齢者・様々な環境でも利用できるUI（ユーアイ）/UX（ユーエックス）。WCAG（ダブリューシーエージー）準拠、スクリーンリーダー対応など。</p>
+    <p><strong>使い方:</strong> 「Webアクセシビリティ検査員検定L1～3を取得し、誰もが使いやすいAIシステムの開発に貢献できます。」</p>
+  </div>
+
+  <div class="term">
+    <span class="term-name">ベクトルデータベース（ベクトルデータベース、Vector DB）</span>
+    <p><strong>意味:</strong> テキストをベクトル（数値配列）に変換して保存し、類似検索ができるDB（ディービー）。RAG（ラグ）で「関連ドキュメントを検索」する際に使用。ChromaDB（クローマディービー）、Pinecone（パインコーン）等。</p>
+    <p><strong>使い方:</strong> 「ChromaDB（クローマディービー）をベクトルデータベースとして使い、RAG（ラグ）で関連ドキュメントを検索する仕組みを実装しました。」</p>
+  </div>
+
+  <div class="term">
+    <span class="term-name">LangChain（ラングチェーン）</span>
+    <p><strong>意味:</strong> LLM（エルエルエム）アプリケーション開発のフレームワーク。RAG（ラグ）、エージェント、チェーンなどを組み立てやすくするPython（パイソン）ライブラリ。</p>
+    <p><strong>使い方:</strong> 「LangChain（ラングチェーン）でRAG（ラグ）チェーンを構築し、ドキュメントの埋め込みと検索を実装しました。」</p>
+  </div>
+
+  <div class="term">
+    <span class="term-name">プロンプトエンジニアリング（プロンプトエンジニアリング）</span>
+    <p><strong>意味:</strong> LLM（エルエルエム）への指示（プロンプト）を設計・最適化すること。Few-shot（フィューショット）、CoT（コット）、役割設定などで出力品質を高める。</p>
+    <p><strong>使い方:</strong> 「プロンプトエンジニアリングで、CoT（コット）推論とFew-shot（フィューショット）例を組み合わせ、回答精度を向上させました。」</p>
+  </div>
+
+  <div class="term">
+    <span class="term-name">チャンキング（チャンキング、Chunking）</span>
+    <p><strong>意味:</strong> 長いテキストを小さな塊（チャンク）に分割すること。RAG（ラグ）ではドキュメントをチャンク化してベクトルDB（ディービー）に格納し、検索対象にする。</p>
+    <p><strong>使い方:</strong> 「チャンキングでドキュメントを適切なサイズに分割し、RAG（ラグ）の検索精度を高めました。」</p>
+  </div>
+
+  <div class="term">
+    <span class="term-name">ハルシネーション（ハルシネーション、Hallucination）</span>
+    <p><strong>意味:</strong> LLM（エルエルエム）が事実と異なる内容を「自信満々に」生成すること。RAG（ラグ）で外部知識を参照することで軽減できる。</p>
+    <p><strong>使い方:</strong> 「ハルシネーションを減らすため、RAG（ラグ）で社内ドキュメントを参照し、根拠のある回答を生成するようにしました。」</p>
+  </div>
+
+  <div class="term">
+    <span class="term-name">レイテンシ（レイテンシ、Latency）</span>
+    <p><strong>意味:</strong> 応答時間。リクエストからレスポンスまでの遅延。推論レイテンシはAIの回答速度。ユーザー体験に直結。</p>
+    <p><strong>使い方:</strong> 「推論レイテンシを10ms未満に最適化し、リアルタイム性を確保しました。」</p>
+  </div>
+
+  <div class="term">
+    <span class="term-name">API（エーピーアイ、Application Programming Interface）</span>
+    <p><strong>意味:</strong> ソフトウェア同士が連携するためのインターフェース。REST API（レストエーピーアイ）、OpenAI API（オープンエーアイエーピーアイ）など。外部サービスとの連携に使用。</p>
+    <p><strong>使い方:</strong> 「OpenAI API（オープンエーアイエーピーアイ）と連携し、LLM（エルエルエム）の推論機能をアプリケーションに組み込みました。」</p>
+  </div>
+</div>
+
+<hr>
+
+<div id="aisatsu">
+  <h2>2. 挨拶・締め</h2>
+  <p><strong>冒頭</strong> 本日はお時間をいただきありがとうございます。事前アンケート・書類選考を経てご案内いただき光栄です。よろしくお願いいたします。</p>
+  <p><strong>締め</strong> 本日はありがとうございました。今後の選考の流れをお教えいただけますか。追加のご質問があればお聞かせください。</p>
+</div>
+
+<hr>
+
+<div id="jikoshokai">
+  <h2>3. 自己紹介・転職理由</h2>
+  <p><strong>自己紹介（約40秒）</strong> 小川清志、51歳。完全在宅で総務・Webアクセシビリティ検査（検定L1～3）。2025年6月からAI（エーアイ）・ML（エムエル）に集中、8ヶ月で100システム以上を担当。MLOps（エムエルオプス）・生成AI（セイセイエーアイ）実装、稼働率99.995%達成。完全リモート3年9ヶ月。貴社の<span class="hl">AX（エーエックス）・AI駆動開発</span>・シニア向けデジタルデバイド解消サービスに、アクセシビリティの専門性を活かして貢献したいです。</p>
+  <p><strong>転職理由</strong> チーム開発・コードレビューなど実務スキルを深めたい。AI駆動開発・生成AI（セイセイエーアイ）で専門性を活かし貢献したい。貴社は<span class="hl">AX（エーエックス）</span>・自社AIサービス・プライム案件・要件定義～開発まで一貫して関与できると伺いました。</p>
+  <p><strong>志望動機</strong> <span class="hl">AX（エーエックス、AI Transformation）</span>を推進され、AI駆動開発・自社AIサービス（シニア向けデジタルデバイド解消）・プライム案件・直請け・フルリモート・フレックス。生成AI（セイセイエーアイ）・MLOps（エムエルオプス）/LLMOps（エルエルエムオプス）の専門知識を活かしたい。</p>
+  <p><strong>希望年収</strong> 経験・スキル・役割に応じてご相談。成長機会を最優先。通院配慮をいただければ幸いです。</p>
+</div>
+
+<hr>
+
+<div id="choshoshosho">
+  <h2>4. 長所・短所</h2>
+  <p><strong>長所</strong> 実装力とスピード。8ヶ月で100システム以上、稼働率99.995%、推論レイテンシ（スイロンレイテンシ）10ms未満。Zenn（ゼン）・Qiita（キータ）で技術記事執筆。アクセシビリティ専門性をシニア向けサービスに活かしたい。</p>
+  <p><strong>短所</strong> ①ビジネス理解 ②非エンジニアへの説明 ③チーム開発経験。いずれも貴社で身につけたい。</p>
+  <p><strong>AI（エーアイ）・Cursor（カーソル）</strong> 補助ツール。要件定義・設計・判断は自分で行い、人間が主導。</p>
+</div>
+
+<hr>
+
+<div id="question">
+  <h2>5. 質問への回答</h2>
+  <p><span class="q">Q: なぜラスクか？</span> <span class="hl">AX（エーエックス、AI Transformation）</span>を推進され、AI駆動開発・自社AIサービス（シニア向けデジタルデバイド解消）・プライム案件・直請け。要件定義～設計～開発～テストまで一貫して関与できる点に惹かれました。</p>
+  <p><span class="q">Q: 他社ではなくラスクか？</span> AX（エーエックス）・AI駆動開発の最前線／自社AIサービスでシニア向けデジタルデバイド解消／プライム案件・直請け／フルリモート・フレックス。</p>
+  <p><span class="q">Q: 100システム以上をどう実現？</span> AI協働ツール（Cursor（カーソル）、Copilot（コパイロット））活用。少林寺拳法で学んだ目標設定・効率的学習が支え。デモで実績をご確認いただけます。</p>
+  <p><span class="q">Q: MLOps/LLMOps・生成AIの経験？</span> MLflow（エムエルフロー）、Prometheus（プロメテウス）/Grafana（グラファナ）、RAG（ラグ）（LangChain（ラングチェーン）、ChromaDB（クローマディービー））、CoT（コット）推論。稼働率99.995%達成。デモで動作をご確認いただけます。</p>
+  <p><span class="q">Q: RAG・CoTとは？（用語の意味）</span> 上記「1. AI用語集」を参照。RAG（ラグ）は検索拡張生成、CoT（コット）は思考の連鎖。簡潔に説明し、実装経験を補足。</p>
+  <p><span class="q">Q: 身体障害者手帳、業務に支障は？</span> 技術的作業に支障なし。完全リモートであれば健常者と同等以上。通院の時間調整をいただければ幸いです。</p>
+  <p><span class="q">Q: ラスクでのキャリアプラン？</span> <span class="hl">AI駆動開発・自社AIサービス</span>でLLM（エルエルエム）・RAG（ラグ）・CoT（コット）・MLOps（エムエルオプス）/LLMOps（エルエルエムオプス）の専門知識を活かし貢献。シニア向けデジタルデバイド解消にアクセシビリティで貢献。長期はAI（エーアイ）×アクセシビリティで誰もが使いやすいシステム開発に貢献。</p>
+  <p><span class="q">Q: 希望年収？</span> 経験・スキル・役割に応じてご相談。成長機会を最優先。通院配慮をいただければ幸いです。</p>
+  <p><span class="q">Q: 興味のある案件？</span> AI駆動開発・生成AI（セイセイエーアイ）・データ系・MLOps（エムエルオプス）/LLMOps（エルエルエムオプス）。Python（パイソン）、TypeScript（タイプスクリプト）、React（リアクト）、PostgreSQL（ポストグレスキューエル）、Docker（ドッカー）など。</p>
+  <p><span class="q">Q: シニア向けサービスへの貢献？</span> Webアクセシビリティ検査員検定L1～3、身体障害者としての当事者視点。誰もが使いやすいUI（ユーアイ）/UX（ユーエックス）設計に貢献できます。</p>
+  <p><span class="q">Q: 51歳について？</span> 影響なし。8ヶ月で100システム以上の超高速学習能力。</p>
+  <p><span class="q">Q: 質問は？</span> AI駆動開発・自社AIサービスの内容、プライム案件の流れ、評価制度、チーム体制など。</p>
+  <p><span class="q">Q: レベル5グローバルエンタープライズ対応とは？</span> グローバル展開を想定した設計。マルチリージョン、高可用性、コンプライアンス、災害復旧まで考慮。Level 1（7コア）から Level 5（グローバル）まで段階的に拡張できる構成。</p>
+  <p><span class="q">Q: チーム開発経験・個人開発ばかりで大丈夫？</span> 個人開発が中心ですが、以前のフルリモート勤務でSlack（スラック）・Teams（チームズ）・Google Meet（グーグルミート）を日常的に使用。非同期コミュニケーションとオンライン会議には慣れており、リモートでのチーム連携ツールは問題なく使えます。コードレビューは経験が浅いので、指摘を素直に受け止め、質問しながら学ぶ姿勢で臨みます。</p>
+</div>
+
+<hr>
+
+<div id="experience">
+  <h2>6. ITエンジニア実務経験・チーム開発について</h2>
+  <p><em>面談で「実務経験は？」「チーム開発は？」と聞かれたときの回答例。</em></p>
+
+  <h3>ITエンジニア実務経験について</h3>
+  <p><span class="q">Q: 未経験ですか？実務経験はありますか？</span></p>
+  <p><strong>回答のポイント:</strong> 未経験ではありません（typeフォームでは2_1年未満で登録）。以下のIT関連経験があります。</p>
+  <ul>
+    <li><strong>KDDIエボルバ</strong>（11ヶ月）: ヘルプデスク業務。セキュリティのためのパスワード再設定、サーバー処理を担当。IT・通信業界での技術業務。</li>
+    <li><strong>AI技術研究開発</strong>（8ヶ月）: 個人での開発・設計・実装。100システム以上を設計・実装。Python、FastAPI、React、TypeScript、Docker、Kubernetes等を使用。</li>
+    <li><strong>JCI Teleworkers' Network</strong>（2年2ヶ月）: Webアクセシビリティ検査。Web技術関連の検査業務を完全リモートで実施。</li>
+  </ul>
+  <p><strong>口頭での説明例:</strong> 「未経験ではありません。KDDIエボルバでヘルプデスク・サーバー処理を11ヶ月、その後AI技術研究開発で約8ヶ月、個人開発として100システム以上を設計・実装してきました。JCIではWebアクセシビリティ検査を2年2ヶ月担当しています。」</p>
+
+  <h3>チーム開発について</h3>
+  <p><span class="q">Q: チーム開発の経験はありますか？個人開発ばかりでは？</span></p>
+  <p><strong>回答のポイント:</strong> チーム開発経験は浅いが、リモートでの協働ツールには慣れている。</p>
+  <ul>
+    <li>個人開発が中心。チームでのコードレビュー・ペアプログラミングの経験は浅い。</li>
+    <li>以前のフルリモート勤務（Earth Technology 1年5ヶ月、JCI 2年2ヶ月等）でSlack・Teams・Google Meetを日常的に使用。</li>
+    <li>非同期コミュニケーションとオンライン会議には慣れており、リモートでのチーム連携ツールは問題なく使える。</li>
+    <li>コードレビューは経験が浅いため、指摘を素直に受け止め、質問しながら学ぶ姿勢で臨む。</li>
+  </ul>
+  <p><strong>口頭での説明例:</strong> 「チーム開発経験は浅いです。個人開発が中心ですが、以前のフルリモート勤務でSlack・Teams・Google Meetを日常的に使い、非同期コミュニケーションとオンライン会議には慣れています。コードレビューは経験が浅いので、指摘を素直に受け止め、質問しながら学ぶ姿勢で臨みます。」</p>
+</div>
+
+<hr>
+
+<div id="demo">
+  <h2>7. デモ手順</h2>
+  <p><strong>進め方</strong> 実績を聞かれたら「画面共有でデモできます」と伝え、了承されたら実施。Swagger UI（スワッガーユーアイ）とフロントダッシュボードを中心に説明。事前に start-all.bat で起動。</p>
+  <p><strong>強調ポイント</strong> 実際に動作するシステム／稼働率99.995%・推論レイテンシ（スイロンレイテンシ）&lt;10ms／MLOps（エムエルオプス）/LLMOps（エルエルエムオプス）・生成AI（セイセイエーアイ）／レベル5グローバルエンタープライズ対応（Level 1～5 統合）／2025-2026最新技術（推論AI（スイロンエーアイ）・MCP（エムシーピー）/A2A（エーツーエー）・ガバナンス・端末内AI）／ビジネス領域12種（DX・EX・CX・UX・BX・HX・SX・BPR・BPM・CRM・ERP・HRTech）</p>
+  <p><em>※詳細は docs/DEMO_INTERVIEW_NAV_RASUKU.html を参照</em></p>
+</div>
+
+<hr>
+
+<p><a href="#">↑ トップへ</a></p>
+
+</body>
+</html>

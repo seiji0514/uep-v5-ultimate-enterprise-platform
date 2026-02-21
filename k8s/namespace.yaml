@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: uep-v5
+  labels:
+    name: uep-v5
+    environment: production

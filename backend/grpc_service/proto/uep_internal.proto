@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+// UEP 内部マイクロサービス間 gRPC 通信
+service UepInternalService {
+  // ヘルスチェック
+  rpc HealthCheck(HealthRequest) returns (HealthResponse);
+  // メトリクス取得
+  rpc GetMetrics(MetricsRequest) returns (MetricsResponse);
+}
+
+message HealthRequest {}
+
+message HealthResponse {
+  string status = 1;
+  string version = 2;
+  string service = 3;
+}
+
+message MetricsRequest {
+  string service_name = 1;
+}
+
+message MetricsResponse {
+  int64 request_count = 1;
+  double avg_latency_ms = 2;
+  int32 error_count = 3;
+}

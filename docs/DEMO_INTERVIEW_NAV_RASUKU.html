@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UEP v5.0 デモンストレーション手順書 - 株式会社ラスク用</title>
+    <style>
+      body {
+        font-family: "Yu Gothic", "Meiryo", sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 1rem;
+        line-height: 1.5;
+        font-size: 0.95rem;
+      }
+      h1 {
+        font-size: 1.3rem;
+        border-bottom: 2px solid #333;
+        padding-bottom: 0.4rem;
+      }
+      h2 {
+        font-size: 1.15rem;
+        margin-top: 1.5rem;
+        color: #333;
+        border-bottom: 1px solid #ccc;
+      }
+      h3 {
+        font-size: 1rem;
+        margin-top: 1rem;
+        color: #555;
+      }
+      nav {
+        background: #f0f8ff;
+        padding: 0.8rem;
+        border-radius: 4px;
+        margin-bottom: 1.5rem;
+        border-left: 4px solid #0066cc;
+      }
+      nav ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      nav li {
+        margin: 0.3rem 0;
+      }
+      nav a {
+        color: #0066cc;
+        text-decoration: none;
+      }
+      nav a:hover {
+        text-decoration: underline;
+      }
+      .oral {
+        background: #fff9e6;
+        padding: 0.5rem 0.8rem;
+        margin: 0.5rem 0;
+        border-radius: 4px;
+        font-style: italic;
+      }
+      .term {
+        background: #f8f9fa;
+        padding: 0.6rem 0.8rem;
+        margin: 0.5rem 0;
+        border-radius: 4px;
+        border-left: 3px solid #0066cc;
+      }
+      .term-name {
+        font-weight: bold;
+        color: #0066cc;
+      }
+      pre,
+      code {
+        background: #f5f5f5;
+        padding: 0.2rem 0.4rem;
+        font-size: 0.9rem;
+      }
+      pre {
+        padding: 0.8rem;
+        overflow-x: auto;
+      }
+      ul {
+        padding-left: 1.5rem;
+      }
+      p,
+      ul,
+      ol {
+        margin: 0.4rem 0;
+      }
+      hr {
+        border: none;
+        border-top: 1px solid #ddd;
+        margin: 1rem 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>UEP v5.0 デモンストレーション手順書 - 株式会社ラスク用</h1>
+    <p><em>目的: ラスク面談での UEP v5.0 デモンストレーション手順。AI用語の説明付き。汎用版（どの企業・職種でも対応）は <a href="DEMO_INTERVIEW_NAV_汎用.html">DEMO_INTERVIEW_NAV_汎用.html</a> を参照</em></p>
+
+    <nav>
+      <p><strong>▼ クリックで該当箇所に移動</strong></p>
+      <ul>
+        <li><a href="#terms">デモで使うAI用語集</a></li>
+        <li><a href="#flow">デモの進め方</a></li>
+        <li><a href="#demo-prep">デモ・面接の準備</a></li>
+        <li><a href="#check">事前準備チェックリスト</a></li>
+        <li><a href="#start">面談当日の起動手順</a></li>
+        <li><a href="#demo">デモンストレーションの流れ</a></li>
+        <li><a href="#faq">よくある質問</a></li>
+        <li><a href="#experience">ITエンジニア実務経験・チーム開発について</a></li>
+        <li><a href="#trouble">トラブル時の対応</a></li>
+        <li><a href="#inclusive">インクルーシブ雇用AIデモ</a></li>
+        <li><a href="#points">強調すべきポイント</a></li>
+        <li><a href="#after">面談後</a></li>
+      </ul>
+    </nav>
+
+    <div id="terms">
+      <h2>デモで使うAI用語集（聞かれたときの説明用）</h2>
+      <p><em>面談で「〇〇とは？」と聞かれたとき、簡潔に説明できるようピックアップ。</em></p>
+
+      <div class="term">
+        <span class="term-name">RAG（ラグ、Retrieval-Augmented Generation）</span>
+        <p><strong>意味:</strong> 検索拡張生成。外部知識を検索してLLM（エルエルエム）の入力に加え、根拠のある回答を生成。ハルシネーション軽減。</p>
+        <p><strong>デモでの説明:</strong> 「生成AI（セイセイエーアイ）のRAG（ラグ）タブで、ドキュメント検索とLLM（エルエルエム）による回答生成の連携をご確認いただけます。」</p>
+      </div>
+
+      <div class="term">
+        <span class="term-name">CoT（コット、Chain-of-Thought）推論</span>
+        <p><strong>意味:</strong> 思考の連鎖。段階的に推論してから結論を出す手法。複雑な問題で精度向上。</p>
+        <p><strong>デモでの説明:</strong> 「CoT（コット）推論をプロンプトに組み込み、論理的な回答を生成するように実装しています。」</p>
+      </div>
+
+      <div class="term">
+        <span class="term-name">MLOps / LLMOps（エムエルオプス / エルエルエムオプス）</span>
+        <p><strong>意味:</strong> MLOps（エムエルオプス）=ML（エムエル）モデルの運用管理。LLMOps（エルエルエムオプス）=LLM（エルエルエム）の運用管理（プロンプト管理、監視、A/Bテスト等）。</p>
+        <p><strong>デモでの説明:</strong> 「MLOps（エムエルオプス）タブでパイプライン・モデル・実験管理、Prometheus（プロメテウス）/Grafana（グラファナ）で稼働率99.995%を監視しています。」</p>
+      </div>
+
+      <div class="term">
+        <span class="term-name">推論AI・モデルルーティング（スイロンエーアイ・モデルルーティング）</span>
+        <p><strong>意味:</strong> タスク難度に応じて軽量モデル／高性能モデルを振り分ける。コストと品質のバランス。</p>
+        <p><strong>デモでの説明:</strong> 「インダストリーページの推論AI（スイロンエーアイ）で、タスクに応じたモデルルーティングを実装しています。」</p>
+      </div>
+
+      <div class="term">
+        <span class="term-name">MCP / A2A（エムシーピー / エーツーエー）</span>
+        <p><strong>意味:</strong> MCP（エムシーピー）=AI（エーアイ）が外部ツールにアクセスするプロトコル。A2A（エーツーエー）=エージェント間連携。</p>
+        <p><strong>デモでの説明:</strong> 「インダストリーのLevel 4で、MCP（エムシーピー）/A2A（エーツーエー）によるエージェント間連携を統合しています。」</p>
+      </div>
+
+      <div class="term">
+        <span class="term-name">レイテンシ（レイテンシ、Latency）</span>
+        <p><strong>意味:</strong> 応答時間。推論レイテンシ=AI（エーアイ）の回答速度。10ms未満はリアルタイム性を意味。</p>
+        <p><strong>デモでの説明:</strong> 「推論レイテンシを10ms未満に最適化し、ユーザー体験を確保しています。」</p>
+      </div>
+
+      <div class="term">
+        <span class="term-name">ベクトルデータベース（ベクトルデータベース、ChromaDB等）</span>
+        <p><strong>意味:</strong> テキストをベクトル化して類似検索するDB（ディービー）。RAG（ラグ）の「関連ドキュメント検索」に使用。</p>
+        <p><strong>デモでの説明:</strong> 「ChromaDB（クローマディービー）をベクトルDB（ディービー）として使い、RAG（ラグ）で関連ドキュメントを検索しています。」</p>
+      </div>
+
+      <div class="term">
+        <span class="term-name">API / REST API / OpenAPI（エーピーアイ / レストエーピーアイ / オープンエーピーアイ）</span>
+        <p><strong>意味:</strong> API（エーピーアイ）=ソフト間の連携インターフェース。REST（レスト）=HTTP（エイチティーティーピー）ベースの設計。OpenAPI（オープンエーピーアイ）=API仕様の標準。</p>
+        <p><strong>デモでの説明:</strong> 「Swagger UI（スワッガーユーアイ）でOpenAPI（オープンエーピーアイ）ドキュメントを自動生成し、RESTful API（レストフルエーピーアイ）を実装しています。」</p>
+      </div>
+
+      <div class="term">
+        <span class="term-name">マイクロサービス / イベント駆動（マイクロサービス / イベントクドウ）</span>
+        <p><strong>意味:</strong> マイクロサービス=小さなサービスに分割。イベント駆動=イベントで疎結合に連携。</p>
+        <p><strong>デモでの説明:</strong> 「Level 1～5をマイクロサービスで独立実装し、イベント駆動で疎結合に連携しています。」</p>
+      </div>
+
+      <div class="term">
+        <span class="term-name">稼働率99.995%（カドウリツ99.995%）</span>
+        <p><strong>意味:</strong> 可用性の指標。99.995%=月間ダウンタイム約2分。Prometheus（プロメテウス）/Grafana（グラファナ）で監視。</p>
+        <p><strong>デモでの説明:</strong> 「監視基盤で稼働率99.995%を測定し、エンタープライズレベルの品質を達成しています。」</p>
+      </div>
+
+      <div class="term">
+        <span class="term-name">インクルーシブ雇用AI（インクルーシブコヨウエーアイ）</span>
+        <p><strong>意味:</strong> 障害者雇用マッチング、アクセシビリティ特化AI、当事者視点UX評価を統合したプラットフォーム。身体障害者としての当事者視点を活かしたシステム。</p>
+        <p><strong>デモでの説明:</strong> 「サイドメニューのインクルーシブ雇用AIで、求人マッチング・アクセシビリティAIチャット・企業サイトのUX評価・AIエージェントをご確認いただけます。障害者雇用とアクセシビリティに特化した実装です。」</p>
+      </div>
+    </div>
+
+    <hr />
+
+    <div id="flow">
+      <h2>デモの進め方</h2>
+      <p>デモは面談の流れに合わせて実施する。事前に環境を起動し、手順書を手元に用意しておく。</p>
+      <ul>
+        <li><strong>実績・プロジェクトを聞かれたとき</strong> 「実際に動作しているシステムがあります。画面共有でデモンストレーションできます」と伝え、了承されたら画面共有でデモを行う。</li>
+        <li><strong>技術的な深掘りをされたとき</strong> UEP（ユーイーピー）v5.0 を起動し、Swagger UI（スワッガーユーアイ）とフロントのダッシュボードを中心に説明する。</li>
+        <li><strong>AI用語の意味を聞かれたとき</strong> 上記「デモで使うAI用語集」を参照し、簡潔に説明してから実装例を補足。</li>
+        <li><strong>時間が足りない／話題が別のとき</strong> 無理にデモはせず、口頭で概要（Level 1～5 統合、技術スタック、品質指標など）を説明する。</li>
+        <li><strong>「デモを見せてください」と言われたとき</strong> すぐに画面共有に切り替え、「面談当日の起動手順」以降に従ってデモを行う。</li>
+        <li><strong>事前にしておくこと</strong> start-backend.bat、フロントエンド（cd frontend → npm start）で起動できる状態にしておく。本手順書を開いておく。Zoom（ズーム）/Meet（ミート）の画面共有を確認しておく。</li>
+      </ul>
+    </div>
+
+    <hr />
+
+    <div id="demo-prep">
+      <h2>デモ・面接の準備</h2>
+      <p><em>面談前に練習しておく推奨デモフローと、アピールすべき技術ポイント。</em></p>
+
+      <h3>推奨デモフロー（約10分）</h3>
+      <ol>
+        <li><strong>ログイン</strong> → http://localhost:3000 で kaho0525 / kaho052514 または developer / dev123 でログイン</li>
+        <li><strong>ダッシュボード</strong> → Level 1～5 の統合構成を一覧で説明</li>
+        <li><strong>インクルーシブ雇用AI</strong> → マッチング（スキル入力で検索）、アクセシビリティAIチャット、UX評価を実演</li>
+        <li><strong>Chaos Engineering（カオスエンジニアリング）</strong> → 遅延注入・エラー注入の「実行」でレジリエンス検証を実演</li>
+        <li><strong>GraphQL（グラフキューエル）</strong> → hello / health / services クエリを実行し、REST に加えた GraphQL エンドポイントを説明</li>
+        <li><strong>WebAssembly（ウェブアセンブリ）</strong> → 加算・乗算・合計の計算デモで、フロントエンドの WASM 実装を説明</li>
+      </ol>
+      <div class="oral">「Chaos Engineering（カオスエンジニアリング）で障害シミュレーション、GraphQL（グラフキューエル）で柔軟なクエリ、WebAssembly（ウェブアセンブリ）でフロントの計算処理を高速化しています。」</div>
+
+      <h3>練習のコツ</h3>
+      <ul>
+        <li>上記フローを 1 回通して、画面切り替えと説明のタイミングを確認する</li>
+        <li>各ページで「何をアピールするか」を 1 文で言えるようにする</li>
+        <li>ポート 8000 が使用中の場合は 8001 で起動。フロントの .env は <code>REACT_APP_API_URL=http://localhost:8001</code> に合わせる</li>
+      </ul>
+
+      <h3>アーキテクチャ図の参照</h3>
+      <p><a href="ARCHITECTURE.md">docs/ARCHITECTURE.md</a> に Mermaid 形式のアーキテクチャ図を記載。システム全体構成・レベル別構成・技術スタック・データフローを説明する際に参照。</p>
+
+      <h3>アピールすべき技術ポイント（1 文で）</h3>
+      <ul>
+        <li><strong>インクルーシブ雇用AI:</strong> 障害者雇用マッチング・アクセシビリティ特化AI・当事者視点UX評価</li>
+        <li><strong>Chaos Engineering:</strong> 遅延・エラー注入でレジリエンス検証</li>
+        <li><strong>GraphQL:</strong> REST に加えて柔軟なクエリを提供</li>
+        <li><strong>Contract Testing:</strong> API 契約をテストで保証</li>
+        <li><strong>WebAssembly:</strong> フロントエンドの計算処理を WASM 化</li>
+      </ul>
+    </div>
+
+    <hr />
+
+    <div id="check">
+      <h2>事前準備チェックリスト</h2>
+      <p>環境確認（面談前日までに実施）</p>
+      <ul>
+        <li>Python（パイソン）3.11以上: <code>python --version</code></li>
+        <li>Node.js（ノードジェーエス）18以上: <code>node --version</code> <code>npm（エヌピーエム） --version</code></li>
+        <li>プロジェクト: <code>cd c:\uep-v5-ultimate-enterprise-platform</code></li>
+        <li>バックエンド: <code>start-backend.bat</code> → <a href="http://localhost:8000/health">http://localhost:8000/health</a>, <a href="http://localhost:8000/docs">http://localhost:8000/docs</a>（ポート8000が使用中の場合は <a href="http://localhost:8001/health">8001</a>, <a href="http://localhost:8001/docs">8001/docs</a>）</li>
+        <li>フロントエンド: <code>start-frontend.bat</code> → <a href="http://localhost:3000">http://localhost:3000</a></li>
+        <li>ログイン: <code>kaho0525</code> / <code>kaho052514</code> または <code>developer</code> / <code>dev123</code></li>
+        <li>画面共有: Google Meet（グーグルミート）/ Zoom（ズーム）の機能確認、ブラウザのウィンドウサイズ調整</li>
+      </ul>
+    </div>
+
+    <hr />
+
+    <div id="start">
+      <h2>面談当日の起動手順</h2>
+
+      <h3>ステップ1: システムの起動（面談開始5分前）</h3>
+      <p><strong>個別起動（推奨）:</strong> バックエンド <code>start-backend.bat</code>、フロントエンド <code>cd frontend</code> → <code>npm start</code>（初回は <code>npm install</code> を先に実行）</p>
+      <p><strong>実行後の確認:</strong></p>
+      <ol>
+        <li>バックエンドが http://localhost:8000 または http://localhost:8001 で起動していること（ポート8000が使用中の場合は8001）</li>
+        <li>フロントエンドが http://localhost:3000 で起動していること</li>
+        <li>エラーメッセージがないこと</li>
+      </ol>
+
+      <h3>ステップ2: ブラウザの準備</h3>
+      <ul>
+        <li>Chrome（クローム）または Edge（エッジ）で、以下のタブを開いておく:</li>
+        <li><a href="http://localhost:3000">http://localhost:3000</a>（フロントエンド）</li>
+        <li><a href="http://localhost:8000/docs">http://localhost:8000/docs</a> または <a href="http://localhost:8001/docs">http://localhost:8001/docs</a>（Swagger UI（スワッガーユーアイ））</li>
+        <li><a href="http://localhost:8000/health">http://localhost:8000/health</a> または <a href="http://localhost:8001/health">http://localhost:8001/health</a>（ヘルスチェック）</li>
+        <li>ログイン画面を表示し、入力できる状態にしておく</li>
+      </ul>
+    </div>
+
+    <hr />
+
+    <div id="demo">
+      <h2>デモンストレーションの流れ（約15-20分）</h2>
+
+      <h3>1. システム概要（2-3分）</h3>
+      <div class="oral">
+        「UEP（ユーイーピー）v5.0はレベル5グローバルエンタープライズ対応システムです。インクルーシブ雇用AI（障害者雇用マッチング・アクセシビリティ特化AI・当事者視点UX評価）も統合済み。Level 1（7コア）～Level 5（マルチリージョン・高可用性・コンプライアンス）まで統合。Level
+        4には2025-2026最新技術（推論AI（スイロンエーアイ）・MCP（エムシーピー）/A2A（エーツーエー）・ガバナンス・端末内AI）とビジネス領域12種（DX・EX・CX・UX・BX・HX・SX・BPR・BPM・CRM・ERP・HRTech）を統合済み。稼働率99.995%、推論レイテンシ（スイロンレイテンシ）10ms未満を達成し、個人開発で100システム以上を実装した実際に動作するシステムです。」
+      </div>
+
+      <h3>2. バックエンドAPI（3-4分）</h3>
+      <p><strong>手順:</strong> <a href="http://localhost:8000/docs">http://localhost:8000/docs</a> または <a href="http://localhost:8001/docs">http://localhost:8001/docs</a> を開く → Swagger UI（スワッガーユーアイ）を共有 → 主要API（エーピーアイ）を説明</p>
+      <p>auth（オース）、mlops（エムエルオプス）、generative-ai（ジェネラティブエーアイ）、inclusive-work（インクルーシブ雇用AI）、Chaos Engineering（カオスエンジニアリング）、security-center、cloud-infra、idop（アイドップ）、ai-dev、platform、ecosystem、industry-leader、global-enterprise、GraphQL（グラフキューエル）</p>
+      <div class="oral">「FastAPI（ファストエーピーアイ）でRESTful API（レストフルエーピーアイ）を実装し、OpenAPI（オープンエーピーアイ）でドキュメントを自動生成しています。Chaos Engineering（カオスエンジニアリング）で遅延・エラー注入によるレジリエンス検証、RESTに加えてGraphQL（グラフキューエル）エンドポイントも提供。Contract Testing（契約テスト）でAPI品質を保証しています。」</div>
+      <p><strong>オプション:</strong> /api/v1/auth/login で Try it out → username: kaho0525, password: kaho052514 → Execute</p>
+      <div class="oral">「JWT（ジェイダブリューティー）認証が動作していることをご確認いただけます。」</div>
+
+      <h3>3. フロントエンドUI（5-6分）</h3>
+      <p><strong>ログイン:</strong> http://localhost:3000 → kaho0525 / kaho052514 → ログイン</p>
+      <div class="oral">「React（リアクト）とTypeScript（タイプスクリプト）、Material-UI（マテリアルユーアイ）で実装した認証付きUI（ユーアイ）です。」</div>
+      <p><strong>ダッシュボード:</strong> MLOps（エムエルオプス）、生成AI（セイセイエーアイ）、インクルーシブ雇用AI、セキュリティコマンドセンター、クラウドインフラ、IDOP（アイドップ）、AI（エーアイ）支援開発、プラットフォーム(Level 2)、エコシステム(Level 3)、インダストリー(Level 4)、グローバル(Level 5)</p>
+      <div class="oral">「Level 1～5 の統合システムへアクセスできるダッシュボードです。」</div>
+      <p><strong>時間があれば:</strong> インクルーシブ雇用AI（マッチング・アクセシビリティAI・UX評価）、MLOps（エムエルオプス）（パイプライン・モデル・実験）、生成AI（セイセイエーアイ）（RAG（ラグ）・CoT（コット））、セキュリティ（イベント・インシデント・リスク分析）、インダストリー（推論AI（スイロンエーアイ）・MCP（エムシーピー）/A2A（エーツーエー）・ガバナンス・端末内AI、ビジネス領域12種：DX・EX・CX・UX等）</p>
+      <div class="oral">「MLOps（エムエルオプス）、生成AI（セイセイエーアイ）（RAG（ラグ）・CoT（コット））、セキュリティ、2025-2026最新技術、ビジネス領域12種など各システムの実装をご確認いただけます。」</div>
+
+      <h3>4. 技術スタック（2-3分）</h3>
+      <div class="oral">
+        「バックエンドはPython（パイソン）、FastAPI（ファストエーピーアイ）、PostgreSQL（ポストグレスキューエル）。フロントはTypeScript（タイプスクリプト）、React（リアクト）、MUI（エムユーアイ）。インフラはDocker（ドッカー）、Kubernetes（クバネティス）、Terraform（テラフォーム）。AI（エーアイ）/ML（エムエル）はMLOps（エムエルオプス）、RAG（ラグ）、CoT（コット）推論、推論AI（スイロンエーアイ）、MCP（エムシーピー）/A2A（エーツーエー）、ガバナンス・ワークフロー、端末内AI、インクルーシブ雇用AI。Chaos Engineering（カオスエンジニアリング）、GraphQL（グラフキューエル）、Contract Testing（契約テスト）。ビジネス領域はDX・EX・CX・UX・BX・HX・SX・BPR・BPM・CRM・ERP・HRTechの12種。監視はPrometheus（プロメテウス）、Grafana（グラファナ）。セキュリティはZero
+        Trust（ゼロトラスト）、mTLS（エムティーエルエス）、Vault（ボルト）です。」
+      </div>
+
+      <h3>5. アーキテクチャ（2-3分）</h3>
+      <div class="oral">「マイクロサービスでLevel 1～5 を独立実装。イベント駆動で疎結合。API（エーピーアイ）GatewayはKong（コン）とEnvoy（エンボイ）。監視はPrometheus（プロメテウス）とGrafana（グラファナ）でリアルタイム監視しています。」</div>
+
+      <h3>6. 品質指標（1-2分）</h3>
+      <div class="oral">「稼働率99.995%、推論レイテンシ（スイロンレイテンシ）10ms未満、セキュリティインシデント0件。個人開発ながら実務レベルの品質を達成しています。」</div>
+
+      <h3 id="inclusive">7. インクルーシブ雇用AI（2-3分）</h3>
+      <p><strong>手順:</strong> サイドメニュー「インクルーシブ雇用AI」→ マッチングタブでスキル「Python, React」入力 → 検索 → 求人一覧を説明。アクセシビリティAIタブで「求人」と入力 → 送信。UX評価タブでURL入力 → 評価。</p>
+      <div class="oral">「障害者雇用マッチング、アクセシビリティ特化AI、当事者視点UX評価を統合したプラットフォームです。身体障害者としての当事者視点とアクセシビリティ専門知識を活かした実装です。」</div>
+    </div>
+
+    <hr />
+
+    <div id="faq">
+      <h2>よくある質問</h2>
+      <p><strong>Q1: RAG（ラグ）とは？</strong> 検索拡張生成。外部知識を検索してLLM（エルエルエム）の入力に加え、根拠のある回答を生成。ハルシネーション軽減。上記「デモで使うAI用語集」参照。</p>
+      <p><strong>Q2: CoT（コット）とは？</strong> 思考の連鎖。段階的に推論してから結論を出す手法。上記「デモで使うAI用語集」参照。</p>
+      <p><strong>Q3: なぜWindows（ウィンドウズ）環境？</strong> デモ環境としてWindowsデスクトップPCを想定。WSL（ダブリューエスエル）やDocker Desktop（ドッカーデスクトップ）が不要で簡単に起動できるため。</p>
+      <p><strong>Q4: 認証情報の変更は？</strong> backend/auth/routes.py の <code>_init_demo_users</code> で変更可能。現在は kaho0525 / kaho052514。</p>
+      <p><strong>Q5: 本番環境での使用は？</strong> 開発・デモ用。本番ではセキュリティ・DB（ディービー）・環境変数・ログの見直しが必要。</p>
+      <p><strong>Q6: パフォーマンスは？</strong> 開発環境向け。本番ではDB（ディービー）最適化、キャッシング、ロードバランシング、CDN（シーディーエヌ）を推奨。</p>
+      <p><strong>Q7: レベル5グローバルエンタープライズ対応とは？</strong> グローバル展開を想定した設計。マルチリージョン、高可用性、コンプライアンス、災害復旧まで考慮。Level 1（7コア）から Level 5（グローバル）まで段階的に拡張できる構成。</p>
+      <p><strong>Q8: インクルーシブ雇用AIとは？</strong> 障害者雇用マッチング、アクセシビリティ特化AI、当事者視点UX評価を統合したプラットフォーム。身体障害者としての当事者視点を活かした実装。上記「デモで使うAI用語集」参照。</p>
+      <div class="oral">「グローバル展開を想定した設計で、マルチリージョン、高可用性、コンプライアンス、災害復旧まで考慮しています。Level 1の7コアから、Level 5のグローバルエンタープライズまで段階的に拡張できる構成です。」</div>
+    </div>
+
+    <hr />
+
+    <div id="experience">
+      <h2>ITエンジニア実務経験・チーム開発について</h2>
+      <p><em>面談で「実務経験は？」「チーム開発は？」と聞かれたときの回答例。</em></p>
+
+      <h3>ITエンジニア実務経験について</h3>
+      <p><strong>Q: 未経験ですか？実務経験はありますか？</strong></p>
+      <p><strong>回答のポイント:</strong> 未経験ではありません。以下のIT関連経験があります。</p>
+      <ul>
+        <li><strong>KDDIエボルバ</strong>（11ヶ月）: ヘルプデスク業務。セキュリティのためのパスワード再設定、サーバー処理を担当。IT・通信業界での技術業務。</li>
+        <li><strong>AI技術研究開発</strong>（8ヶ月）: 個人での開発・設計・実装。100システム以上を設計・実装。Python、FastAPI、React、TypeScript、Docker、Kubernetes等を使用。</li>
+        <li><strong>JCI Teleworkers' Network</strong>（2年2ヶ月）: Webアクセシビリティ検査。Web技術関連の検査業務を完全リモートで実施。</li>
+      </ul>
+      <div class="oral">「未経験ではありません。KDDIエボルバでヘルプデスク・サーバー処理を11ヶ月、その後AI技術研究開発で約8ヶ月、個人開発として100システム以上を設計・実装してきました。JCIではWebアクセシビリティ検査を2年2ヶ月担当しています。」</div>
+
+      <h3>チーム開発について</h3>
+      <p><strong>Q: チーム開発の経験はありますか？個人開発ばかりでは？</strong></p>
+      <p><strong>回答のポイント:</strong> チーム開発経験は浅いが、リモートでの協働ツールには慣れている。</p>
+      <ul>
+        <li>個人開発が中心。チームでのコードレビュー・ペアプログラミングの経験は浅い。</li>
+        <li>以前のフルリモート勤務（Earth Technology 1年5ヶ月、JCI 2年2ヶ月等）でSlack・Teams・Google Meetを日常的に使用。</li>
+        <li>非同期コミュニケーションとオンライン会議には慣れており、リモートでのチーム連携ツールは問題なく使える。</li>
+        <li>コードレビューは経験が浅いため、指摘を素直に受け止め、質問しながら学ぶ姿勢で臨む。</li>
+      </ul>
+      <div class="oral">「チーム開発経験は浅いです。個人開発が中心ですが、以前のフルリモート勤務でSlack・Teams・Google Meetを日常的に使い、非同期コミュニケーションとオンライン会議には慣れています。コードレビューは経験が浅いので、指摘を素直に受け止め、質問しながら学ぶ姿勢で臨みます。」</div>
+    </div>
+
+    <hr />
+
+    <div id="trouble">
+      <h2>トラブル時の対応</h2>
+      <p><strong>バックエンドが起動しない:</strong> ポート8000が使用中の場合は8001で起動する。python（パイソン）--version 確認 → venv（ベンブ）再作成 → それでもダメなら Swagger UI（スワッガーユーアイ）のスクリーンショットで説明</p>
+      <p><strong>フロントエンドが起動しない:</strong> node（ノード）--version 確認 → node_modules（ノードモジュール）削除 → npm（エヌピーエム）install → それでもダメなら Swagger UI（スワッガーユーアイ）でAPI（エーピーアイ）実演</p>
+      <p><strong>ログインできない:</strong> バックエンド起動確認 → 認証情報確認 → それでもダメなら Swagger UI（スワッガーユーアイ）でAPI（エーピーアイ）実演</p>
+      <p><strong>画面共有ができない:</strong> スクリーンショット共有 または コードを直接共有して説明</p>
+    </div>
+
+    <hr />
+
+    <div id="points">
+      <h2>強調すべきポイント（ラスク向け）</h2>
+      <ol>
+        <li>実際に動作するシステムであること（個人開発の実績を証明）</li>
+        <li>エンタープライズレベルの品質（稼働率99.995%、推論レイテンシ&lt;10ms）</li>
+        <li>AI（エーアイ）駆動開発の実績（MLOps（エムエルオプス）/LLMOps（エルエルエムオプス）、RAG（ラグ）、CoT（コット）推論、生成AI（セイセイエーアイ）の実装経験）</li>
+        <li>インクルーシブ雇用AI（障害者雇用マッチング・アクセシビリティ特化AI・当事者視点UX評価）による差別化</li>
+        <li>統合プラットフォームとしての完成度（Level 1～5 グローバルエンタープライズ対応、2025-2026最新4技術統合、ビジネス領域12種）</li>
+        <li>シニア向けデジタルデバイド解消への貢献可能性（アクセシビリティ専門性・当事者視点）</li>
+      </ol>
+    </div>
+
+    <hr />
+
+    <div id="after">
+      <h2>面談後</h2>
+      <p><strong>システムの停止:</strong> 各ウィンドウで Ctrl+C / ウィンドウを閉じる</p>
+      <h3>事前準備の推奨（オプション）</h3>
+      <ul>
+        <li>スクリーンショット: Swagger UI（スワッガーユーアイ）、ダッシュボード、各システム画面</li>
+        <li>コード: backend/main.py, backend/auth/routes.py, frontend/src/App.tsx, Dashboard.tsx</li>
+        <li>プロジェクト構造: backend/, frontend/, infrastructure/, docs/</li>
+      </ul>
+    </div>
+
+    <hr />
+
+    <p><a href="#">↑ トップへ</a></p>
+  </body>
+</html>

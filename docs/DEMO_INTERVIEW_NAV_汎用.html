@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UEP v5.0 デモンストレーション手順書 - 汎用版（企業・職種対応）</title>
+    <style>
+      body {
+        font-family: "Yu Gothic", "Meiryo", sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 1rem;
+        line-height: 1.5;
+        font-size: 0.95rem;
+      }
+      h1 {
+        font-size: 1.3rem;
+        border-bottom: 2px solid #333;
+        padding-bottom: 0.4rem;
+      }
+      h2 {
+        font-size: 1.15rem;
+        margin-top: 1.5rem;
+        color: #333;
+        border-bottom: 1px solid #ccc;
+      }
+      h3 {
+        font-size: 1rem;
+        margin-top: 1rem;
+        color: #555;
+      }
+      nav {
+        background: #f0f8ff;
+        padding: 0.8rem;
+        border-radius: 4px;
+        margin-bottom: 1.5rem;
+        border-left: 4px solid #0066cc;
+      }
+      nav ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      nav li {
+        margin: 0.3rem 0;
+      }
+      nav a {
+        color: #0066cc;
+        text-decoration: none;
+      }
+      nav a:hover {
+        text-decoration: underline;
+      }
+      .oral {
+        background: #fff9e6;
+        padding: 0.5rem 0.8rem;
+        margin: 0.5rem 0;
+        border-radius: 4px;
+        font-style: italic;
+      }
+      .customize {
+        background: #e8f5e9;
+        padding: 0.8rem;
+        border-radius: 4px;
+        margin: 0.5rem 0;
+        border-left: 4px solid #4caf50;
+      }
+      .term {
+        background: #f8f9fa;
+        padding: 0.6rem 0.8rem;
+        margin: 0.5rem 0;
+        border-radius: 4px;
+        border-left: 3px solid #0066cc;
+      }
+      .term-name {
+        font-weight: bold;
+        color: #0066cc;
+      }
+      pre,
+      code {
+        background: #f5f5f5;
+        padding: 0.2rem 0.4rem;
+        font-size: 0.9rem;
+      }
+      pre {
+        padding: 0.8rem;
+        overflow-x: auto;
+      }
+      ul {
+        padding-left: 1.5rem;
+      }
+      p,
+      ul,
+      ol {
+        margin: 0.4rem 0;
+      }
+      hr {
+        border: none;
+        border-top: 1px solid #ddd;
+        margin: 1rem 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>UEP v5.0 デモンストレーション手順書 - 汎用版（企業・職種対応）</h1>
+    <p>
+      <em>どの企業・どの職種の面談にも対応可能。面談前に「強調すべきポイント」を企業・職種に合わせてカスタマイズしてください。株式会社ラスク向け詳細版は <a href="DEMO_INTERVIEW_NAV_RASUKU.html">DEMO_INTERVIEW_NAV_RASUKU.html</a> を参照</em>
+    </p>
+
+    <div class="customize">
+      <h3>企業・職種に合わせたカスタマイズ（面談前に記入）</h3>
+      <p><strong>【企業名】</strong> 例: 株式会社〇〇</p>
+      <p><strong>【希望職種】</strong> 例: AIエンジニア / フルスタック / システムアーキテクト 等</p>
+      <p><strong>【企業の特色・事業】</strong> 例: AI駆動開発／シニア向けサービス／フルリモート 等</p>
+      <p><strong>【デモで特に強調する点】</strong> 例: インクルーシブ雇用AI／MLOps・生成AI／Chaos Engineering 等</p>
+    </div>
+
+    <nav>
+      <p><strong>▼ クリックで該当箇所に移動</strong></p>
+      <ul>
+        <li><a href="#terms">デモで使うAI用語集</a></li>
+        <li><a href="#flow">デモの進め方</a></li>
+        <li><a href="#demo-prep">デモ・面接の準備</a></li>
+        <li><a href="#check">事前準備チェックリスト</a></li>
+        <li><a href="#start">面談当日の起動手順</a></li>
+        <li><a href="#demo">デモンストレーションの流れ</a></li>
+        <li><a href="#faq">よくある質問</a></li>
+        <li><a href="#experience">ITエンジニア実務経験・チーム開発について</a></li>
+        <li><a href="#trouble">トラブル時の対応</a></li>
+        <li><a href="#inclusive">インクルーシブ雇用AIデモ</a></li>
+        <li><a href="#points">強調すべきポイント（職種別）</a></li>
+        <li><a href="#after">面談後</a></li>
+      </ul>
+    </nav>
+
+    <div id="terms">
+      <h2>デモで使うAI用語集（聞かれたときの説明用）</h2>
+      <p><em>面談で「〇〇とは？」と聞かれたとき、簡潔に説明できるようピックアップ。</em></p>
+
+      <div class="term">
+        <span class="term-name">RAG（ラグ、Retrieval-Augmented Generation）</span>
+        <p><strong>意味:</strong> 検索拡張生成。外部知識を検索してLLMの入力に加え、根拠のある回答を生成。ハルシネーション軽減。</p>
+        <p><strong>デモでの説明:</strong> 「生成AIのRAGタブで、ドキュメント検索とLLMによる回答生成の連携をご確認いただけます。」</p>
+      </div>
+
+      <div class="term">
+        <span class="term-name">CoT（コット、Chain-of-Thought）推論</span>
+        <p><strong>意味:</strong> 思考の連鎖。段階的に推論してから結論を出す手法。複雑な問題で精度向上。</p>
+        <p><strong>デモでの説明:</strong> 「CoT推論をプロンプトに組み込み、論理的な回答を生成するように実装しています。」</p>
+      </div>
+
+      <div class="term">
+        <span class="term-name">MLOps / LLMOps</span>
+        <p><strong>意味:</strong> MLモデル／LLMの運用管理。実験管理、モデルレジストリ、デプロイ、監視。</p>
+        <p><strong>デモでの説明:</strong> 「MLOpsタブでパイプライン・モデル・実験管理、Prometheus/Grafanaで稼働率99.995%を監視しています。」</p>
+      </div>
+
+      <div class="term">
+        <span class="term-name">インクルーシブ雇用AI</span>
+        <p><strong>意味:</strong> 障害者雇用マッチング、アクセシビリティ特化AI、当事者視点UX評価を統合したプラットフォーム。</p>
+        <p><strong>デモでの説明:</strong> 「サイドメニューのインクルーシブ雇用AIで、求人マッチング・アクセシビリティAI・UX評価をご確認いただけます。」</p>
+      </div>
+
+      <div class="term">
+        <span class="term-name">Chaos Engineering / GraphQL / Contract Testing</span>
+        <p><strong>意味:</strong> Chaos=障害シミュレーションでレジリエンス検証。GraphQL=柔軟なクエリ。Contract Testing=API契約のテスト保証。</p>
+        <p><strong>デモでの説明:</strong> 「Chaos Engineeringで遅延・エラー注入、GraphQLで柔軟なクエリ、Contract TestingでAPI品質を保証しています。」</p>
+      </div>
+
+      <p><em>※その他用語は docs/DEMO_INTERVIEW_NAV_RASUKU.html を参照</em></p>
+    </div>
+
+    <hr />
+
+    <div id="flow">
+      <h2>デモの進め方</h2>
+      <p>デモは面談の流れに合わせて実施する。事前に環境を起動し、手順書を手元に用意しておく。</p>
+      <ul>
+        <li><strong>実績・プロジェクトを聞かれたとき</strong> 「実際に動作しているシステムがあります。画面共有でデモンストレーションできます」と伝え、了承されたら画面共有でデモを行う。</li>
+        <li><strong>技術的な深掘りをされたとき</strong> UEP v5.0 を起動し、Swagger UIとフロントのダッシュボードを中心に説明する。</li>
+        <li><strong>AI用語の意味を聞かれたとき</strong> 上記「デモで使うAI用語集」を参照し、簡潔に説明してから実装例を補足。</li>
+        <li><strong>時間が足りない／話題が別のとき</strong> 無理にデモはせず、口頭で概要（Level 1～5 統合、技術スタック、品質指標など）を説明する。</li>
+        <li><strong>事前にしておくこと</strong> start-backend.bat、フロントエンド（cd frontend → npm start）で起動できる状態にしておく。本手順書を開いておく。Zoom/Meetの画面共有を確認しておく。</li>
+      </ul>
+    </div>
+
+    <hr />
+
+    <div id="demo-prep">
+      <h2>デモ・面接の準備</h2>
+      <h3>推奨デモフロー（約10分）</h3>
+      <ol>
+        <li><strong>ログイン</strong> → http://localhost:3000 で kaho0525 / kaho052514 または developer / dev123 でログイン</li>
+        <li><strong>ダッシュボード</strong> → Level 1～5 の統合構成を一覧で説明</li>
+        <li><strong>インクルーシブ雇用AI</strong> → マッチング、アクセシビリティAI、UX評価を実演</li>
+        <li><strong>Chaos Engineering</strong> → 遅延注入・エラー注入の「実行」でレジリエンス検証を実演</li>
+        <li><strong>GraphQL</strong> → hello / health / services クエリを実行</li>
+        <li><strong>WebAssembly</strong> → 加算・乗算・合計の計算デモ</li>
+      </ol>
+      <h3>職種別・推奨アピール順</h3>
+      <ul>
+        <li><strong>AIエンジニア:</strong> インクルーシブ雇用AI → MLOps・生成AI（RAG・CoT）→ 推論AI・MCP/A2A</li>
+        <li><strong>フルスタック:</strong> ダッシュボード全体 → フロント（React・TypeScript）→ バックエンドAPI（FastAPI）</li>
+        <li><strong>システムアーキテクト:</strong> Level 1～5 の統合設計 → マイクロサービス・イベント駆動 → Chaos Engineering</li>
+        <li><strong>バックエンド:</strong> Swagger UI → API設計 → 認証・認可 → データレイク・イベントストリーミング</li>
+        <li><strong>アクセシビリティ:</strong> インクルーシブ雇用AI（マッチング・アクセシビリティAI・UX評価）を優先</li>
+      </ul>
+    </div>
+
+    <hr />
+
+    <div id="check">
+      <h2>事前準備チェックリスト</h2>
+      <ul>
+        <li>Python 3.11以上: <code>python --version</code></li>
+        <li>Node.js 18以上: <code>node --version</code> <code>npm --version</code></li>
+        <li>プロジェクト: <code>cd c:\uep-v5-ultimate-enterprise-platform</code></li>
+        <li>バックエンド: <code>start-backend.bat</code> → <a href="http://localhost:8000/health">http://localhost:8000/health</a>, <a href="http://localhost:8000/docs">http://localhost:8000/docs</a>（ポート8000が使用中の場合は <a href="http://localhost:8001/health">8001</a>, <a href="http://localhost:8001/docs">8001/docs</a>）</li>
+        <li>フロントエンド: <code>start-frontend.bat</code> または <code>cd frontend</code> → <code>npm start</code> → <a href="http://localhost:3000">http://localhost:3000</a></li>
+        <li>ログイン: <code>kaho0525</code> / <code>kaho052514</code> または <code>developer</code> / <code>dev123</code></li>
+        <li>画面共有: Google Meet / Zoom の機能確認、ブラウザのウィンドウサイズ調整</li>
+      </ul>
+    </div>
+
+    <hr />
+
+    <div id="start">
+      <h2>面談当日の起動手順</h2>
+      <h3>ステップ1: システムの起動（面談開始5分前）</h3>
+      <p><strong>個別起動（推奨）:</strong> バックエンド <code>start-backend.bat</code>、フロントエンド <code>cd frontend</code> → <code>npm start</code>（初回は <code>npm install</code> を先に実行）</p>
+      <h3>ステップ2: ブラウザの準備</h3>
+      <ul>
+        <li><a href="http://localhost:3000">http://localhost:3000</a>（フロントエンド）</li>
+        <li><a href="http://localhost:8000/docs">http://localhost:8000/docs</a> または <a href="http://localhost:8001/docs">http://localhost:8001/docs</a>（Swagger UI）</li>
+        <li><a href="http://localhost:8000/health">http://localhost:8000/health</a> または <a href="http://localhost:8001/health">http://localhost:8001/health</a>（ヘルスチェック）</li>
+      </ul>
+    </div>
+
+    <hr />
+
+    <div id="demo">
+      <h2>デモンストレーションの流れ（約15-20分）</h2>
+      <h3>1. システム概要（2-3分）</h3>
+      <div class="oral">「UEP v5.0はレベル5グローバルエンタープライズ対応システムです。インクルーシブ雇用AI、MLOps、生成AI（RAG・CoT）、Chaos Engineering、GraphQL、Contract Testingを統合。稼働率99.995%、推論レイテンシ10ms未満。個人開発で100システム以上を実装した実際に動作するシステムです。」</div>
+      <h3>2. バックエンドAPI（3-4分）</h3>
+      <p><a href="http://localhost:8000/docs">http://localhost:8000/docs</a> で Swagger UI を共有。auth、mlops、generative-ai、inclusive-work、Chaos Engineering、GraphQL 等を説明。</p>
+      <h3>3. フロントエンドUI（5-6分）</h3>
+      <p>http://localhost:3000 でログイン。ダッシュボード、インクルーシブ雇用AI、MLOps、生成AI、セキュリティ、インダストリー 等を説明。</p>
+      <h3 id="inclusive">4. インクルーシブ雇用AI（2-3分）</h3>
+      <p>サイドメニュー「インクルーシブ雇用AI」→ マッチング・アクセシビリティAI・UX評価を実演。</p>
+      <div class="oral">「障害者雇用マッチング、アクセシビリティ特化AI、当事者視点UX評価を統合したプラットフォームです。」</div>
+    </div>
+
+    <hr />
+
+    <div id="faq">
+      <h2>よくある質問</h2>
+      <p><strong>Q: RAGとは？</strong> 検索拡張生成。外部知識を検索してLLMの入力に加え、根拠のある回答を生成。ハルシネーション軽減。</p>
+      <p><strong>Q: レベル5グローバルエンタープライズ対応とは？</strong> グローバル展開を想定した設計。マルチリージョン、高可用性、コンプライアンス、災害復旧まで考慮。Level 1～5 まで段階的に拡張できる構成。</p>
+      <p><strong>Q: インクルーシブ雇用AIとは？</strong> 障害者雇用マッチング、アクセシビリティ特化AI、当事者視点UX評価を統合したプラットフォーム。</p>
+      <p><em>※その他は docs/DEMO_INTERVIEW_NAV_RASUKU.html を参照</em></p>
+    </div>
+
+    <hr />
+
+    <div id="experience">
+      <h2>ITエンジニア実務経験・チーム開発について</h2>
+      <p><strong>実務経験:</strong> KDDIエボルバ（11ヶ月）、AI技術研究開発（8ヶ月・100システム以上）、JCI（2年2ヶ月・Webアクセシビリティ検査）。</p>
+      <p><strong>チーム開発:</strong> 個人開発が中心。フルリモートでSlack・Teams・Meetを日常使用。コードレビューは経験が浅いが、指摘を素直に受け止め学ぶ姿勢。</p>
+    </div>
+
+    <hr />
+
+    <div id="trouble">
+      <h2>トラブル時の対応</h2>
+      <p><strong>バックエンドが起動しない:</strong> ポート8000が使用中の場合は8001で起動。それでもダメなら Swagger UI のスクリーンショットで説明。</p>
+      <p><strong>フロントエンドが起動しない:</strong> node_modules 削除 → npm install。それでもダメなら Swagger UI でAPI実演。</p>
+      <p><strong>ログインできない:</strong> バックエンド起動確認 → 認証情報確認。それでもダメなら Swagger UI でAPI実演。</p>
+    </div>
+
+    <hr />
+
+    <div id="points">
+      <h2>強調すべきポイント（職種別・企業に合わせてカスタマイズ）</h2>
+      <p><em>面談先の企業・職種に合わせて、以下から該当するものを選び強調する。</em></p>
+      <ol>
+        <li><strong>共通:</strong> 実際に動作するシステム／稼働率99.995%・推論レイテンシ&lt;10ms／個人開発で100システム以上</li>
+        <li><strong>AIエンジニア:</strong> MLOps・LLMOps、RAG、CoT推論、生成AI、インクルーシブ雇用AI、推論AI・MCP/A2A</li>
+        <li><strong>フルスタック:</strong> React・TypeScript・FastAPI・PostgreSQL・Docker、設計～実装～テスト一貫</li>
+        <li><strong>システムアーキテクト:</strong> Level 1～5 統合設計、マイクロサービス・イベント駆動、Chaos Engineering</li>
+        <li><strong>バックエンド:</strong> FastAPI、REST API、GraphQL、認証・認可、データレイク、イベントストリーミング</li>
+        <li><strong>アクセシビリティ:</strong> インクルーシブ雇用AI（障害者雇用マッチング・アクセシビリティ特化AI・当事者視点UX評価）、Webアクセシビリティ検査員L1～3</li>
+        <li><strong>シニア・デジタルデバイド関連企業:</strong> インクルーシブ雇用AI、アクセシビリティ専門性、当事者視点</li>
+      </ol>
+    </div>
+
+    <hr />
+
+    <div id="after">
+      <h2>面談後</h2>
+      <p><strong>システムの停止:</strong> 各ウィンドウで Ctrl+C / ウィンドウを閉じる</p>
+    </div>
+
+    <hr />
+
+    <p><a href="#">↑ トップへ</a></p>
+  </body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【図1】システム全体アーキテクチャ</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 25mm;
+        }
+        
+        body {
+            font-family: 'MS Gothic', 'Yu Gothic', monospace;
+            margin: 25mm;
+            background: white;
+        }
+        
+        .drawing-title {
+            text-align: center;
+            font-size: 14pt;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .architecture {
+            border: 2px solid #000;
+            padding: 20px;
+        }
+        
+        .layer {
+            border: 2px solid #000;
+            margin: 10px 0;
+            padding: 15px;
+            background: #f5f5f5;
+        }
+        
+        .layer-title {
+            font-weight: bold;
+            font-size: 12pt;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .component {
+            border: 1px solid #000;
+            padding: 8px;
+            margin: 5px;
+            display: inline-block;
+            min-width: 150px;
+            text-align: center;
+            background: white;
+            font-size: 10pt;
+        }
+        
+        .arrow {
+            text-align: center;
+            font-size: 20pt;
+            margin: 5px 0;
+        }
+        
+        .label {
+            font-size: 9pt;
+            margin-left: 5px;
+            color: #666;
+        }
+        
+        .input-output {
+            border: 2px dashed #000;
+            padding: 10px;
+            margin: 10px 0;
+            text-align: center;
+            background: #e8f4f8;
+        }
+    </style>
+</head>
+<body>
+    <div class="drawing-title">【図1】システム全体アーキテクチャ</div>
+    
+    <div class="architecture">
+        <!-- 入力層 -->
+        <div class="input-output">
+            <strong>入力: 複数モダリティのデータ</strong><br>
+            画像、音声、テキスト、時系列データ、地理空間データ、グラフデータ
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <!-- 適応的マルチモーダル融合エンジン -->
+        <div class="layer">
+            <div class="layer-title">適応的マルチモーダル融合エンジン (1)</div>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                <div class="component">動的重み付け<br><span class="label">(1-1)</span></div>
+                <div class="component">融合戦略選択<br><span class="label">(1-2)</span></div>
+                <div class="component">エラー補正<br><span class="label">(1-3)</span></div>
+            </div>
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <!-- 適応的キャッシュ戦略エンジン -->
+        <div class="layer">
+            <div class="layer-title">適応的キャッシュ戦略エンジン (2)</div>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                <div class="component">アクセスパターン学習<br><span class="label">(2-1)</span></div>
+                <div class="component">予測的プリフェッチ<br><span class="label">(2-2)</span></div>
+                <div class="component">動的TTL調整<br><span class="label">(2-3)</span></div>
+            </div>
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <!-- 量子最適化マルチモーダル融合エンジン -->
+        <div class="layer">
+            <div class="layer-title">量子最適化マルチモーダル融合エンジン (3)</div>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                <div class="component">QUBO形式変換<br><span class="label">(3-1)</span></div>
+                <div class="component">量子計算最適化<br><span class="label">(3-2)</span></div>
+            </div>
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <!-- 準同型暗号マルチモーダル処理エンジン -->
+        <div class="layer">
+            <div class="layer-title">準同型暗号マルチモーダル処理エンジン (4)</div>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                <div class="component">CKKS準同型暗号<br><span class="label">(4-1)</span></div>
+                <div class="component">暗号化演算<br><span class="label">(4-2)</span></div>
+            </div>
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <!-- MLOps統合管理システム -->
+        <div class="layer">
+            <div class="layer-title">MLOps統合管理システム (5)</div>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                <div class="component">モデルライフサイクル管理<br><span class="label">(5-1)</span></div>
+                <div class="component">データドリフト検知<br><span class="label">(5-2)</span></div>
+                <div class="component">自動再学習<br><span class="label">(5-3)</span></div>
+                <div class="component">A/Bテスト<br><span class="label">(5-4)</span></div>
+                <div class="component">カナリアデプロイ<br><span class="label">(5-5)</span></div>
+                <div class="component">パフォーマンス監視<br><span class="label">(5-6)</span></div>
+            </div>
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <!-- 出力層 -->
+        <div class="input-output">
+            <strong>出力: 統合処理結果</strong><br>
+            統合推論結果、信頼度、最適化された重み、処理統計
+        </div>
+    </div>
+    
+    <div style="margin-top: 20px; font-size: 9pt; text-align: center;">
+        <strong>符号の説明</strong><br>
+        (1): 適応的マルチモーダル融合エンジン<br>
+        (2): 適応的キャッシュ戦略エンジン<br>
+        (3): 量子最適化マルチモーダル融合エンジン<br>
+        (4): 準同型暗号マルチモーダル処理エンジン<br>
+        (5): MLOps統合管理システム
+    </div>
+</body>
+</html>
+

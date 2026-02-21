@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>面談用ナビゲーション</title>
+  <style>
+    body { font-family: "Yu Gothic", "Meiryo", sans-serif; max-width: 720px; margin: 0 auto; padding: 1rem; line-height: 1.5; font-size: 0.95rem; }
+    h1 { font-size: 1.3rem; border-bottom: 2px solid #333; padding-bottom: 0.4rem; }
+    h2 { font-size: 1.15rem; margin-top: 1.5rem; color: #333; border-bottom: 1px solid #ccc; }
+    h3 { font-size: 1rem; margin-top: 1rem; color: #555; }
+    nav { background: #f5f5f5; padding: 0.8rem; border-radius: 4px; margin-bottom: 1.5rem; }
+    nav ul { list-style: none; padding: 0; margin: 0; }
+    nav li { margin: 0.3rem 0; }
+    nav a { color: #0066cc; text-decoration: none; }
+    nav a:hover { text-decoration: underline; }
+    .q { font-weight: bold; color: #333; }
+    p, ul { margin: 0.4rem 0; padding-left: 1.2rem; }
+    ul { padding-left: 1.5rem; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 1rem 0; }
+  </style>
+</head>
+<body>
+
+<h1>面談用ナビゲーション</h1>
+
+<nav>
+  <p><strong>▼ クリックで該当箇所に移動</strong></p>
+  <ul>
+    <li><a href="#aisatsu">1. 挨拶・締めの言葉</a></li>
+    <li><a href="#jikoshokai">2. 自己紹介・転職理由</a></li>
+    <li><a href="#choshoshosho">3. 長所・短所</a></li>
+    <li><a href="#question">4. 質問への回答</a></li>
+    <li><a href="#demo">5. デモンストレーション手順</a></li>
+  </ul>
+</nav>
+
+<div id="aisatsu">
+  <h2>1. 挨拶・締めの言葉</h2>
+  <p><strong>冒頭</strong> 本日はお時間をいただきありがとうございます。最終WEB面接の機会をいただき光栄です。少し緊張しておりますが、よろしくお願いいたします。</p>
+  <p><strong>締め</strong> 本日はありがとうございました。今後の選考の流れをお教えいただけますか。追加のご質問があればお聞かせください。</p>
+</div>
+
+<hr>
+
+<div id="jikoshokai">
+  <h2>2. 自己紹介・転職理由</h2>
+  <h3>自己紹介（約40秒）</h3>
+  <p>小川清志、51歳。完全在宅で総務サポート・Webアクセシビリティ検査（検定L1～3）に携わり、2025年6月からAI・MLに集中。約8ヶ月で主要プロジェクト100システム以上を設計～運用まで担当。MLOps・生成AI実装、稼働率99.995%達成。完全リモート開発・運用は約3年9ヶ月。貴社の豊富なIT案件・フルリモート・AI・DXで経験を活かしたいです。</p>
+  <h3>転職理由</h3>
+  <p>個人開発ではチーム開発・コードレビュー・設計レビューなど実務スキルをさらに深めたい。生成AI・データ系案件で専門性を活かし、クライアントの課題解決に貢献したい。貴社はフルリモート案件が多く、AI・IoT・DXなど多様なプロジェクトを展開されている点に魅力を感じています。</p>
+  <h3>希望年収</h3>
+  <p>LAPRAS求人年収683万～1,167万円の範囲を参考に、目安として年収700万円を希望。役割・貴社規定に合わせて柔軟に相談可。成長機会を最優先。</p>
+</div>
+
+<hr>
+
+<div id="choshoshosho">
+  <h2>3. 長所・短所</h2>
+  <p><strong>長所</strong> 実装力とスピード。8ヶ月で100システム以上、稼働率99.995%、推論レイテンシ10ms未満達成。Zenn・Qiitaで技術記事執筆。完全リモート3年9ヶ月の経験。</p>
+  <p><strong>短所</strong> ①ビジネス理解の強化 ②非エンジニアへの説明力 ③チーム開発経験。いずれも貴社で身につけたい。</p>
+  <p><strong>AI・Cursor</strong> 補助ツールとして活用。要件定義・設計・判断は自分で行い、人間が主導。</p>
+</div>
+
+<hr>
+
+<div id="question">
+  <h2>4. 質問への回答（要点）</h2>
+
+  <h3>志望動機</h3>
+  <p><span class="q">Q: なぜC3を選んだか？</span> フルリモート案件が多く、AI・IoT・DXなど多様なプロジェクト。MLOps/LLMOps・生成AIの経験を活かし、お客様の課題解決に貢献したい。</p>
+  <p><span class="q">Q: 他社ではなくC3か？</span> ライト通信グループとして多数のIT案件を保有、フルリモートで活躍するエンジニアが多い。完全在宅実績が活かせる。</p>
+
+  <h3>技術スキル</h3>
+  <p><span class="q">Q: 100システム以上をどう実現？</span> AI協働ツール（Cursor, Copilot）活用。少林寺拳法で学んだ目標設定・計画的達成・効率的学習が支え。デモで実績をご確認いただけます。</p>
+  <p><span class="q">Q: 個人開発と実務の違い？</span> 実務ではチーム開発・コードレビュー・設計レビューが重要。3年9ヶ月の完全リモート経験で習得済み。稼働率99.995%など本番レベルの品質を達成。</p>
+  <p><span class="q">Q: MLOps/LLMOps・生成AIの経験？</span> MLflow、Prometheus/Grafana、RAG（LangChain, ChromaDB）、CoT推論を実装。デモで動作をご確認いただけます。</p>
+
+  <h3>障害・配慮</h3>
+  <p><span class="q">Q: 身体障害者手帳、業務に支障は？</span> 技術的作業に支障なし。完全リモートであれば健常者と同等以上。一般枠希望、通院の時間調整をいただければ幸いです。</p>
+  <p><span class="q">Q: アクセシビリティの活かし方？</span> 検定L1～3取得。当事者視点と専門スキルで、誰もが使いやすいAIシステムの開発に貢献できる。</p>
+
+  <h3>キャリア・年収・案件</h3>
+  <p><span class="q">Q: キャリアプラン？</span> 短期はMLOps/LLMOpsを軸に専門性を深め、中期は技術コンサルタント、長期はAI×アクセシビリティで誰もが使いやすいシステム開発に貢献。</p>
+  <p><span class="q">Q: 希望年収？</span> 目安700万円。役割・規定に合わせて柔軟に相談。成長機会を最優先。</p>
+  <p><span class="q">Q: 興味のある案件？</span> 生成AI・データ系・MLOps/LLMOps。Python、TypeScript、React、PostgreSQL、Dockerなど。</p>
+
+  <h3>デモ・その他</h3>
+  <p><span class="q">Q: デモの内容？</span> UEP v5.0で、バックエンドAPI、フロントエンド、監視基盤、RAG、CoT推論の実際の動作をご確認いただけます。</p>
+  <p><span class="q">Q: 51歳について？</span> 影響なし。8ヶ月で100システム以上の超高速学習能力で最新技術を即座に習得。</p>
+  <p><span class="q">Q: 質問は？</span> 生成AI・データ系案件の内容、フルリモート体制、チーム開発体制、評価制度など。</p>
+</div>
+
+<hr>
+
+<div id="demo">
+  <h2>5. デモンストレーション手順</h2>
+  <p><strong>進め方</strong> 実績を聞かれたら「画面共有でデモできます」と伝え、了承されたら実施。技術的深掘り時はUEP v5.0を起動し、Swagger UIとフロントダッシュボードを中心に説明。</p>
+  <p><strong>事前</strong> start-all.bat で起動。面談5分前に http://localhost:8000, http://localhost:3000 を確認。ログイン: kaho0525 / kaho052514</p>
+  <p><strong>デモ流れ</strong> ①システム概要（7コア、稼働率99.995%、100システム以上） ②Swagger UI（/docs） ③フロントログイン・ダッシュボード ④技術スタック・品質指標</p>
+  <p><strong>トラブル時</strong> 起動不可ならSwagger UIのスクリーンショットで説明。ログイン不可ならAPI実演。</p>
+  <p><strong>強調ポイント</strong> 実際に動作するシステム／稼働率99.995%・推論レイテンシ&lt;10ms／MLOps・生成AIの技術的深さ／7コアシステム統合</p>
+</div>
+
+<hr>
+
+<p><a href="#">↑ トップへ</a></p>
+
+</body>
+</html>

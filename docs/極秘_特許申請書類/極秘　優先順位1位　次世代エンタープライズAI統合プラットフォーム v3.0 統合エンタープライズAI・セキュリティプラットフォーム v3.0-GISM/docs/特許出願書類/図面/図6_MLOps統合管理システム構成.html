@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【図6】MLOps統合管理システム構成</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 25mm;
+        }
+        
+        body {
+            font-family: 'MS Gothic', 'Yu Gothic', monospace;
+            margin: 25mm;
+            background: white;
+        }
+        
+        .drawing-title {
+            text-align: center;
+            font-size: 14pt;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .architecture {
+            border: 2px solid #000;
+            padding: 20px;
+        }
+        
+        .module {
+            border: 2px solid #000;
+            padding: 15px;
+            margin: 10px;
+            background: #f5f5f5;
+            display: inline-block;
+            min-width: 200px;
+            vertical-align: top;
+        }
+        
+        .module-title {
+            font-weight: bold;
+            font-size: 11pt;
+            margin-bottom: 10px;
+            text-align: center;
+            border-bottom: 1px solid #000;
+            padding-bottom: 5px;
+        }
+        
+        .module-content {
+            font-size: 9pt;
+            text-align: left;
+        }
+        
+        .module-content ul {
+            margin: 5px 0;
+            padding-left: 20px;
+        }
+        
+        .central {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 12pt;
+            font-weight: bold;
+        }
+        
+        .arrow {
+            text-align: center;
+            font-size: 16pt;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="drawing-title">【図6】MLOps統合管理システム構成</div>
+    
+    <div class="architecture">
+        <div class="central">
+            MLOps統合管理システム (5)
+        </div>
+        
+        <div style="text-align: center;">
+            <div class="module" style="width: 45%;">
+                <div class="module-title">モデルライフサイクル管理モジュール (5-1)</div>
+                <div class="module-content">
+                    <ul>
+                        <li>学習</li>
+                        <li>評価</li>
+                        <li>デプロイ</li>
+                        <li>監視</li>
+                        <li>複数モダリティ対応</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="module" style="width: 45%;">
+                <div class="module-title">データドリフト検知モジュール (5-2)</div>
+                <div class="module-content">
+                    <ul>
+                        <li>Kolmogorov-Smirnov検定</li>
+                        <li>PSI (Population Stability Index)</li>
+                        <li>MMD (Maximum Mean Discrepancy)</li>
+                        <li>各モダリティの分布監視</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div style="text-align: center;">
+            <div class="module" style="width: 45%;">
+                <div class="module-title">自動再学習モジュール (5-3)</div>
+                <div class="module-content">
+                    <ul>
+                        <li>ドリフト検知時の自動トリガー</li>
+                        <li>再学習パイプライン実行</li>
+                        <li>モデル評価</li>
+                        <li>性能比較</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="module" style="width: 45%;">
+                <div class="module-title">A/Bテストモジュール (5-4)</div>
+                <div class="module-content">
+                    <ul>
+                        <li>新旧モデルの比較</li>
+                        <li>トラフィック分割</li>
+                        <li>メトリクス収集</li>
+                        <li>統計的有意性検定</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div style="text-align: center;">
+            <div class="module" style="width: 45%;">
+                <div class="module-title">カナリアデプロイメントモジュール (5-5)</div>
+                <div class="module-content">
+                    <ul>
+                        <li>段階的デプロイ</li>
+                        <li>トラフィック比率調整</li>
+                        <li>ロールバック機能</li>
+                        <li>安全性確保</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="module" style="width: 45%;">
+                <div class="module-title">パフォーマンス監視モジュール (5-6)</div>
+                <div class="module-content">
+                    <ul>
+                        <li>CPU/メモリ使用率</li>
+                        <li>レイテンシ</li>
+                        <li>エラー率</li>
+                        <li>スループット</li>
+                        <li>可用性（99.99%）</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div style="margin-top: 20px; font-size: 9pt; text-align: center;">
+        <strong>システム構成の説明</strong><br>
+        MLOps統合管理システムは、モデルライフサイクル管理、データドリフト検知、自動再学習、<br>
+        A/Bテスト、カナリアデプロイメント、パフォーマンス監視の6つのモジュールで構成される。
+    </div>
+</body>
+</html>
+

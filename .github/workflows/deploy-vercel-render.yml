@@ -1,0 +1,40 @@
+# GitHub Actions + Vercel + Render デプロイ
+# プッシュ時に Vercel（フロント）と Render（API）へデプロイ
+# 事前設定: Vercel と Render で GitHub リポジトリを連携
+
+name: Deploy to Vercel & Render
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:  # 手動実行も可能
+
+env:
+  NODE_VERSION: "18"
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  build-check:
+    name: Build Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Frontend build
+        run: |
+          cd frontend
+          npm ci
+          npm run build
+
+  # Vercel: GitHub 連携で main への push 時に自動デプロイ
+  # Render: GitHub 連携で main への push 時に自動デプロイ
+  deploy-info:
+    name: Deploy Info
+    runs-on: ubuntu-latest
+    needs: [build-check]
+    if: success()
+    steps:
+      - run: |
+          echo "Deploy triggered. Vercel and Render will auto-deploy from GitHub."
+          echo "Vercel: Connect repo at vercel.com"
+          echo "Render: Connect repo at dashboard.render.com"

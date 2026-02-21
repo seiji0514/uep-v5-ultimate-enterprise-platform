@@ -1,0 +1,93 @@
+# 次世代マルチモーダルAI統合プラットフォーム v8.0
+# フェーズ1: 基盤統合
+
+# Webフレームワーク
+fastapi>=0.115.0  # Python 3.13対応版
+uvicorn[standard]>=0.32.0  # Python 3.13対応版
+python-multipart>=0.0.12  # 最新版
+
+# 分散処理
+pyspark>=3.5.0  # Python 3.13対応確認済み
+kafka-python>=2.0.2  # 互換性確認済み
+# ray[default]>=2.9.0  # Python 3.13対応版（必要に応じて有効化、オプショナル）
+
+# マルチモーダルAI
+transformers>=4.40.0  # Python 3.13対応版
+# torch>=2.6.0  # Python 3.13対応版（Dockerビルドエラー回避のため一時的にコメントアウト、必要に応じて有効化）
+# torchvision>=0.21.0  # torch 2.6+対応版（torchと一緒に有効化）
+sentencepiece>=0.2.0  # 最新版
+protobuf>=5.26.0  # Python 3.13対応版
+
+# フェーズ2: コンピュータビジョン
+opencv-python>=4.8.0  # 画像・動画処理
+ultralytics>=8.0.0  # YOLO v8
+# segmentation-models-pytorch>=0.3.0  # U-Net等（torch依存のため一時的にコメントアウト）
+pydicom>=2.4.0  # DICOM形式（医療画像）
+SimpleITK>=2.3.0  # 医療画像処理
+ffmpeg-python>=0.2.0  # 動画処理
+
+# データ処理
+pandas>=2.2.0  # Python 3.13対応版
+numpy>=2.0.0  # Python 3.13対応版
+Pillow>=10.2.0  # 最新版
+
+# 既存システム統合
+requests>=2.32.0  # 最新版
+httpx>=0.27.0  # Python 3.13対応版
+
+# データベース
+psycopg2-binary>=2.9.9  # 互換性確認済み
+redis>=5.0.1  # 互換性確認済み
+
+# 監視・ログ
+prometheus-client>=0.21.0  # 最新版
+python-json-logger>=2.0.7  # 互換性確認済み
+
+# テスト
+pytest>=8.3.0  # Python 3.13対応版
+pytest-asyncio>=0.24.0  # Python 3.13対応版
+pytest-cov>=6.0.0  # 最新版
+
+# フェーズ2: 音声処理
+# openai-whisper>=20231117  # 音声認識（torch依存のため一時的にコメントアウト）
+# coqui-tts>=0.20.0  # 音声合成（torch依存のため一時的にコメントアウト）
+librosa>=0.10.0  # 音声処理（torch非依存）
+soundfile>=0.12.0  # 音声ファイル処理
+scipy>=1.11.0  # 音声処理の依存関係
+
+# フェーズ2: 時系列分析
+# keras-tcn>=3.4.0  # Temporal Convolutional Network（keras依存のため一時的にコメントアウト）
+# pyod>=1.1.0  # 異常検知（torch依存の可能性あり）
+statsmodels>=0.14.0  # 時系列分析（torch非依存）
+tsfresh>=0.20.0  # 時系列特徴量抽出（torch非依存）
+# tslearn>=0.6.0  # 時系列機械学習（torch依存の可能性あり）
+scikit-learn>=1.3.0  # 異常検知、クラスタリング（Isolation Forest等）
+
+# フェーズ3: グラフニューラルネットワーク（GNN）
+networkx>=3.2  # グラフ操作（torch非依存）
+# torch-geometric>=2.4.0  # GNN実装（torch依存のため一時的にコメントアウト）
+# dgl>=1.1.0  # Deep Graph Library（torch依存のため一時的にコメントアウト）
+
+# フェーズ3: エッジAI（後で実装）
+# tensorflow>=2.15.0  # TensorFlow Lite用（オプショナル）
+# onnxruntime>=1.16.0  # ONNX Runtime（オプショナル）
+paho-mqtt>=1.6.0  # MQTT通信（IoT統合）
+
+# フェーズ3: 強化学習（後で実装）
+# stable-baselines3>=2.0.0  # 強化学習フレームワーク（torch依存）
+# gymnasium>=0.29.0  # 環境（オプショナル）
+
+# フェーズ4: 金融AI（後で実装）
+# scipy>=1.11.0  # 最適化（既にnumpy依存でインストール済みの可能性あり）
+
+# フェーズ4: 医療AI（後で実装）
+# 既にpydicom, SimpleITKが実装済み
+
+# 特許出願レベル: 自己最適化・監視
+psutil>=5.9.0  # システムリソース監視
+
+# その他
+python-dotenv>=1.0.1  # 最新版
+pydantic>=2.9.0  # Python 3.13対応版
+pydantic-settings>=2.5.0  # 最新版
+

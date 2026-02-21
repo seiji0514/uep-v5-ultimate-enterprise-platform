@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>面談用ナビ - 汎用版（企業・職種対応）</title>
+  <style>
+    body { font-family: "Yu Gothic", "Meiryo", sans-serif; max-width: 720px; margin: 0 auto; padding: 1rem; line-height: 1.5; font-size: 0.95rem; }
+    h1 { font-size: 1.3rem; border-bottom: 2px solid #333; padding-bottom: 0.4rem; }
+    h2 { font-size: 1.15rem; margin-top: 1.5rem; color: #333; border-bottom: 1px solid #ccc; }
+    h3 { font-size: 1rem; margin-top: 1rem; color: #555; }
+    nav { background: #e8f4f8; padding: 0.8rem; border-radius: 4px; margin-bottom: 1.5rem; border-left: 4px solid #0066cc; }
+    nav ul { list-style: none; padding: 0; margin: 0; }
+    nav li { margin: 0.3rem 0; }
+    nav a { color: #0066cc; text-decoration: none; }
+    nav a:hover { text-decoration: underline; }
+    .q { font-weight: bold; color: #333; }
+    .hl { background: #fff9e6; padding: 0 0.2rem; }
+    .customize { background: #e8f5e9; padding: 0.8rem; border-radius: 4px; margin: 0.5rem 0; border-left: 4px solid #4caf50; }
+    .term { background: #f8f9fa; padding: 0.6rem 0.8rem; margin: 0.5rem 0; border-radius: 4px; border-left: 3px solid #0066cc; }
+    .term-name { font-weight: bold; color: #0066cc; }
+    p, ul { margin: 0.4rem 0; padding-left: 1.2rem; }
+    ul { padding-left: 1.5rem; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 1rem 0; }
+  </style>
+</head>
+<body>
+
+<h1>面談用ナビ - 汎用版（企業・職種対応）</h1>
+<p><em>どの企業・どの職種の面談にも対応可能。面談前に「0. 企業・職種に合わせたポイント」をカスタマイズしてください。株式会社ラスク向け詳細版は <a href="INTERVIEW_NAV_RASUKU.html">INTERVIEW_NAV_RASUKU.html</a> を参照</em></p>
+
+<nav>
+  <p><strong>▼ クリックで該当箇所に移動</strong></p>
+  <ul>
+    <li><a href="#customize-point">0. 企業・職種に合わせたポイント（面談前に記入）</a></li>
+    <li><a href="#terms">1. AI用語集</a></li>
+    <li><a href="#aisatsu">2. 挨拶・締め</a></li>
+    <li><a href="#jikoshokai">3. 自己紹介・転職理由</a></li>
+    <li><a href="#choshoshosho">4. 長所・短所</a></li>
+    <li><a href="#question">5. 質問への回答</a></li>
+    <li><a href="#experience">6. ITエンジニア実務経験・チーム開発</a></li>
+    <li><a href="#demo">7. デモ手順</a></li>
+  </ul>
+</nav>
+
+<div id="customize-point">
+  <h2>0. 企業・職種に合わせたポイント（面談前に記入）</h2>
+  <div class="customize">
+    <p><strong>【企業名】</strong> 例: 株式会社〇〇</p>
+    <p><strong>【希望職種】</strong> 例: AIエンジニア / フルスタック開発者 / システムアーキテクト / バックエンドエンジニア 等</p>
+    <p><strong>【貴社の特色】</strong> 例: AI駆動開発／自社AIサービス／フルリモート／プライム案件／要件定義～開発まで一貫 等（求人票・企業HPから抜粋）</p>
+    <p><strong>【面談で強調する点】</strong> 例: 貴社の〇〇への共感／〇〇の専門性を活かしたい／完全リモート・通院配慮 等</p>
+    <p><strong>【職種別強調】</strong></p>
+    <ul>
+      <li>AIエンジニア: MLOps/LLMOps、RAG、CoT推論、生成AI、インクルーシブ雇用AI</li>
+      <li>フルスタック: Python、React、TypeScript、FastAPI、設計～実装～テスト一貫</li>
+      <li>システムアーキテクト: マイクロサービス、イベント駆動、Level 1～5 統合設計</li>
+      <li>バックエンド: FastAPI、PostgreSQL、Docker、Kubernetes、API設計</li>
+      <li>アクセシビリティ: Webアクセシビリティ検査員L1～3（書面あり）、当事者視点、インクルーシブ雇用AI</li>
+    </ul>
+  </div>
+</div>
+
+<hr>
+
+<div id="terms">
+  <h2>1. AI用語集（面談で聞かれやすい用語）</h2>
+  <p><em>AI用語の意味を聞かれたとき、簡潔に説明してから実装経験を補足。</em></p>
+
+  <div class="term">
+    <span class="term-name">RAG（ラグ、Retrieval-Augmented Generation）</span>
+    <p><strong>意味:</strong> 検索拡張生成。外部知識を検索してLLMの入力に加え、根拠のある回答を生成。ハルシネーション軽減。</p>
+    <p><strong>使い方:</strong> 「RAGパターンでLangChainとChromaDBを組み合わせ、社内ドキュメント検索を実装しました。」</p>
+  </div>
+
+  <div class="term">
+    <span class="term-name">CoT（コット、Chain-of-Thought）推論</span>
+    <p><strong>意味:</strong> 思考の連鎖。段階的に推論してから結論を出す手法。複雑な問題で精度向上。</p>
+    <p><strong>使い方:</strong> 「CoT推論をプロンプトに組み込み、論理的な回答を導くように設計しました。」</p>
+  </div>
+
+  <div class="term">
+    <span class="term-name">MLOps / LLMOps</span>
+    <p><strong>意味:</strong> MLモデル／LLMの運用管理。実験管理、モデルレジストリ、デプロイ、監視。</p>
+    <p><strong>使い方:</strong> 「MLflowで実験管理、Prometheus/Grafanaで監視基盤を構築しました。」</p>
+  </div>
+
+  <div class="term">
+    <span class="term-name">インクルーシブ雇用AI</span>
+    <p><strong>意味:</strong> 障害者雇用マッチング、アクセシビリティ特化AI、当事者視点UX評価を統合したプラットフォーム。</p>
+    <p><strong>使い方:</strong> 「身体障害者としての当事者視点を活かし、障害者雇用・アクセシビリティに特化したシステムを実装しました。」</p>
+  </div>
+
+  <div class="term">
+    <span class="term-name">アクセシビリティ</span>
+    <p><strong>意味:</strong> 誰もが使いやすい設計。WCAG準拠、スクリーンリーダー対応等。</p>
+    <p><strong>使い方:</strong> 「Webアクセシビリティ検査員検定L1～3（書面あり）を取得し、誰もが使いやすいAIシステムの開発に貢献できます。」</p>
+  </div>
+
+  <p><em>※その他（LLM、生成AI、AIエージェント、MCP/A2A、デジタルデバイド等）は docs/INTERVIEW_NAV_RASUKU.html を参照</em></p>
+</div>
+
+<hr>
+
+<div id="aisatsu">
+  <h2>2. 挨拶・締め</h2>
+  <p><strong>冒頭</strong> 本日はお時間をいただきありがとうございます。ご案内いただき光栄です。よろしくお願いいたします。</p>
+  <p><strong>締め</strong> 本日はありがとうございました。今後の選考の流れをお教えいただけますか。追加のご質問があればお聞かせください。</p>
+</div>
+
+<hr>
+
+<div id="jikoshokai">
+  <h2>3. 自己紹介・転職理由</h2>
+  <p><strong>自己紹介（約40秒）</strong> 小川清志、51歳。完全在宅で総務・Webアクセシビリティ検査（検定L1～3）。2025年6月からAI・MLに集中、8ヶ月で100システム以上を担当。MLOps・生成AI・インクルーシブ雇用AIを実装、稼働率99.995%達成。完全リモート3年9ヶ月。貴社の【上記0で記入した特色】に、専門性を活かして貢献したいです。</p>
+  <p><strong>転職理由</strong> チーム開発・コードレビューなど実務スキルを深めたい。AI駆動開発・生成AIで専門性を活かし貢献したい。貴社は【特色】と伺いました。</p>
+  <p><strong>希望年収</strong> 経験・スキル・役割に応じてご相談。成長機会を最優先。通院配慮をいただければ幸いです。</p>
+</div>
+
+<hr>
+
+<div id="choshoshosho">
+  <h2>4. 長所・短所</h2>
+  <p><strong>長所</strong> 実装力とスピード。myiq IQ127（認知機能評価レポート書面あり）。8ヶ月で100システム以上、稼働率99.995%、推論レイテンシ10ms未満。Zenn・Qiitaで技術記事執筆。アクセシビリティ専門性。【職種に合わせて強調】</p>
+  <p><strong>短所</strong> ①ビジネス理解 ②非エンジニアへの説明 ③チーム開発経験。いずれも貴社で身につけたい。</p>
+  <p><strong>AI・Cursor</strong> 補助ツール。要件定義・設計・判断は自分で行い、人間が主導。</p>
+</div>
+
+<hr>
+
+<div id="question">
+  <h2>5. 質問への回答</h2>
+  <p><span class="q">Q: なぜ貴社か？</span> 【上記0で記入した特色】に惹かれました。【職種】で【強調点】を活かしたいです。</p>
+  <p><span class="q">Q: 100システム以上をどう実現？</span> AI協働ツール（Cursor、Copilot）活用。myiq IQ127（認知機能評価レポート書面あり）、少林寺拳法で学んだ目標設定・効率的学習が支え。デモで実績をご確認いただけます。</p>
+  <p><span class="q">Q: MLOps/LLMOps・生成AIの経験？</span> MLflow、Prometheus/Grafana、RAG（LangChain、ChromaDB）、CoT推論、インクルーシブ雇用AI。稼働率99.995%達成。デモで動作をご確認いただけます。</p>
+  <p><span class="q">Q: 身体障害者手帳、業務に支障は？</span> 技術的作業に支障なし。完全リモートであれば健常者と同等以上。通院の時間調整をいただければ幸いです。</p>
+  <p><span class="q">Q: キャリアプラン？</span> AI駆動開発・生成AIでLLM・RAG・CoT・MLOps/LLMOpsの専門知識を活かし貢献。【企業の事業に合わせて】アクセシビリティ・インクルーシブ雇用AIで誰もが使いやすいシステム開発に貢献。</p>
+  <p><span class="q">Q: 興味のある案件？</span> AI駆動開発・生成AI・データ系・MLOps/LLMOps。Python、TypeScript、React、PostgreSQL、Dockerなど。</p>
+  <p><span class="q">Q: チーム開発経験・個人開発ばかりで大丈夫？</span> 個人開発が中心ですが、Webアクセシビリティ検査は1人では完遂できないためJCIで2年2ヶ月チーム協働。派遣社員統括（30～40名・3年7ヶ月）・台風対策通行止判断の統括（最大50名・5年）の経験もあり、チームでの役割遂行は可能です。フルリモート勤務でSlack・Teams・Google Meetを日常的に使用。非同期コミュニケーションとオンライン会議には慣れています。コードレビューは経験が浅いので、指摘を素直に受け止め、質問しながら学ぶ姿勢で臨みます。</p>
+  <p><span class="q">Q: 51歳で大丈夫か？</span> 影響なし。myiq IQ127（認知機能評価レポート書面あり）、少林寺拳法で学んだ目標設定・効率的学習、8ヶ月で100システム以上の実績で学習・実行力を証明。デモで動作をご確認いただけます。</p>
+  <p><span class="q">Q: インクルーシブ雇用AIの信頼性は？</span> 身体障害者としての当事者視点と、Webアクセシビリティ検査員検定L1～3（書面あり）の専門知識で補強。誰もが使いやすい設計に貢献できます。デモで実装をご確認いただけます。</p>
+  <p><em>※企業・職種に合わせて「0. 企業・職種に合わせたポイント」の内容を質問回答に反映してください</em></p>
+</div>
+
+<hr>
+
+<div id="experience">
+  <h2>6. ITエンジニア実務経験・チーム開発について</h2>
+  <p><strong>実務経験:</strong> KDDIエボルバ（11ヶ月・ヘルプデスク・サーバー処理）、AI技術研究開発（8ヶ月・100システム以上）、JCI（2年2ヶ月・Webアクセシビリティ検査）。</p>
+  <p><strong>チーム開発:</strong> Webアクセシビリティ検査は1人では完遂できないためJCIで2年2ヶ月チーム協働。派遣統括・台風対策統括の経験もあり。個人開発が中心だが、フルリモートでSlack・Teams・Meetを日常使用。コードレビューは経験が浅いが、指摘を素直に受け止め学ぶ姿勢。</p>
+</div>
+
+<hr>
+
+<div id="demo">
+  <h2>7. デモ手順</h2>
+  <p><strong>進め方</strong> 実績を聞かれたら「画面共有でデモできます」と伝え、了承されたら実施。start-backend.bat、cd frontend → npm start で起動。</p>
+  <p><strong>強調ポイント</strong> 実際に動作するシステム／稼働率99.995%・推論レイテンシ&lt;10ms／MLOps・生成AI・インクルーシブ雇用AI／Level 1～5 統合／Chaos Engineering・GraphQL・Contract Testing</p>
+  <p><em>※詳細は docs/DEMO_INTERVIEW_NAV_RASUKU.html または docs/DEMO_INTERVIEW_NAV_汎用.html を参照</em></p>
+</div>
+
+<hr>
+
+<p><a href="#">↑ トップへ</a></p>
+
+</body>
+</html>

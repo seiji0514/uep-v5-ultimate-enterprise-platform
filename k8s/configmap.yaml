@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: uep-config
+  namespace: uep-v5
+data:
+  APP_NAME: "UEP v5.0 - Ultimate Enterprise Platform"
+  APP_VERSION: "5.0.0"
+  ENVIRONMENT: "production"
+  LOG_LEVEL: "INFO"
+  CORS_ORIGINS: "https://uep.example.com"
+  RATE_LIMIT_ENABLED: "true"
+  RATE_LIMIT_PER_MINUTE: "60"
+  PROMETHEUS_ENABLED: "true"
+  OPENTELEMETRY_ENABLED: "true"

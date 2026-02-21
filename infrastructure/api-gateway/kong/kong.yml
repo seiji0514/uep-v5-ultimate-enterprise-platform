@@ -1,0 +1,71 @@
+_format_version: "3.0"
+
+services:
+  - name: backend-api
+    url: http://backend:8000
+    routes:
+      - name: backend-api-route
+        paths:
+          - /api/v1
+        strip_path: false
+    plugins:
+      - name: rate-limiting
+        config:
+          minute: 100
+          hour: 1000
+      - name: cors
+        config:
+          origins:
+            - "*"
+          methods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - PATCH
+            - OPTIONS
+          headers:
+            - Authorization
+            - Content-Type
+            - X-Request-ID
+          credentials: true
+      - name: request-id
+        config:
+          header_name: X-Request-ID
+          echo_downstream: true
+      - name: prometheus
+        config:
+          per_consumer: true
+
+  - name: mlops-service
+    url: http://mlops-service:8003
+    routes:
+      - name: mlops-route
+        paths:
+          - /api/v1/mlops
+        strip_path: false
+
+  - name: generative-ai-service
+    url: http://generative-ai-service:8004
+    routes:
+      - name: generative-ai-route
+        paths:
+          - /api/v1/generative-ai
+        strip_path: false
+
+  - name: security-service
+    url: http://security-service:8005
+    routes:
+      - name: security-route
+        paths:
+          - /api/v1/security
+        strip_path: false
+
+consumers:
+  - username: admin
+    keyauth_credentials:
+      - key: admin-key-12345
+
+  - username: api-user
+    keyauth_credentials:
+      - key: user-key-67890

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【図9】予測的プリフェッチの実行フロー</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 25mm;
+        }
+        
+        body {
+            font-family: 'MS Gothic', 'Yu Gothic', monospace;
+            margin: 25mm;
+            background: white;
+        }
+        
+        .drawing-title {
+            text-align: center;
+            font-size: 14pt;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .flowchart {
+            border: 2px solid #000;
+            padding: 20px;
+        }
+        
+        .step {
+            border: 2px solid #000;
+            padding: 12px;
+            margin: 10px auto;
+            text-align: center;
+            background: white;
+            width: 80%;
+            font-size: 10pt;
+        }
+        
+        .step.start {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+        
+        .step.process {
+            background: #fff3cd;
+            border-color: #ffc107;
+        }
+        
+        .step.decision {
+            background: #d1ecf1;
+            border-color: #17a2b8;
+            border-radius: 50px;
+        }
+        
+        .step.end {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+        
+        .arrow {
+            text-align: center;
+            font-size: 20pt;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="drawing-title">【図9】予測的プリフェッチの実行フロー</div>
+    
+    <div class="flowchart">
+        <div class="step start">
+            <strong>開始</strong><br>
+            キーアクセスを検知
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div class="step process">
+            <strong>ステップ1</strong><br>
+            アクセス履歴から共起頻度を計算<br>
+            (共起頻度 = 同時アクセス回数 / 総アクセス回数)
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div class="step process">
+            <strong>ステップ2</strong><br>
+            モーダル間の相関関係を分析<br>
+            (相関スコア = 共起頻度 × 時間的近接度)
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div class="step decision">
+            <strong>ステップ3</strong><br>
+            共起度が閾値を超えるか？<br>
+            (閾値: 0.3以上)
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div class="step process">
+            <strong>ステップ4</strong><br>
+            プリフェッチ対象キーを特定<br>
+            (共起度が高いキーのリストを作成)
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div class="step process">
+            <strong>ステップ5</strong><br>
+            予測的プリフェッチを実行<br>
+            (対象キーのデータを事前にキャッシュに読み込み)
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div class="step process">
+            <strong>ステップ6</strong><br>
+            プリフェッチ結果を記録<br>
+            (ヒット率、レイテンシ削減効果を記録)
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div class="step end">
+            <strong>終了</strong>
+        </div>
+    </div>
+    
+    <div style="margin-top: 20px; font-size: 9pt; text-align: center;">
+        <strong>処理フローの説明</strong><br>
+        キーアクセスを検知し、共起度を計算し、閾値判定を行い、プリフェッチ対象キーを特定し、<br>
+        予測的プリフェッチを実行する。
+    </div>
+</body>
+</html>
+

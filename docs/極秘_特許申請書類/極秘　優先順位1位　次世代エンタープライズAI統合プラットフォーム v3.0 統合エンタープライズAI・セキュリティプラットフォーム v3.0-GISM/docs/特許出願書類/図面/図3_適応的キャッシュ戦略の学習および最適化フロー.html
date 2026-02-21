@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【図3】適応的キャッシュ戦略の学習および最適化フロー</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 25mm;
+        }
+        
+        body {
+            font-family: 'MS Gothic', 'Yu Gothic', monospace;
+            margin: 25mm;
+            background: white;
+        }
+        
+        .drawing-title {
+            text-align: center;
+            font-size: 14pt;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .flowchart {
+            border: 2px solid #000;
+            padding: 20px;
+        }
+        
+        .step {
+            border: 2px solid #000;
+            padding: 12px;
+            margin: 10px auto;
+            text-align: center;
+            background: white;
+            width: 80%;
+            font-size: 10pt;
+        }
+        
+        .step.start {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+        
+        .step.process {
+            background: #fff3cd;
+            border-color: #ffc107;
+        }
+        
+        .step.decision {
+            background: #d1ecf1;
+            border-color: #17a2b8;
+            border-radius: 50px;
+        }
+        
+        .step.end {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+        
+        .arrow {
+            text-align: center;
+            font-size: 20pt;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="drawing-title">【図3】適応的キャッシュ戦略の学習および最適化フロー</div>
+    
+    <div class="flowchart">
+        <div class="step start">
+            <strong>開始</strong><br>
+            データキーへのアクセス
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div class="step process">
+            <strong>ステップ1</strong><br>
+            アクセス履歴を記録<br>
+            (キー、時刻、頻度、順序)
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div class="step process">
+            <strong>ステップ2</strong><br>
+            アクセスパターンを学習<br>
+            (時間帯、頻度、順序パターン)
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div class="step process">
+            <strong>ステップ3</strong><br>
+            モーダル間の相関関係を分析<br>
+            (共起頻度、相関スコア)
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div class="step process">
+            <strong>ステップ4</strong><br>
+            次にアクセスされる可能性の高いデータを予測
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div class="step process">
+            <strong>ステップ5</strong><br>
+            予測的プリフェッチを実行<br>
+            (共起度が閾値を超えるキーを事前に読み込み)
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div class="step process">
+            <strong>ステップ6</strong><br>
+            データの重要度に応じて動的にTTLを調整<br>
+            (重要度スコア = アクセス頻度 × 最終アクセス時刻 × 相関)
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div class="step decision">
+            <strong>ステップ7</strong><br>
+            メモリ使用量が閾値（90%）を超えたか？
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div class="step process">
+            <strong>ステップ8</strong><br>
+            メモリ最適化を実行<br>
+            (重要度スコアが低いキーから順に削除)
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div class="step end">
+            <strong>終了</strong>
+        </div>
+    </div>
+    
+    <div style="margin-top: 20px; font-size: 9pt; text-align: center;">
+        <strong>処理フローの説明</strong><br>
+        アクセス履歴を記録し、アクセスパターンを学習し、モーダル間の相関関係を分析し、<br>
+        予測的プリフェッチを実行し、動的TTL調整とメモリ最適化を行う。
+    </div>
+</body>
+</html>
+

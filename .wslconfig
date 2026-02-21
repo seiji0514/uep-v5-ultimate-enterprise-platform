@@ -1,0 +1,21 @@
+# WSL設定ファイル（Windows側の %UserProfile%\.wslconfig に配置）
+# このファイルは参考用です。実際の設定はWindows側で行ってください。
+
+[wsl2]
+# メモリ制限（GB）
+memory=8GB
+
+# プロセッサ数
+processors=4
+
+# スワップファイルサイズ（GB）
+swap=4GB
+
+# スワップファイルの場所
+swapFile=C:\\Users\\%USERNAME%\\AppData\\Local\\Temp\\swap.vhdx
+
+# ローカルホスト転送
+localhostForwarding=true
+
+# カーネルコマンドライン
+kernelCommandLine=cgroup_no_v1=all
