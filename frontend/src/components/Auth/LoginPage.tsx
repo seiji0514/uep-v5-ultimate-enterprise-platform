@@ -35,8 +35,8 @@ export const LoginPage: React.FC = () => {
 
     try {
       await login({ username: username.trim(), password: password.trim() });
-      // 認証状態更新後、LoginPage の再レンダで Navigate が発火する
-      navigate('/', { replace: true });
+      // ローディングUIのアンマウントを待ってからナビゲート（removeChild エラー回避）
+      setTimeout(() => navigate('/', { replace: true }), 100);
     } catch (err: any) {
       setError(err.response?.data?.detail || 'ログインに失敗しました');
       setLoading(false);
