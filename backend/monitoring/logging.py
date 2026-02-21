@@ -147,7 +147,7 @@ class LoggingHandler:
         message: str,
         user_id: Optional[str] = None,
         request_id: Optional[str] = None,
-        **kwargs
+        **kwargs,
     ):
         """情報ログを記録"""
         extra = {"service": self.service_name, **kwargs}
@@ -164,7 +164,7 @@ class LoggingHandler:
         error: Optional[Exception] = None,
         user_id: Optional[str] = None,
         request_id: Optional[str] = None,
-        **kwargs
+        **kwargs,
     ):
         """エラーログを記録"""
         extra = {"service": self.service_name, **kwargs}
@@ -183,7 +183,7 @@ class LoggingHandler:
         message: str,
         user_id: Optional[str] = None,
         request_id: Optional[str] = None,
-        **kwargs
+        **kwargs,
     ):
         """警告ログを記録"""
         extra = {"service": self.service_name, **kwargs}
