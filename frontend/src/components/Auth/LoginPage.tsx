@@ -10,7 +10,6 @@ import {
   Typography,
   Box,
   Alert,
-  CircularProgress,
 } from '@mui/material';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate, Navigate } from 'react-router-dom';
@@ -35,8 +34,11 @@ export const LoginPage: React.FC = () => {
 
     try {
       await login({ username: username.trim(), password: password.trim() });
-      // ローディングUIのアンマウントを待ってからナビゲート（removeChild エラー回避）
-      setTimeout(() => navigate('/', { replace: true }), 100);
+      setLoading(false); // CircularProgress を先にアンマウント（removeChild エラー回避）
+      // 次のフレームでナビゲート（DOM 更新を待つ）
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => navigate('/', { replace: true }));
+      });
     } catch (err: any) {
       setError(err.response?.data?.detail || 'ログインに失敗しました');
       setLoading(false);
@@ -97,7 +99,7 @@ export const LoginPage: React.FC = () => {
               sx={{ mt: 3, mb: 2 }}
               disabled={loading}
             >
-              {loading ? <CircularProgress size={24} /> : 'ログイン'}
+              {loading ? 'ログイン中...' : 'ログイン'}
             </Button>
             <Box sx={{ mt: 2 }}>
               <Typography variant="body2" color="text.secondary" align="center">
