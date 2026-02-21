@@ -136,8 +136,10 @@ jobs:
         env:
           CI: true
           DISABLE_ESLINT_PLUGIN: "true"
+          GENERATE_SOURCEMAP: "false"
         run: |
           cd frontend
+          rm -rf node_modules/.cache
           npm run build
 
   security-scan:
