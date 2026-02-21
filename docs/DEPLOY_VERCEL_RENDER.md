@@ -75,13 +75,16 @@ git push -u origin main
 | **Name** | uep-backend |
 | **Root Directory** | `backend` |
 | **Runtime** | Python 3 |
-| **Build Command** | `pip install -r requirements.txt` |
+| **Build Command** | `pip install -r requirements-render.txt` |
 | **Start Command** | `uvicorn main:app --host 0.0.0.0 --port $PORT` |
+
+> **重要**: `requirements-render.txt` を使用してください。`requirements.txt` には ChromaDB 等の Rust ビルドが必要なパッケージが含まれており、Render の無料枠でビルド失敗する場合があります。
 
 ### 1.3 環境変数（Render ダッシュボード → Environment）
 
 | Key | Value |
 |-----|-------|
+| `PYTHON_VERSION` | 3.11.7 |
 | `ENVIRONMENT` | production |
 | `DEBUG` | false |
 | `RATE_LIMIT_ENABLED` | false |
@@ -163,9 +166,15 @@ Vercel の URL が決まったら、以下を追加:
 - Render のバックエンドが起動しているか確認（スリープ後は初回アクセスで遅延あり）
 - 認証のデモユーザーは `backend/auth/routes.py` の `_init_demo_users` で定義
 
+### ログイン後、白画面のまま
+
+- **ブラウザの開発者ツール（F12）→ Console** でエラーを確認
+- Render の `CORS_ORIGINS` に Vercel の URL が含まれているか確認
+- Vercel の `REACT_APP_API_URL` がビルド時に正しく設定されているか確認（Settings → Environment Variables）
+
 ### ビルド失敗
 
-- **Render**: `requirements.txt` の依存関係が重い場合、`requirements-render.txt` を用意して簡略化を検討
+- **Render**: Build Command を `pip install -r requirements-render.txt` に変更。ChromaDB/LangSmith 等の Rust ビルドが必要なパッケージを除外した軽量版を使用。`PYTHON_VERSION=3.11.7` を環境変数に追加。
 - **Vercel**: Node 18 以上推奨、`npm ci` で依存関係を固定
 
 ---

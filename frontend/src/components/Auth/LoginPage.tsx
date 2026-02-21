@@ -35,8 +35,8 @@ export const LoginPage: React.FC = () => {
 
     try {
       await login({ username: username.trim(), password: password.trim() });
-      // 状態更新を待ってからナビゲート（React の setState は非同期のため）
-      setTimeout(() => navigate('/', { replace: true }), 150);
+      // 認証状態更新後、LoginPage の再レンダで Navigate が発火する
+      navigate('/', { replace: true });
     } catch (err: any) {
       setError(err.response?.data?.detail || 'ログインに失敗しました');
       setLoading(false);
