@@ -39,8 +39,14 @@ async def get_erp_summary(
         "platform": "ERP（統合基幹業務システム）",
         "version": "1.0.0",
         "modules": {
-            "販売管理": {"order_count": sales["order_count"], "total_sales": sales["total_sales"]},
-            "購買管理": {"order_count": purchasing["order_count"], "total_purchases": purchasing["total_purchases"]},
+            "販売管理": {
+                "order_count": sales["order_count"],
+                "total_sales": sales["total_sales"],
+            },
+            "購買管理": {
+                "order_count": purchasing["order_count"],
+                "total_purchases": purchasing["total_purchases"],
+            },
             "データ連携": integration,
         },
     }

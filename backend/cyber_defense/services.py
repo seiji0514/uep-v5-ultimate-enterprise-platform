@@ -2,17 +2,17 @@
 サイバー対策 サービス層
 Suricata, Wazuh, MISP 連携（外部サービス未起動時はメモリ内で動作）
 """
+import uuid
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional
-import uuid
 
 from security_center.monitoring import SecurityEvent, ThreatLevel, security_monitor
-
 
 # メモリ内ストア（外部サービス未連携時のフォールバック）
 _suricata_alerts: Dict[str, Dict[str, Any]] = {}
 _wazuh_alerts: Dict[str, Dict[str, Any]] = {}
 _audit_logs: List[Dict[str, Any]] = []
+
 
 # デモ用初期データ
 def _init_demo_data():
@@ -21,11 +21,13 @@ def _init_demo_data():
     if _suricata_alerts:
         return
     # Suricata デモアラート
-    for i, (rid, msg, sev) in enumerate([
-        ("2000001", "ET SCAN Potential SSH Scan", "high"),
-        ("2000002", "ET MALWARE Possible C&C Beacon", "critical"),
-        ("2000003", "ET SCAN Nmap Scan Detection", "medium"),
-    ]):
+    for i, (rid, msg, sev) in enumerate(
+        [
+            ("2000001", "ET SCAN Potential SSH Scan", "high"),
+            ("2000002", "ET MALWARE Possible C&C Beacon", "critical"),
+            ("2000003", "ET SCAN Nmap Scan Detection", "medium"),
+        ]
+    ):
         aid = str(uuid.uuid4())
         _suricata_alerts[aid] = {
             "id": aid,
@@ -38,11 +40,13 @@ def _init_demo_data():
             "source": "suricata",
         }
     # Wazuh デモアラート
-    for i, (rid, desc, lvl) in enumerate([
-        ("100002", "File integrity monitoring: File changed", 7),
-        ("100003", "Rootcheck: Rootkit detected", 12),
-        ("100004", "Authentication failure", 5),
-    ]):
+    for i, (rid, desc, lvl) in enumerate(
+        [
+            ("100002", "File integrity monitoring: File changed", 7),
+            ("100003", "Rootcheck: Rootkit detected", 12),
+            ("100004", "Authentication failure", 5),
+        ]
+    ):
         aid = str(uuid.uuid4())
         _wazuh_alerts[aid] = {
             "id": aid,
@@ -59,7 +63,12 @@ def ingest_suricata_alert(data: Dict[str, Any]) -> Dict[str, Any]:
     """Suricata アラートを取り込み、Security Center に連携"""
     _init_demo_data()
     alert_id = str(uuid.uuid4())
-    sev_map = {"low": ThreatLevel.LOW, "medium": ThreatLevel.MEDIUM, "high": ThreatLevel.HIGH, "critical": ThreatLevel.CRITICAL}
+    sev_map = {
+        "low": ThreatLevel.LOW,
+        "medium": ThreatLevel.MEDIUM,
+        "high": ThreatLevel.HIGH,
+        "critical": ThreatLevel.CRITICAL,
+    }
     threat = sev_map.get(data.get("severity", "medium").lower(), ThreatLevel.MEDIUM)
     # Security Center にイベント登録
     security_monitor.log_event(
@@ -89,7 +98,11 @@ def ingest_wazuh_alert(data: Dict[str, Any]) -> Dict[str, Any]:
     _init_demo_data()
     alert_id = str(uuid.uuid4())
     lvl = data.get("rule_level", 5)
-    threat = ThreatLevel.CRITICAL if lvl >= 12 else (ThreatLevel.HIGH if lvl >= 8 else ThreatLevel.MEDIUM)
+    threat = (
+        ThreatLevel.CRITICAL
+        if lvl >= 12
+        else (ThreatLevel.HIGH if lvl >= 8 else ThreatLevel.MEDIUM)
+    )
     security_monitor.log_event(
         event_type="edr_alert",
         threat_level=threat,
@@ -115,14 +128,18 @@ def ingest_wazuh_alert(data: Dict[str, Any]) -> Dict[str, Any]:
 def get_suricata_alerts(limit: int = 50) -> List[Dict[str, Any]]:
     """Suricata アラート一覧"""
     _init_demo_data()
-    items = sorted(_suricata_alerts.values(), key=lambda x: x.get("timestamp", ""), reverse=True)
+    items = sorted(
+        _suricata_alerts.values(), key=lambda x: x.get("timestamp", ""), reverse=True
+    )
     return items[:limit]
 
 
 def get_wazuh_alerts(limit: int = 50) -> List[Dict[str, Any]]:
     """Wazuh アラート一覧"""
     _init_demo_data()
-    items = sorted(_wazuh_alerts.values(), key=lambda x: x.get("timestamp", ""), reverse=True)
+    items = sorted(
+        _wazuh_alerts.values(), key=lambda x: x.get("timestamp", ""), reverse=True
+    )
     return items[:limit]
 
 
@@ -131,7 +148,9 @@ def check_threat_intel(ioc_type: str, ioc_value: str) -> Dict[str, Any]:
     # デモ用: 既知の悪意IP/ドメインの簡易チェック
     malicious_ips = {"192.168.1.100", "10.0.0.99"}
     malicious_domains = {"malware.example.com", "c2.evil.org"}
-    malicious_hashes = {"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}
+    malicious_hashes = {
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
     if ioc_type == "ip":
         is_mal = ioc_value in malicious_ips
     elif ioc_type == "domain":
@@ -170,7 +189,11 @@ def generate_compliance_report(period_days: int = 30) -> Dict[str, Any]:
         },
         "access_log_summary": {"total_requests": 0, "failed_auth": 0},
         "incident_summary": {"total": len(incidents), "resolved": 0},
-        "security_events_summary": {"total": len(events), "critical": critical, "high": high},
+        "security_events_summary": {
+            "total": len(events),
+            "critical": critical,
+            "high": high,
+        },
         "recommendations": [
             "定期的な脆弱性スキャン実施",
             "ログ保持期間の見直し",

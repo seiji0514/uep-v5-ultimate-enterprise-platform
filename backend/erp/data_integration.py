@@ -8,6 +8,7 @@ from typing import Any, Dict, List, Optional
 
 class DataIntegrationManager:
     """データ連携オーケストレーター"""
+
     _rules: Dict[str, Dict[str, Any]]
     _sync_logs: List[Dict[str, Any]]
 
@@ -15,7 +16,14 @@ class DataIntegrationManager:
         self._rules = {}
         self._sync_logs = []
 
-    def create_rule(self, source: str, target: str, sync_type: str, schedule: Optional[str] = None, mapping: Optional[Dict[str, str]] = None) -> Dict[str, Any]:
+    def create_rule(
+        self,
+        source: str,
+        target: str,
+        sync_type: str,
+        schedule: Optional[str] = None,
+        mapping: Optional[Dict[str, str]] = None,
+    ) -> Dict[str, Any]:
         rule_id = f"sync-{source}-{target}"
         rule = {
             "id": rule_id,
@@ -50,13 +58,21 @@ class DataIntegrationManager:
         return {"success": True, "log": log}
 
     def get_sync_logs(self, limit: int = 50) -> List[Dict[str, Any]]:
-        return sorted(self._sync_logs, key=lambda x: x["executed_at"], reverse=True)[:limit]
+        return sorted(self._sync_logs, key=lambda x: x["executed_at"], reverse=True)[
+            :limit
+        ]
 
     def get_summary(self) -> Dict[str, Any]:
         return {
             "rules_count": len(self._rules),
             "last_sync_count": len(self._sync_logs),
-            "systems": ["erp_sales", "erp_purchasing", "accounting", "hr", "unified_business"],
+            "systems": [
+                "erp_sales",
+                "erp_purchasing",
+                "accounting",
+                "hr",
+                "unified_business",
+            ],
         }
 
 

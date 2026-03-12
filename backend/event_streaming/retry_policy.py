@@ -25,7 +25,7 @@ class RetryPolicy:
     def get_delay(self, attempt: int) -> float:
         """attempt 回目のリトライまでの待機時間（秒）"""
         delay = min(
-            self.initial_delay_sec * (self.backoff_multiplier ** attempt),
+            self.initial_delay_sec * (self.backoff_multiplier**attempt),
             self.max_delay_sec,
         )
         if self.jitter:
@@ -75,6 +75,7 @@ async def retry_async(
 ):
     """非同期版リトライ"""
     import asyncio
+
     p = policy or RetryPolicy()
     last_exc = None
     for attempt in range(p.max_retries + 1):

@@ -7,15 +7,44 @@ from typing import Any, Dict, Tuple
 
 # 推論が必要なキーワード（高難度と判定）
 REASONING_KEYWORDS = [
-    "証明", "推論", "なぜ", "理由", "計算", "比較", "分析", "評価",
-    "説明", "根拠", "論理", "因果", "仮説", "検証", "検討", "考察",
-    "prove", "reason", "why", "compare", "analyze", "evaluate",
+    "証明",
+    "推論",
+    "なぜ",
+    "理由",
+    "計算",
+    "比較",
+    "分析",
+    "評価",
+    "説明",
+    "根拠",
+    "論理",
+    "因果",
+    "仮説",
+    "検証",
+    "検討",
+    "考察",
+    "prove",
+    "reason",
+    "why",
+    "compare",
+    "analyze",
+    "evaluate",
 ]
 
 # 簡易なキーワード（低難度と判定）
 SIMPLE_KEYWORDS = [
-    "はい", "いいえ", "簡単", "簡単に", "要約", "一言", "簡潔",
-    "yes", "no", "simple", "brief", "summary",
+    "はい",
+    "いいえ",
+    "簡単",
+    "簡単に",
+    "要約",
+    "一言",
+    "簡潔",
+    "yes",
+    "no",
+    "simple",
+    "brief",
+    "summary",
 ]
 
 

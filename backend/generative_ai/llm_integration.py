@@ -22,6 +22,7 @@ def _get_llm_cache():
     if _llm_cache is None:
         try:
             import redis
+
             r = redis.from_url(os.getenv("REDIS_URL", "redis://localhost:6379/0"))
             r.ping()
             return ("redis", r)
@@ -32,11 +33,16 @@ def _get_llm_cache():
 
 def _llm_cache_key(prompt: str, model: str, max_tokens: int, temperature: float) -> str:
     """キャッシュキーを生成"""
-    data = json.dumps({"p": prompt[:500], "m": model, "t": max_tokens, "temp": temperature}, sort_keys=True)
+    data = json.dumps(
+        {"p": prompt[:500], "m": model, "t": max_tokens, "temp": temperature},
+        sort_keys=True,
+    )
     return "llm:" + hashlib.sha256(data.encode()).hexdigest()
 
 
-def _get_cached(prompt: str, model: str, max_tokens: int, temperature: float) -> Optional[Dict[str, Any]]:
+def _get_cached(
+    prompt: str, model: str, max_tokens: int, temperature: float
+) -> Optional[Dict[str, Any]]:
     """キャッシュから取得"""
     key = _llm_cache_key(prompt, model, max_tokens, temperature)
     cache_type, cache = _get_llm_cache()
@@ -54,9 +60,12 @@ def _get_cached(prompt: str, model: str, max_tokens: int, temperature: float) ->
     return None
 
 
-def _set_cached(prompt: str, model: str, max_tokens: int, temperature: float, value: Dict[str, Any]):
+def _set_cached(
+    prompt: str, model: str, max_tokens: int, temperature: float, value: Dict[str, Any]
+):
     """キャッシュに保存"""
     import time
+
     key = _llm_cache_key(prompt, model, max_tokens, temperature)
     cache_type, cache = _get_llm_cache()
     expires = int(time.time()) + _llm_cache_ttl
@@ -148,6 +157,7 @@ class LLMClient:
 
         try:
             from core.health_failover import failover_execute
+
             result = await failover_execute(
                 _primary,
                 fallback_value={

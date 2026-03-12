@@ -21,7 +21,9 @@ from .models import IncidentCreate, IncidentUpdate, RiskCreate, SecurityEventCre
 from .monitoring import SecurityEvent, ThreatLevel, security_monitor
 from .risk_analysis import Risk, RiskLevel, risk_analyzer
 
-router = APIRouter(prefix="/api/v1/security-defense-platform", tags=["統合セキュリティ・防衛プラットフォーム"])
+router = APIRouter(
+    prefix="/api/v1/security-defense-platform", tags=["統合セキュリティ・防衛プラットフォーム"]
+)
 
 # サイバー対策（IDS/IPS, EDR, SIEM, 脅威インテリジェンス, コンプライアンス）を統合
 from cyber_defense.routes import router as cyber_defense_router

@@ -29,13 +29,13 @@ def init_unified_demo_data() -> None:
 
 def _seed_cloud_infra() -> None:
     """クラウドインフラ・オーケストレーション・IaC にサンプルデータ投入"""
+    from cloud_infra.iac import IaCProvider, IaCTemplate, iac_manager
     from cloud_infra.infrastructure import (
         InfrastructureResource,
         ResourceStatus,
         ResourceType,
         infrastructure_manager,
     )
-    from cloud_infra.iac import IaCProvider, IaCTemplate, iac_manager
     from cloud_infra.orchestration import (
         Deployment,
         DeploymentStatus,
@@ -170,7 +170,12 @@ def _seed_mlops() -> None:
     """MLOps（実験追跡・モデルレジストリ・パイプライン）にサンプルデータ投入"""
     from mlops.experiment_tracking import Experiment, experiment_tracker
     from mlops.model_registry import MLModel, ModelStatus, ModelVersion, model_registry
-    from mlops.pipeline import MLPipeline, PipelineStage, PipelineStatus, pipeline_executor
+    from mlops.pipeline import (
+        MLPipeline,
+        PipelineStage,
+        PipelineStatus,
+        pipeline_executor,
+    )
 
     now = datetime.utcnow()
 
@@ -181,10 +186,33 @@ def _seed_mlops() -> None:
             name=f"{UNIFIED_PROJECT_NAME} 学習パイプライン",
             description="推論モデル v1.2 の学習・評価・デプロイまで自動化",
             stages=[
-                PipelineStage(id="stage-1", name="データ前処理", stage_type="data_preprocessing", config={"batch_size": 32}),
-                PipelineStage(id="stage-2", name="学習", stage_type="training", config={"epochs": 10}, dependencies=["stage-1"]),
-                PipelineStage(id="stage-3", name="評価", stage_type="evaluation", config={}, dependencies=["stage-2"]),
-                PipelineStage(id="stage-4", name="デプロイ", stage_type="deployment", config={"target": "production"}, dependencies=["stage-3"]),
+                PipelineStage(
+                    id="stage-1",
+                    name="データ前処理",
+                    stage_type="data_preprocessing",
+                    config={"batch_size": 32},
+                ),
+                PipelineStage(
+                    id="stage-2",
+                    name="学習",
+                    stage_type="training",
+                    config={"epochs": 10},
+                    dependencies=["stage-1"],
+                ),
+                PipelineStage(
+                    id="stage-3",
+                    name="評価",
+                    stage_type="evaluation",
+                    config={},
+                    dependencies=["stage-2"],
+                ),
+                PipelineStage(
+                    id="stage-4",
+                    name="デプロイ",
+                    stage_type="deployment",
+                    config={"target": "production"},
+                    dependencies=["stage-3"],
+                ),
             ],
             status=PipelineStatus.SUCCESS,
             created_at=now - timedelta(days=7),
@@ -196,8 +224,16 @@ def _seed_mlops() -> None:
             name="A/Bテスト モデル比較パイプライン",
             description="v1.1 vs v1.2 推論性能比較",
             stages=[
-                PipelineStage(id="s1", name="モデル読み込み", stage_type="data_preprocessing", config={}),
-                PipelineStage(id="s2", name="推論比較", stage_type="evaluation", config={}, dependencies=["s1"]),
+                PipelineStage(
+                    id="s1", name="モデル読み込み", stage_type="data_preprocessing", config={}
+                ),
+                PipelineStage(
+                    id="s2",
+                    name="推論比較",
+                    stage_type="evaluation",
+                    config={},
+                    dependencies=["s1"],
+                ),
             ],
             status=PipelineStatus.RUNNING,
             created_at=now - timedelta(days=3),
@@ -275,8 +311,13 @@ def _seed_mlops() -> None:
 
 def _seed_security_center() -> None:
     """セキュリティコマンドセンターにサンプルデータ投入"""
+    from security_center.incident_response import (
+        Incident,
+        IncidentSeverity,
+        IncidentStatus,
+        incident_response,
+    )
     from security_center.monitoring import SecurityEvent, ThreatLevel, security_monitor
-    from security_center.incident_response import Incident, IncidentSeverity, IncidentStatus, incident_response
 
     now = datetime.utcnow()
 
@@ -398,7 +439,11 @@ def _seed_idop() -> None:
                 name="uep-inference-api",
                 description="推論API マイクロサービス",
                 repository="https://github.com/uep/uep-inference-api",
-                environments=[Environment.DEVELOPMENT, Environment.STAGING, Environment.PRODUCTION],
+                environments=[
+                    Environment.DEVELOPMENT,
+                    Environment.STAGING,
+                    Environment.PRODUCTION,
+                ],
                 current_version="v1.2.0",
                 created_at=now - timedelta(days=14),
                 updated_at=now,

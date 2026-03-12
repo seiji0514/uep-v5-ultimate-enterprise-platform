@@ -112,6 +112,7 @@ def _load_production_users() -> Dict[str, Dict[str, Any]]:
         return data if isinstance(data, dict) else {}
     except Exception as e:
         import logging
+
         logging.getLogger(__name__).error(f"Failed to load production users: {e}")
         return {}
 
@@ -128,6 +129,7 @@ def _save_production_users(users: Dict[str, Dict[str, Any]]) -> None:
             json.dump(users, f, ensure_ascii=False, indent=2)
     except Exception as e:
         import logging
+
         logging.getLogger(__name__).error(f"Failed to save production users: {e}")
 
 
@@ -139,6 +141,7 @@ def get_demo_users() -> Dict[str, Dict[str, Any]]:
             env = os.environ.get("ENVIRONMENT", "production")
             prod_file = os.environ.get("PRODUCTION_USERS_FILE")
             import logging
+
             if env == "production" and prod_file:
                 _demo_users_cache = _load_production_users()
                 logging.getLogger(__name__).info(
@@ -153,6 +156,7 @@ def get_demo_users() -> Dict[str, Dict[str, Any]]:
         except Exception as e:
             import logging
             import traceback
+
             logging.getLogger(__name__).error(f"Failed to initialize users: {e}")
             traceback.print_exc()
             _demo_users_cache = {}

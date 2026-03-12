@@ -10,6 +10,7 @@ from typing import Any, Dict, List, Optional
 
 try:
     import redis
+
     REDIS_AVAILABLE = True
 except ImportError:
     REDIS_AVAILABLE = False

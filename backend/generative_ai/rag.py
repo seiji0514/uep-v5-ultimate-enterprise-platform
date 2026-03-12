@@ -9,11 +9,7 @@ from typing import Any, Dict, List, Optional
 from pydantic import BaseModel
 
 from .llm_integration import LLMClient
-from .rag_enhancements import (
-    chunk_text,
-    keyword_search_score,
-    reciprocal_rank_fusion,
-)
+from .rag_enhancements import chunk_text, keyword_search_score, reciprocal_rank_fusion
 
 # ChromaDB の利用可否
 CHROMADB_AVAILABLE = False
@@ -130,7 +126,9 @@ class RAGSystem:
                 coll = _get_or_create_collection(collection)
                 if coll:
                     try:
-                        coll.add(documents=[doc_text], metadatas=[doc_meta], ids=[doc_id])
+                        coll.add(
+                            documents=[doc_text], metadatas=[doc_meta], ids=[doc_id]
+                        )
                         continue
                     except Exception:
                         pass
@@ -141,7 +139,9 @@ class RAGSystem:
                 {"text": doc_text, "metadata": doc_meta, "id": doc_id}
             )
 
-    def _retrieve_vector(self, query: str, collection: str, top_k: int) -> List[Dict[str, Any]]:
+    def _retrieve_vector(
+        self, query: str, collection: str, top_k: int
+    ) -> List[Dict[str, Any]]:
         """ベクトル検索のみ"""
         if self._use_chromadb:
             coll = _get_or_create_collection(collection)
@@ -189,8 +189,12 @@ class RAGSystem:
                         documents = [
                             {
                                 "text": d,
-                                "metadata": all_data["metadatas"][i] if all_data.get("metadatas") else {},
-                                "id": all_data["ids"][i] if all_data.get("ids") else str(i),
+                                "metadata": all_data["metadatas"][i]
+                                if all_data.get("metadatas")
+                                else {},
+                                "id": all_data["ids"][i]
+                                if all_data.get("ids")
+                                else str(i),
                             }
                             for i, d in enumerate(all_data["documents"])
                         ]
@@ -244,7 +248,11 @@ class RAGSystem:
 
         if collection:
             retrieved_docs = await self.retrieve(
-                query, collection, top_k=top_k, use_hybrid=use_hybrid, use_rerank=use_rerank
+                query,
+                collection,
+                top_k=top_k,
+                use_hybrid=use_hybrid,
+                use_rerank=use_rerank,
             )
 
         retrieve_latency_ms = (time.perf_counter() - start_time) * 1000

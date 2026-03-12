@@ -11,6 +11,7 @@ from typing import Any, Dict, List
 @dataclass
 class StressScenario:
     """ストレスシナリオ"""
+
     name: str
     description: str
     shock_factor: float  # 負のショック係数（例: -0.2 = 20%下落）
@@ -33,14 +34,16 @@ def run_stress_test(
     results = []
     for s in scenarios:
         impact = portfolio_value * s.shock_factor
-        results.append({
-            "scenario": s.name,
-            "description": s.description,
-            "original_value": portfolio_value,
-            "shock_factor": s.shock_factor,
-            "impact": impact,
-            "stressed_value": portfolio_value + impact,
-        })
+        results.append(
+            {
+                "scenario": s.name,
+                "description": s.description,
+                "original_value": portfolio_value,
+                "shock_factor": s.shock_factor,
+                "impact": impact,
+                "stressed_value": portfolio_value + impact,
+            }
+        )
     return {
         "portfolio_value": portfolio_value,
         "scenarios": results,

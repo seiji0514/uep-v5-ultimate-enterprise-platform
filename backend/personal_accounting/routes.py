@@ -8,11 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 
 from auth.jwt_auth import get_current_active_user
 
-from .expense_categories import (
-    ALL_CATEGORIES,
-    get_expense_judgment,
-    suggest_category,
-)
+from .expense_categories import ALL_CATEGORIES, get_expense_judgment, suggest_category
 from .models import ExpenseCreate, IncomeCreate
 from .store import (
     add_expense,
@@ -35,7 +31,12 @@ async def list_categories(
     """経費カテゴリ一覧（経費判定付き）"""
     return {
         "categories": [
-            {"id": k, "name": v["name"], "is_expense": v["is_expense"], "note": v.get("note", "")}
+            {
+                "id": k,
+                "name": v["name"],
+                "is_expense": v["is_expense"],
+                "note": v.get("note", ""),
+            }
             for k, v in ALL_CATEGORIES.items()
         ]
     }

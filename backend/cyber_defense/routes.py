@@ -103,6 +103,7 @@ async def siem_search(
 ):
     """ログ検索（OpenSearch 未連携時は内部イベントから検索）"""
     from security_center.monitoring import security_monitor
+
     events = security_monitor.get_events()
     results = [
         {
@@ -118,7 +119,11 @@ async def siem_search(
     ]
     if query:
         q = query.lower()
-        results = [r for r in results if q in r.get("description", "").lower() or q in r.get("source", "").lower()]
+        results = [
+            r
+            for r in results
+            if q in r.get("description", "").lower() or q in r.get("source", "").lower()
+        ]
     if source:
         results = [r for r in results if r.get("source") == source]
     return {"results": results[:limit], "total": len(results)}
@@ -132,6 +137,7 @@ async def list_soar_playbooks(
 ):
     """SOAR プレイブック一覧"""
     from cyber_defense.soar_integration import get_available_playbooks
+
     return {"playbooks": get_available_playbooks()}
 
 
@@ -143,7 +149,12 @@ async def execute_soar_playbook(
 ):
     """SOAR プレイブック実行"""
     from cyber_defense.soar_integration import PlaybookAction, execute_playbook
-    action_enums = [PlaybookAction(a) for a in data.actions if a in [e.value for e in PlaybookAction]]
+
+    action_enums = [
+        PlaybookAction(a)
+        for a in data.actions
+        if a in [e.value for e in PlaybookAction]
+    ]
     return execute_playbook(data.alert_id, action_enums)
 
 

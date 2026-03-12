@@ -51,5 +51,7 @@ def suggest_category(keyword: str) -> list:
     results = []
     for cid, cat in ALL_CATEGORIES.items():
         if keyword_lower in cat["name"].lower() or keyword_lower in cid.lower():
-            results.append({"id": cid, "name": cat["name"], "is_expense": cat["is_expense"]})
+            results.append(
+                {"id": cid, "name": cat["name"], "is_expense": cat["is_expense"]}
+            )
     return results[:5]

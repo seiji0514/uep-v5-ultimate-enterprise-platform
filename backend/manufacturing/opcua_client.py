@@ -9,6 +9,7 @@ from typing import Any, Dict, List, Optional
 # opcua はオプショナル: pip install opcua
 try:
     from opcua import Client
+
     OPCUA_AVAILABLE = True
 except ImportError:
     OPCUA_AVAILABLE = False
@@ -22,7 +23,9 @@ class OPCUAClient:
         self,
         endpoint: Optional[str] = None,
     ):
-        self.endpoint = endpoint or os.getenv("OPCUA_ENDPOINT", "opc.tcp://localhost:4840")
+        self.endpoint = endpoint or os.getenv(
+            "OPCUA_ENDPOINT", "opc.tcp://localhost:4840"
+        )
         self._client = None
 
     def _get_client(self):
@@ -53,7 +56,13 @@ class OPCUAClient:
             c = self._get_client()
             node = c.get_node(node_id)
             children = node.get_children()
-            return [{"node_id": c.nodeid.to_string(), "browse_name": str(c.get_browse_name())} for c in children[:10]]
+            return [
+                {
+                    "node_id": c.nodeid.to_string(),
+                    "browse_name": str(c.get_browse_name()),
+                }
+                for c in children[:10]
+            ]
         except Exception:
             return []
 

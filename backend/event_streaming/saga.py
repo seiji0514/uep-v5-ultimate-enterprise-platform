@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 class SagaStatus(str, Enum):
     """Sagaステータス"""
+
     PENDING = "pending"
     IN_PROGRESS = "in_progress"
     COMPLETED = "completed"
@@ -25,6 +26,7 @@ class SagaStatus(str, Enum):
 
 class SagaStep(BaseModel):
     """Sagaステップ"""
+
     step_id: str
     action: str
     compensate_action: str
@@ -36,6 +38,7 @@ class SagaStep(BaseModel):
 
 class Saga(BaseModel):
     """Sagaオーケストレーター（補正処理対応）"""
+
     saga_id: str
     saga_type: str
     steps: List[SagaStep]
@@ -50,7 +53,9 @@ class Saga(BaseModel):
         if self.updated_at is None:
             self.updated_at = datetime.utcnow()
 
-    def execute_step(self, step_index: int, executor: Callable[[str, Dict], Any]) -> bool:
+    def execute_step(
+        self, step_index: int, executor: Callable[[str, Dict], Any]
+    ) -> bool:
         """ステップを実行。失敗時は補正を開始"""
         if step_index >= len(self.steps):
             self.status = SagaStatus.COMPLETED
@@ -83,6 +88,7 @@ class Saga(BaseModel):
 
 class OutboxEvent(BaseModel):
     """アウトボックスパターン: トランザクションとイベントを同時に永続化"""
+
     event_id: str
     aggregate_type: str
     aggregate_id: str
@@ -95,6 +101,7 @@ class OutboxEvent(BaseModel):
 
 class OutboxStore:
     """アウトボックスストア（DBと連携する想定、ここではメモリ）"""
+
     _events: List[OutboxEvent] = []
 
     @classmethod

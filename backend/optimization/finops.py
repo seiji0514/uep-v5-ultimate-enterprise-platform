@@ -27,8 +27,16 @@ def get_cost_summary(
         ],
         "forecast_next_month_usd": 1320.00,
         "recommendations": [
-            {"type": "rightsizing", "description": "idle インスタンスのダウンサイズ推奨", "potential_savings_usd": 120},
-            {"type": "reserved", "description": "1年リザーブドで約30%削減可能", "potential_savings_usd": 195},
+            {
+                "type": "rightsizing",
+                "description": "idle インスタンスのダウンサイズ推奨",
+                "potential_savings_usd": 120,
+            },
+            {
+                "type": "reserved",
+                "description": "1年リザーブドで約30%削減可能",
+                "potential_savings_usd": 195,
+            },
         ],
         "generated_at": datetime.utcnow().isoformat(),
     }

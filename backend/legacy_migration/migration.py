@@ -9,6 +9,7 @@ from typing import Any, Dict, List, Optional
 
 class LegacyMigrationManager:
     """レガシー移行マネージャー"""
+
     _jobs: Dict[str, Dict[str, Any]]
     _validation_results: List[Dict[str, Any]]
 
@@ -16,7 +17,13 @@ class LegacyMigrationManager:
         self._jobs = {}
         self._validation_results = []
 
-    def create_job(self, source_type: str, source_config: Dict[str, Any], target_system: str, mapping: Optional[Dict[str, str]] = None) -> Dict[str, Any]:
+    def create_job(
+        self,
+        source_type: str,
+        source_config: Dict[str, Any],
+        target_system: str,
+        mapping: Optional[Dict[str, str]] = None,
+    ) -> Dict[str, Any]:
         job_id = f"mig-{uuid.uuid4().hex[:12]}"
         job = {
             "id": job_id,
@@ -35,7 +42,9 @@ class LegacyMigrationManager:
         return self._jobs.get(job_id)
 
     def list_jobs(self, limit: int = 50) -> List[Dict[str, Any]]:
-        return sorted(self._jobs.values(), key=lambda x: x["created_at"], reverse=True)[:limit]
+        return sorted(self._jobs.values(), key=lambda x: x["created_at"], reverse=True)[
+            :limit
+        ]
 
     def run_migration(self, job_id: str) -> Dict[str, Any]:
         job = self._jobs.get(job_id)

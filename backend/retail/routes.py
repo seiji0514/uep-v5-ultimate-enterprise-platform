@@ -12,33 +12,146 @@ router = APIRouter(prefix="/api/v1/retail", tags=["小売・EC"])
 
 def _pos_transactions() -> List[Dict[str, Any]]:
     return [
-        {"id": "pos-001", "store": "店舗A", "amount": 3500, "items": 3, "timestamp": (datetime.utcnow() - timedelta(minutes=5)).isoformat(), "payment": "カード"},
-        {"id": "pos-002", "store": "店舗B", "amount": 12800, "items": 5, "timestamp": (datetime.utcnow() - timedelta(minutes=12)).isoformat(), "payment": "現金"},
-        {"id": "pos-003", "store": "店舗A", "amount": 5200, "items": 2, "timestamp": (datetime.utcnow() - timedelta(minutes=18)).isoformat(), "payment": "QR"},
-        {"id": "pos-004", "store": "店舗C", "amount": 8900, "items": 4, "timestamp": (datetime.utcnow() - timedelta(minutes=25)).isoformat(), "payment": "カード"},
-        {"id": "pos-005", "store": "店舗B", "amount": 2100, "items": 1, "timestamp": (datetime.utcnow() - timedelta(minutes=30)).isoformat(), "payment": "現金"},
-        {"id": "pos-006", "store": "店舗A", "amount": 15600, "items": 6, "timestamp": (datetime.utcnow() - timedelta(minutes=35)).isoformat(), "payment": "カード"},
+        {
+            "id": "pos-001",
+            "store": "店舗A",
+            "amount": 3500,
+            "items": 3,
+            "timestamp": (datetime.utcnow() - timedelta(minutes=5)).isoformat(),
+            "payment": "カード",
+        },
+        {
+            "id": "pos-002",
+            "store": "店舗B",
+            "amount": 12800,
+            "items": 5,
+            "timestamp": (datetime.utcnow() - timedelta(minutes=12)).isoformat(),
+            "payment": "現金",
+        },
+        {
+            "id": "pos-003",
+            "store": "店舗A",
+            "amount": 5200,
+            "items": 2,
+            "timestamp": (datetime.utcnow() - timedelta(minutes=18)).isoformat(),
+            "payment": "QR",
+        },
+        {
+            "id": "pos-004",
+            "store": "店舗C",
+            "amount": 8900,
+            "items": 4,
+            "timestamp": (datetime.utcnow() - timedelta(minutes=25)).isoformat(),
+            "payment": "カード",
+        },
+        {
+            "id": "pos-005",
+            "store": "店舗B",
+            "amount": 2100,
+            "items": 1,
+            "timestamp": (datetime.utcnow() - timedelta(minutes=30)).isoformat(),
+            "payment": "現金",
+        },
+        {
+            "id": "pos-006",
+            "store": "店舗A",
+            "amount": 15600,
+            "items": 6,
+            "timestamp": (datetime.utcnow() - timedelta(minutes=35)).isoformat(),
+            "payment": "カード",
+        },
     ]
 
 
 def _ec_orders() -> List[Dict[str, Any]]:
     return [
-        {"id": "ec-001", "customer_id": "C001", "amount": 8500, "status": "発送済", "ordered_at": (datetime.utcnow() - timedelta(days=1)).isoformat()},
-        {"id": "ec-002", "customer_id": "C002", "amount": 3200, "status": "出荷準備中", "ordered_at": (datetime.utcnow() - timedelta(hours=5)).isoformat()},
-        {"id": "ec-003", "customer_id": "C003", "amount": 12500, "status": "入金確認", "ordered_at": (datetime.utcnow() - timedelta(hours=2)).isoformat()},
-        {"id": "ec-004", "customer_id": "C001", "amount": 4500, "status": "発送済", "ordered_at": (datetime.utcnow() - timedelta(days=2)).isoformat()},
-        {"id": "ec-005", "customer_id": "C004", "amount": 9800, "status": "キャンセル", "ordered_at": (datetime.utcnow() - timedelta(hours=1)).isoformat()},
-        {"id": "ec-006", "customer_id": "C005", "amount": 21000, "status": "出荷準備中", "ordered_at": (datetime.utcnow() - timedelta(hours=8)).isoformat()},
+        {
+            "id": "ec-001",
+            "customer_id": "C001",
+            "amount": 8500,
+            "status": "発送済",
+            "ordered_at": (datetime.utcnow() - timedelta(days=1)).isoformat(),
+        },
+        {
+            "id": "ec-002",
+            "customer_id": "C002",
+            "amount": 3200,
+            "status": "出荷準備中",
+            "ordered_at": (datetime.utcnow() - timedelta(hours=5)).isoformat(),
+        },
+        {
+            "id": "ec-003",
+            "customer_id": "C003",
+            "amount": 12500,
+            "status": "入金確認",
+            "ordered_at": (datetime.utcnow() - timedelta(hours=2)).isoformat(),
+        },
+        {
+            "id": "ec-004",
+            "customer_id": "C001",
+            "amount": 4500,
+            "status": "発送済",
+            "ordered_at": (datetime.utcnow() - timedelta(days=2)).isoformat(),
+        },
+        {
+            "id": "ec-005",
+            "customer_id": "C004",
+            "amount": 9800,
+            "status": "キャンセル",
+            "ordered_at": (datetime.utcnow() - timedelta(hours=1)).isoformat(),
+        },
+        {
+            "id": "ec-006",
+            "customer_id": "C005",
+            "amount": 21000,
+            "status": "出荷準備中",
+            "ordered_at": (datetime.utcnow() - timedelta(hours=8)).isoformat(),
+        },
     ]
 
 
 def _inventory_retail() -> List[Dict[str, Any]]:
     return [
-        {"sku": "R-1001", "name": "商品A", "qty": 120, "reorder_level": 50, "status": "正常", "store": "倉庫中央"},
-        {"sku": "R-1002", "name": "商品B", "qty": 35, "reorder_level": 40, "status": "要発注", "store": "倉庫中央"},
-        {"sku": "R-1003", "name": "商品C", "qty": 250, "reorder_level": 80, "status": "正常", "store": "倉庫東"},
-        {"sku": "R-1004", "name": "商品D", "qty": 18, "reorder_level": 30, "status": "要発注", "store": "倉庫西"},
-        {"sku": "R-1005", "name": "商品E", "qty": 420, "reorder_level": 100, "status": "正常", "store": "倉庫中央"},
+        {
+            "sku": "R-1001",
+            "name": "商品A",
+            "qty": 120,
+            "reorder_level": 50,
+            "status": "正常",
+            "store": "倉庫中央",
+        },
+        {
+            "sku": "R-1002",
+            "name": "商品B",
+            "qty": 35,
+            "reorder_level": 40,
+            "status": "要発注",
+            "store": "倉庫中央",
+        },
+        {
+            "sku": "R-1003",
+            "name": "商品C",
+            "qty": 250,
+            "reorder_level": 80,
+            "status": "正常",
+            "store": "倉庫東",
+        },
+        {
+            "sku": "R-1004",
+            "name": "商品D",
+            "qty": 18,
+            "reorder_level": 30,
+            "status": "要発注",
+            "store": "倉庫西",
+        },
+        {
+            "sku": "R-1005",
+            "name": "商品E",
+            "qty": 420,
+            "reorder_level": 100,
+            "status": "正常",
+            "store": "倉庫中央",
+        },
     ]
 
 

@@ -32,6 +32,7 @@ AVAILABLE_TOOLS: Dict[str, Callable[..., Any]] = {}
 
 def _register_tools():
     """ツールを登録"""
+
     def tool_echo(args: Dict) -> str:
         return str(args.get("message", ""))
 

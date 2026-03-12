@@ -10,6 +10,7 @@ from pydantic import BaseModel, Field
 
 class AlertSource(str, Enum):
     """アラートソース"""
+
     SURICATA = "suricata"
     WAZUH = "wazuh"
     INTERNAL = "internal"
@@ -18,6 +19,7 @@ class AlertSource(str, Enum):
 
 class SuricataAlertCreate(BaseModel):
     """Suricata アラート取り込み"""
+
     timestamp: str
     src_ip: str
     dest_ip: str
@@ -32,6 +34,7 @@ class SuricataAlertCreate(BaseModel):
 
 class WazuhAlertCreate(BaseModel):
     """Wazuh アラート取り込み"""
+
     timestamp: str
     agent_id: Optional[str] = None
     agent_name: Optional[str] = None
@@ -44,12 +47,14 @@ class WazuhAlertCreate(BaseModel):
 
 class ThreatIntelCheck(BaseModel):
     """脅威インテリジェンス照合リクエスト"""
+
     ioc_type: str  # ip, domain, hash
     ioc_value: str
 
 
 class ThreatIntelResult(BaseModel):
     """脅威インテリジェンス照合結果"""
+
     ioc_type: str
     ioc_value: str
     is_malicious: bool
@@ -60,12 +65,14 @@ class ThreatIntelResult(BaseModel):
 
 class SOARExecuteRequest(BaseModel):
     """SOAR プレイブック実行リクエスト"""
+
     alert_id: str
     actions: List[str] = []
 
 
 class ComplianceReport(BaseModel):
     """コンプライアンスレポート"""
+
     generated_at: datetime
     period_start: str
     period_end: str

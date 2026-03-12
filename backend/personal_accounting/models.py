@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 
 class ExpenseCreate(BaseModel):
     """経費登録"""
+
     date: date
     category_id: str
     amount: int
@@ -16,6 +17,7 @@ class ExpenseCreate(BaseModel):
 
 class IncomeCreate(BaseModel):
     """売上登録"""
+
     date: date
     amount: int
     description: str = ""
@@ -25,6 +27,7 @@ class IncomeCreate(BaseModel):
 
 class ExpenseResponse(BaseModel):
     """経費レスポンス"""
+
     id: str
     date: str
     category_id: str
@@ -38,6 +41,7 @@ class ExpenseResponse(BaseModel):
 
 class IncomeResponse(BaseModel):
     """売上レスポンス"""
+
     id: str
     date: str
     amount: int
@@ -49,6 +53,7 @@ class IncomeResponse(BaseModel):
 
 class MonthlySummary(BaseModel):
     """月次サマリ"""
+
     year: int
     month: int
     total_income: int
@@ -60,6 +65,7 @@ class MonthlySummary(BaseModel):
 
 class DashboardSummary(BaseModel):
     """ダッシュボードサマリ"""
+
     this_month_income: int
     this_month_expense: int
     this_month_profit: int

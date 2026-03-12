@@ -11,10 +11,7 @@ import httpx
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 
 from auth.jwt_auth import get_current_active_user
-from core.health_failover import (
-    health_check_with_retry,
-    service_health_registry,
-)
+from core.health_failover import health_check_with_retry, service_health_registry
 
 from .logging import logging_handler
 from .metrics import metrics_collector
@@ -25,13 +22,17 @@ router = APIRouter(prefix="/api/v1/monitoring", tags=["監視"])
 
 async def _check_service_with_retry(url: str) -> Dict[str, Any]:
     """リトライ付きサービスヘルスチェック"""
+
     async def _check():
         try:
             start = time.perf_counter()
             async with httpx.AsyncClient(timeout=2.0) as client:
                 r = await client.get(url)
                 latency_ms = (time.perf_counter() - start) * 1000
-                return {"status": "healthy" if r.status_code == 200 else "unhealthy", "latency_ms": latency_ms}
+                return {
+                    "status": "healthy" if r.status_code == 200 else "unhealthy",
+                    "latency_ms": latency_ms,
+                }
         except Exception as e:
             return {"status": "unreachable", "error": str(e)}
 
@@ -47,6 +48,7 @@ async def get_metrics(current_user: Dict[str, Any] = Depends(get_current_active_
 @router.get("/health")
 async def health_check():
     """ヘルスチェック（認証不要・リトライ付き）"""
+
     async def _backend_check():
         return {"status": "healthy"}
 

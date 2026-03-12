@@ -13,7 +13,6 @@ from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
-
 # サンプリング設定
 SAMPLING_RATIO = float(os.getenv("OTEL_TRACES_SAMPLER_ARG", "1.0"))  # 1.0=100%, 0.1=10%
 SAMPLING_STRATEGY = os.getenv("OTEL_TRACES_SAMPLER", "parentbased_traceidratio")
@@ -24,15 +23,19 @@ def _create_sampler():
     try:
         if SAMPLING_STRATEGY == "parentbased_traceidratio":
             from opentelemetry.sdk.trace.sampling import ParentBasedTraceIdRatioBased
+
             return ParentBasedTraceIdRatioBased(SAMPLING_RATIO)
         if SAMPLING_STRATEGY == "traceidratio":
             from opentelemetry.sdk.trace.sampling import TraceIdRatioBased
+
             return TraceIdRatioBased(SAMPLING_RATIO)
         if SAMPLING_STRATEGY == "always_on":
             from opentelemetry.sdk.trace.sampling import AlwaysOn
+
             return AlwaysOn()
         if SAMPLING_STRATEGY == "always_off":
             from opentelemetry.sdk.trace.sampling import AlwaysOff
+
             return AlwaysOff()
     except Exception:
         pass
@@ -63,10 +66,14 @@ class TracingHandler:
 
             # サンプリングを適用
             sampler = _create_sampler()
-            self.tracer_provider = TracerProvider(
-                resource=resource,
-                sampler=sampler,
-            ) if sampler else TracerProvider(resource=resource)
+            self.tracer_provider = (
+                TracerProvider(
+                    resource=resource,
+                    sampler=sampler,
+                )
+                if sampler
+                else TracerProvider(resource=resource)
+            )
 
             # OTLPエクスポーターを設定（Jaeger等と互換）
             otlp_endpoint = os.getenv("OTLP_ENDPOINT", "http://localhost:4317")
@@ -110,7 +117,9 @@ class TracingHandler:
 class _SpanContext:
     """スパン用コンテキストマネージャ"""
 
-    def __init__(self, handler: "TracingHandler", name: str, attributes: Dict[str, Any]):
+    def __init__(
+        self, handler: "TracingHandler", name: str, attributes: Dict[str, Any]
+    ):
         self.handler = handler
         self.name = name
         self.attributes = attributes

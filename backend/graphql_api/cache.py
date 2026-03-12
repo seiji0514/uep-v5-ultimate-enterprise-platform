@@ -14,6 +14,7 @@ _DEFAULT_TTL = int(os.getenv("GRAPHQL_CACHE_TTL_SEC", "60"))
 def get_cached(key: str) -> Optional[Any]:
     """キャッシュから取得"""
     import time
+
     if key not in _cache:
         return None
     ttl = _cache_ttl.get(key, 0)
@@ -27,6 +28,7 @@ def get_cached(key: str) -> Optional[Any]:
 def set_cached(key: str, value: Any, ttl_sec: int = _DEFAULT_TTL) -> None:
     """キャッシュに保存"""
     import time
+
     _cache[key] = value
     _cache_ttl[key] = time.time() + ttl_sec if ttl_sec > 0 else 0
 

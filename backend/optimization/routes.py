@@ -5,17 +5,17 @@
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Depends
+from pydantic import BaseModel
 
 from auth.jwt_auth import get_current_active_user
-from pydantic import BaseModel
 
 
 class BatchAnomalyRequest(BaseModel):
     """バッチ異常検知リクエスト"""
+
     domain: str = "manufacturing"
     items: List[Dict[str, Any]] = []
 
-from optimization.finops import get_cost_by_tag, get_cost_summary
 
 from core.anomaly_detector import (
     DEFAULT_THRESHOLDS,
@@ -23,6 +23,7 @@ from core.anomaly_detector import (
     ensemble_detect,
     get_anomaly_list,
 )
+from optimization.finops import get_cost_by_tag, get_cost_summary
 
 router = APIRouter(prefix="/api/v1/optimization", tags=["最適化"])
 
@@ -39,8 +40,12 @@ def _get_threshold_config(metric: str) -> ThresholdConfig:
             metric=base.metric,
             upper=over.get("upper", base.upper),
             lower=over.get("lower", base.lower),
-            severity_high_ratio=over.get("severity_high_ratio", base.severity_high_ratio),
-            severity_medium_ratio=over.get("severity_medium_ratio", base.severity_medium_ratio),
+            severity_high_ratio=over.get(
+                "severity_high_ratio", base.severity_high_ratio
+            ),
+            severity_medium_ratio=over.get(
+                "severity_medium_ratio", base.severity_medium_ratio
+            ),
         )
     return base
 
@@ -95,6 +100,7 @@ async def update_threshold(
 
 class DetectAnomalyRequest(BaseModel):
     """単一異常検知リクエスト"""
+
     metric: str
     value: float
     history: Optional[List[float]] = None

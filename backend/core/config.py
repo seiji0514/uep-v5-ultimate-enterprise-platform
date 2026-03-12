@@ -48,7 +48,7 @@ class Settings(BaseSettings):
     CORS_ORIGINS: Union[str, List[str]] = Field(
         default=["http://localhost:3000", "http://localhost:8080"],
         env="CORS_ORIGINS",
-        description="カンマ区切り: https://a.com,https://b.com または JSON: [\"https://a.com\"]",
+        description='カンマ区切り: https://a.com,https://b.com または JSON: ["https://a.com"]',
     )
 
     # APIレート制限設定
@@ -165,14 +165,19 @@ class Settings(BaseSettings):
         """本番環境時の必須設定チェック"""
         if not self.is_production:
             return
-        if not self.SECRET_KEY or self.SECRET_KEY == "change-this-secret-key-in-production":
+        if (
+            not self.SECRET_KEY
+            or self.SECRET_KEY == "change-this-secret-key-in-production"
+        ):
             raise ValueError(
-                "本番環境では SECRET_KEY を必ず設定してください。"
-                "例: openssl rand -hex 32 で生成"
+                "本番環境では SECRET_KEY を必ず設定してください。" "例: openssl rand -hex 32 で生成"
             )
         if self.DEBUG:
             import warnings
-            warnings.warn("本番環境で DEBUG=True は推奨されません。ENVIRONMENT=production の場合は DEBUG を False にしてください。")
+
+            warnings.warn(
+                "本番環境で DEBUG=True は推奨されません。ENVIRONMENT=production の場合は DEBUG を False にしてください。"
+            )
 
 
 # グローバル設定インスタンス

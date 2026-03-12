@@ -14,34 +14,160 @@ router = APIRouter(prefix="/api/v1/medical", tags=["医療"])
 
 def _ai_diagnosis_list() -> List[Dict[str, Any]]:
     return [
-        {"id": "diag-001", "patient_id": "P001", "finding": "胸部X線異常所見", "confidence": 0.94, "status": "要確認", "modality": "X線"},
-        {"id": "diag-002", "patient_id": "P002", "finding": "正常範囲", "confidence": 0.99, "status": "完了", "modality": "CT"},
-        {"id": "diag-003", "patient_id": "P003", "finding": "眼底画像異常疑い", "confidence": 0.87, "status": "要精査", "modality": "眼底"},
-        {"id": "diag-004", "patient_id": "P004", "finding": "MRI脳血管異常なし", "confidence": 0.96, "status": "完了", "modality": "MRI"},
-        {"id": "diag-005", "patient_id": "P005", "finding": "皮膚病変要確認", "confidence": 0.82, "status": "要確認", "modality": "皮膚"},
-        {"id": "diag-006", "patient_id": "P006", "finding": "心電図異常所見", "confidence": 0.91, "status": "要精査", "modality": "心電図"},
+        {
+            "id": "diag-001",
+            "patient_id": "P001",
+            "finding": "胸部X線異常所見",
+            "confidence": 0.94,
+            "status": "要確認",
+            "modality": "X線",
+        },
+        {
+            "id": "diag-002",
+            "patient_id": "P002",
+            "finding": "正常範囲",
+            "confidence": 0.99,
+            "status": "完了",
+            "modality": "CT",
+        },
+        {
+            "id": "diag-003",
+            "patient_id": "P003",
+            "finding": "眼底画像異常疑い",
+            "confidence": 0.87,
+            "status": "要精査",
+            "modality": "眼底",
+        },
+        {
+            "id": "diag-004",
+            "patient_id": "P004",
+            "finding": "MRI脳血管異常なし",
+            "confidence": 0.96,
+            "status": "完了",
+            "modality": "MRI",
+        },
+        {
+            "id": "diag-005",
+            "patient_id": "P005",
+            "finding": "皮膚病変要確認",
+            "confidence": 0.82,
+            "status": "要確認",
+            "modality": "皮膚",
+        },
+        {
+            "id": "diag-006",
+            "patient_id": "P006",
+            "finding": "心電図異常所見",
+            "confidence": 0.91,
+            "status": "要精査",
+            "modality": "心電図",
+        },
     ]
 
 
 def _voice_response_list() -> List[Dict[str, Any]]:
     return [
-        {"id": "vr-001", "type": "問診音声", "duration_sec": 45, "transcription": "頭痛が3日続いています", "status": "処理完了"},
-        {"id": "vr-002", "type": "ナースコール", "duration_sec": 12, "transcription": "トイレに付き添いをお願いします", "status": "対応済み"},
-        {"id": "vr-003", "type": "医師指示", "duration_sec": 90, "transcription": "投薬変更の指示を記録", "status": "処理中"},
-        {"id": "vr-004", "type": "問診音声", "duration_sec": 60, "transcription": "めまいと吐き気があります", "status": "処理完了"},
-        {"id": "vr-005", "type": "ナースコール", "duration_sec": 8, "transcription": "点滴の交換をお願いします", "status": "対応済み"},
-        {"id": "vr-006", "type": "医師指示", "duration_sec": 120, "transcription": "検査オーダー登録", "status": "処理完了"},
+        {
+            "id": "vr-001",
+            "type": "問診音声",
+            "duration_sec": 45,
+            "transcription": "頭痛が3日続いています",
+            "status": "処理完了",
+        },
+        {
+            "id": "vr-002",
+            "type": "ナースコール",
+            "duration_sec": 12,
+            "transcription": "トイレに付き添いをお願いします",
+            "status": "対応済み",
+        },
+        {
+            "id": "vr-003",
+            "type": "医師指示",
+            "duration_sec": 90,
+            "transcription": "投薬変更の指示を記録",
+            "status": "処理中",
+        },
+        {
+            "id": "vr-004",
+            "type": "問診音声",
+            "duration_sec": 60,
+            "transcription": "めまいと吐き気があります",
+            "status": "処理完了",
+        },
+        {
+            "id": "vr-005",
+            "type": "ナースコール",
+            "duration_sec": 8,
+            "transcription": "点滴の交換をお願いします",
+            "status": "対応済み",
+        },
+        {
+            "id": "vr-006",
+            "type": "医師指示",
+            "duration_sec": 120,
+            "transcription": "検査オーダー登録",
+            "status": "処理完了",
+        },
     ]
 
 
 def _anomaly_detection_list() -> List[Dict[str, Any]]:
     return [
-        {"id": "ma-001", "type": "バイタル異常", "patient_id": "P001", "metric": "心拍数", "value": 125, "threshold": 100, "severity": "高"},
-        {"id": "ma-002", "type": "検査値異常", "patient_id": "P002", "metric": "血糖値", "value": 280, "threshold": 200, "severity": "中"},
-        {"id": "ma-003", "type": "バイタル異常", "patient_id": "P003", "metric": "血圧", "value": 185, "threshold": 140, "severity": "高"},
-        {"id": "ma-004", "type": "検査値異常", "patient_id": "P004", "metric": "CRP", "value": 12.5, "threshold": 1.0, "severity": "中"},
-        {"id": "ma-005", "type": "バイタル異常", "patient_id": "P005", "metric": "SpO2", "value": 88, "threshold": 92, "severity": "高"},
-        {"id": "ma-006", "type": "検査値異常", "patient_id": "P006", "metric": "肝機能", "value": 180, "threshold": 40, "severity": "中"},
+        {
+            "id": "ma-001",
+            "type": "バイタル異常",
+            "patient_id": "P001",
+            "metric": "心拍数",
+            "value": 125,
+            "threshold": 100,
+            "severity": "高",
+        },
+        {
+            "id": "ma-002",
+            "type": "検査値異常",
+            "patient_id": "P002",
+            "metric": "血糖値",
+            "value": 280,
+            "threshold": 200,
+            "severity": "中",
+        },
+        {
+            "id": "ma-003",
+            "type": "バイタル異常",
+            "patient_id": "P003",
+            "metric": "血圧",
+            "value": 185,
+            "threshold": 140,
+            "severity": "高",
+        },
+        {
+            "id": "ma-004",
+            "type": "検査値異常",
+            "patient_id": "P004",
+            "metric": "CRP",
+            "value": 12.5,
+            "threshold": 1.0,
+            "severity": "中",
+        },
+        {
+            "id": "ma-005",
+            "type": "バイタル異常",
+            "patient_id": "P005",
+            "metric": "SpO2",
+            "value": 88,
+            "threshold": 92,
+            "severity": "高",
+        },
+        {
+            "id": "ma-006",
+            "type": "検査値異常",
+            "patient_id": "P006",
+            "metric": "肝機能",
+            "value": 180,
+            "threshold": 40,
+            "severity": "中",
+        },
     ]
 
 
@@ -86,6 +212,7 @@ async def get_fhir_patient(
 ):
     """FHIR 患者リソース取得"""
     from medical.fhir_client import fhir_client
+
     result = fhir_client.get_patient(patient_id)
     return result or {"error": "Patient not found"}
 
@@ -98,6 +225,7 @@ async def get_fhir_observations(
 ):
     """FHIR Observation 検索"""
     from medical.fhir_client import fhir_client
+
     return {"items": fhir_client.search_observations(patient_id, code)}
 
 

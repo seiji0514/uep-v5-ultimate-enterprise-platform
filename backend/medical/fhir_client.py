@@ -10,6 +10,7 @@ from typing import Any, Dict, List, Optional
 try:
     from fhirclient import client
     from fhirclient.models.fhirdate import FHIRDate
+
     FHIR_AVAILABLE = True
 except ImportError:
     FHIR_AVAILABLE = False
@@ -24,7 +25,9 @@ class FHIRClient:
         base_url: Optional[str] = None,
         app_id: Optional[str] = None,
     ):
-        self.base_url = base_url or os.getenv("FHIR_SERVER_URL", "http://localhost:8080/fhir")
+        self.base_url = base_url or os.getenv(
+            "FHIR_SERVER_URL", "http://localhost:8080/fhir"
+        )
         self.app_id = app_id or os.getenv("FHIR_APP_ID", "uep-medical")
         self._client = None
 
@@ -57,7 +60,9 @@ class FHIRClient:
     ) -> List[Dict[str, Any]]:
         """Observation を検索（デモ）"""
         if not FHIR_AVAILABLE:
-            return [{"resourceType": "Observation", "subject": patient_id, "demo": True}]
+            return [
+                {"resourceType": "Observation", "subject": patient_id, "demo": True}
+            ]
         try:
             c = self._get_client()
             search = c.resource("Observation").search(patient=patient_id)

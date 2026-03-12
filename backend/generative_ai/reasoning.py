@@ -99,7 +99,11 @@ class ReasoningEngine:
 
             steps.append(step)
 
-            if "結論" in reasoning_text or "答え" in reasoning_text or "最終" in reasoning_text:
+            if (
+                "結論" in reasoning_text
+                or "答え" in reasoning_text
+                or "最終" in reasoning_text
+            ):
                 step.conclusion = reasoning_text
                 prior_steps_text += f"\nステップ{step_num}: {reasoning_text}"
                 break

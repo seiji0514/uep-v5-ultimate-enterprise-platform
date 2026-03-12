@@ -7,7 +7,8 @@ from typing import Any, Dict, List, Optional
 
 # LangGraph はオプショナル: pip install langgraph langchain
 try:
-    from langgraph.graph import StateGraph, END
+    from langgraph.graph import END, StateGraph
+
     LANGGRAPH_AVAILABLE = True
 except ImportError:
     LANGGRAPH_AVAILABLE = False

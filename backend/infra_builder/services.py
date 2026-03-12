@@ -5,11 +5,7 @@ import uuid
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-from .models import (
-    BuildProjectStatus,
-    BuildStage,
-    PipelineStatus,
-)
+from .models import BuildProjectStatus, BuildStage, PipelineStatus
 
 
 class BuildProject:
@@ -85,7 +81,9 @@ class PipelineRun:
             "status": self.status.value,
             "current_stage": self.current_stage,
             "started_at": self.started_at.isoformat(),
-            "completed_at": self.completed_at.isoformat() if self.completed_at else None,
+            "completed_at": self.completed_at.isoformat()
+            if self.completed_at
+            else None,
             "logs": self.logs,
         }
 
@@ -210,7 +208,10 @@ class InfraBuilderService:
             result = [p for p in result if p.status == status]
         if provider:
             result = [p for p in result if p.target_provider == provider]
-        return [p.to_dict() for p in sorted(result, key=lambda x: x.updated_at, reverse=True)]
+        return [
+            p.to_dict()
+            for p in sorted(result, key=lambda x: x.updated_at, reverse=True)
+        ]
 
     def create_project(
         self,
@@ -243,7 +244,10 @@ class InfraBuilderService:
         result = list(self._blueprints.values())
         if provider:
             result = [b for b in result if b.provider == provider]
-        return [b.to_dict() for b in sorted(result, key=lambda x: x.created_at, reverse=True)]
+        return [
+            b.to_dict()
+            for b in sorted(result, key=lambda x: x.created_at, reverse=True)
+        ]
 
     def create_blueprint(
         self,
@@ -279,7 +283,10 @@ class InfraBuilderService:
             result = [p for p in result if p.project_id == project_id]
         if status:
             result = [p for p in result if p.status == status]
-        return [p.to_dict() for p in sorted(result, key=lambda x: x.started_at, reverse=True)]
+        return [
+            p.to_dict()
+            for p in sorted(result, key=lambda x: x.started_at, reverse=True)
+        ]
 
     def run_pipeline(
         self,
@@ -310,8 +317,12 @@ class InfraBuilderService:
         projects = list(self._projects.values())
         return {
             "total_projects": len(projects),
-            "in_progress": len([p for p in projects if p.status == BuildProjectStatus.IN_PROGRESS]),
-            "completed": len([p for p in projects if p.status == BuildProjectStatus.COMPLETED]),
+            "in_progress": len(
+                [p for p in projects if p.status == BuildProjectStatus.IN_PROGRESS]
+            ),
+            "completed": len(
+                [p for p in projects if p.status == BuildProjectStatus.COMPLETED]
+            ),
             "draft": len([p for p in projects if p.status == BuildProjectStatus.DRAFT]),
             "total_blueprints": len(self._blueprints),
             "total_pipeline_runs": len(self._pipelines),

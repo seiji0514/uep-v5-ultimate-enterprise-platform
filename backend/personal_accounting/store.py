@@ -35,7 +35,13 @@ def _save_data(data: dict):
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
-def add_expense(date_str: str, category_id: str, amount: int, description: str = "", memo: Optional[str] = None) -> dict:
+def add_expense(
+    date_str: str,
+    category_id: str,
+    amount: int,
+    description: str = "",
+    memo: Optional[str] = None,
+) -> dict:
     data = _load_data()
     cat = ALL_CATEGORIES.get(category_id, {})
     judgment = get_expense_judgment(category_id)
@@ -55,7 +61,13 @@ def add_expense(date_str: str, category_id: str, amount: int, description: str =
     return item
 
 
-def add_income(date_str: str, amount: int, description: str = "", client_name: Optional[str] = None, memo: Optional[str] = None) -> dict:
+def add_income(
+    date_str: str,
+    amount: int,
+    description: str = "",
+    client_name: Optional[str] = None,
+    memo: Optional[str] = None,
+) -> dict:
     data = _load_data()
     item = {
         "id": str(uuid.uuid4()),
@@ -110,8 +122,12 @@ def get_monthly_summary(year: int, month: int) -> dict:
 def get_dashboard_summary() -> dict:
     today = date.today()
     this_month = get_monthly_summary(today.year, today.month)
-    ytd_income = sum(i["amount"] for i in get_income() if i["date"].startswith(str(today.year)))
-    ytd_expense = sum(e["amount"] for e in get_expenses() if e["date"].startswith(str(today.year)))
+    ytd_income = sum(
+        i["amount"] for i in get_income() if i["date"].startswith(str(today.year))
+    )
+    ytd_expense = sum(
+        e["amount"] for e in get_expenses() if e["date"].startswith(str(today.year))
+    )
     return {
         "this_month_income": this_month["total_income"],
         "this_month_expense": this_month["total_expense"],

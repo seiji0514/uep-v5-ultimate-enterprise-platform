@@ -12,7 +12,6 @@ from auth.jwt_auth import get_current_active_user
 from .cqrs import Command, Query, cqrs_bus
 from .event_sourcing import DomainEvent, EventSourcingHandler, EventStore
 from .kafka_client import KafkaClient
-from .saga import OutboxStore, Saga, SagaStatus, SagaStep, create_outbox_event
 from .models import (
     CommandCreate,
     DomainEventCreate,
@@ -23,6 +22,7 @@ from .models import (
     SagaCreate,
     TopicCreate,
 )
+from .saga import OutboxStore, Saga, SagaStatus, SagaStep, create_outbox_event
 
 router = APIRouter(prefix="/api/v1/events", tags=["イベントストリーミング"])
 
@@ -94,10 +94,14 @@ async def publish_event(
     """イベントを発行"""
     try:
         from monitoring.tracing import tracing_handler
-        with tracing_handler.span("event_streaming.publish", {
-            "event.topic": event_data.topic,
-            "event.type": event_data.event_type,
-        }):
+
+        with tracing_handler.span(
+            "event_streaming.publish",
+            {
+                "event.topic": event_data.topic,
+                "event.type": event_data.event_type,
+            },
+        ):
             success = kafka_client.publish_event(
                 topic=event_data.topic,
                 event_type=event_data.event_type,

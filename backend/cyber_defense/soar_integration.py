@@ -10,6 +10,7 @@ from typing import Any, Dict, List, Optional
 
 class PlaybookAction(str, Enum):
     """プレイブックアクション"""
+
     ALERT = "alert"
     ISOLATE = "isolate"
     BLOCK_IP = "block_ip"
@@ -28,12 +29,14 @@ def execute_playbook(
     """
     results = []
     for action in actions:
-        results.append({
-            "action": action.value,
-            "status": "simulated",
-            "alert_id": alert_id,
-            "timestamp": datetime.utcnow().isoformat(),
-        })
+        results.append(
+            {
+                "action": action.value,
+                "status": "simulated",
+                "alert_id": alert_id,
+                "timestamp": datetime.utcnow().isoformat(),
+            }
+        )
     return {
         "alert_id": alert_id,
         "actions": results,
@@ -45,7 +48,15 @@ def execute_playbook(
 def get_available_playbooks() -> List[Dict[str, Any]]:
     """利用可能なプレイブック一覧"""
     return [
-        {"id": "phishing", "name": "フィッシング検知時", "actions": ["alert", "block_ip", "notify"]},
-        {"id": "malware", "name": "マルウェア検知時", "actions": ["isolate", "alert", "create_ticket"]},
+        {
+            "id": "phishing",
+            "name": "フィッシング検知時",
+            "actions": ["alert", "block_ip", "notify"],
+        },
+        {
+            "id": "malware",
+            "name": "マルウェア検知時",
+            "actions": ["isolate", "alert", "create_ticket"],
+        },
         {"id": "bruteforce", "name": "ブルートフォース検知時", "actions": ["block_ip", "alert"]},
     ]

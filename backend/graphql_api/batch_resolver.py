@@ -13,14 +13,16 @@ async def batch_load_users(keys: List[str]) -> List[Dict[str, Any]]:
     # 実装例: keys (username) で一括取得
     result = []
     for key in keys:
-        result.append({
-            "username": key,
-            "email": f"{key}@uep.local",
-            "full_name": key.capitalize(),
-            "department": "Dev",
-            "roles": ["user"] if key != "admin" else ["admin"],
-            "is_active": True,
-        })
+        result.append(
+            {
+                "username": key,
+                "email": f"{key}@uep.local",
+                "full_name": key.capitalize(),
+                "department": "Dev",
+                "roles": ["user"] if key != "admin" else ["admin"],
+                "is_active": True,
+            }
+        )
     return result
 
 
@@ -28,13 +30,15 @@ async def batch_load_projects(keys: List[str]) -> List[Dict[str, Any]]:
     """プロジェクトをバッチ取得"""
     result = []
     for key in keys:
-        result.append({
-            "id": key,
-            "name": f"Project {key}",
-            "description": "Batch loaded",
-            "status": "active",
-            "owner_username": "admin",
-        })
+        result.append(
+            {
+                "id": key,
+                "name": f"Project {key}",
+                "description": "Batch loaded",
+                "status": "active",
+                "owner_username": "admin",
+            }
+        )
     return result
 
 

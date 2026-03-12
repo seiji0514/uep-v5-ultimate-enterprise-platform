@@ -189,7 +189,9 @@ class VaultClient:
         try:
             response = self.client.secrets.transit.encrypt_data(
                 name=key_name,
-                plaintext=plaintext.encode("utf-8") if isinstance(plaintext, str) else plaintext,
+                plaintext=plaintext.encode("utf-8")
+                if isinstance(plaintext, str)
+                else plaintext,
                 mount_point=mount_point,
             )
             return response.get("data", {}).get("ciphertext")
@@ -215,6 +217,7 @@ class VaultClient:
             plaintext = response.get("data", {}).get("plaintext")
             if plaintext:
                 import base64
+
                 return base64.b64decode(plaintext).decode("utf-8")
             return None
         except Exception as e:

@@ -23,7 +23,12 @@ def _demand_forecast() -> List[Dict[str, Any]]:
 def _smart_grid_control() -> List[Dict[str, Any]]:
     return [
         {"zone": "Zone-A", "status": "正常", "load_percent": 72, "renewable_percent": 35},
-        {"zone": "Zone-B", "status": "調整中", "load_percent": 88, "renewable_percent": 28},
+        {
+            "zone": "Zone-B",
+            "status": "調整中",
+            "load_percent": 88,
+            "renewable_percent": 28,
+        },
         {"zone": "Zone-C", "status": "正常", "load_percent": 65, "renewable_percent": 42},
     ]
 

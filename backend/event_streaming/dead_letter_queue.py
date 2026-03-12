@@ -37,6 +37,7 @@ def push_to_dlq(
         DLQ エントリ ID
     """
     import uuid
+
     entry_id = str(uuid.uuid4())
     entry = {
         "id": entry_id,

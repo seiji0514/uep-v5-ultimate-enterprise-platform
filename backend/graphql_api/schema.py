@@ -97,9 +97,7 @@ class Query:
         )
 
     @strawberry.field
-    async def service_detail(
-        self, info: Info, name: str
-    ) -> Optional[ServiceDetail]:
+    async def service_detail(self, info: Info, name: str) -> Optional[ServiceDetail]:
         """サービス詳細（DataLoader経由・N+1対策）"""
         loader = info.context["service_loader"]
         return await loader.load(name)
@@ -128,7 +126,9 @@ class Query:
     async def projects(self) -> List[Project]:
         """プロジェクト一覧"""
         return [
-            Project(id="p1", name="UEP Core", description="基盤システム", owner_username="admin"),
+            Project(
+                id="p1", name="UEP Core", description="基盤システム", owner_username="admin"
+            ),
             Project(id="p2", name="MLOps", description="ML運用", status="active"),
         ]
 
@@ -136,8 +136,18 @@ class Query:
     async def users(self) -> List[User]:
         """ユーザー一覧（サンプル）"""
         return [
-            User(username="admin", email="admin@uep.local", roles=["admin"], full_name="管理者"),
-            User(username="user1", email="user1@uep.local", roles=["user"], department="Dev"),
+            User(
+                username="admin",
+                email="admin@uep.local",
+                roles=["admin"],
+                full_name="管理者",
+            ),
+            User(
+                username="user1",
+                email="user1@uep.local",
+                roles=["user"],
+                department="Dev",
+            ),
         ]
 
 
@@ -146,7 +156,9 @@ class Subscription:
     """GraphQL サブスクリプション（WebSocket リアルタイム）"""
 
     @strawberry.subscription
-    async def health_updates(self, interval_sec: float = 2.0) -> AsyncGenerator[HealthStatus, None]:
+    async def health_updates(
+        self, interval_sec: float = 2.0
+    ) -> AsyncGenerator[HealthStatus, None]:
         """ヘルスステータスの定期配信（デモ）"""
         for _ in range(5):
             yield HealthStatus(

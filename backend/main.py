@@ -90,9 +90,9 @@ except ImportError as e:
 
 from ai_dev.routes import router as ai_dev_router
 from cloud_infra.routes import router as cloud_infra_router
-from infra_builder.routes import router as infra_builder_router
 from generative_ai.routes import router as generative_ai_router
 from idop.routes import router as idop_router
+from infra_builder.routes import router as infra_builder_router
 
 # Phase 2: コアシステム層のインポート
 from mlops.routes import router as mlops_router
@@ -124,44 +124,44 @@ from chaos.routes import router as chaos_router
 
 # Level 3: エコシステムモジュール
 from ecosystem.routes import router as ecosystem_router
+from education.routes import router as education_router
+from energy.routes import router as energy_router
+
+# ERP（統合基幹業務システム）・レガシー移行
+from erp.routes import router as erp_router
+from fintech.routes import router as fintech_router
 
 # Level 5: グローバルエンタープライズモジュール
 from global_enterprise.routes import router as global_enterprise_router
 
-# Level 4: インダストリーリーダーモジュール
-from industry_leader.routes import router as industry_leader_router
-
 # AIガバナンス・ワークフロー（実行可能実装）
 from governance.routes import router as governance_router
 
+# Level 4: インダストリーリーダーモジュール
+from industry_leader.routes import router as industry_leader_router
+from legacy_migration.routes import router as legacy_migration_router
+from legal.routes import router as legal_router
+
+# ビジネス領域（製造・IoT、金融・FinTech、エネルギー、医療、宇宙、交通）
+from manufacturing.routes import router as manufacturing_router
+
 # MCP / A2A プロトコル（実行可能実装）
 from mcp_a2a.routes import router as mcp_a2a_router
+from medical.routes import router as medical_router
+from personal_accounting.routes import router as personal_accounting_router
 
 # Level 2: プラットフォームモジュール
 from platform_level.routes import router as platform_router
 
-# 統合ビジネスプラットフォーム（業務効率化・人材・顧客対応の3システム統合）
-from unified_business_platform.routes import router as unified_business_router
-
-# ビジネス領域（製造・IoT、金融・FinTech、エネルギー、医療、宇宙、交通）
-from manufacturing.routes import router as manufacturing_router
-from fintech.routes import router as fintech_router
-from energy.routes import router as energy_router
-from medical.routes import router as medical_router
-from space.routes import router as space_router
-from traffic.routes import router as traffic_router
-from personal_accounting.routes import router as personal_accounting_router
-
-# ERP（統合基幹業務システム）・レガシー移行
-from erp.routes import router as erp_router
-from legacy_migration.routes import router as legacy_migration_router
-
 # 追加業種（公共・小売・教育・法務・サプライチェーン）
 from public_sector.routes import router as public_sector_router
 from retail.routes import router as retail_router
-from education.routes import router as education_router
-from legal.routes import router as legal_router
+from space.routes import router as space_router
 from supply_chain.routes import router as supply_chain_router
+from traffic.routes import router as traffic_router
+
+# 統合ビジネスプラットフォーム（業務効率化・人材・顧客対応の3システム統合）
+from unified_business_platform.routes import router as unified_business_router
 
 # GraphQL（strawberry-graphql が必要。graphql_api は graphql パッケージとの名前衝突回避）
 try:
@@ -217,6 +217,7 @@ async def lifespan(app: FastAPI):
     if settings.DEBUG and not settings.is_production:
         try:
             from core.seed_demo import init_unified_demo_data
+
             init_unified_demo_data()
         except Exception as e:
             print(f"Warning: Demo seed data initialization failed: {e}")
@@ -255,13 +256,15 @@ async def lifespan(app: FastAPI):
     _outbox_task = None
     if EVENT_STREAMING_AVAILABLE and event_streaming_router:
         try:
-            from event_streaming.outbox_poller import poll_and_publish_outbox
             from event_streaming.kafka_client import KafkaClient
+            from event_streaming.outbox_poller import poll_and_publish_outbox
+
             _outbox_task = asyncio.create_task(
                 poll_and_publish_outbox(KafkaClient(), interval_sec=10.0)
             )
         except Exception as e:
             import logging
+
             logging.getLogger(__name__).warning(f"Outbox poller not started: {e}")
 
     yield
@@ -296,7 +299,11 @@ _chaos_instance_id = f"{time.time():.0f}-{_rand.randint(1000,9999)}"
 async def _chaos_ok_handler():
     if settings.is_production:
         from fastapi.responses import JSONResponse
-        return JSONResponse(status_code=403, content={"detail": "Chaos Engineering is disabled in production"})
+
+        return JSONResponse(
+            status_code=403,
+            content={"detail": "Chaos Engineering is disabled in production"},
+        )
     return {
         "status": "ok",
         "instance_id": _chaos_instance_id,
@@ -307,7 +314,11 @@ async def _chaos_ok_handler():
 async def _chaos_status_handler():
     if settings.is_production:
         from fastapi.responses import JSONResponse
-        return JSONResponse(status_code=403, content={"detail": "Chaos Engineering is disabled in production"})
+
+        return JSONResponse(
+            status_code=403,
+            content={"detail": "Chaos Engineering is disabled in production"},
+        )
     return {
         "enabled": True,
         "endpoints": {
@@ -404,6 +415,7 @@ if not settings.is_production:
         app.include_router(chaos_router)
     except Exception as e:
         import logging
+
         logging.getLogger(__name__).warning(f"Chaos router not included: {e}")
 if GRAPHQL_AVAILABLE and graphql_router:
     app.include_router(graphql_router, prefix="/graphql")
@@ -715,6 +727,7 @@ async def list_users(current_user: Dict[str, Any] = Depends(get_current_active_u
 def _can_bind_port(host: str, port: int) -> bool:
     """ポートにバインド可能か事前チェック（Windows予約ポート回避）"""
     import socket
+
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.bind((host, port))
@@ -731,7 +744,9 @@ if __name__ == "__main__":
         port = 8080
         os.environ["PORT"] = str(port)
         print(f"\n*** ポート8000が使用不可のため、ポート{port}で起動します ***")
-        print(f"*** フロントエンドの .env で REACT_APP_API_URL=http://localhost:{port} に変更してください ***\n")
+        print(
+            f"*** フロントエンドの .env で REACT_APP_API_URL=http://localhost:{port} に変更してください ***\n"
+        )
     uvicorn.run(
         app,
         host=settings.HOST,

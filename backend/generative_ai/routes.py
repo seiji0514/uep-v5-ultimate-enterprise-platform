@@ -9,7 +9,12 @@ from auth.jwt_auth import get_current_active_user
 from auth.rbac import require_permission
 
 from .llm_integration import LLMProvider, llm_client
-from .models import GenerateRequest, RAGRequest, ReasoningRequest, ReasoningRoutingRequest
+from .models import (
+    GenerateRequest,
+    RAGRequest,
+    ReasoningRequest,
+    ReasoningRoutingRequest,
+)
 from .rag import get_rag_system
 from .reasoning import get_reasoning_engine
 from .reasoning_routing import assess_task_difficulty, get_routing_decision
@@ -148,7 +153,9 @@ async def add_document(
     """ドキュメントをRAGシステムに追加（chunk_size>0 でチャンク分割）"""
     system = get_rag_system()
     system.add_document(
-        collection, document, metadata,
+        collection,
+        document,
+        metadata,
         chunk_size=chunk_size,
         chunk_overlap=chunk_overlap,
     )

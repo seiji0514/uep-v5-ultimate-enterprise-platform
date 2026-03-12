@@ -29,12 +29,14 @@ DEFAULT_THRESHOLDS: Dict[str, ThresholdConfig] = {
 }
 
 
-def _threshold_detector(
-    value: float, config: ThresholdConfig
-) -> Dict[str, Any]:
+def _threshold_detector(value: float, config: ThresholdConfig) -> Dict[str, Any]:
     """閾値ベースの異常検知"""
     if value > config.upper or value < config.lower:
-        ratio = value / config.upper if value > config.upper else config.lower / max(value, 0.001)
+        ratio = (
+            value / config.upper
+            if value > config.upper
+            else config.lower / max(value, 0.001)
+        )
         if ratio >= config.severity_high_ratio:
             severity = "高"
         elif ratio >= config.severity_medium_ratio:
@@ -77,7 +79,7 @@ def _rolling_detector(
     recent = history[-window:]
     mean = sum(recent) / len(recent)
     variance = sum((x - mean) ** 2 for x in recent) / len(recent)
-    std = variance ** 0.5 if variance > 0 else 0
+    std = variance**0.5 if variance > 0 else 0
     return _zscore_detector(value, mean, std, z_threshold=deviation)
 
 
@@ -169,13 +171,33 @@ def get_anomaly_list(
     """
     if domain == "medical":
         default_items = [
-            {"id": "ma-001", "metric": "heart_rate", "value": 125, "patient_id": "P001"},
-            {"id": "ma-002", "metric": "blood_glucose", "value": 280, "patient_id": "P002"},
+            {
+                "id": "ma-001",
+                "metric": "heart_rate",
+                "value": 125,
+                "patient_id": "P001",
+            },
+            {
+                "id": "ma-002",
+                "metric": "blood_glucose",
+                "value": 280,
+                "patient_id": "P002",
+            },
         ]
     else:
         default_items = [
-            {"id": "ano-001", "metric": "vibration", "value": 0.25, "equipment": "CNC旋盤A"},
-            {"id": "ano-002", "metric": "temperature_equipment", "value": 95.0, "equipment": "溶接ロボットB"},
+            {
+                "id": "ano-001",
+                "metric": "vibration",
+                "value": 0.25,
+                "equipment": "CNC旋盤A",
+            },
+            {
+                "id": "ano-002",
+                "metric": "temperature_equipment",
+                "value": 95.0,
+                "equipment": "溶接ロボットB",
+            },
         ]
 
     data = items if items else default_items
@@ -185,18 +207,24 @@ def get_anomaly_list(
     for item in data:
         metric = item.get("metric", "unknown")
         value = item.get("value", 0)
-        config = configs.get(metric) if isinstance(configs.get(metric), ThresholdConfig) else None
+        config = (
+            configs.get(metric)
+            if isinstance(configs.get(metric), ThresholdConfig)
+            else None
+        )
         if not config:
             config = DEFAULT_THRESHOLDS.get(metric, ThresholdConfig(metric, 999, -999))
 
         det = ensemble_detect(value, metric, threshold_config=config)
         if det["is_anomaly"]:
-            results.append({
-                **item,
-                "type": f"{config.metric}異常",
-                "severity": det["severity"],
-                "detected_at": det["detected_at"],
-                "ensemble_votes": det.get("ensemble_votes", 1),
-            })
+            results.append(
+                {
+                    **item,
+                    "type": f"{config.metric}異常",
+                    "severity": det["severity"],
+                    "detected_at": det["detected_at"],
+                    "ensemble_votes": det.get("ensemble_votes", 1),
+                }
+            )
 
     return results
