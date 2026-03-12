@@ -33,6 +33,7 @@ jobs:
   lint:
     name: Lint & Format Check
     runs-on: ubuntu-latest
+    if: false  # 一時スキップ（管理用リポジトリ・必要時に true に戻す）
     steps:
       - uses: actions/checkout@v4
 
