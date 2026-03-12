@@ -59,6 +59,34 @@
 
 ---
 
+## 🔧 補強スキル実装
+
+| スキル | 実装 |
+|--------|------|
+| **Go** | `tools/uep-cli`（cobra CLI） |
+| **eBPF** | Falco ルール、Webhook、bpftrace サンプル |
+| **GraphQL** | DataLoader、サブスクリプション、フェデレーション |
+| **分散トレーシング** | OpenTelemetry、Jaeger、W3C Trace Context |
+| **イベント駆動** | Saga 補正、アウトボックス、Kafka Streams |
+
+詳細: [docs/ENHANCEMENTS.md](docs/ENHANCEMENTS.md)、[docs/ENHANCEMENTS_EXTENDED.md](docs/ENHANCEMENTS_EXTENDED.md)（拡張実装一覧）
+
+---
+
+## 📌 参画の前提条件
+
+| 項目                     | 要件                           |
+| ------------------------ | ------------------------------ |
+| Python                   | 3.11以上                       |
+| Node.js                  | 18以上                         |
+| PostgreSQL または SQLite | データベース                   |
+| Docker                   | 必須ではない（ローカル実行可） |
+
+参画者が取り組めること: 精度向上、パフォーマンス改善、機能追加、品質強化等。  
+詳細: [docs/参画に必要なこと.md](docs/参画に必要なこと.md)
+
+---
+
 ## 🚀 クイックスタート
 
 ### Windows（コマンドプロンプト） ⭐ 推奨
@@ -159,6 +187,40 @@ uep-v5-ultimate-enterprise-platform/
 ├── frontend/               # フロントエンド
 └── docs/                   # ドキュメント
 ```
+
+---
+
+## 📈 スキル向上ロードマップ
+
+参画者がUEP v5.0を通じて習得・強化できるスキル。
+
+### 高優先度（実務でよく使う）
+
+- **Kubernetes** … 本番運用、HPA/VPA、NetworkPolicy、ResourceQuota、オペレーター
+- **Terraform** … モジュール化、state管理、マルチクラウド対応
+- **Prometheus/Grafana** … SLO/SLI設計、アラート設計、長期保存、Thanos/Cortex
+- **Python** … 非同期処理、型ヒント、テスト、リファクタリング
+- **CI/CD** … マルチステージ、キャッシュ、セキュリティスキャン、シークレット管理
+
+### 補強スキル（5スキル）
+
+- **Go** … インフラツール・CLI開発、Kubernetesオペレーター
+- **eBPF** … 観測性、ネットワーク、セキュリティ
+- **GraphQL** … API設計、N+1対策、フェデレーション
+- **分散トレーシング** … OpenTelemetry、Jaeger、トレース設計・運用
+- **イベント駆動** … Kafka、Kafka Streams、イベントソーシング、CQRS
+
+### 補強スキル 詳細（学習リソース・実践例）
+
+| スキル | 学習リソース・実践例 |
+|--------|----------------------|
+| **Go** | A Tour of Go、Effective Go、cobra |
+| **eBPF** | Cilium、Falco、BCC、bpftrace |
+| **GraphQL** | Apollo Server、Strawberry、DataLoader |
+| **分散トレーシング** | OpenTelemetry SDK、Jaeger、W3C Trace Context |
+| **イベント駆動** | Kafka Streams、イベントソーシング、CQRS、Saga、アウトボックスパターン |
+
+詳細: [docs/スキル向上ロードマップ.md](docs/スキル向上ロードマップ.md)
 
 ---
 

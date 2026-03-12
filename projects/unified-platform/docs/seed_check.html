@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>シード確認</title></head>
+<body>
+<h1>UEP シード実行チェック</h1>
+<p>下のボタンをクリックして、API に接続できるか確認します。</p>
+<button onclick="run()">シード実行</button>
+<pre id="result">（未実行）</pre>
+<script>
+async function run() {
+  const r = document.getElementById('result');
+  r.textContent = '接続中...';
+  try {
+    const res = await fetch('http://localhost:8000/api/v1/seed');
+    const text = await res.text();
+    r.textContent = 'HTTP ' + res.status + '\n' + text;
+  } catch (e) {
+    r.textContent = 'エラー: ' + e.message + '\n\n127.0.0.1 を試します...';
+    try {
+      const res2 = await fetch('http://127.0.0.1:8000/api/v1/seed');
+      const text2 = await res2.text();
+      r.textContent = 'HTTP ' + res2.status + '\n' + text2;
+    } catch (e2) {
+      r.textContent = 'エラー: ' + e2.message + '\n\n接続できません。Docker が起動しているか確認してください。';
+    }
+  }
+}
+</script>
+</body>
+</html>

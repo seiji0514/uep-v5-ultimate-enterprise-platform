@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>デモ ボタンエラー対処</title>
+  <style>
+    body { font-family: "Yu Gothic", "Meiryo", sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; line-height: 1.6; font-size: 0.9rem; color: #333; }
+    h1 { font-size: 1.4rem; border-bottom: 2px solid #333; padding-bottom: 0.5rem; margin-bottom: 1rem; }
+    h2 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.5rem; color: #333; }
+    h3 { font-size: 1rem; margin-top: 1rem; margin-bottom: 0.3rem; color: #555; }
+    table { width: 100%; border-collapse: collapse; margin: 0.5rem 0; font-size: 0.9rem; }
+    th, td { border: 1px solid #666; padding: 0.5rem 0.8rem; text-align: left; }
+    th { background: #f0f0f0; font-weight: bold; }
+    ul { margin: 0.3rem 0; padding-left: 1.5rem; }
+    p { margin: 0.5rem 0; }
+    pre { background: #f5f5f5; padding: 1rem; border-radius: 4px; overflow-x: auto; font-size: 0.85rem; }
+    code { font-family: "Consolas", "Monaco", monospace; }
+    hr { border: none; border-top: 1px solid #ccc; margin: 1rem 0; }
+    .meta { color: #666; font-size: 0.85rem; margin-bottom: 1.5rem; }
+    @media print { body { padding: 1rem; } }
+  </style>
+</head>
+<body>
+
+<h1>デモ ボタンエラー対処</h1>
+<p class="meta">更新: 2026年2月25日</p>
+
+<hr>
+
+<h2>面談中ログアウト防止</h2>
+<p><code>backend/.env</code> に以下を追加すると、トークン有効期限が 120 分になります。</p>
+<pre>ACCESS_TOKEN_EXPIRE_MINUTES=120</pre>
+<p>追加後、バックエンドを再起動してください。</p>
+
+<hr>
+
+<h2>修正済み</h2>
+
+<h3>1. インフラ構築「実行」ボタン → 403 エラー</h3>
+<p><strong>原因</strong>: <code>manage_infrastructure</code> 権限が不足していた。</p>
+<p><strong>対応</strong>: デモユーザー（kaho0525、developer）に <code>manage_infrastructure</code> を付与済み。</p>
+<p><strong>注意</strong>:</p>
+<ol>
+  <li><strong>バックエンドを再起動</strong>してください（コード変更の反映）</li>
+  <li>既にログイン済みの場合は、<strong>一度ログアウトして再ログイン</strong>すると新しい権限が反映されます</li>
+</ol>
+
+<hr>
+
+<h2>ログイン情報（デモ用）</h2>
+<table>
+  <tr><th style="width:25%">ユーザー</th><th style="width:25%">パスワード</th><th>用途</th></tr>
+  <tr><td>kaho0525</td><td>kaho052514</td><td>管理者・全権限</td></tr>
+  <tr><td>developer</td><td>dev123</td><td>開発者・インフラ実行可</td></tr>
+  <tr><td>viewer</td><td>view123</td><td>閲覧のみ</td></tr>
+</table>
+
+<hr>
+
+<h2>その他の想定エラー</h2>
+<table>
+  <tr><th style="width:35%">エラー</th><th style="width:25%">原因</th><th>対処</th></tr>
+  <tr><td>バックエンドに接続できません</td><td>バックエンド未起動</td><td><code>python main.py</code> で起動</td></tr>
+  <tr><td>401 Unauthorized</td><td>未ログイン or トークン期限切れ</td><td>ログアウト→再ログイン</td></tr>
+  <tr><td>Chaos「エラー注入」で失敗</td><td>仕様（確率でエラーを返す）</td><td>正常動作。再試行で成功する場合あり</td></tr>
+  <tr><td>GraphQL 404</td><td>strawberry-graphql 未インストール</td><td><code>pip install strawberry-graphql[fastapi]</code></td></tr>
+</table>
+
+<hr>
+
+<h2>起動後の確認手順</h2>
+<ol>
+  <li>バックエンド: <code>cd backend && python main.py</code></li>
+  <li>フロントエンド: <code>cd frontend && npm start</code></li>
+  <li>ログイン: kaho0525 / kaho052514 または developer / dev123</li>
+  <li>インフラ構築 → 実行ボタン → パイプライン実行タブで確認</li>
+</ol>
+
+<hr>
+<p><em>以上</em></p>
+
+</body>
+</html>

@@ -1,5 +1,3 @@
-version: "3.8"
-
 # WSL環境での実行を考慮した設定
 # Docker Desktop for Windows (WSL2バックエンド) または WSL内のDockerで実行可能
 
@@ -41,7 +39,7 @@ services:
       - uep-network
     command: /usr/local/bin/envoy -c /etc/envoy/envoy.yaml
 
-  # Backend API
+  # Backend API（本番運用モード）
   backend:
     build:
       context: ./backend
@@ -49,15 +47,20 @@ services:
     ports:
       - "8000:8000"
     environment:
+      - ENVIRONMENT=production
+      - DEBUG=false
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/uep_db
       - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=${SECRET_KEY:-uep-docker-prod-key-change-in-env}
+      - OTLP_ENDPOINT=jaeger:4317
+    depends_on:
+      - postgres
+      - redis
+      - jaeger
     volumes:
       - ./backend:/app
     networks:
       - uep-network
-    depends_on:
-      - postgres
-      - redis
 
   # PostgreSQL
   postgres:
@@ -96,9 +99,9 @@ services:
       - uep-network
     command: server /data --console-address ":9001"
 
-  # Kafka
+  # Kafka (Zookeeper モード - 7.4 は Zookeeper 対応)
   zookeeper:
-    image: confluentinc/cp-zookeeper:latest
+    image: confluentinc/cp-zookeeper:7.4.0
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -106,7 +109,7 @@ services:
       - uep-network
 
   kafka:
-    image: confluentinc/cp-kafka:latest
+    image: confluentinc/cp-kafka:7.4.0
     depends_on:
       - zookeeper
     ports:
@@ -114,10 +117,48 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_INTERNAL://0.0.0.0:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     networks:
       - uep-network
+
+  # Kafka トピック作成（uep-events）
+  kafka-init:
+    image: confluentinc/cp-kafka:7.4.0
+    depends_on:
+      - kafka
+    networks:
+      - uep-network
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        for n in 1 2 3 4 5 6 7 8 9 10; do
+          if kafka-topics --bootstrap-server kafka:29092 --list 2>/dev/null; then break; fi
+          echo "Waiting for Kafka..."; sleep 3
+        done
+        kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic uep-events --partitions 1 --replication-factor 1
+        echo "Topic uep-events ready."
+    profiles:
+      - event-streaming
+
+  # Kafka Streams（Docker 内実行 - kafka:29092 で接続）
+  kafka-streams:
+    build:
+      context: ./infrastructure/event-streaming/kafka-streams
+      dockerfile: Dockerfile
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+    networks:
+      - uep-network
+    restart: unless-stopped
+    profiles:
+      - event-streaming
 
   # Prometheus
   prometheus:
@@ -197,6 +238,40 @@ services:
       - uep-network
     depends_on:
       - elasticsearch
+
+  # Jaeger（分散トレーシング・OpenTelemetry OTLP対応）
+  jaeger:
+    image: jaegertracing/all-in-one:1.52
+    ports:
+      - "16686:16686"   # Jaeger UI
+      - "4317:4317"     # OTLP gRPC
+      - "4318:4318"     # OTLP HTTP
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    networks:
+      - uep-network
+
+  # Falco（eBPFベースのランタイムセキュリティ）
+  falco:
+    image: falcosecurity/falco:latest
+    privileged: true
+    volumes:
+      - /var/run/docker.sock:/host/var/run/docker.sock:ro
+      - /dev:/host/dev:ro
+      - /proc:/host/proc:ro
+      - /boot:/host/boot:ro
+      - /lib/modules:/host/lib/modules:ro
+      - /usr:/host/usr:ro
+      - ./infrastructure/falco/falco_rules_uep.yaml:/etc/falco/falco_rules_uep.yaml:ro
+    environment:
+      - FALCO_BPF_PROBE=""
+      - HOST_ROOT=/
+    networks:
+      - uep-network
+    depends_on:
+      - backend
+    profiles:
+      - security
 
   # HashiCorp Vault
   vault:

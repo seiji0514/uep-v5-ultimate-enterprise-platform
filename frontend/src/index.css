@@ -15,3 +15,8 @@ code {
 * {
   box-sizing: border-box;
 }
+
+/* Recharts: 円グラフのラベルが切れないように overflow を継承 */
+.recharts-wrapper svg {
+  overflow: visible !important;
+}

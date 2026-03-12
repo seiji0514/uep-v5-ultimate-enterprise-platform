@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>宇宙開発・衛星制御分野AIシステム群 - 統合管理ダッシュボード</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #E6E6FA, #DDA0DD, #D8BFD8, #E0B0FF);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #0f0f23;
+            padding: 12px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .back-button:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .header {
+            text-align: center;
+            padding: 80px 20px 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .systems-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .system-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .system-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+        }
+
+        .system-card h3 {
+            color: #0f0f23;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .system-status {
+            background: linear-gradient(135deg, #3730a3, #1e3a8a);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .metric-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+
+        .metric-label {
+            font-size: 0.85em;
+            color: #6c757d;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .metric-value {
+            font-size: 1.1em;
+            color: #0f0f23;
+            font-weight: 700;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3730a3, #1e3a8a);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #3498db, #5dade2);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 40px;
+        }
+
+        .back-link {
+            background: rgba(255, 255, 255, 0.9);
+            color: #0f0f23;
+            padding: 15px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .back-link:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .systems-grid {
+                grid-template-columns: 1fr;
+                padding: 15px;
+            }
+            
+            .metrics {
+                grid-template-columns: 1fr;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 戻るボタン -->
+    <a href="integrated-ai-systems-dashboard.html" class="back-button">← 戻る</a>
+
+    <!-- ヘッダー -->
+    <div class="header">
+        <h1>宇宙開発・衛星制御分野AIシステム群</h1>
+        <p>宇宙探査と衛星技術の革新を実現する4つのAI技術の統合プラットフォーム<br>
+        衛星制御・宇宙探査・軌道計算・宇宙通信による人類の宇宙進出の実現</p>
+    </div>
+
+    <!-- AIシステム群 -->
+    <div class="systems-grid">
+        <!-- 衛星制御AI -->
+        <div class="system-card">
+            <h3>衛星制御AI</h3>
+            <div class="system-status">稼働中 - 精密制御モード</div>
+            <div class="metrics">
+                <div class="metric-item">
+                    <div class="metric-label">制御精度</div>
+                    <div class="metric-value">99.97%</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">軌道維持精度</div>
+                    <div class="metric-value">±0.1m</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">応答速度</div>
+                    <div class="metric-value">0.01秒</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">燃料効率</div>
+                    <div class="metric-value">+89%</div>
+                </div>
+            </div>
+            <div class="actions">
+                <button class="btn btn-primary" onclick="startSatelliteControl()">衛星制御開始</button>
+                <button class="btn btn-success" onclick="maintainOrbit()">軌道維持開始</button>
+                <button class="btn btn-info" onclick="optimizeFuel()">燃料最適化開始</button>
+            </div>
+        </div>
+
+        <!-- 宇宙探査AI -->
+        <div class="system-card">
+            <h3>宇宙探査AI</h3>
+            <div class="system-status">稼働中 - 探査分析モード</div>
+            <div class="metrics">
+                <div class="metric-item">
+                    <div class="metric-label">探査精度</div>
+                    <div class="metric-value">98.9%</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">発見率</div>
+                    <div class="metric-value">+156%</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">分析速度</div>
+                    <div class="metric-value">リアルタイム</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">探査範囲</div>
+                    <div class="metric-value">太陽系全域</div>
+                </div>
+            </div>
+            <div class="actions">
+                <button class="btn btn-primary" onclick="startSpaceExploration()">宇宙探査開始</button>
+                <button class="btn btn-success" onclick="analyzeData()">データ分析開始</button>
+                <button class="btn btn-info" onclick="discoverObjects()">天体発見開始</button>
+            </div>
+        </div>
+
+        <!-- 軌道計算AI -->
+        <div class="system-card">
+            <h3>軌道計算AI</h3>
+            <div class="system-status">稼働中 - 精密計算モード</div>
+            <div class="metrics">
+                <div class="metric-item">
+                    <div class="metric-label">計算精度</div>
+                    <div class="metric-value">99.999%</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">予測精度</div>
+                    <div class="metric-value">99.8%</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">計算速度</div>
+                    <div class="metric-value">1000倍</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">衝突回避率</div>
+                    <div class="metric-value">99.95%</div>
+                </div>
+            </div>
+            <div class="actions">
+                <button class="btn btn-primary" onclick="calculateOrbit()">軌道計算開始</button>
+                <button class="btn btn-success" onclick="predictTrajectory()">軌道予測開始</button>
+                <button class="btn btn-info" onclick="avoidCollision()">衝突回避開始</button>
+            </div>
+        </div>
+
+        <!-- 宇宙通信AI -->
+        <div class="system-card">
+            <h3>宇宙通信AI</h3>
+            <div class="system-status">稼働中 - 高帯域通信モード</div>
+            <div class="metrics">
+                <div class="metric-item">
+                    <div class="metric-label">通信速度</div>
+                    <div class="metric-value">100Gbps</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">通信品質</div>
+                    <div class="metric-value">99.99%</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">通信範囲</div>
+                    <div class="metric-value">深宇宙</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">遅延時間</div>
+                    <div class="metric-value">0.1ms</div>
+                </div>
+            </div>
+            <div class="actions">
+                <button class="btn btn-primary" onclick="startCommunication()">宇宙通信開始</button>
+                <button class="btn btn-success" onclick="optimizeBandwidth()">帯域最適化開始</button>
+                <button class="btn btn-info" onclick="establishLink()">通信リンク確立</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- フッター -->
+    <div class="footer" style="text-align: center; padding: 40px 20px; margin-top: 40px;">
+        <p style="color: white; margin-bottom: 15px; font-size: 1.1em; font-weight: 600;">宇宙開発・衛星制御分野AIシステム群 - 統合管理ダッシュボード</p>
+        <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: 25px; font-size: 1em;">衛星制御・軌道最適化・通信管理・ミッション制御の包括的管理システム</p>
+       
+    </div>
+
+    <script>
+        // 衛星制御AI
+        function startSatelliteControl() {
+            console.log(' 衛星制御AI: 衛星制御を開始しました');
+            alert('衛星制御: 包括的な衛星制御システムを開始しました。\n\n• 衛星の姿勢制御\n• 軌道制御の実行\n• システム監視の開始\n• 異常検知の実行\n\n制御開始完了まで数分お待ちください。');
+        }
+
+        function maintainOrbit() {
+            console.log('衛星制御AI: 軌道維持を開始しました');
+            alert('軌道維持: 精密な軌道維持を開始しました。\n\n• 軌道偏差の測定\n• 軌道修正の実行\n• 燃料消費の最適化\n• 軌道安定性の確保\n\n軌道維持完了まで数分お待ちください。');
+        }
+
+        function optimizeFuel() {
+            console.log('衛星制御AI: 燃料最適化を開始しました');
+            alert('燃料最適化: 燃料消費の最適化を開始しました。\n\n• 燃料残量の分析\n• 消費パターンの最適化\n• 効率的な軌道計画\n• 燃料節約の実行\n\n最適化完了まで数分お待ちください。');
+        }
+
+        // 宇宙探査AI
+        function startSpaceExploration() {
+            console.log('宇宙探査AI: 宇宙探査を開始しました');
+            alert('宇宙探査: 包括的な宇宙探査を開始しました。\n\n• 探査対象の特定\n• 探査計画の策定\n• 探査機器の制御\n• データ収集の開始\n\n探査開始完了まで数分お待ちください。');
+        }
+
+        function analyzeData() {
+            console.log('宇宙探査AI: データ分析を開始しました');
+            alert('データ分析: 収集された宇宙データの分析を開始しました。\n\n• データの前処理\n• パターン分析の実行\n• 異常検知の実行\n• 科学的発見の特定\n\n分析完了まで数分お待ちください。');
+        }
+
+        function discoverObjects() {
+            console.log('宇宙探査AI: 天体発見を開始しました');
+            alert('天体発見: 新しい天体の発見を開始しました。\n\n• 観測データの分析\n• 新天体の検出\n• 軌道計算の実行\n• 分類・命名の実行\n\n発見完了まで数分お待ちください。');
+        }
+
+        // 軌道計算AI
+        function calculateOrbit() {
+            console.log('軌道計算AI: 軌道計算を開始しました');
+            alert('軌道計算: 精密な軌道計算を開始しました。\n\n• 軌道要素の計算\n• 摂動の考慮\n• 軌道予測の実行\n• 精度検証の実行\n\n計算完了まで数分お待ちください。');
+        }
+
+        function predictTrajectory() {
+            console.log('軌道計算AI: 軌道予測を開始しました');
+            alert('軌道予測: 将来の軌道予測を開始しました。\n\n• 軌道進化の計算\n• 摂動影響の評価\n• 軌道変化の予測\n• リスク評価の実行\n\n予測完了まで数分お待ちください。');
+        }
+
+        function avoidCollision() {
+            console.log('軌道計算AI: 衝突回避を開始しました');
+            alert('衝突回避: 軌道衝突の回避を開始しました。\n\n• 衝突リスクの評価\n• 回避軌道の計算\n• 軌道修正の実行\n• 安全性の確認\n\n回避完了まで数分お待ちください。');
+        }
+
+        // 宇宙通信AI
+        function startCommunication() {
+            console.log('宇宙通信AI: 宇宙通信を開始しました');
+            alert('宇宙通信: 高帯域宇宙通信を開始しました。\n\n• 通信リンクの確立\n• データ転送の開始\n• 通信品質の監視\n• 帯域幅の最適化\n\n通信開始完了まで数分お待ちください。');
+        }
+
+        function optimizeBandwidth() {
+            console.log('宇宙通信AI: 帯域最適化を開始しました');
+            alert('帯域最適化: 通信帯域幅の最適化を開始しました。\n\n• 帯域使用状況の分析\n• 効率的な帯域配分\n• 通信品質の向上\n• データ転送速度の最適化\n\n最適化完了まで数分お待ちください。');
+        }
+
+        function establishLink() {
+            console.log('宇宙通信AI: 通信リンク確立を開始しました');
+            alert('通信リンク確立: 安定した通信リンクの確立を開始しました。\n\n• リンク品質の評価\n• 最適な通信経路の選択\n• リンク安定性の確保\n• 通信継続性の保証\n\nリンク確立完了まで数分お待ちください。');
+        }
+
+        // システム初期化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('宇宙開発・衛星制御分野AIシステム群ダッシュボードが初期化されました');
+            
+            // リアルタイム更新
+            setInterval(function() {
+                updateSystemStatus();
+            }, 5000);
+        });
+
+        function updateSystemStatus() {
+            // システムステータスの更新
+            const statusElements = document.querySelectorAll('.system-status');
+            statusElements.forEach(function(element) {
+                if (Math.random() > 0.95) {
+                    element.style.background = 'linear-gradient(135deg, #2d1b69, #1e3a8a)';
+                    element.textContent = '更新中 - データ処理中';
+                    
+                    setTimeout(function() {
+                        element.style.background = 'linear-gradient(135deg, #3730a3, #1e3a8a)';
+                        element.textContent = element.textContent.replace('更新中 - データ処理中', '稼働中 - 精密制御モード');
+                    }, 2000);
+                }
+            });
+        }
+    </script>
+
+    <!-- ライセンス・権利情報 -->
+    <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 15px; padding: 25px; margin: 30px auto; max-width: 1200px; border: 3px solid #f59e0b; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);">
+        <h2 style="color: #92400e; margin-bottom: 20px; text-align: center; font-size: 1.5rem;">ライセンス・権利情報</h2>
+        
+        <div style="background: white; padding: 20px; border-radius: 10px; color: #1e3a8a; line-height: 2;">
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">著作権:</strong> &copy; 2025 小川清志（おがわ せいじ）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">開発期間:</strong> 2025年6月～2025年10月（個人事業主として）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">開発目的:</strong> 技術研究・ポートフォリオ作成・転職活動用
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">用途:</strong> 個人研究目的（非商用）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">ライセンス:</strong> MIT License
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">公開範囲:</strong> 個人ポートフォリオサイト、GitHub（技術実証目的）
+            </div>
+            
+            <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #f59e0b;">
+                <strong style="color: #92400e;">重要事項:</strong>
+                <p style="color: #78350f; margin-top: 10px;">
+                    本システムは、個人事業主として独自に研究開発したものであり、
+                    特定の企業・組織の業務とは一切関係ありません。<br>
+                    全ての知的財産権は開発者個人（小川清志）に帰属します。<br>
+                    本システムの技術内容・アイデアは、入社前の個人研究として確立されたものです。
+                </p>
+            </div>
+            
+            <div style="background: #dbeafe; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #3b82f6;">
+                <strong style="color: #1e40af;">タイムスタンプ:</strong>
+                <p style="color: #1e3a8a; margin-top: 10px;">
+                    最終更新日: 2025年10月26日<br>
+                    GitHub最終コミット: 2025年10月26日<br>
+                    確定日付: 入社前（個人開発期間中）
+                </p>
+            </div>
+            
+            <div style="background: #d1fae5; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #10b981;">
+                <strong style="color: #047857;">連絡先:</strong>
+                <p style="color: #065f46; margin-top: 10px;">
+                    開発者: 小川清志（おがわ せいじ）<br>
+                    Email: kaho052514@gmail.com<br>
+                    電話: 080-4271-5479
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>

@@ -1,13 +1,72 @@
 """
 LLM統合モジュール
-大規模言語モデルの統合
+大規模言語モデルの統合（キャッシュ・フェイルオーバー対応）
 """
+import hashlib
+import json
 import os
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
 import httpx
 from pydantic import BaseModel
+
+# 推論レイテンシ低減: キャッシュ（Redis またはメモリ）
+_llm_cache: Optional[Dict[str, Any]] = None
+_llm_cache_ttl = 3600  # 1時間
+
+
+def _get_llm_cache():
+    """LLMキャッシュを取得（Redis があれば使用、なければメモリ）"""
+    global _llm_cache
+    if _llm_cache is None:
+        try:
+            import redis
+            r = redis.from_url(os.getenv("REDIS_URL", "redis://localhost:6379/0"))
+            r.ping()
+            return ("redis", r)
+        except Exception:
+            _llm_cache = {}
+    return ("memory", _llm_cache)
+
+
+def _llm_cache_key(prompt: str, model: str, max_tokens: int, temperature: float) -> str:
+    """キャッシュキーを生成"""
+    data = json.dumps({"p": prompt[:500], "m": model, "t": max_tokens, "temp": temperature}, sort_keys=True)
+    return "llm:" + hashlib.sha256(data.encode()).hexdigest()
+
+
+def _get_cached(prompt: str, model: str, max_tokens: int, temperature: float) -> Optional[Dict[str, Any]]:
+    """キャッシュから取得"""
+    key = _llm_cache_key(prompt, model, max_tokens, temperature)
+    cache_type, cache = _get_llm_cache()
+    if cache_type == "redis":
+        try:
+            val = cache.get(key)
+            if val:
+                return json.loads(val)
+        except Exception:
+            pass
+    else:
+        entry = cache.get(key)
+        if entry and entry.get("expires", 0) > __import__("time").time():
+            return entry.get("value")
+    return None
+
+
+def _set_cached(prompt: str, model: str, max_tokens: int, temperature: float, value: Dict[str, Any]):
+    """キャッシュに保存"""
+    import time
+    key = _llm_cache_key(prompt, model, max_tokens, temperature)
+    cache_type, cache = _get_llm_cache()
+    expires = int(time.time()) + _llm_cache_ttl
+    if cache_type == "redis":
+        try:
+            cache.setex(key, _llm_cache_ttl, json.dumps(value))
+        except Exception:
+            pass
+    else:
+        cache[key] = {"value": value, "expires": expires}
 
 
 class LLMProvider(str, Enum):
@@ -49,36 +108,61 @@ class LLMClient:
         model: str = "gpt-3.5-turbo",
         max_tokens: int = 1000,
         temperature: float = 0.7,
+        use_cache: bool = True,
         **kwargs,
     ) -> Dict[str, Any]:
         """
-        テキストを生成
+        テキストを生成（キャッシュ対応でレイテンシ低減）
 
         Args:
             prompt: プロンプト
             model: モデル名
             max_tokens: 最大トークン数
             temperature: 温度パラメータ
+            use_cache: キャッシュを使用するか
             **kwargs: その他のパラメータ
 
         Returns:
             生成結果
         """
-        if self.provider == LLMProvider.OPENAI:
-            return await self._generate_openai(
-                prompt, model, max_tokens, temperature, **kwargs
+        if use_cache:
+            cached = _get_cached(prompt, model, max_tokens, temperature)
+            if cached:
+                return {**cached, "cached": True}
+
+        async def _primary():
+            if self.provider == LLMProvider.OPENAI:
+                return await self._generate_openai(
+                    prompt, model, max_tokens, temperature, **kwargs
+                )
+            elif self.provider == LLMProvider.LOCAL:
+                return await self._generate_local(
+                    prompt, model, max_tokens, temperature, **kwargs
+                )
+            else:
+                return {
+                    "text": f"[{self.provider}] Generated response for: {prompt[:50]}...",
+                    "model": model,
+                    "provider": self.provider.value,
+                }
+
+        try:
+            from core.health_failover import failover_execute
+            result = await failover_execute(
+                _primary,
+                fallback_value={
+                    "text": "[フェイルオーバー] 一時的に応答できません。しばらくしてから再試行してください。",
+                    "model": model,
+                    "provider": self.provider.value,
+                    "error": "failover",
+                },
             )
-        elif self.provider == LLMProvider.LOCAL:
-            return await self._generate_local(
-                prompt, model, max_tokens, temperature, **kwargs
-            )
-        else:
-            # その他のプロバイダーは簡易実装
-            return {
-                "text": f"[{self.provider}] Generated response for: {prompt[:50]}...",
-                "model": model,
-                "provider": self.provider.value,
-            }
+        except ImportError:
+            result = await _primary()
+
+        if use_cache and result.get("text") and not result.get("error"):
+            _set_cached(prompt, model, max_tokens, temperature, result)
+        return result
 
     async def _generate_openai(
         self, prompt: str, model: str, max_tokens: int, temperature: float, **kwargs

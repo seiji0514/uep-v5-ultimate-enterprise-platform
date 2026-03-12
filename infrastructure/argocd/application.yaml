@@ -1,0 +1,23 @@
+# Argo CD Application（UEP v5.0）
+# 補強スキル: GitOps, Argo CD
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: uep-v5
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/your-org/uep-v5-ultimate-enterprise-platform.git
+    path: infrastructure/kubernetes
+    targetRevision: main
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: uep
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

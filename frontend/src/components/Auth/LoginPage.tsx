@@ -113,7 +113,7 @@ export const LoginPage: React.FC = () => {
             </Button>
             <Box sx={{ mt: 2 }}>
               <Typography variant="body2" color="text.secondary" align="center">
-                デモ: kaho0525 / kaho052514 または developer / dev123
+                デモ: kaho0525 / 0525 または developer / dev123
               </Typography>
             </Box>
           </Box>

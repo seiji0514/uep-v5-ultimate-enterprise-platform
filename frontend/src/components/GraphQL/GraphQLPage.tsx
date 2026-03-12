@@ -2,7 +2,7 @@
  * GraphQL クライアントページ
  * クエリを実行して結果を表示
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Paper,
@@ -43,6 +43,14 @@ export const GraphQLPage: React.FC = () => {
   };
 
   const insertExample = (q: string) => setQuery(q);
+
+  useEffect(() => {
+    graphqlQuery(QUERIES.hello).then((res) => {
+      if (res.errors?.length) setError(res.errors.map((e) => e.message).join(', '));
+      else setResult(JSON.stringify(res.data, null, 2));
+    }).catch((e) => setError(e instanceof Error ? e.message : 'Unknown error'));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Box>

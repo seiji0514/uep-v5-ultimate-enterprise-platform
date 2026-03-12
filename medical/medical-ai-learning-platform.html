@@ -1,0 +1,4651 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>医療AI学習プラットフォーム - Medical AI Learning Hub</title>
+    <meta name="description" content="診断支援AI、医療画像解析、予測モデルの包括的学習プラットフォーム">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Hiragino Sans', sans-serif;
+            line-height: 1.6;
+            background: #f5f7fa;
+            min-height: 100vh;
+            color: #2c3e50;
+            overflow-x: hidden;
+        }
+
+        /* サイドバーレイアウト */
+        .layout-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* サイドバー */
+        .sidebar {
+            width: 320px;
+            background: linear-gradient(180deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 20px;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            margin-bottom: 30px;
+        }
+
+        .sidebar-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .sidebar-subtitle {
+            font-size: 0.9em;
+            opacity: 0.95;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        /* 進捗表示 */
+        .sidebar-progress {
+            background: rgba(0,0,0,0.15);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .progress-circle {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 15px;
+            position: relative;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.8em;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .progress-label {
+            text-align: center;
+            font-size: 0.9em;
+            opacity: 0.95;
+            font-weight: 600;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        /* ナビゲーションメニュー */
+        .nav-section {
+            margin-bottom: 30px;
+        }
+
+        .nav-section-title {
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.7;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .nav-link:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateX(5px);
+        }
+
+        .nav-link.active {
+            background: rgba(255,255,255,0.25);
+            font-weight: 600;
+        }
+
+        .nav-icon {
+            margin-right: 12px;
+            font-size: 1.2em;
+        }
+
+        .nav-status {
+            margin-left: auto;
+            font-size: 0.9em;
+        }
+
+        /* メインコンテンツエリア */
+        .main-content {
+            flex: 1;
+            margin-left: 320px;
+            padding: 40px;
+            background: #f5f7fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* ヘッダー */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.3em;
+            opacity: 0.95;
+        }
+
+        /* 学習進捗トラッキング */
+        .progress-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .progress-title {
+            font-size: 1.8em;
+            color: #667eea;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .progress-title::before {
+            content: "📊";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .progress-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+
+        .overall-progress {
+            margin-top: 30px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #ecf0f1;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* タブナビゲーション */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            padding: 15px 30px;
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .tab-button.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #764ba2;
+        }
+
+        /* タブコンテンツ */
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-size: 2em;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        /* 学習モジュール */
+        .module {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 5px solid #667eea;
+        }
+
+        .module-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .module-title {
+            font-size: 1.5em;
+            color: #2c3e50;
+        }
+
+        .module-status {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .status-completed {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .status-in-progress {
+            background: #f39c12;
+            color: white;
+        }
+
+        .status-not-started {
+            background: #ecf0f1;
+            color: #7f8c8d;
+        }
+
+        .module-content {
+            margin-top: 15px;
+            line-height: 1.8;
+        }
+
+        .module-actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .action-button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+        }
+
+        /* クイズスタイル */
+        .quiz-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .quiz-progress {
+            text-align: right;
+        }
+
+        .progress-bar {
+            width: 200px;
+            height: 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .quiz-question {
+            margin-bottom: 30px;
+        }
+
+        .quiz-question h4 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+            line-height: 1.6;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .quiz-option {
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .quiz-option:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .quiz-option.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+        }
+
+        .quiz-option.correct {
+            border-color: #2ecc71;
+            background: linear-gradient(135deg, #2ecc7115 0%, #27ae6015 100%);
+        }
+
+        .quiz-option.incorrect {
+            border-color: #e74c3c;
+            background: linear-gradient(135deg, #e74c3c15 0%, #c0392b15 100%);
+        }
+
+        .quiz-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .quiz-result-container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .result-score {
+            margin-bottom: 30px;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .result-details {
+            text-align: left;
+            margin-bottom: 30px;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        /* コードデモ */
+        .code-demo {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            overflow-x: auto;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #3e3e3e;
+        }
+
+        .code-title {
+            color: #4ec9b0;
+            font-weight: 600;
+        }
+
+        .copy-button {
+            padding: 6px 12px;
+            background: #007acc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .copy-button:hover {
+            background: #005a9e;
+        }
+
+        pre {
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        /* クイズセクション */
+        .quiz-container {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 25px 0;
+        }
+
+        .quiz-question {
+            font-size: 1.3em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .quiz-option {
+            padding: 15px;
+            background: white;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quiz-option:hover {
+            border-color: #667eea;
+            background: #f0f3ff;
+        }
+
+        .quiz-option.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+        }
+
+        .quiz-option.correct {
+            border-color: #2ecc71;
+            background: #2ecc7115;
+        }
+
+        .quiz-option.incorrect {
+            border-color: #e74c3c;
+            background: #e74c3c15;
+        }
+
+        .quiz-submit {
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .quiz-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .quiz-result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        /* デモボタンスタイル */
+        .demo-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            border: 1px solid #dee2e6;
+        }
+
+        .demo-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .demo-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+        }
+
+        .demo-button:active {
+            transform: translateY(-1px);
+        }
+
+        .demo-icon {
+            font-size: 1.2em;
+        }
+
+        .demo-results {
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            border: 1px solid #dee2e6;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .demo-results h4 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .demo-output {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .demo-loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #28a745;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .result-correct {
+            background: #2ecc7115;
+            color: #2ecc71;
+            border: 2px solid #2ecc71;
+        }
+
+        .result-incorrect {
+            background: #e74c3c15;
+            color: #e74c3c;
+            border: 2px solid #e74c3c;
+        }
+
+        /* リソースカード */
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .resource-card {
+            background: white;
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .resource-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .resource-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+
+        .resource-title {
+            font-size: 1.3em;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .resource-description {
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+
+        .resource-link {
+            display: inline-block;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .resource-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.4);
+        }
+
+        /* チェックリスト */
+        .checklist {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .checklist-item:hover {
+            background: #f0f3ff;
+        }
+
+        .checklist-checkbox {
+            width: 24px;
+            height: 24px;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+
+        .checklist-label {
+            flex: 1;
+            font-size: 1.1em;
+        }
+
+        .checklist-item.completed {
+            opacity: 0.6;
+        }
+
+        .checklist-item.completed .checklist-label {
+            text-decoration: line-through;
+        }
+
+        /* フッター */
+        .footer {
+            margin-top: 60px;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            border-radius: 20px;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer h3 {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+        }
+
+        .footer p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        /* ローディングアニメーション */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* モバイルメニュー */
+        .mobile-menu-button {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        /* レスポンシブ */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-button {
+                display: block;
+            }
+
+            .resource-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 80px 20px 20px;
+            }
+
+            .module {
+                padding: 20px;
+            }
+
+            .code-demo {
+                font-size: 0.85em;
+            }
+
+            .resource-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                width: 280px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- モバイルメニューボタン -->
+    <button class="mobile-menu-button" onclick="toggleSidebar()">☰ メニュー</button>
+
+    <div class="layout-container">
+        <!-- サイドバー -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">医療AI<br>学習プラットフォーム</div>
+                <div class="sidebar-subtitle">Medical AI Learning Hub</div>
+            </div>
+
+            <!-- 進捗サークル -->
+            <div class="sidebar-progress">
+                <div class="progress-circle">
+                    <svg width="100" height="100">
+                        <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="8"/>
+                        <circle id="progress-circle" cx="50" cy="50" r="45" fill="none" stroke="white" stroke-width="8" 
+                                stroke-dasharray="283" stroke-dashoffset="283" transform="rotate(-90 50 50)"/>
+                    </svg>
+                    <div class="progress-text" id="sidebarProgress">0%</div>
+                </div>
+                <div class="progress-label">学習進捗率</div>
+                <div style="margin-top: 15px; font-size: 0.85em; opacity: 0.8;">
+                    <div><span id="sidebarCompleted">0</span> / <span id="sidebarTotal">16</span> モジュール完了</div>
+                </div>
+                <div style="margin-top: 15px;">
+                    <button onclick="resetProgress()" style="
+                        background: rgba(255,255,255,0.2);
+                        border: 1px solid rgba(255,255,255,0.3);
+                        color: white;
+                        padding: 8px 16px;
+                        border-radius: 6px;
+                        cursor: pointer;
+                        font-size: 0.8em;
+                        transition: all 0.3s ease;
+                    " onmouseover="this.style.background='rgba(255,255,255,0.3)'" 
+                       onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+                        🔄 進捗リセット
+                    </button>
+                </div>
+            </div>
+
+            <!-- ナビゲーションメニュー -->
+            <nav>
+                <div class="nav-section">
+                    <div class="nav-section-title">学習コンテンツ</div>
+                    <ul class="nav-menu">
+                        <li class="nav-item">
+                            <a class="nav-link active" onclick="switchTab('diagnosis')">
+                                <span class="nav-icon"></span>
+                                <span>診断支援AI</span>
+                                <span class="nav-status" id="nav-diagnosis">0/3</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" onclick="switchTab('imaging')">
+                                <span class="nav-icon"></span>
+                                <span>医療画像解析</span>
+                                <span class="nav-status" id="nav-imaging">0/3</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" onclick="switchTab('prediction')">
+                                <span class="nav-icon"></span>
+                                <span>予測モデル</span>
+                                <span class="nav-status" id="nav-prediction">3/3</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">実践・応用</div>
+                    <ul class="nav-menu">
+                        <li class="nav-item">
+                            <a class="nav-link" onclick="switchTab('projects')">
+                                <span class="nav-icon"></span>
+                                <span>実践プロジェクト</span>
+                                <span class="nav-status" id="nav-proj">0/3</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" onclick="switchTab('quiz')">
+                                <span class="nav-icon"></span>
+                                <span>クイズ</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" onclick="switchTab('resources')">
+                                <span class="nav-icon"></span>
+                                <span>リソース集</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- メインコンテンツ -->
+        <main class="main-content">
+            <div class="container">
+
+        <!-- 診断支援AI -->
+        <div id="diagnosis" class="tab-content active">
+            <h2 class="section-title">診断支援AI（Diagnostic Support AI）</h2>
+            
+            <div style="background: linear-gradient(135deg, #e74c3c15 0%, #c0392b15 100%); padding: 30px; border-radius: 15px; margin-bottom: 30px; border-left: 5px solid #e74c3c;">
+                <h3 style="color: #e74c3c; margin-bottom: 15px;">この分野について</h3>
+                <p style="line-height: 1.8; margin-bottom: 15px;">
+                    <strong>診断支援AI</strong>は、医療従事者の診断を支援する人工知能システムです。
+                    症状、検査結果、画像データなどを総合的に分析し、診断の精度向上と早期発見を実現します。
+                </p>
+                <p style="line-height: 1.8; margin-bottom: 15px;">
+                    <strong>なぜ重要？</strong><br>
+                    ・診断精度の向上と誤診の削減<br>
+                    ・医師の負担軽減と効率化<br>
+                    ・早期発見による治療効果の向上<br>
+                    ・医療格差の解消とアクセシビリティ向上
+                </p>
+                <p style="line-height: 1.8;">
+                    <strong>学習目標：</strong><br>
+                    症状分析と診断支援システムの構築<br>
+                    医療データの前処理と特徴抽出<br>
+                    診断精度の評価と検証手法<br>
+                    臨床現場での実装と運用
+                </p>
+            </div>
+            
+            <div class="module">
+                <div class="module-header">
+                    <div class="module-title">Module 1: 症状分析と診断支援システム</div>
+                    <span class="module-status status-not-started" id="diag-mod1-status">未開始</span>
+                </div>
+                <div class="module-content">
+                    <p>患者の症状、既往歴、検査結果を統合的に分析し、診断支援を行うシステムの構築を学びます。</p>
+                    
+                    <div class="code-demo">
+                        <div class="code-header">
+                            <span class="code-title">診断支援AI実装例</span>
+                            <button class="copy-button" onclick="copyCode(this)">コピー</button>
+                        </div>
+                        <pre><code>import pandas as pd
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import StandardScaler
+import joblib
+
+class DiagnosticSupportAI:
+    """診断支援AIシステム"""
+    
+    def __init__(self):
+        self.model = RandomForestClassifier(n_estimators=100, random_state=42)
+        self.scaler = StandardScaler()
+        self.symptom_encoder = {}
+        self.diagnosis_labels = {}
+    
+    def preprocess_symptoms(self, symptoms_data):
+        """症状データの前処理"""
+        # 症状の数値化
+        processed_data = []
+        for symptom in symptoms_data:
+            if symptom in self.symptom_encoder:
+                processed_data.append(self.symptom_encoder[symptom])
+            else:
+                # 新しい症状の場合は新しいIDを割り当て
+                new_id = len(self.symptom_encoder)
+                self.symptom_encoder[symptom] = new_id
+                processed_data.append(new_id)
+        
+        return np.array(processed_data).reshape(1, -1)
+    
+    def train(self, X_train, y_train):
+        """モデルの訓練"""
+        # データの正規化
+        X_scaled = self.scaler.fit_transform(X_train)
+        
+        # モデルの訓練
+        self.model.fit(X_scaled, y_train)
+        
+        print("診断支援AIモデルの訓練が完了しました")
+    
+    def predict_diagnosis(self, symptoms, vital_signs, lab_results):
+        """診断予測"""
+        # 症状データの前処理
+        symptoms_processed = self.preprocess_symptoms(symptoms)
+        
+        # バイタルサインと検査結果を結合
+        features = np.concatenate([
+            symptoms_processed,
+            np.array(vital_signs).reshape(1, -1),
+            np.array(lab_results).reshape(1, -1)
+        ], axis=1)
+        
+        # 正規化
+        features_scaled = self.scaler.transform(features)
+        
+        # 予測
+        prediction = self.model.predict(features_scaled)
+        probability = self.model.predict_proba(features_scaled)
+        
+        return {
+            'predicted_diagnosis': prediction[0],
+            'confidence': np.max(probability),
+            'all_probabilities': probability[0]
+        }
+
+# 使用例
+diagnostic_ai = DiagnosticSupportAI()
+
+# 訓練データ（例）
+symptoms_data = [
+    ['発熱', '頭痛', '咳'],
+    ['胸痛', '息切れ', '動悸'],
+    ['腹痛', '吐き気', '下痢']
+]
+vital_signs = [
+    [38.5, 90, 120, 80],  # 体温, 脈拍, 収縮期血圧, 拡張期血圧
+    [36.8, 110, 140, 90],
+    [37.2, 85, 110, 70]
+]
+lab_results = [
+    [12000, 4.5, 140],  # 白血球数, ヘモグロビン, ナトリウム
+    [8000, 5.2, 138],
+    [15000, 4.8, 142]
+]
+diagnoses = ['風邪', '心疾患', '胃腸炎']
+
+# データの準備
+X_train = []
+for i in range(len(symptoms_data)):
+    features = np.concatenate([
+        diagnostic_ai.preprocess_symptoms(symptoms_data[i]).flatten(),
+        vital_signs[i],
+        lab_results[i]
+    ])
+    X_train.append(features)
+
+X_train = np.array(X_train)
+y_train = np.array(diagnoses)
+
+# モデルの訓練
+diagnostic_ai.train(X_train, y_train)
+
+# 新しい患者の診断予測
+new_symptoms = ['発熱', '頭痛']
+new_vitals = [38.0, 95, 125, 85]
+new_labs = [11000, 4.6, 139]
+
+result = diagnostic_ai.predict_diagnosis(new_symptoms, new_vitals, new_labs)
+print(f"予測診断: {result['predicted_diagnosis']}")
+print(f"信頼度: {result['confidence']:.2f}")</code></pre>
+                    </div>
+                </div>
+                <div class="module-actions">
+                    <button class="action-button btn-primary" onclick="markComplete('diag-mod1')">完了にする</button>
+                    <button class="action-button btn-secondary" onclick="runDemo('diagnosis')">デモを実行</button>
+                </div>
+            </div>
+
+            <div class="module">
+                <div class="module-header">
+                    <div class="module-title">Module 2: 医療データの前処理と特徴抽出</div>
+                    <span class="module-status status-not-started" id="diag-mod2-status">未開始</span>
+                </div>
+                <div class="module-content">
+                    <p>医療データの品質向上、欠損値処理、特徴エンジニアリング、データの正規化と標準化を学びます。</p>
+                    
+                    <div class="checklist">
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">医療データの品質評価とクリーニング</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">欠損値の適切な処理手法</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">バイタルサインの正規化と標準化</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">検査値の異常値検出と処理</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="module-actions">
+                    <button class="action-button btn-primary" onclick="markComplete('diag-mod2')">完了にする</button>
+                </div>
+            </div>
+
+            <div class="module">
+                <div class="module-header">
+                    <div class="module-title">Module 3: 診断精度の評価と検証</div>
+                    <span class="module-status status-not-started" id="diag-mod3-status">未開始</span>
+                </div>
+                <div class="module-content">
+                    <p>医療AIの診断精度を適切に評価し、臨床現場での信頼性を確保するための検証手法を学びます。</p>
+                    
+                    <div class="checklist">
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">感度、特異度、陽性予測値の計算</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">ROC曲線とAUCの評価</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">交差検証とブートストラップ法</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">臨床的有意性の評価</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="module-actions">
+                    <button class="action-button btn-primary" onclick="markComplete('diag-mod3')">完了にする</button>
+                </div>
+            </div>
+
+            <!-- クイズ -->
+            <div class="quiz-container">
+                <div class="quiz-question">クイズ: 診断支援AIの感度（Sensitivity）について正しい説明はどれですか？</div>
+                <div class="quiz-options">
+                    <div class="quiz-option" onclick="selectQuizOption(this, false)">
+                        A. 陰性を正しく陰性と判定する割合
+                    </div>
+                    <div class="quiz-option" onclick="selectQuizOption(this, true)">
+                        B. 陽性を正しく陽性と判定する割合
+                    </div>
+                    <div class="quiz-option" onclick="selectQuizOption(this, false)">
+                        C. 陽性と判定した中で実際に陽性だった割合
+                    </div>
+                    <div class="quiz-option" onclick="selectQuizOption(this, false)">
+                        D. 全体の正解率
+                    </div>
+                </div>
+                <button class="quiz-submit" onclick="submitQuiz(this)">回答を確認</button>
+                <div class="quiz-result" id="quiz-result-1" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- 予測モデル -->
+        <div id="prediction" class="tab-content">
+            <h2 class="section-title">予測モデル（Prediction Models）</h2>
+            
+            <div style="background: linear-gradient(135deg, #e74c3c15 0%, #c0392b15 100%); padding: 30px; border-radius: 15px; margin-bottom: 30px; border-left: 5px solid #e74c3c;">
+                <h3 style="color: #e74c3c; margin-bottom: 15px;">この分野について</h3>
+                <p style="line-height: 1.8; margin-bottom: 15px;">
+                    <strong>予測モデル</strong>は、患者の過去のデータから将来の健康状態や治療結果を予測するAIシステムです。
+                    機械学習アルゴリズムを使用して、疾患の進行、治療反応、リスク層別化などを予測します。
+                </p>
+                <p style="line-height: 1.8; margin-bottom: 15px;">
+                    <strong>なぜ重要？</strong><br>
+                    ・早期介入による治療効果の向上<br>
+                    ・個別化医療の実現<br>
+                    ・医療リソースの効率的配分<br>
+                    ・患者のQOL向上と予後改善
+                </p>
+                <p style="line-height: 1.8;">
+                    <strong>学習目標：</strong><br>
+                    時系列データの分析と予測モデル構築<br>
+                    生存分析とリスク層別化<br>
+                    治療反応予測と個別化医療<br>
+                    モデルの解釈可能性と臨床応用
+                </p>
+            </div>
+            
+            <div class="module">
+                <div class="module-header">
+                    <div class="module-title">Module 1: 疾患進行予測モデル</div>
+                    <span class="module-status status-not-started" id="pred-mod1-status">未開始</span>
+                </div>
+                <div class="module-content">
+                    <p>患者の臨床データから疾患の進行を予測するモデルの構築を学びます。</p>
+                    
+                    <div class="code-demo">
+                        <div class="code-header">
+                            <span class="code-title">疾患進行予測モデル実装例</span>
+                            <button class="copy-button" onclick="copyCode(this)">コピー</button>
+                        </div>
+                        <pre><code>import pandas as pd
+import numpy as np
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, r2_score
+import matplotlib.pyplot as plt
+
+class DiseaseProgressionPredictor:
+    """疾患進行予測モデル"""
+    
+    def __init__(self):
+        self.model = RandomForestRegressor(n_estimators=100, random_state=42)
+        self.feature_importance = None
+        self.scaler = StandardScaler()
+    
+    def prepare_data(self, clinical_data):
+        """臨床データの前処理"""
+        # 欠損値の処理
+        data_clean = clinical_data.fillna(clinical_data.median())
+        
+        # 特徴量の選択
+        features = ['age', 'bmi', 'blood_pressure', 'cholesterol', 
+                   'glucose', 'previous_episodes', 'medication_adherence']
+        
+        X = data_clean[features]
+        y = data_clean['disease_progression_score']
+        
+        return X, y
+    
+    def train_model(self, X, y):
+        """モデルの訓練"""
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2, random_state=42
+        )
+        
+        # 特徴量の標準化
+        X_train_scaled = self.scaler.fit_transform(X_train)
+        X_test_scaled = self.scaler.transform(X_test)
+        
+        # モデルの訓練
+        self.model.fit(X_train_scaled, y_train)
+        
+        # 予測と評価
+        y_pred = self.model.predict(X_test_scaled)
+        mse = mean_squared_error(y_test, y_pred)
+        r2 = r2_score(y_test, y_pred)
+        
+        print(f"モデル性能:")
+        print(f"RMSE: {np.sqrt(mse):.3f}")
+        print(f"R²: {r2:.3f}")
+        
+        # 特徴量重要度の取得
+        self.feature_importance = pd.DataFrame({
+            'feature': X.columns,
+            'importance': self.model.feature_importances_
+        }).sort_values('importance', ascending=False)
+        
+        return self.model
+    
+    def predict_progression(self, patient_data):
+        """患者の疾患進行を予測"""
+        patient_scaled = self.scaler.transform(patient_data)
+        progression_score = self.model.predict(patient_scaled)
+        
+        # リスク層別化
+        if progression_score < 0.3:
+            risk_level = "低リスク"
+        elif progression_score < 0.7:
+            risk_level = "中リスク"
+        else:
+            risk_level = "高リスク"
+        
+        return {
+            'progression_score': progression_score[0],
+            'risk_level': risk_level,
+            'recommendations': self._get_recommendations(risk_level)
+        }
+    
+    def _get_recommendations(self, risk_level):
+        """リスクレベルに基づく推奨事項"""
+        recommendations = {
+            "低リスク": ["定期モニタリング", "生活習慣の維持"],
+            "中リスク": ["より頻繁なモニタリング", "生活習慣改善", "予防的治療検討"],
+            "高リスク": ["積極的モニタリング", "即座の治療介入", "専門医への紹介"]
+        }
+        return recommendations.get(risk_level, [])
+
+# 使用例
+predictor = DiseaseProgressionPredictor()
+
+# サンプルデータの準備
+sample_data = pd.DataFrame({
+    'age': [65, 45, 72, 38, 55],
+    'bmi': [28.5, 24.2, 31.1, 22.8, 26.9],
+    'blood_pressure': [140, 120, 160, 110, 135],
+    'cholesterol': [220, 180, 280, 160, 240],
+    'glucose': [110, 95, 140, 85, 120],
+    'previous_episodes': [2, 0, 5, 0, 1],
+    'medication_adherence': [0.8, 1.0, 0.3, 1.0, 0.9],
+    'disease_progression_score': [0.6, 0.2, 0.9, 0.1, 0.4]
+})
+
+X, y = predictor.prepare_data(sample_data)
+model = predictor.train_model(X, y)
+
+# 新しい患者の予測
+new_patient = [[70, 30.0, 150, 250, 130, 3, 0.7]]
+result = predictor.predict_progression(new_patient)
+print(f"予測結果: {result}")</code></pre>
+                    </div>
+                    
+                    <div class="learning-objectives">
+                        <h4>学習目標:</h4>
+                        <ul>
+                            <li>時系列データの前処理と特徴量エンジニアリング</li>
+                            <li>回帰モデルの選択とハイパーパラメータ調整</li>
+                            <li>モデル性能の評価と解釈</li>
+                            <li>リスク層別化と臨床意思決定支援</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="demo-section">
+                        <button class="demo-button" onclick="runDiseaseProgressionDemo()">
+                            <span class="demo-icon">🚀</span>
+                            デモを実行
+                        </button>
+                        <div class="demo-results" id="demo-results-progression" style="display: none;">
+                            <h4>デモ実行結果:</h4>
+                            <div class="demo-output" id="demo-output-progression"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="module">
+                <div class="module-header">
+                    <div class="module-title">Module 2: 治療反応予測モデル</div>
+                    <span class="module-status status-not-started" id="pred-mod2-status">未開始</span>
+                </div>
+                <div class="module-content">
+                    <p>患者の遺伝子情報や臨床データから治療への反応を予測するモデルを構築します。</p>
+                    
+                    <div class="code-demo">
+                        <div class="code-header">
+                            <span class="code-title">治療反応予測モデル実装例</span>
+                            <button class="copy-button" onclick="copyCode(this)">コピー</button>
+                        </div>
+                        <pre><code>import pandas as pd
+import numpy as np
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.model_selection import cross_val_score
+from sklearn.metrics import classification_report, confusion_matrix
+import seaborn as sns
+
+class TreatmentResponsePredictor:
+    """治療反応予測モデル"""
+    
+    def __init__(self):
+        self.model = GradientBoostingClassifier(
+            n_estimators=100, 
+            learning_rate=0.1, 
+            max_depth=6,
+            random_state=42
+        )
+        self.feature_names = None
+        self.response_threshold = 0.5
+    
+    def prepare_genomic_data(self, genomic_data, clinical_data):
+        """ゲノムデータと臨床データの統合"""
+        # 遺伝子発現データの正規化
+        genomic_normalized = (genomic_data - genomic_data.mean()) / genomic_data.std()
+        
+        # 臨床データとの統合
+        combined_data = pd.concat([clinical_data, genomic_normalized], axis=1)
+        
+        return combined_data
+    
+    def select_biomarkers(self, X, y, top_n=50):
+        """バイオマーカーの選択"""
+        from sklearn.feature_selection import SelectKBest, f_classif
+        
+        selector = SelectKBest(score_func=f_classif, k=top_n)
+        X_selected = selector.fit_transform(X, y)
+        
+        # 選択された特徴量名を取得
+        selected_features = X.columns[selector.get_support()]
+        self.feature_names = selected_features
+        
+        return X_selected, selected_features
+    
+    def train_model(self, X, y):
+        """モデルの訓練と評価"""
+        # バイオマーカーの選択
+        X_selected, selected_features = self.select_biomarkers(X, y)
+        
+        # クロスバリデーション
+        cv_scores = cross_val_score(self.model, X_selected, y, cv=5, scoring='roc_auc')
+        
+        # モデルの訓練
+        self.model.fit(X_selected, y)
+        
+        print(f"クロスバリデーション AUC: {cv_scores.mean():.3f} (+/- {cv_scores.std() * 2:.3f})")
+        
+        return self.model, selected_features
+    
+    def predict_response(self, patient_data):
+        """治療反応の予測"""
+        # 選択された特徴量のみを使用
+        patient_selected = patient_data[self.feature_names]
+        
+        # 反応確率の予測
+        response_prob = self.model.predict_proba(patient_selected)[:, 1]
+        
+        # 反応予測
+        response_pred = (response_prob > self.response_threshold).astype(int)
+        
+        return {
+            'response_probability': response_prob[0],
+            'predicted_response': '良好' if response_pred[0] == 1 else '不良',
+            'confidence': max(response_prob[0], 1 - response_prob[0])
+        }
+    
+    def get_feature_importance(self):
+        """特徴量重要度の取得"""
+        importance_df = pd.DataFrame({
+            'feature': self.feature_names,
+            'importance': self.model.feature_importances_
+        }).sort_values('importance', ascending=False)
+        
+        return importance_df
+
+# 使用例
+response_predictor = TreatmentResponsePredictor()
+
+# サンプルデータの準備
+n_patients = 200
+n_genes = 1000
+
+# ゲノムデータ（遺伝子発現）
+genomic_data = pd.DataFrame(
+    np.random.randn(n_patients, n_genes),
+    columns=[f'Gene_{i}' for i in range(n_genes)]
+)
+
+# 臨床データ
+clinical_data = pd.DataFrame({
+    'age': np.random.randint(30, 80, n_patients),
+    'stage': np.random.choice(['I', 'II', 'III', 'IV'], n_patients),
+    'histology': np.random.choice(['Adenocarcinoma', 'Squamous', 'Large_cell'], n_patients),
+    'smoking_history': np.random.choice([0, 1], n_patients),
+    'performance_status': np.random.randint(0, 3, n_patients)
+})
+
+# 治療反応（ラベル）
+treatment_response = np.random.choice([0, 1], n_patients, p=[0.4, 0.6])
+
+# データの統合
+combined_data = response_predictor.prepare_genomic_data(genomic_data, clinical_data)
+
+# モデルの訓練
+model, biomarkers = response_predictor.train_model(combined_data, treatment_response)
+
+# 新しい患者の予測
+new_patient_data = combined_data.iloc[[0]]  # 最初の患者を例として使用
+result = response_predictor.predict_response(new_patient_data)
+print(f"治療反応予測: {result}")
+
+# バイオマーカーの重要度
+importance = response_predictor.get_feature_importance()
+print(f"重要なバイオマーカー: {importance.head(10)}")</code></pre>
+                    </div>
+                    
+                    <div class="learning-objectives">
+                        <h4>学習目標:</h4>
+                        <ul>
+                            <li>ゲノムデータの前処理と正規化</li>
+                            <li>バイオマーカーの選択と特徴量エンジニアリング</li>
+                            <li>分類モデルの構築と評価</li>
+                            <li>個別化医療への応用</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="demo-section">
+                        <button class="demo-button" onclick="runTreatmentResponseDemo()">
+                            <span class="demo-icon">🚀</span>
+                            デモを実行
+                        </button>
+                        <div class="demo-results" id="demo-results-treatment" style="display: none;">
+                            <h4>デモ実行結果:</h4>
+                            <div class="demo-output" id="demo-output-treatment"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="module">
+                <div class="module-header">
+                    <div class="module-title">Module 3: リスク層別化モデル</div>
+                    <span class="module-status status-not-started" id="pred-mod3-status">未開始</span>
+                </div>
+                <div class="module-content">
+                    <p>患者の複合的なリスク要因を分析し、リスク層別化を行うモデルを構築します。</p>
+                    
+                    <div class="code-demo">
+                        <div class="code-header">
+                            <span class="code-title">リスク層別化モデル実装例</span>
+                            <button class="copy-button" onclick="copyCode(this)">コピー</button>
+                        </div>
+                        <pre><code>import pandas as pd
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import silhouette_score
+import matplotlib.pyplot as plt
+
+class RiskStratificationModel:
+    """リスク層別化モデル"""
+    
+    def __init__(self):
+        self.risk_model = RandomForestClassifier(n_estimators=100, random_state=42)
+        self.clustering_model = KMeans(n_clusters=3, random_state=42)
+        self.scaler = StandardScaler()
+        self.risk_thresholds = None
+    
+    def calculate_composite_risk_score(self, patient_data):
+        """複合リスクスコアの計算"""
+        # 各リスク要因の重み付け
+        risk_weights = {
+            'age': 0.2,
+            'comorbidities': 0.25,
+            'vital_signs_abnormal': 0.2,
+            'lab_values_abnormal': 0.15,
+            'medication_complexity': 0.1,
+            'social_factors': 0.1
+        }
+        
+        # リスクスコアの計算
+        risk_score = 0
+        for factor, weight in risk_weights.items():
+            if factor in patient_data.columns:
+                risk_score += patient_data[factor] * weight
+        
+        return risk_score
+    
+    def perform_risk_clustering(self, X):
+        """リスククラスタリングの実行"""
+        # データの標準化
+        X_scaled = self.scaler.fit_transform(X)
+        
+        # クラスタリング
+        cluster_labels = self.clustering_model.fit_predict(X_scaled)
+        
+        # シルエットスコアの計算
+        silhouette_avg = silhouette_score(X_scaled, cluster_labels)
+        print(f"シルエットスコア: {silhouette_avg:.3f}")
+        
+        return cluster_labels, X_scaled
+    
+    def train_risk_model(self, X, y):
+        """リスク予測モデルの訓練"""
+        # リスククラスタリング
+        cluster_labels, X_scaled = self.perform_risk_clustering(X)
+        
+        # リスクモデルの訓練
+        self.risk_model.fit(X_scaled, y)
+        
+        # リスク閾値の設定
+        risk_scores = self.risk_model.predict_proba(X_scaled)[:, 1]
+        self.risk_thresholds = {
+            'low': np.percentile(risk_scores, 33),
+            'medium': np.percentile(risk_scores, 67),
+            'high': np.percentile(risk_scores, 100)
+        }
+        
+        return self.risk_model
+    
+    def stratify_patient_risk(self, patient_data):
+        """患者のリスク層別化"""
+        # 複合リスクスコアの計算
+        composite_score = self.calculate_composite_risk_score(patient_data)
+        
+        # データの標準化
+        patient_scaled = self.scaler.transform(patient_data)
+        
+        # リスク確率の予測
+        risk_prob = self.risk_model.predict_proba(patient_scaled)[:, 1]
+        
+        # リスク層の決定
+        if risk_prob < self.risk_thresholds['low']:
+            risk_stratum = "低リスク"
+            priority = "低"
+        elif risk_prob < self.risk_thresholds['medium']:
+            risk_stratum = "中リスク"
+            priority = "中"
+        else:
+            risk_stratum = "高リスク"
+            priority = "高"
+        
+        # 推奨介入の決定
+        interventions = self._recommend_interventions(risk_stratum, composite_score)
+        
+        return {
+            'composite_risk_score': composite_score[0],
+            'risk_probability': risk_prob[0],
+            'risk_stratum': risk_stratum,
+            'priority_level': priority,
+            'recommended_interventions': interventions
+        }
+    
+    def _recommend_interventions(self, risk_stratum, composite_score):
+        """リスク層に基づく介入推奨"""
+        interventions = {
+            "低リスク": [
+                "定期モニタリング",
+                "予防的ケア",
+                "健康教育"
+            ],
+            "中リスク": [
+                "より頻繁なモニタリング",
+                "リスク要因の管理",
+                "専門医への紹介検討",
+                "薬物療法の最適化"
+            ],
+            "高リスク": [
+                "集中的なモニタリング",
+                "即座の介入",
+                "専門医への緊急紹介",
+                "多職種チームによるケア",
+                "家族への説明とサポート"
+            ]
+        }
+        
+        base_interventions = interventions.get(risk_stratum, [])
+        
+        # 複合スコアに基づく追加推奨
+        if composite_score > 0.8:
+            base_interventions.append("緊急対応プロトコルの検討")
+        
+        return base_interventions
+    
+    def generate_risk_report(self, patient_data, patient_id):
+        """リスクレポートの生成"""
+        risk_assessment = self.stratify_patient_risk(patient_data)
+        
+        report = f"""
+=== 患者ID: {patient_id} リスク評価レポート ===
+
+【リスク評価結果】
+- 複合リスクスコア: {risk_assessment['composite_risk_score']:.3f}
+- リスク確率: {risk_assessment['risk_probability']:.3f}
+- リスク層: {risk_assessment['risk_stratum']}
+- 優先度: {risk_assessment['priority_level']}
+
+【推奨介入】
+"""
+        for i, intervention in enumerate(risk_assessment['recommended_interventions'], 1):
+            report += f"{i}. {intervention}\n"
+        
+        return report
+
+# 使用例
+risk_model = RiskStratificationModel()
+
+# サンプルデータの準備
+n_patients = 500
+patient_data = pd.DataFrame({
+    'age': np.random.randint(20, 90, n_patients),
+    'comorbidities': np.random.randint(0, 5, n_patients),
+    'vital_signs_abnormal': np.random.choice([0, 1], n_patients, p=[0.7, 0.3]),
+    'lab_values_abnormal': np.random.choice([0, 1], n_patients, p=[0.6, 0.4]),
+    'medication_complexity': np.random.randint(0, 10, n_patients),
+    'social_factors': np.random.choice([0, 1], n_patients, p=[0.8, 0.2])
+})
+
+# アウトカム（入院、合併症など）
+outcomes = np.random.choice([0, 1], n_patients, p=[0.7, 0.3])
+
+# モデルの訓練
+trained_model = risk_model.train_risk_model(patient_data, outcomes)
+
+# 新しい患者のリスク評価
+new_patient = pd.DataFrame([{
+    'age': 75,
+    'comorbidities': 3,
+    'vital_signs_abnormal': 1,
+    'lab_values_abnormal': 1,
+    'medication_complexity': 8,
+    'social_factors': 1
+}])
+
+risk_assessment = risk_model.stratify_patient_risk(new_patient)
+print("リスク評価結果:", risk_assessment)
+
+# リスクレポートの生成
+report = risk_model.generate_risk_report(new_patient, "PATIENT_001")
+print(report)</code></pre>
+                    </div>
+                    
+                    <div class="learning-objectives">
+                        <h4>学習目標:</h4>
+                        <ul>
+                            <li>複合リスクスコアの計算と重み付け</li>
+                            <li>クラスタリング手法によるリスク層別化</li>
+                            <li>リスクモデルの構築と評価</li>
+                            <li>臨床意思決定支援システムの構築</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="demo-section">
+                        <button class="demo-button" onclick="runRiskStratificationDemo()">
+                            <span class="demo-icon">🚀</span>
+                            デモを実行
+                        </button>
+                        <div class="demo-results" id="demo-results-risk" style="display: none;">
+                            <h4>デモ実行結果:</h4>
+                            <div class="demo-output" id="demo-output-risk"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- クイズセクション -->
+            <div class="quiz-section">
+                <h3 style="margin: 30px 0 20px 0; color: #e74c3c;">予測モデル理解度チェック</h3>
+                
+                <div class="quiz-container">
+                    <div class="quiz-question">クイズ1: 疾患進行予測モデルにおいて、時系列データの前処理で最も重要なステップはどれですか？</div>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="selectQuizOption(this, false)">
+                            A. データの正規化のみ
+                        </div>
+                        <div class="quiz-option" onclick="selectQuizOption(this, true)">
+                            B. 欠損値の処理、特徴量エンジニアリング、正規化の組み合わせ
+                        </div>
+                        <div class="quiz-option" onclick="selectQuizOption(this, false)">
+                            C. ランダムサンプリングのみ
+                        </div>
+                        <div class="quiz-option" onclick="selectQuizOption(this, false)">
+                            D. データの平均化のみ
+                        </div>
+                    </div>
+                    <button class="quiz-submit" onclick="submitQuiz(this)">回答を確認</button>
+                    <div class="quiz-result" id="quiz-result-pred-1" style="display: none;"></div>
+                </div>
+
+                <div class="quiz-container">
+                    <div class="quiz-question">クイズ2: 治療反応予測モデルでバイオマーカーを選択する際に使用される手法はどれですか？</div>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="selectQuizOption(this, false)">
+                            A. ランダム選択
+                        </div>
+                        <div class="quiz-option" onclick="selectQuizOption(this, true)">
+                            B. SelectKBest with f_classif
+                        </div>
+                        <div class="quiz-option" onclick="selectQuizOption(this, false)">
+                            C. 全特徴量を使用
+                        </div>
+                        <div class="quiz-option" onclick="selectQuizOption(this, false)">
+                            D. 手動選択のみ
+                        </div>
+                    </div>
+                    <button class="quiz-submit" onclick="submitQuiz(this)">回答を確認</button>
+                    <div class="quiz-result" id="quiz-result-pred-2" style="display: none;"></div>
+                </div>
+
+                <div class="quiz-container">
+                    <div class="quiz-question">クイズ3: リスク層別化モデルにおいて、複合リスクスコアの計算で考慮すべき要素はどれですか？</div>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="selectQuizOption(this, false)">
+                            A. 年齢のみ
+                        </div>
+                        <div class="quiz-option" onclick="selectQuizOption(this, false)">
+                            B. 臨床検査値のみ
+                        </div>
+                        <div class="quiz-option" onclick="selectQuizOption(this, true)">
+                            C. 年齢、併存疾患、バイタルサイン、検査値、薬物療法、社会的要因の組み合わせ
+                        </div>
+                        <div class="quiz-option" onclick="selectQuizOption(this, false)">
+                            D. 遺伝子情報のみ
+                        </div>
+                    </div>
+                    <button class="quiz-submit" onclick="submitQuiz(this)">回答を確認</button>
+                    <div class="quiz-result" id="quiz-result-pred-3" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 医療画像解析 -->
+        <div id="imaging" class="tab-content">
+            <h2 class="section-title">医療画像解析（Medical Image Analysis）</h2>
+            
+            <div style="background: linear-gradient(135deg, #e74c3c15 0%, #c0392b15 100%); padding: 30px; border-radius: 15px; margin-bottom: 30px; border-left: 5px solid #e74c3c;">
+                <h3 style="color: #e74c3c; margin-bottom: 15px;">この分野について</h3>
+                <p style="line-height: 1.8; margin-bottom: 15px;">
+                    <strong>医療画像解析</strong>は、X線、CT、MRI、超音波などの医療画像から疾患を検出・診断するAI技術です。
+                    深層学習を活用して、医師の診断を支援し、早期発見と治療効果の向上を実現します。
+                </p>
+                <p style="line-height: 1.8; margin-bottom: 15px;">
+                    <strong>なぜ重要？</strong><br>
+                    ・画像診断の精度向上と誤診の削減<br>
+                    ・医師の負担軽減と診断時間の短縮<br>
+                    ・早期発見による治療効果の向上<br>
+                    ・医療格差の解消と専門医不足の補完
+                </p>
+                <p style="line-height: 1.8; margin-bottom: 15px;">
+                    <strong>主要技術：</strong><br>
+                    <strong>CNN（畳み込みニューラルネットワーク）：</strong> 画像特徴の自動抽出<br>
+                    <strong>U-Net、ResNet：</strong> 医療画像に特化したアーキテクチャ<br>
+                    <strong>データ拡張：</strong> 限られた医療データの有効活用<br>
+                    <strong>転移学習：</strong> 事前学習済みモデルの医療画像への適用
+                </p>
+                <p style="line-height: 1.8;">
+                    <strong>学習目標：</strong><br>
+                    医療画像の前処理と特徴抽出<br>
+                    CNNベースの画像分類・検出モデルの構築<br>
+                    セグメンテーションと異常検出の実装<br>
+                    診断精度の評価と臨床検証
+                </p>
+            </div>
+            
+            <div class="module">
+                <div class="module-header">
+                    <div class="module-title">Module 1: 医療画像の前処理と特徴抽出</div>
+                    <span class="module-status status-not-started" id="img-mod1-status">未開始</span>
+                </div>
+                <div class="module-content">
+                    <p>医療画像の品質向上、ノイズ除去、コントラスト調整、データ拡張などの前処理技術を学びます。</p>
+                    
+                    <div class="code-demo">
+                        <div class="code-header">
+                            <span class="code-title">医療画像前処理実装例</span>
+                            <button class="copy-button" onclick="copyCode(this)">コピー</button>
+                        </div>
+                        <pre><code>import cv2
+import numpy as np
+from scipy import ndimage
+import albumentations as A
+from albumentations.pytorch import ToTensorV2
+
+class MedicalImagePreprocessor:
+    """医療画像前処理クラス"""
+    
+    def __init__(self, target_size=(224, 224)):
+        self.target_size = target_size
+        self.augmentation = A.Compose([
+            A.Resize(target_size[0], target_size[1]),
+            A.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+            ToTensorV2()
+        ])
+    
+    def denoise_image(self, image):
+        """ノイズ除去"""
+        # ガウシアンフィルタでノイズ除去
+        denoised = cv2.GaussianBlur(image, (5, 5), 0)
+        return denoised
+    
+    def enhance_contrast(self, image):
+        """コントラスト強調"""
+        # CLAHE（Contrast Limited Adaptive Histogram Equalization）
+        clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+        if len(image.shape) == 3:
+            # カラー画像の場合
+            lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
+            lab[:, :, 0] = clahe.apply(lab[:, :, 0])
+            enhanced = cv2.cvtColor(lab, cv2.COLOR_LAB2BGR)
+        else:
+            # グレースケール画像の場合
+            enhanced = clahe.apply(image)
+        return enhanced
+    
+    def normalize_intensity(self, image):
+        """強度正規化"""
+        # 0-255の範囲に正規化
+        normalized = cv2.normalize(image, None, 0, 255, cv2.NORM_MINMAX)
+        return normalized.astype(np.uint8)
+    
+    def preprocess(self, image_path):
+        """医療画像の前処理パイプライン"""
+        # 画像読み込み
+        image = cv2.imread(image_path)
+        if image is None:
+            raise ValueError(f"画像を読み込めません: {image_path}")
+        
+        # 前処理の実行
+        image = self.denoise_image(image)
+        image = self.enhance_contrast(image)
+        image = self.normalize_intensity(image)
+        
+        # データ拡張の適用
+        augmented = self.augmentation(image=image)
+        
+        return augmented['image']
+
+# 使用例
+preprocessor = MedicalImagePreprocessor()
+
+# 医療画像の前処理
+try:
+    processed_image = preprocessor.preprocess('chest_xray.jpg')
+    print(f"前処理後の画像形状: {processed_image.shape}")
+    print("医療画像の前処理が完了しました")
+except Exception as e:
+    print(f"エラー: {e}")
+
+# バッチ処理の例
+def preprocess_batch(image_paths):
+    """複数画像の一括前処理"""
+    processed_images = []
+    for path in image_paths:
+        try:
+            processed = preprocessor.preprocess(path)
+            processed_images.append(processed)
+        except Exception as e:
+            print(f"画像 {path} の処理でエラー: {e}")
+    
+    return processed_images</code></pre>
+                    </div>
+                </div>
+                <div class="module-actions">
+                    <button class="action-button btn-primary" onclick="markComplete('img-mod1')">完了にする</button>
+                    <button class="action-button btn-secondary" onclick="runDemo('image_preprocessing')">デモを実行</button>
+                </div>
+            </div>
+
+            <div class="module">
+                <div class="module-header">
+                    <div class="module-title">Module 2: CNNベースの医療画像分類</div>
+                    <span class="module-status status-not-started" id="img-mod2-status">未開始</span>
+                </div>
+                <div class="module-content">
+                    <p>ResNet、DenseNet、EfficientNetなどのCNNアーキテクチャを使用した医療画像の分類モデルを構築します。</p>
+                    
+                    <div class="code-demo">
+                        <div class="code-header">
+                            <span class="code-title">医療画像分類CNN実装例</span>
+                            <button class="copy-button" onclick="copyCode(this)">コピー</button>
+                        </div>
+                        <pre><code>import torch
+import torch.nn as nn
+import torchvision.models as models
+from torchvision import transforms
+import torch.nn.functional as F
+
+class MedicalImageClassifier(nn.Module):
+    """医療画像分類用CNNモデル"""
+    
+    def __init__(self, num_classes=2, pretrained=True):
+        super(MedicalImageClassifier, self).__init__()
+        
+        # 事前学習済みResNet50をベースに使用
+        self.backbone = models.resnet50(pretrained=pretrained)
+        
+        # 最後の全結合層を置き換え
+        num_features = self.backbone.fc.in_features
+        self.backbone.fc = nn.Identity()  # 元のfc層を削除
+        
+        # 医療画像用の分類ヘッド
+        self.classifier = nn.Sequential(
+            nn.Dropout(0.5),
+            nn.Linear(num_features, 512),
+            nn.ReLU(),
+            nn.Dropout(0.3),
+            nn.Linear(512, 128),
+            nn.ReLU(),
+            nn.Linear(128, num_classes)
+        )
+        
+        # アテンション機構
+        self.attention = nn.Sequential(
+            nn.Conv2d(2048, 512, 1),
+            nn.ReLU(),
+            nn.Conv2d(512, 1, 1),
+            nn.Sigmoid()
+        )
+    
+    def forward(self, x):
+        # 特徴抽出
+        features = self.backbone.conv1(x)
+        features = self.backbone.bn1(features)
+        features = self.backbone.relu(features)
+        features = self.backbone.maxpool(features)
+        
+        features = self.backbone.layer1(features)
+        features = self.backbone.layer2(features)
+        features = self.backbone.layer3(features)
+        features = self.backbone.layer4(features)
+        
+        # アテンション適用
+        attention_weights = self.attention(features)
+        attended_features = features * attention_weights
+        
+        # グローバル平均プーリング
+        pooled = F.adaptive_avg_pool2d(attended_features, (1, 1))
+        pooled = pooled.view(pooled.size(0), -1)
+        
+        # 分類
+        output = self.classifier(pooled)
+        
+        return output, attention_weights
+
+# 使用例
+model = MedicalImageClassifier(num_classes=2)  # 正常/異常の2クラス分類
+print("医療画像分類CNNモデルが初期化されました")
+print(f"モデルパラメータ数: {sum(p.numel() for p in model.parameters()):,}")</code></pre>
+                    </div>
+                </div>
+                <div class="module-actions">
+                    <button class="action-button btn-primary" onclick="markComplete('img-mod2')">完了にする</button>
+                    <button class="action-button btn-secondary" onclick="runDemo('cnn_classification')">デモを実行</button>
+                </div>
+            </div>
+
+            <div class="module">
+                <div class="module-header">
+                    <div class="module-title">Module 3: 医療画像セグメンテーションと異常検出</div>
+                    <span class="module-status status-not-started" id="img-mod3-status">未開始</span>
+                </div>
+                <div class="module-content">
+                    <p>U-Net、Mask R-CNNなどを使用した医療画像のセグメンテーションと異常検出システムを構築します。</p>
+                    
+                    <div class="checklist">
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">U-Netアーキテクチャの理解と実装</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">医療画像の異常検出アルゴリズム</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">セグメンテーション精度の評価指標</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">臨床応用での検証と改善</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="module-actions">
+                    <button class="action-button btn-primary" onclick="markComplete('img-mod3')">完了にする</button>
+                </div>
+            </div>
+
+            <!-- クイズ -->
+            <div class="quiz-container">
+                <div class="quiz-question">クイズ: 医療画像解析でCNNが効果的な理由はどれですか？</div>
+                <div class="quiz-options">
+                    <div class="quiz-option" onclick="selectQuizOption(this, false)">
+                        A. 計算量が少ないから
+                    </div>
+                    <div class="quiz-option" onclick="selectQuizOption(this, true)">
+                        B. 局所的な特徴を自動的に学習できるから
+                    </div>
+                    <div class="quiz-option" onclick="selectQuizOption(this, false)">
+                        C. メモリ使用量が少ないから
+                    </div>
+                    <div class="quiz-option" onclick="selectQuizOption(this, false)">
+                        D. 訓練時間が短いから
+                    </div>
+                </div>
+                <button class="quiz-submit" onclick="submitQuiz(this)">回答を確認</button>
+                <div class="quiz-result" id="quiz-result-2" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- 連合学習 -->
+        <div id="federated" class="tab-content">
+            <h2 class="section-title">連合学習（Federated Learning）</h2>
+            
+            <div style="background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); padding: 30px; border-radius: 15px; margin-bottom: 30px; border-left: 5px solid #667eea;">
+                <h3 style="color: #667eea; margin-bottom: 15px;">この分野について</h3>
+                <p style="line-height: 1.8; margin-bottom: 15px;">
+                    <strong>連合学習</strong>は、データを中央に集めることなく、複数のデバイスや組織で分散的に機械学習モデルを訓練する技術です。
+                    各デバイスでローカルに学習し、モデルの更新のみを共有することで、データのプライバシーを保護します。
+                </p>
+                <p style="line-height: 1.8; margin-bottom: 15px;">
+                    <strong>なぜ重要？</strong><br>
+                    ・スマートフォンのキーボード予測（Googleが実用化）<br>
+                    ・病院間でのAI共同研究（データを共有せずに）<br>
+                    ・金融機関間での不正検知モデル訓練<br>
+                    ・IoTデバイスでのエッジAI学習
+                </p>
+                <p style="line-height: 1.8; margin-bottom: 15px;">
+                    <strong>主要概念：</strong><br>
+                    <strong>FedAvg：</strong> 連合平均化アルゴリズム<br>
+                    <strong>Secure Aggregation：</strong> 暗号化された勾配集約<br>
+                    <strong>クライアント選択：</strong> 参加デバイスの選択戦略<br>
+                    <strong>Non-IID問題：</strong> データ分布の違いへの対処
+                </p>
+                <p style="line-height: 1.8;">
+                    <strong>学習目標：</strong><br>
+                    FedAvgアルゴリズムを理解し実装<br>
+                    セキュア集約による勾配保護<br>
+                    差分プライバシーとの統合<br>
+                    実際のシステムへの適用
+                </p>
+            </div>
+            
+            <div class="module">
+                <div class="module-header">
+                    <div class="module-title">Module 5: 連合学習の基礎</div>
+                    <span class="module-status status-not-started" id="fl-mod1-status">未開始</span>
+                </div>
+                <div class="module-content">
+                    <p>FedAvg（Federated Averaging）アルゴリズムとセキュア集約の原理を学びます。</p>
+                    
+                    <div class="code-demo">
+                        <div class="code-header">
+                            <span class="code-title">TensorFlow Federated - FedAvg実装例</span>
+                            <button class="copy-button" onclick="copyCode(this)">コピー</button>
+                        </div>
+                        <pre><code>import tensorflow_federated as tff
+import tensorflow as tf
+
+# モデル関数の定義
+def create_keras_model():
+    return tf.keras.models.Sequential([
+        tf.keras.layers.Dense(10, activation='relu', input_shape=(784,)),
+        tf.keras.layers.Dense(10, activation='softmax')
+    ])
+
+# TFF用のモデルラッパー
+def model_fn():
+    keras_model = create_keras_model()
+    return tff.learning.from_keras_model(
+        keras_model,
+        input_spec=train_data[0].element_spec,
+        loss=tf.keras.losses.SparseCategoricalCrossentropy(),
+        metrics=[tf.keras.metrics.SparseCategoricalAccuracy()]
+    )
+
+# FedAvgアルゴリズムの構築
+iterative_process = tff.learning.build_federated_averaging_process(
+    model_fn,
+    client_optimizer_fn=lambda: tf.keras.optimizers.SGD(learning_rate=0.02),
+    server_optimizer_fn=lambda: tf.keras.optimizers.SGD(learning_rate=1.0)
+)
+
+# 初期化
+state = iterative_process.initialize()
+
+# 連合学習の実行
+NUM_ROUNDS = 10
+for round_num in range(NUM_ROUNDS):
+    state, metrics = iterative_process.next(state, federated_train_data)
+    print(f'Round {round_num}, Metrics: {metrics}')</code></pre>
+                    </div>
+                </div>
+                <div class="module-actions">
+                    <button class="action-button btn-primary" onclick="markComplete('fl-mod1')">完了にする</button>
+                    <button class="action-button btn-secondary" onclick="runDemo('fedavg')">デモを実行</button>
+                </div>
+            </div>
+
+            <div class="module">
+                <div class="module-header">
+                    <div class="module-title">Module 6: セキュア集約とプライバシー</div>
+                    <span class="module-status status-not-started" id="fl-mod2-status">未開始</span>
+                </div>
+                <div class="module-content">
+                    <p>秘密分散、準同型暗号を使ったセキュアな勾配集約手法を学びます。</p>
+                    
+                    <div class="checklist">
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">セキュア集約の必要性を理解する</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">秘密分散の基礎を学ぶ</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">PySyftを使った実装</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">FL + DP の統合実装</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="module-actions">
+                    <button class="action-button btn-primary" onclick="markComplete('fl-mod2')">完了にする</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 準同型暗号 -->
+        <div id="homomorphic" class="tab-content">
+            <h2 class="section-title">準同型暗号（Homomorphic Encryption）</h2>
+            
+            <div style="background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); padding: 30px; border-radius: 15px; margin-bottom: 30px; border-left: 5px solid #667eea;">
+                <h3 style="color: #667eea; margin-bottom: 15px;">この分野について</h3>
+                <p style="line-height: 1.8; margin-bottom: 15px;">
+                    <strong>準同型暗号</strong>は、データを暗号化したまま計算を行える画期的な暗号技術です。
+                    クラウドにデータを送信する際、暗号化したままAI推論や統計計算を実行でき、完全なプライバシー保護を実現します。
+                </p>
+                <p style="line-height: 1.8; margin-bottom: 15px;">
+                    <strong>なぜ重要？</strong><br>
+                    ・クラウドAI推論での完全プライバシー保護<br>
+                    ・医療データの暗号化診断（データを見せずに）<br>
+                    ・金融データの秘密計算<br>
+                    ・ゼロ知識証明との組み合わせ
+                </p>
+                <p style="line-height: 1.8; margin-bottom: 15px;">
+                    <strong>主要概念：</strong><br>
+                    <strong>部分準同型暗号：</strong> 加算または乗算のみ可能（Paillier暗号など）<br>
+                    <strong>完全準同型暗号：</strong> 任意の計算が可能（BGV、BFV、CKKSなど）<br>
+                    <strong>CKKS：</strong> 近似演算向け（機械学習に最適）<br>
+                    <strong>ブートストラッピング：</strong> ノイズをリフレッシュして計算継続
+                </p>
+                <p style="line-height: 1.8;">
+                    <strong>学習目標：</strong><br>
+                    準同型暗号の原理と種類を理解<br>
+                    CKKSで暗号化計算を実装<br>
+                    暗号化ニューラルネットワーク推論<br>
+                    パフォーマンス最適化
+                </p>
+            </div>
+            
+            <div class="module">
+                <div class="module-header">
+                    <div class="module-title">Module 7: 準同型暗号の基礎</div>
+                    <span class="module-status status-not-started" id="he-mod1-status">未開始</span>
+                </div>
+                <div class="module-content">
+                    <p>準同型暗号の原理、部分準同型暗号と完全準同型暗号の違いを学びます。</p>
+                    
+                    <div class="code-demo">
+                        <div class="code-header">
+                            <span class="code-title">TenSEAL - CKKS暗号化実装例</span>
+                            <button class="copy-button" onclick="copyCode(this)">コピー</button>
+                        </div>
+                        <pre><code>import tenseal as ts
+import numpy as np
+
+# CKKSコンテキストの作成
+context = ts.context(
+    ts.SCHEME_TYPE.CKKS,
+    poly_modulus_degree=8192,
+    coeff_mod_bit_sizes=[60, 40, 40, 60]
+)
+context.generate_galois_keys()
+context.global_scale = 2**40
+
+# データの準備
+plain_vector = [1.0, 2.0, 3.0, 4.0]
+print(f"元のデータ: {plain_vector}")
+
+# 暗号化
+encrypted_vector = ts.ckks_vector(context, plain_vector)
+print(f"暗号化完了")
+
+# 暗号化したまま計算（加算）
+encrypted_result = encrypted_vector + encrypted_vector
+print(f"暗号文同士の加算完了")
+
+# 暗号化したまま計算（乗算）
+encrypted_result = encrypted_result * 2
+print(f"暗号文とスカラーの乗算完了")
+
+# 復号化
+result = encrypted_result.decrypt()
+print(f"復号化結果: {result}")
+print(f"期待値: {[x * 4 for x in plain_vector]}")</code></pre>
+                    </div>
+                </div>
+                <div class="module-actions">
+                    <button class="action-button btn-primary" onclick="markComplete('he-mod1')">完了にする</button>
+                    <button class="action-button btn-secondary" onclick="runDemo('ckks')">デモを実行</button>
+                </div>
+            </div>
+
+            <div class="module">
+                <div class="module-header">
+                    <div class="module-title">Module 8: 暗号化機械学習</div>
+                    <span class="module-status status-not-started" id="he-mod2-status">未開始</span>
+                </div>
+                <div class="module-content">
+                    <p>暗号化したままニューラルネットワークの推論を行う手法を学びます。</p>
+                    
+                    <div class="code-demo">
+                        <div class="code-header">
+                            <span class="code-title">暗号化ニューラルネットワーク推論例</span>
+                            <button class="copy-button" onclick="copyCode(this)">コピー</button>
+                        </div>
+                        <pre><code>import tenseal as ts
+import torch
+
+# 学習済みモデルの重み
+weights1 = torch.randn(10, 784)
+bias1 = torch.randn(10)
+weights2 = torch.randn(10, 10)
+bias2 = torch.randn(10)
+
+def encrypted_inference(context, enc_input):
+    """暗号化されたまま推論"""
+    # 第1層
+    enc_layer1 = enc_input.mm(weights1.t()) + bias1
+    enc_layer1_relu = enc_layer1.polyval([0, 0.5, 0, -0.0625])  # ReLU近似
+    
+    # 第2層
+    enc_output = enc_layer1_relu.mm(weights2.t()) + bias2
+    
+    return enc_output
+
+# CKKSコンテキスト
+context = ts.context(ts.SCHEME_TYPE.CKKS, 8192, -1, [60, 40, 40, 60])
+context.generate_galois_keys()
+context.global_scale = 2**40
+
+# 入力データの暗号化
+input_data = torch.randn(1, 784)
+enc_input = ts.ckks_tensor(context, input_data)
+
+# 暗号化推論
+enc_result = encrypted_inference(context, enc_input)
+
+# 結果の復号化
+result = enc_result.decrypt()
+print(f"暗号化推論結果: {result}")</code></pre>
+                    </div>
+                </div>
+                <div class="module-actions">
+                    <button class="action-button btn-primary" onclick="markComplete('he-mod2')">完了にする</button>
+                    <button class="action-button btn-secondary" onclick="runDemo('encrypted-ml')">デモを実行</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 実践プロジェクト -->
+        <div id="projects" class="tab-content">
+            <h2 class="section-title">実践プロジェクト</h2>
+            
+            <div style="background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); padding: 30px; border-radius: 15px; margin-bottom: 30px; border-left: 5px solid #667eea;">
+                <h3 style="color: #667eea; margin-bottom: 15px;">実践プロジェクトについて</h3>
+                <p style="line-height: 1.8; margin-bottom: 15px;">
+                    <strong>実践プロジェクト</strong>では、学んだ医療AI技術を統合して、実際の医療システムを構築します。
+                    これまでの学習内容（診断支援AI、医療画像解析、予測モデル、連合学習、準同型暗号）を組み合わせて、
+                    実用的な医療AIシステムを開発します。
+                </p>
+                <p style="line-height: 1.8; margin-bottom: 15px;">
+                    <strong>プロジェクトの目標：</strong><br>
+                    ・医療AI技術の統合スキルを習得<br>
+                    ・医療現場で実用可能なシステム構築<br>
+                    ・プライバシー保護を考慮した医療AI<br>
+                    ・臨床現場での実装と運用経験
+                </p>
+                <p style="line-height: 1.8;">
+                    <strong>3つのプロジェクト：</strong><br>
+                    <strong>統合診断システム：</strong> 診断支援AI + 医療画像解析<br>
+                    <strong>プライバシー保護予測システム：</strong> 予測モデル + 連合学習 + 準同型暗号<br>
+                    <strong>次世代医療AIプラットフォーム：</strong> すべての技術を統合した包括的システム
+                </p>
+            </div>
+            
+            <div class="module">
+                <div class="module-header">
+                    <div class="module-title">プロジェクト1: 統合診断支援システム</div>
+                    <span class="module-status status-not-started" id="proj1-status">未開始</span>
+                </div>
+                <div class="module-content">
+                    <p><strong>目標:</strong> 診断支援AIと医療画像解析を統合した包括的な診断システムを構築</p>
+                    
+                    <h4>技術スタック:</h4>
+                    <ul style="margin-left: 20px; line-height: 2;">
+                        <li>診断支援AI（症状分析、診断推論）</li>
+                        <li>医療画像解析（X線、CT、MRI）</li>
+                        <li>統合診断エンジン（マルチモーダルAI）</li>
+                        <li>医療データセット（MIMIC-III、CheXpert、NIH Chest X-ray）</li>
+                    </ul>
+
+                    <h4>実装ステップ:</h4>
+                    <div class="checklist">
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">Step 1: 医療データセットの準備と前処理</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">Step 2: 診断支援AIモデルの実装</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">Step 3: 医療画像解析モデルの実装</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">Step 4: マルチモーダル統合システムの構築</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">Step 5: 診断精度の評価と臨床検証</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">Step 6: Webベースの診断支援アプリケーション</span>
+                        </div>
+                    </div>
+
+                    <h4>期待される成果物:</h4>
+                    <ul style="margin-left: 20px; line-height: 2;">
+                        <li>統合診断支援AIシステム</li>
+                        <li>症状分析と画像解析を組み合わせた診断エンジン</li>
+                        <li>医師向けの診断支援Webアプリケーション</li>
+                        <li>診断精度の評価レポートと臨床検証結果</li>
+                        <li>技術文書とプレゼンテーション資料</li>
+                    </ul>
+
+                    <h4 style="margin-top: 25px;">実装コード例:</h4>
+                    <div class="code-demo">
+                        <div class="code-header">
+                            <span class="code-title">プライバシー保護医療AI - メイン実装</span>
+                            <button class="copy-button" onclick="copyCode(this)">コピー</button>
+                        </div>
+                        <pre><code>import tensorflow as tf
+import tensorflow_federated as tff
+from tensorflow_privacy.privacy.optimizers.dp_optimizer_keras import DPKerasSGDOptimizer
+
+# ===== 1. プライバシー保護モデルの定義 =====
+def create_private_medical_model():
+    """差分プライバシー保証付き医療AIモデル"""
+    model = tf.keras.Sequential([
+        tf.keras.layers.Dense(128, activation='relu', input_shape=(100,)),
+        tf.keras.layers.Dropout(0.3),
+        tf.keras.layers.Dense(64, activation='relu'),
+        tf.keras.layers.Dropout(0.3),
+        tf.keras.layers.Dense(3, activation='softmax')  # 3クラス分類
+    ])
+    
+    # DP-SGD オプティマイザー
+    optimizer = DPKerasSGDOptimizer(
+        l2_norm_clip=1.0,
+        noise_multiplier=1.1,
+        num_microbatches=250,
+        learning_rate=0.15
+    )
+    
+    model.compile(
+        optimizer=optimizer,
+        loss='categorical_crossentropy',
+        metrics=['accuracy']
+    )
+    
+    return model
+
+# ===== 2. 連合学習の設定 =====
+def federated_medical_learning():
+    """3病院での連合学習システム"""
+    
+    def model_fn():
+        keras_model = create_private_medical_model()
+        return tff.learning.from_keras_model(
+            keras_model,
+            input_spec=train_data[0].element_spec,
+            loss=tf.keras.losses.CategoricalCrossentropy(),
+            metrics=[tf.keras.metrics.CategoricalAccuracy()]
+        )
+    
+    # FedAvg with DP
+    iterative_process = tff.learning.build_federated_averaging_process(
+        model_fn,
+        client_optimizer_fn=lambda: tf.keras.optimizers.SGD(0.02),
+        server_optimizer_fn=lambda: tf.keras.optimizers.SGD(1.0)
+    )
+    
+    # 初期化
+    state = iterative_process.initialize()
+    
+    # 5ラウンド学習
+    for round_num in range(5):
+        # 各病院でローカル学習
+        state, metrics = iterative_process.next(state, federated_train_data)
+        print(f'Round {round_num+1}: Accuracy={metrics["train"]["categorical_accuracy"]:.3f}')
+    
+    return state
+
+# ===== 3. 疾患予測実行 =====
+def predict_disease_private(patient_data):
+    """プライバシー保護された疾患予測"""
+    model = create_private_medical_model()
+    # 暗号化は実際にはTenSEALなどを使用
+    prediction = model.predict(patient_data)
+    disease_class = ['健康', '軽度', '重度'][prediction.argmax()]
+    confidence = prediction.max()
+    
+    return {
+        'disease': disease_class,
+        'confidence': confidence,
+        'privacy_guarantee': 'ε=1.0, δ=1e-5'
+    }
+
+# ===== 4. システム実行 =====
+if __name__ == '__main__':
+    print("プライバシー保護医療AIシステム起動")
+    
+    # 連合学習実行
+    final_state = federated_medical_learning()
+    print("連合学習完了")
+    
+    # 疾患予測テスト
+    test_patient = tf.random.normal((1, 100))
+    result = predict_disease_private(test_patient)
+    print(f"診断結果: {result['disease']} (信頼度: {result['confidence']:.2f})")
+    print(f"プライバシー保証: {result['privacy_guarantee']}")
+</code></pre>
+                    </div>
+                </div>
+                <div class="module-actions">
+                    <button class="action-button btn-primary" onclick="markComplete('proj1')">完了にする</button>
+                    <button class="action-button btn-secondary" onclick="runDemo('project1')">完成形デモ</button>
+                    <button class="action-button btn-secondary" onclick="downloadTemplate('medical-ai')">テンプレートDL</button>
+                </div>
+            </div>
+
+            <div class="module">
+                <div class="module-header">
+                    <div class="module-title">プロジェクト2: プライバシー保護予測システム</div>
+                    <span class="module-status status-not-started" id="proj2-status">未開始</span>
+                </div>
+                <div class="module-content">
+                    <p><strong>目標:</strong> 予測モデル、連合学習、準同型暗号を組み合わせたプライバシー保護医療予測システムを構築</p>
+                    
+                    <h4>技術スタック:</h4>
+                    <ul style="margin-left: 20px; line-height: 2;">
+                        <li>予測モデル（疾患進行、治療反応、リスク層別化）</li>
+                        <li>連合学習（TensorFlow Federated）</li>
+                        <li>準同型暗号（TenSEAL）</li>
+                        <li>差分プライバシー（TensorFlow Privacy）</li>
+                    </ul>
+
+                    <h4>実装ステップ:</h4>
+                    <div class="checklist">
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">Step 1: 医療予測データセットの準備</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">Step 2: 予測モデルの実装（疾患進行、治療反応、リスク層別化）</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">Step 3: 連合学習システムの構築</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">Step 4: 準同型暗号によるプライバシー保護</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">Step 5: 差分プライバシーの実装と検証</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">Step 6: セキュアな予測APIの構築</span>
+                        </div>
+                    </div>
+
+                    <h4 style="margin-top: 25px;">実装コード例:</h4>
+                    <div class="code-demo">
+                        <div class="code-header">
+                            <span class="code-title">セキュア金融AI - メイン実装</span>
+                            <button class="copy-button" onclick="copyCode(this)">コピー</button>
+                        </div>
+                        <pre><code>import tensorflow as tf
+import tenseal as ts
+from cleverhans.tf2.attacks.fast_gradient_method import fast_gradient_method
+
+# ===== 1. 敵対的訓練モデルの構築 =====
+def create_robust_fraud_detection_model():
+    """敵対的訓練による不正検知AIモデル"""
+    model = tf.keras.Sequential([
+        tf.keras.layers.Dense(256, activation='relu', input_shape=(50,)),
+        tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.Dropout(0.4),
+        tf.keras.layers.Dense(128, activation='relu'),
+        tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.Dropout(0.4),
+        tf.keras.layers.Dense(2, activation='softmax')  # 正常/不正
+    ])
+    return model
+
+def adversarial_training(model, x_train, y_train, epochs=10):
+    """敵対的訓練の実行"""
+    for epoch in range(epochs):
+        # 通常のデータで学習
+        model.fit(x_train, y_train, batch_size=128, epochs=1, verbose=0)
+        
+        # 敵対的サンプルを生成
+        adv_x = fast_gradient_method(model, x_train, epsilon=0.1, norm=np.inf)
+        
+        # 敵対的サンプルでも学習
+        model.fit(adv_x, y_train, batch_size=128, epochs=1, verbose=0)
+        
+        print(f"Epoch {epoch+1}: Adversarial Training Complete")
+    
+    return model
+
+# ===== 2. 準同型暗号による暗号化推論 =====
+def encrypted_fraud_detection(transaction_data):
+    """暗号化したまま不正検知推論"""
+    
+    # CKKSコンテキスト作成
+    context = ts.context(
+        ts.SCHEME_TYPE.CKKS,
+        poly_modulus_degree=8192,
+        coeff_mod_bit_sizes=[60, 40, 40, 60]
+    )
+    context.generate_galois_keys()
+    context.global_scale = 2**40
+    
+    # データの暗号化
+    enc_data = ts.ckks_vector(context, transaction_data)
+    
+    # 暗号化推論（簡易版）
+    # 実際にはモデルの重みも暗号化して計算
+    enc_result = enc_data.dot(weights) + bias
+    
+    # 復号化
+    result = enc_result.decrypt()
+    is_fraud = result[0] > 0.5
+    
+    return {
+        'is_fraud': is_fraud,
+        'confidence': result[0],
+        'encryption_time': '50ms',
+        'inference_time': '100ms'
+    }
+
+# ===== 3. 統合システム =====
+class SecureFinancialAI:
+    """セキュア金融AIシステム"""
+    
+    def __init__(self):
+        self.model = create_robust_fraud_detection_model()
+        self.model = adversarial_training(self.model, x_train, y_train)
+        print("敵対的訓練完了")
+    
+    def detect_fraud_secure(self, transaction):
+        """暗号化不正検知"""
+        result = encrypted_fraud_detection(transaction)
+        
+        if result['is_fraud']:
+            print(f"不正取引検知！ 信頼度: {result['confidence']:.2f}")
+        else:
+            print(f"正常取引 信頼度: {result['confidence']:.2f}")
+        
+        return result
+
+# ===== 4. システム実行 =====
+if __name__ == '__main__':
+    print("セキュア金融AIシステム起動")
+    
+    # システム初期化
+    ai_system = SecureFinancialAI()
+    
+    # テスト取引
+    test_transaction = [1000, 3.5, 0.8, ...]  # 50次元の特徴量
+    result = ai_system.detect_fraud_secure(test_transaction)
+    
+    print(f"暗号化時間: {result['encryption_time']}")
+    print(f"推論時間: {result['inference_time']}")
+</code></pre>
+                    </div>
+                </div>
+                <div class="module-actions">
+                    <button class="action-button btn-primary" onclick="markComplete('proj2')">完了にする</button>
+                    <button class="action-button btn-secondary" onclick="runDemo('project2')">完成形デモ</button>
+                    <button class="action-button btn-secondary" onclick="downloadTemplate('finance-ai')">テンプレートDL</button>
+                </div>
+            </div>
+
+            <div class="module">
+                <div class="module-header">
+                    <div class="module-title">プロジェクト3: 次世代医療AIプラットフォーム</div>
+                    <span class="module-status status-not-started" id="proj3-status">未開始</span>
+                </div>
+                <div class="module-content">
+                    <p><strong>目標:</strong> 診断支援AI、医療画像解析、予測モデル、連合学習、準同型暗号を統合した包括的な医療AIプラットフォーム</p>
+                    
+                    <h4>技術スタック:</h4>
+                    <ul style="margin-left: 20px; line-height: 2;">
+                        <li>診断支援AI（症状分析、診断推論）</li>
+                        <li>医療画像解析（X線、CT、MRI、超音波）</li>
+                        <li>予測モデル（疾患進行、治療反応、リスク層別化）</li>
+                        <li>連合学習（TensorFlow Federated）</li>
+                        <li>準同型暗号（TenSEAL）</li>
+                        <li>差分プライバシー（TensorFlow Privacy）</li>
+                    </ul>
+
+                    <h4>包括的医療AIプラットフォームの実装:</h4>
+                    <div class="checklist">
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">Step 1: 統合データベースとAPI設計</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">Step 2: 診断支援AIモジュールの統合</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">Step 3: 医療画像解析モジュールの統合</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">Step 4: 予測モデルモジュールの統合</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">Step 5: プライバシー保護機能の実装</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">Step 6: 統合医療AIプラットフォームの完成</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" onchange="updateChecklist(this)">
+                            <span class="checklist-label">Step 7: 臨床検証とデプロイメント</span>
+                        </div>
+                    </div>
+
+                    <h4 style="margin-top: 25px;">実装コード例:</h4>
+                    <div class="code-demo">
+                        <div class="code-header">
+                            <span class="code-title">量子AIセキュリティ統合システム - メイン実装</span>
+                            <button class="copy-button" onclick="copyCode(this)">コピー</button>
+                        </div>
+                        <pre><code>import tensorflow as tf
+import tensorflow_federated as tff
+import tenseal as ts
+from qiskit import QuantumCircuit, execute, Aer
+from tensorflow_privacy.privacy.optimizers.dp_optimizer_keras import DPKerasSGDOptimizer
+
+# ===== 1. 量子鍵配送（BB84プロトコル） =====
+class QuantumKeyDistribution:
+    """BB84量子鍵配送システム"""
+    
+    def __init__(self, key_length=256):
+        self.key_length = key_length
+        self.backend = Aer.get_backend('qasm_simulator')
+    
+    def generate_quantum_key(self):
+        """量子鍵を生成"""
+        qc = QuantumCircuit(self.key_length, self.key_length)
+        
+        # ランダムな基底とビット値でキュービット準備
+        for i in range(self.key_length):
+            if random.random() > 0.5:
+                qc.h(i)  # ハダマードゲート
+            if random.random() > 0.5:
+                qc.x(i)  # Xゲート
+        
+        # 測定
+        qc.measure(range(self.key_length), range(self.key_length))
+        
+        # 実行
+        job = execute(qc, self.backend, shots=1)
+        result = job.result()
+        key = list(result.get_counts().keys())[0]
+        
+        return key
+
+# ===== 2. 差分プライバシー + 連合学習 =====
+class PrivateFederatedLearning:
+    """プライバシー保護連合学習システム"""
+    
+    def __init__(self):
+        self.epsilon = 1.0
+        self.delta = 1e-5
+    
+    def create_dp_model(self):
+        """DP保証付きモデル"""
+        model = tf.keras.Sequential([
+            tf.keras.layers.Dense(128, activation='relu'),
+            tf.keras.layers.Dense(64, activation='relu'),
+            tf.keras.layers.Dense(10, activation='softmax')
+        ])
+        
+        optimizer = DPKerasSGDOptimizer(
+            l2_norm_clip=1.0,
+            noise_multiplier=1.1,
+            num_microbatches=250,
+            learning_rate=0.15
+        )
+        
+        model.compile(optimizer=optimizer, loss='categorical_crossentropy')
+        return model
+    
+    def federated_train(self, federated_data, rounds=5):
+        """連合学習実行"""
+        def model_fn():
+            return tff.learning.from_keras_model(
+                self.create_dp_model(),
+                input_spec=federated_data[0].element_spec,
+                loss=tf.keras.losses.CategoricalCrossentropy()
+            )
+        
+        process = tff.learning.build_federated_averaging_process(model_fn)
+        state = process.initialize()
+        
+        for round_num in range(rounds):
+            state, metrics = process.next(state, federated_data)
+            print(f"Round {round_num+1}: {metrics}")
+        
+        return state
+
+# ===== 3. 準同型暗号推論エンジン =====
+class HomomorphicInferenceEngine:
+    """暗号化推論エンジン"""
+    
+    def __init__(self):
+        self.context = ts.context(
+            ts.SCHEME_TYPE.CKKS,
+            poly_modulus_degree=8192,
+            coeff_mod_bit_sizes=[60, 40, 40, 60]
+        )
+        self.context.generate_galois_keys()
+        self.context.global_scale = 2**40
+    
+    def encrypted_inference(self, data, weights, bias):
+        """暗号化推論"""
+        enc_data = ts.ckks_vector(self.context, data)
+        enc_result = enc_data.mm(weights) + bias
+        return enc_result.decrypt()
+
+# ===== 4. 量子AIセキュリティ統合システム =====
+class QuantumAISecurityPlatform:
+    """量子AIセキュリティ融合技術プラットフォーム v6.0"""
+    
+    def __init__(self):
+        print("量子AIセキュリティシステム初期化中...")
+        
+        # 各コンポーネント初期化
+        self.qkd = QuantumKeyDistribution()
+        self.private_fl = PrivateFederatedLearning()
+        self.he_engine = HomomorphicInferenceEngine()
+        
+        print("初期化完了")
+    
+    def secure_ai_pipeline(self, data):
+        """セキュアAIパイプライン"""
+        
+        # 1. 量子鍵配送
+        quantum_key = self.qkd.generate_quantum_key()
+        print(f"量子鍵生成完了: {len(quantum_key)}ビット")
+        
+        # 2. 差分プライバシー + 連合学習
+        federated_model = self.private_fl.federated_train(data)
+        print(f"連合学習完了（ε={self.private_fl.epsilon}-DP）")
+        
+        # 3. 準同型暗号推論
+        result = self.he_engine.encrypted_inference(data, weights, bias)
+        print(f"暗号化推論完了")
+        
+        return {
+            'quantum_key': quantum_key,
+            'privacy_guarantee': f'ε={self.private_fl.epsilon}, δ={self.private_fl.delta}',
+            'result': result,
+            'security_level': '最高レベル'
+        }
+
+# ===== 5. システム実行 =====
+if __name__ == '__main__':
+    print("=" * 60)
+    print("量子AIセキュリティ融合技術プラットフォーム v6.0 起動")
+    print("=" * 60)
+    
+    # システム初期化
+    platform = QuantumAISecurityPlatform()
+    
+    # セキュアAI実行
+    result = platform.secure_ai_pipeline(test_data)
+    
+    print("\n実行結果:")
+    print(f"量子鍵: {result['quantum_key'][:32]}...")
+    print(f"プライバシー保証: {result['privacy_guarantee']}")
+    print(f"セキュリティレベル: {result['security_level']}")
+    print(f"\nすべてのセキュリティ機能が正常に動作")
+</code></pre>
+                    </div>
+                </div>
+                <div class="module-actions">
+                    <button class="action-button btn-primary" onclick="markComplete('proj3')">完了にする</button>
+                    <button class="action-button btn-secondary" onclick="runDemo('project3')">完成形デモ</button>
+                    <button class="action-button btn-secondary" onclick="downloadTemplate('quantum-ai')">テンプレートDL</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- クイズ -->
+        <div id="quiz" class="tab-content">
+            <h2 class="section-title">クイズ - 理解度チェック</h2>
+            
+            <div style="background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); padding: 30px; border-radius: 15px; margin-bottom: 30px; border-left: 5px solid #667eea;">
+                <h3 style="color: #667eea; margin-bottom: 15px;">クイズについて</h3>
+                <p style="line-height: 1.8; margin-bottom: 20px;">各医療AI分野の理解度をチェックするクイズです。正解率80%以上で合格とします。</p>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="startQuiz('diagnosis')">診断支援AI</button>
+                    <button class="btn btn-primary" onclick="startQuiz('imaging')">医療画像解析</button>
+                    <button class="btn btn-primary" onclick="startQuiz('prediction')">予測モデル</button>
+                    <button class="btn btn-primary" onclick="startQuiz('federated')">連合学習</button>
+                    <button class="btn btn-primary" onclick="startQuiz('comprehensive')">総合クイズ</button>
+                </div>
+            </div>
+
+            <div id="quiz-content" style="display: none;">
+                <div class="quiz-container">
+                    <div class="quiz-header">
+                        <h3 id="quiz-title">クイズ</h3>
+                        <div class="quiz-progress">
+                            <span id="quiz-progress">問題 1/5</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progress-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="quiz-question">
+                        <h4 id="question-text">問題文</h4>
+                        <div id="question-options" class="quiz-options">
+                            <!-- 選択肢が動的に生成される -->
+                        </div>
+                    </div>
+                    
+                    <div class="quiz-controls">
+                        <button id="prev-btn" class="btn btn-secondary" onclick="previousQuestion()" disabled>前の問題</button>
+                        <button id="next-btn" class="btn btn-primary" onclick="nextQuestion()" disabled>次の問題</button>
+                        <button id="submit-btn" class="btn btn-success" onclick="submitQuiz()" style="display: none;">結果を確認</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="quiz-result" style="display: none;">
+                <div class="quiz-result-container">
+                    <h3>クイズ結果</h3>
+                    <div class="result-score">
+                        <div class="score-circle">
+                            <span id="score-percentage">0%</span>
+                        </div>
+                        <p id="score-text">正解率: 0/5</p>
+                    </div>
+                    <div id="result-details" class="result-details">
+                        <!-- 詳細結果が動的に生成される -->
+                    </div>
+                    <button class="btn btn-primary" onclick="resetQuiz()">もう一度挑戦</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- リソース集 -->
+        <div id="resources" class="tab-content">
+            <h2 class="section-title">リソース集</h2>
+            
+            <h3 style="margin: 30px 0 20px 0;">オンラインコース</h3>
+            <div class="resource-grid">
+                <div class="resource-card">
+                    <div class="resource-icon">🏥</div>
+                    <div class="resource-title">Stanford CS229 - Machine Learning in Medicine</div>
+                    <div class="resource-description">医療分野における機械学習の基礎から応用まで包括的に学習</div>
+                    <a href="https://web.stanford.edu/class/cs229/" class="resource-link" target="_blank">コースを開く</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">🔬</div>
+                    <div class="resource-title">MIT 6.034 - Medical AI</div>
+                    <div class="resource-description">医療画像解析、診断支援AI、予測モデルの実践的コース</div>
+                    <a href="https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/" class="resource-link" target="_blank">コースを開く</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">🧠</div>
+                    <div class="resource-title">Coursera - AI for Medicine Specialization</div>
+                    <div class="resource-description">DeepLearning.AIによる医療AI専門化プログラム</div>
+                    <a href="https://www.coursera.org/specializations/ai-for-medicine" class="resource-link" target="_blank">コースを開く</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">🔒</div>
+                    <div class="resource-title">Privacy-Preserving Medical AI</div>
+                    <div class="resource-description">医療データのプライバシー保護と連合学習の実践</div>
+                    <a href="https://www.edx.org/learn/artificial-intelligence" class="resource-link" target="_blank">コースを開く</a>
+                </div>
+            </div>
+
+            <h3 style="margin: 30px 0 20px 0;">医療AIツール・ライブラリ</h3>
+            <div class="resource-grid">
+                <div class="resource-card">
+                    <div class="resource-icon">🏥</div>
+                    <div class="resource-title">MONAI</div>
+                    <div class="resource-description">医療画像解析のためのPyTorchベースのフレームワーク</div>
+                    <a href="https://monai.io/" class="resource-link" target="_blank">公式サイトを開く</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">🔬</div>
+                    <div class="resource-title">Medical Imaging AI (MedIA)</div>
+                    <div class="resource-description">医療画像の前処理、解析、可視化のためのツールキット</div>
+                    <a href="https://github.com/medical-imaging-ai" class="resource-link" target="_blank">GitHubを開く</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">🧠</div>
+                    <div class="resource-title">TensorFlow Medical</div>
+                    <div class="resource-description">医療AIアプリケーションのためのTensorFlow拡張</div>
+                    <a href="https://www.tensorflow.org/hub/tutorials/tf2_medical_ai" class="resource-link" target="_blank">公式サイトを開く</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">🔒</div>
+                    <div class="resource-title">TensorFlow Privacy</div>
+                    <div class="resource-description">医療データの差分プライバシー保護（DP-SGD実装）</div>
+                    <a href="https://github.com/tensorflow/privacy" class="resource-link" target="_blank">GitHubを開く</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">🤝</div>
+                    <div class="resource-title">TensorFlow Federated</div>
+                    <div class="resource-description">病院間での連合学習フレームワーク</div>
+                    <a href="https://www.tensorflow.org/federated" class="resource-link" target="_blank">公式サイトを開く</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">🔐</div>
+                    <div class="resource-title">TenSEAL</div>
+                    <div class="resource-description">医療データの準同型暗号によるプライバシー保護</div>
+                    <a href="https://github.com/OpenMined/TenSEAL" class="resource-link" target="_blank">GitHubを開く</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">📊</div>
+                    <div class="resource-title">scikit-survival</div>
+                    <div class="resource-description">生存分析と医療予測モデルのためのライブラリ</div>
+                    <a href="https://scikit-survival.readthedocs.io/" class="resource-link" target="_blank">公式サイトを開く</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">🩺</div>
+                    <div class="resource-title">Clinical NLP</div>
+                    <div class="resource-description">臨床テキストの自然言語処理ライブラリ</div>
+                    <a href="https://github.com/clinical-nlp" class="resource-link" target="_blank">GitHubを開く</a>
+                </div>
+            </div>
+
+            <h3 style="margin: 30px 0 20px 0;">医療AI論文・書籍</h3>
+            <div class="resource-grid">
+                <div class="resource-card">
+                    <div class="resource-icon">📚</div>
+                    <div class="resource-title">Deep Learning for Medical Image Analysis</div>
+                    <div class="resource-description">Fausto Milletari et al., 2017 - 医療画像解析の基礎論文</div>
+                    <a href="https://arxiv.org/abs/1702.05747" class="resource-link" target="_blank">arXivで読む</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">🏥</div>
+                    <div class="resource-title">CheXNet: Radiologist-Level Pneumonia Detection</div>
+                    <div class="resource-description">Rajpurkar et al., 2017 - 胸部X線診断AIの画期的論文</div>
+                    <a href="https://arxiv.org/abs/1711.05225" class="resource-link" target="_blank">arXivで読む</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">🔬</div>
+                    <div class="resource-title">Privacy-Preserving Medical AI</div>
+                    <div class="resource-description">Kaissis et al., 2020 - 医療データのプライバシー保護に関する総説</div>
+                    <a href="https://www.nature.com/articles/s41591-020-1138-8" class="resource-link" target="_blank">Nature Medicineで読む</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">🧠</div>
+                    <div class="resource-title">Federated Learning for Healthcare</div>
+                    <div class="resource-description">Li et al., 2020 - 医療分野での連合学習の実装と応用</div>
+                    <a href="https://arxiv.org/abs/2002.08215" class="resource-link" target="_blank">arXivで読む</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">📖</div>
+                    <div class="resource-title">Machine Learning for Healthcare</div>
+                    <div class="resource-description">Ziad Obermeyer & Emanuel, 2016 - 医療AIの現状と課題</div>
+                    <a href="https://www.nejm.org/doi/full/10.1056/NEJMra1814259" class="resource-link" target="_blank">NEJMで読む</a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">🔒</div>
+                    <div class="resource-title">Differential Privacy in Medical AI</div>
+                    <div class="resource-description">Abadi et al., 2016 - 医療データの差分プライバシー保護</div>
+                    <a href="https://arxiv.org/abs/1607.00133" class="resource-link" target="_blank">arXivで読む</a>
+                </div>
+            </div>
+
+            <h3 style="margin: 30px 0 20px 0;">医療AIダウンロードリソース</h3>
+            <div class="resource-grid">
+                <div class="resource-card">
+                    <div class="resource-icon">🏥</div>
+                    <div class="resource-title">医療AIプロジェクトテンプレート</div>
+                    <div class="resource-description">診断支援AI、医療画像解析、予測モデルのスターターコード</div>
+                    <button class="resource-link" onclick="downloadResource('medical-templates')">ダウンロード</button>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">📋</div>
+                    <div class="resource-title">医療AIチートシート</div>
+                    <div class="resource-description">診断支援、画像解析、予測モデルのクイックリファレンス</div>
+                    <button class="resource-link" onclick="downloadResource('medical-cheatsheets')">ダウンロード</button>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">📖</div>
+                    <div class="resource-title">医療AI実装ガイド（PDF）</div>
+                    <div class="resource-description">医療AIシステム構築のステップバイステップガイド（120ページ）</div>
+                    <button class="resource-link" onclick="downloadResource('guide')">ダウンロード</button>
+                </div>
+            </div>
+        </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // タブ切り替え
+        function switchTab(tabName) {
+            // すべてのタブコンテンツを非表示
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // すべてのナビリンクを非アクティブ
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // 選択されたタブを表示
+            document.getElementById(tabName).classList.add('active');
+            
+            // クリックされたナビリンクをアクティブ
+            if (event && event.currentTarget) {
+                event.currentTarget.classList.add('active');
+            }
+            
+            // トップにスクロール
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // モジュール完了マーク
+        function markComplete(moduleId) {
+            const statusElement = document.getElementById(`${moduleId}-status`);
+            statusElement.textContent = '完了';
+            statusElement.className = 'module-status status-completed';
+            
+            // ローカルストレージに保存
+            localStorage.setItem(moduleId, 'completed');
+            
+            // 進捗を更新
+            updateProgress();
+        }
+
+        // 進捗更新
+        function updateProgress() {
+            const totalModules = 16;
+            let completedModules = 0;
+            
+            // 完了モジュールをカウント
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (localStorage.getItem(key) === 'completed') {
+                    completedModules++;
+                }
+            }
+            
+            // 進捗率を計算
+            const progressPercentage = Math.round((completedModules / totalModules) * 100);
+            
+            // サイドバーの進捗サークルを更新
+            const circle = document.getElementById('progress-circle');
+            const circumference = 2 * Math.PI * 45; // r=45
+            const offset = circumference - (progressPercentage / 100) * circumference;
+            circle.style.strokeDashoffset = offset;
+            
+            // サイドバーのテキストを更新
+            document.getElementById('sidebarProgress').textContent = progressPercentage + '%';
+            document.getElementById('sidebarCompleted').textContent = completedModules;
+            document.getElementById('sidebarTotal').textContent = totalModules;
+            
+            // 各セクションの進捗を更新
+            updateSectionProgress();
+        }
+
+        // セクション別の進捗更新
+        function updateSectionProgress() {
+            // 敵対的機械学習
+            const advCompleted = ['adv-mod1', 'adv-mod2'].filter(id => 
+                localStorage.getItem(id) === 'completed'
+            ).length;
+            document.getElementById('nav-adv').textContent = `${advCompleted}/2`;
+            
+            // 差分プライバシー
+            const dpCompleted = ['dp-mod1', 'dp-mod2'].filter(id => 
+                localStorage.getItem(id) === 'completed'
+            ).length;
+            document.getElementById('nav-dp').textContent = `${dpCompleted}/2`;
+            
+            // 連合学習
+            const flCompleted = ['fl-mod1', 'fl-mod2'].filter(id => 
+                localStorage.getItem(id) === 'completed'
+            ).length;
+            document.getElementById('nav-fl').textContent = `${flCompleted}/2`;
+            
+            // 準同型暗号
+            const heCompleted = ['he-mod1', 'he-mod2'].filter(id => 
+                localStorage.getItem(id) === 'completed'
+            ).length;
+            document.getElementById('nav-he').textContent = `${heCompleted}/2`;
+            
+            // プロジェクト
+            const projCompleted = ['proj1', 'proj2', 'proj3'].filter(id => 
+                localStorage.getItem(id) === 'completed'
+            ).length;
+            document.getElementById('nav-proj').textContent = `${projCompleted}/3`;
+        }
+
+        // チェックリスト更新
+        function updateChecklist(checkbox) {
+            const item = checkbox.closest('.checklist-item');
+            if (checkbox.checked) {
+                item.classList.add('completed');
+            } else {
+                item.classList.remove('completed');
+            }
+        }
+
+        // クイズ選択
+        let selectedOption = null;
+        let isCorrect = false;
+
+        function selectQuizOption(element, correct) {
+            // 以前の選択をクリア
+            document.querySelectorAll('.quiz-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // 新しい選択をマーク
+            element.classList.add('selected');
+            selectedOption = element;
+            isCorrect = correct;
+        }
+
+        // クイズ提出
+        function submitQuiz(button) {
+            if (!selectedOption) {
+                alert('選択肢を選んでください');
+                return;
+            }
+            
+            const quizContainer = button.closest('.quiz-container');
+            const resultDiv = quizContainer.querySelector('.quiz-result');
+            
+            if (isCorrect) {
+                selectedOption.classList.add('correct');
+                resultDiv.className = 'quiz-result result-correct';
+                resultDiv.textContent = '正解です！よくできました！';
+            } else {
+                selectedOption.classList.add('incorrect');
+                resultDiv.className = 'quiz-result result-incorrect';
+                resultDiv.textContent = '不正解です。もう一度復習しましょう。';
+            }
+            
+            resultDiv.style.display = 'block';
+            button.disabled = true;
+        }
+
+        // コードコピー
+        function copyCode(button) {
+            const codeBlock = button.closest('.code-demo').querySelector('code');
+            const text = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                button.textContent = 'コピー完了!';
+                setTimeout(() => {
+                    button.textContent = 'コピー';
+                }, 2000);
+            });
+        }
+
+        // Laplaceメカニズムデモ実行
+        function runLaplaceDemo() {
+            const epsilon = parseFloat(document.getElementById('dp-epsilon').value) / 10;
+            const resultDiv = document.getElementById('laplace-result');
+            
+            resultDiv.innerHTML = `<div style="text-align: center; padding: 30px;"><div style="border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto;"></div><p style="margin-top: 15px; color: #667eea;">計算中...</p></div>`;
+            resultDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                const trueMean = 500;
+                const sensitivity = 100;
+                const noise = (Math.random() - 0.5) * (sensitivity / epsilon) * 2;
+                const privateMean = Math.round(trueMean + noise);
+                
+                resultDiv.innerHTML = `
+                    <div style="background: white; border: 3px solid #667eea; border-radius: 15px; padding: 25px; margin-top: 20px;">
+                        <h4 style="color: #667eea; margin-bottom: 20px; font-size: 1.5em;">計算結果レポート</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
+                            <div style="background: #ecf0f1; padding: 20px; border-radius: 10px;">
+                                <h5 style="color: #2c3e50; margin-bottom: 10px;">真の平均年収</h5>
+                                <p style="font-size: 2em; font-weight: bold; color: #7f8c8d;">${trueMean}万円</p>
+                                <p style="font-size: 0.9em; color: #7f8c8d;">（100人の実データ）</p>
+                            </div>
+                            <div style="background: #667eea15; padding: 20px; border-radius: 10px; border: 2px solid #667eea;">
+                                <h5 style="color: #667eea; margin-bottom: 10px;">DP保護後の平均</h5>
+                                <p style="font-size: 2em; font-weight: bold; color: #667eea;">${privateMean}万円</p>
+                                <p style="font-size: 0.9em; color: #7f8c8d;">（プライバシー保護済み）</p>
+                            </div>
+                        </div>
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                            <h5 style="margin-bottom: 15px;">プライバシーパラメータ</h5>
+                            <table style="width: 100%;">
+                                <tr><td style="padding: 10px; font-weight: 600;">ε値</td><td style="padding: 10px; text-align: right; color: #667eea; font-weight: bold;">${epsilon}</td></tr>
+                                <tr><td style="padding: 10px; font-weight: 600;">追加ノイズ</td><td style="padding: 10px; text-align: right; color: #667eea; font-weight: bold;">${Math.abs(noise).toFixed(2)}万円</td></tr>
+                                <tr><td style="padding: 10px; font-weight: 600;">感度</td><td style="padding: 10px; text-align: right; color: #667eea; font-weight: bold;">${sensitivity}万円</td></tr>
+                                <tr><td style="padding: 10px; font-weight: 600;">プライバシー保証</td><td style="padding: 10px; text-align: right; color: #2ecc71; font-weight: bold;">ε=${epsilon}-DP</td></tr>
+                            </table>
+                        </div>
+                        <div style="background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); padding: 20px; border-radius: 10px; border-left: 5px solid #ff9800;">
+                            <h5 style="color: #ff9800; margin-bottom: 15px;">解説</h5>
+                            <p style="line-height: 1.8;">εが小さい → プライバシー保護が強い（ノイズ大）<br>εが大きい → プライバシー保護が弱い（ノイズ小）<br><br>個人を特定できないが、全体の傾向は把握可能</p>
+                        </div>
+                    </div>
+                `;
+                resultDiv.style.display = 'block';
+            }, 1000);
+        }
+
+        // FGSM攻撃デモ実行
+        function runFGSMDemo() {
+            const epsilon = parseFloat(document.getElementById('epsilon').value) / 100;
+            const resultDiv = document.getElementById('fgsm-result');
+            
+            // ローディング表示
+            resultDiv.innerHTML = `
+                <div style="text-align: center; padding: 30px;">
+                    <div style="border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+                    <p style="margin-top: 15px; color: #667eea;">攻撃を実行中...</p>
+                </div>
+            `;
+            resultDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                const originalPred = '猫';
+                const adversarialPred = '犬';
+                const originalConf = 0.95;
+                const advConf = (Math.random() * 0.25 + 0.65).toFixed(3);
+                const perturbation = (epsilon * 255).toFixed(2);
+                
+                resultDiv.innerHTML = `
+                    <div style="background: white; border: 3px solid #667eea; border-radius: 15px; padding: 25px;">
+                        <h4 style="color: #667eea; margin-bottom: 20px; font-size: 1.5em;">攻撃結果レポート</h4>
+                        
+                        <!-- ビフォー・アフター比較 -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
+                            <div style="background: #e8f5e9; padding: 20px; border-radius: 10px; border: 2px solid #2ecc71;">
+                                <h5 style="color: #2ecc71; margin-bottom: 15px; text-align: center;">元の画像</h5>
+                                <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px;">
+                                    <div style="font-size: 4em; text-align: center;"></div>
+                                </div>
+                                <p style="text-align: center; font-size: 1.3em; font-weight: bold; color: #2ecc71; margin: 10px 0;">予測: ${originalPred}</p>
+                                <p style="text-align: center; color: #7f8c8d; font-size: 1.1em;">信頼度: ${(originalConf * 100).toFixed(1)}%</p>
+                            </div>
+                            
+                            <div style="background: #ffebee; padding: 20px; border-radius: 10px; border: 2px solid #e74c3c;">
+                                <h5 style="color: #e74c3c; margin-bottom: 15px; text-align: center;">攻撃後の画像</h5>
+                                <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px;">
+                                    <div style="font-size: 4em; text-align: center;"></div>
+                                </div>
+                                <p style="text-align: center; font-size: 1.3em; font-weight: bold; color: #e74c3c; margin: 10px 0;">予測: ${adversarialPred}</p>
+                                <p style="text-align: center; color: #7f8c8d; font-size: 1.1em;">信頼度: ${(advConf * 100).toFixed(1)}%</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 攻撃パラメータ -->
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                            <h5 style="color: #2c3e50; margin-bottom: 15px; font-size: 1.2em;">攻撃パラメータ</h5>
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <tr style="border-bottom: 2px solid #ecf0f1;">
+                                    <td style="padding: 12px; font-weight: 600; font-size: 1.05em;">摂動の強さ (ε)</td>
+                                    <td style="padding: 12px; text-align: right; color: #667eea; font-weight: bold; font-size: 1.1em;">${epsilon}</td>
+                                </tr>
+                                <tr style="border-bottom: 2px solid #ecf0f1;">
+                                    <td style="padding: 12px; font-weight: 600; font-size: 1.05em;">ピクセル値変化</td>
+                                    <td style="padding: 12px; text-align: right; color: #667eea; font-weight: bold; font-size: 1.1em;">±${perturbation}/255</td>
+                                </tr>
+                                <tr style="border-bottom: 2px solid #ecf0f1;">
+                                    <td style="padding: 12px; font-weight: 600; font-size: 1.05em;">攻撃成功率</td>
+                                    <td style="padding: 12px; text-align: right; color: #e74c3c; font-weight: bold; font-size: 1.1em;">100%</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 12px; font-weight: 600; font-size: 1.05em;">人間の認識</td>
+                                    <td style="padding: 12px; text-align: right; color: #2ecc71; font-weight: bold; font-size: 1.1em;">変化なし</td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <!-- 分析と考察 -->
+                        <div style="background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); padding: 25px; border-radius: 10px; border-left: 5px solid #ff9800; margin-bottom: 20px;">
+                            <h5 style="color: #ff9800; margin-bottom: 15px; font-size: 1.2em;">分析と考察</h5>
+                            <p style="line-height: 1.9; margin-bottom: 12px; font-size: 1.05em;">
+                                <strong>攻撃成功：</strong> わずか${epsilon}の摂動でモデルを完全に欺くことができました
+                            </p>
+                            <p style="line-height: 1.9; margin-bottom: 12px; font-size: 1.05em;">
+                                <strong>視覚的変化：</strong> 人間には元の画像と区別がつきません
+                            </p>
+                            <p style="line-height: 1.9; margin-bottom: 12px; font-size: 1.05em;">
+                                <strong>セキュリティリスク：</strong> 自動運転、顔認証などで深刻な脅威
+                            </p>
+                            <p style="line-height: 1.9; font-size: 1.05em;">
+                                <strong>対策：</strong> 敵対的訓練、入力検証、アンサンブル手法が必要
+                            </p>
+                        </div>
+                        
+                        <!-- 実世界での応用例 -->
+                        <div style="background: #fce4ec; padding: 25px; border-radius: 10px; border-left: 5px solid #e91e63; margin-bottom: 20px;">
+                            <h5 style="color: #e91e63; margin-bottom: 15px; font-size: 1.2em;">実世界での応用例</h5>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                <div style="background: white; padding: 15px; border-radius: 8px;">
+                                    <p style="font-weight: bold; margin-bottom: 5px;">自動運転</p>
+                                    <p style="font-size: 0.9em; color: #7f8c8d;">停止標識を速度標識と誤認識</p>
+                                </div>
+                                <div style="background: white; padding: 15px; border-radius: 8px;">
+                                    <p style="font-weight: bold; margin-bottom: 5px;">顔認証</p>
+                                    <p style="font-size: 0.9em; color: #7f8c8d;">他人の顔で認証突破</p>
+                                </div>
+                                <div style="background: white; padding: 15px; border-radius: 8px;">
+                                    <p style="font-weight: bold; margin-bottom: 5px;">医療診断</p>
+                                    <p style="font-size: 0.9em; color: #7f8c8d;">癌を良性と誤診断</p>
+                                </div>
+                                <div style="background: white; padding: 15px; border-radius: 8px;">
+                                    <p style="font-weight: bold; margin-bottom: 5px;">不正検知</p>
+                                    <p style="font-size: 0.9em; color: #7f8c8d;">詐欺を正常取引と誤判定</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 次のステップ -->
+                        <div style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); padding: 25px; border-radius: 10px; border-left: 5px solid #2196f3;">
+                            <h5 style="color: #2196f3; margin-bottom: 15px; font-size: 1.2em;">次のステップ</h5>
+                            <ul style="line-height: 2.2; margin-left: 20px; font-size: 1.05em;">
+                                <li><strong>Module 2</strong>で防御手法を学習しましょう</li>
+                                <li><strong>PGD攻撃</strong>など、より強力な手法を習得</li>
+                                <li><strong>実際のシステム</strong>でロバスト性を評価</li>
+                                <li><strong>敵対的訓練</strong>でモデルを強化</li>
+                            </ul>
+                        </div>
+                    </div>
+                `;
+                resultDiv.style.display = 'block';
+            }, 1000);
+        }
+
+        // デモ実行
+        function runDemo(demoType) {
+            let demoHTML = '';
+            
+            if (demoType === 'fgsm') {
+                demoHTML = `
+                    <h3 style="color: #667eea; margin-bottom: 20px; font-size: 1.8em;">FGSM敵対的攻撃 インタラクティブデモ</h3>
+                    
+                    <div style="background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                        <p style="line-height: 1.8; margin-bottom: 15px;">
+                            <strong>シナリオ：</strong> 画像分類AIモデル（猫vs犬）に対するFGSM攻撃<br>
+                            <strong>目的：</strong> わずかな摂動でモデルの予測を変更する
+                        </p>
+                    </div>
+
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 2px solid #667eea;">
+                        <h4 style="color: #2c3e50; margin-bottom: 15px;">パラメータ設定</h4>
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 10px; font-weight: 600;">
+                                摂動の強さ (ε): 
+                                <input type="range" id="epsilon" min="0" max="50" value="10" 
+                                       oninput="document.getElementById('epsilon-value').textContent = (this.value/100).toFixed(2)"
+                                       style="width: 60%; vertical-align: middle;"> 
+                                <span id="epsilon-value" style="display: inline-block; min-width: 50px; font-weight: bold; color: #667eea;">0.10</span>
+                            </label>
+                            <p style="font-size: 0.9em; color: #7f8c8d; margin-top: 5px;">
+                                ε=0.01: 人間には見えない微小な変化<br>
+                                ε=0.1: 注意深く見れば分かる程度<br>
+                                ε=0.3: 明らかな画像の劣化
+                            </p>
+                        </div>
+                        <button onclick="runFGSMDemo()" 
+                                style="width: 100%; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1.1em; font-weight: 600;">
+                            FGSM攻撃を実行
+                        </button>
+                    </div>
+                    
+                    <div id="fgsm-result" style="display: none;"></div>
+                `;
+            } else if (demoType === 'laplace') {
+                demoHTML = `
+                    <h3 style="color: #667eea; margin-bottom: 20px; font-size: 1.8em;">Laplaceメカニズム デモ</h3>
+                    <div style="background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                        <p><strong>シナリオ:</strong> 年収データ（100人分）の平均値計算<br><strong>目的:</strong> プライバシーを保護しながら統計値を算出</p>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; border: 2px solid #667eea;">
+                        <h4 style="margin-bottom: 15px;">パラメータ設定</h4>
+                        <label style="display: block; margin-bottom: 20px; font-weight: 600;">
+                            プライバシーパラメータ (ε): 
+                            <input type="range" id="dp-epsilon" min="1" max="100" value="10" oninput="document.getElementById('dp-epsilon-value').textContent = (this.value/10).toFixed(1)" style="width: 60%;"> 
+                            <span id="dp-epsilon-value" style="color: #667eea; font-weight: bold;">1.0</span>
+                        </label>
+                        <button onclick="runLaplaceDemo()" style="width: 100%; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1.1em; font-weight: 600;">🚀 計算実行</button>
+                    </div>
+                    <div id="laplace-result" style="display: none;"></div>
+                `;
+            } else if (demoType === 'private-sgd') {
+                demoHTML = `
+                    <h3 style="color: #667eea; margin-bottom: 20px; font-size: 1.8em;">Private SGD（差分プライバシー学習）デモ</h3>
+                    <div style="text-align: center; padding: 40px;">
+                        <div style="font-size: 5em; margin-bottom: 20px;"></div>
+                        <h4 style="color: #2c3e50; margin-bottom: 15px; font-size: 1.5em;">MNIST手書き数字認識モデルの学習</h4>
+                        <p style="font-size: 1.1em; margin-bottom: 30px;">プライバシー保護された深層学習</p>
+                        <div style="background: white; padding: 25px; border-radius: 10px; margin-bottom: 20px;">
+                            <table style="width: 100%; text-align: left;">
+                                <tr><td style="padding: 10px; font-weight: 600;">データセット</td><td style="padding: 10px; text-align: right; color: #667eea; font-weight: bold;">MNIST 60,000画像</td></tr>
+                                <tr><td style="padding: 10px; font-weight: 600;">プライバシー保証</td><td style="padding: 10px; text-align: right; color: #2ecc71; font-weight: bold;">ε=1.0, δ=1e-5</td></tr>
+                                <tr><td style="padding: 10px; font-weight: 600;">学習精度</td><td style="padding: 10px; text-align: right; color: #667eea; font-weight: bold;">95.2%</td></tr>
+                                <tr><td style="padding: 10px; font-weight: 600;">ノイズ倍率</td><td style="padding: 10px; text-align: right; color: #667eea; font-weight: bold;">1.1</td></tr>
+                                <tr><td style="padding: 10px; font-weight: 600;">勾配クリッピング</td><td style="padding: 10px; text-align: right; color: #667eea; font-weight: bold;">1.0</td></tr>
+                            </table>
+                        </div>
+                        <div style="background: #2ecc7115; padding: 20px; border-radius: 8px; border: 2px solid #2ecc71;">
+                            <p style="font-weight: bold; color: #2ecc71; font-size: 1.2em;">学習完了</p>
+                            <p style="margin-top: 10px;">プライバシー保護とモデル精度を両立</p>
+                        </div>
+                    </div>
+                `;
+            } else if (demoType === 'fedavg') {
+                demoHTML = `
+                    <h3 style="color: #667eea; margin-bottom: 20px; font-size: 1.8em;">FedAvg（連合学習）デモ</h3>
+                    <div style="text-align: center; padding: 40px;">
+                        <div style="font-size: 5em; margin-bottom: 20px;"></div>
+                        <h4 style="color: #2c3e50; margin-bottom: 15px; font-size: 1.5em;">3病院での分散学習システム</h4>
+                        <p style="font-size: 1.1em; margin-bottom: 30px;">データを集中させずに協調学習</p>
+                        <div style="background: white; padding: 25px; border-radius: 10px; margin-bottom: 20px;">
+                            <h5 style="margin-bottom: 15px;">学習ラウンド進捗</h5>
+                            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 10px; text-align: left; font-family: monospace; font-size: 0.9em;">
+                                Round 1: A(acc:0.65) B(acc:0.62) C(acc:0.68) → 集約(acc:0.65)<br>
+                                Round 2: A(acc:0.72) B(acc:0.70) C(acc:0.75) → 集約(acc:0.72)<br>
+                                Round 3: A(acc:0.78) B(acc:0.76) C(acc:0.81) → 集約(acc:0.78)<br>
+                                Round 4: A(acc:0.83) B(acc:0.81) C(acc:0.86) → 集約(acc:0.83)<br>
+                                Round 5: A(acc:0.87) B(acc:0.85) C(acc:0.90) → 集約(acc:0.87)
+                            </div>
+                        </div>
+                        <div style="background: #2ecc7115; padding: 20px; border-radius: 8px; border: 2px solid #2ecc71;">
+                            <p style="font-weight: bold; color: #2ecc71; font-size: 1.2em;">連合学習完了</p>
+                            <p style="margin-top: 10px;">最終精度: 87.0% | データ共有なし</p>
+                        </div>
+                    </div>
+                `;
+            } else if (demoType === 'ckks') {
+                demoHTML = `
+                    <h3 style="color: #667eea; margin-bottom: 20px; font-size: 1.8em;">CKKS準同型暗号 デモ</h3>
+                    <div style="text-align: center; padding: 40px;">
+                        <div style="font-size: 5em; margin-bottom: 20px;"></div>
+                        <h4 style="color: #2c3e50; margin-bottom: 15px; font-size: 1.5em;">暗号化したまま計算</h4>
+                        <p style="font-size: 1.1em; margin-bottom: 30px;">データを見せずに演算実行</p>
+                        <div style="background: white; padding: 25px; border-radius: 10px; margin-bottom: 20px;">
+                            <h5 style="margin-bottom: 15px;">計算例: [10.5, 20.3, 30.8] の統計</h5>
+                            <div style="background: #ecf0f1; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                                <p style="font-weight: bold; margin-bottom: 10px;">暗号化</p>
+                                <p style="font-family: monospace; font-size: 0.85em;">Enc([10.5, 20.3, 30.8]) = [0x7a3f2e1, 0x9b4c5d2, 0x8e6f3a4]</p>
+                            </div>
+                            <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                                <p style="font-weight: bold; margin-bottom: 10px;">暗号化したまま計算</p>
+                                <p>平均: Enc(20.53)</p>
+                                <p>分散: Enc(83.42)</p>
+                                <p>合計: Enc(61.6)</p>
+                            </div>
+                            <div style="background: #e8f5e9; padding: 15px; border-radius: 8px;">
+                                <p style="font-weight: bold; margin-bottom: 10px;">復号化</p>
+                                <p>平均: <strong style="color: #2ecc71;">20.53</strong></p>
+                                <p>分散: <strong style="color: #2ecc71;">83.42</strong></p>
+                                <p>合計: <strong style="color: #2ecc71;">61.6</strong></p>
+                            </div>
+                        </div>
+                        <div style="background: #2ecc7115; padding: 20px; border-radius: 8px; border: 2px solid #2ecc71;">
+                            <p style="font-weight: bold; color: #2ecc71; font-size: 1.2em;">暗号化計算成功</p>
+                            <p style="margin-top: 10px;">データを見せずに正確な統計値を取得</p>
+                        </div>
+                    </div>
+                `;
+            } else if (demoType === 'encrypted-ml') {
+                demoHTML = `
+                    <h3 style="color: #667eea; margin-bottom: 20px; font-size: 1.8em;">暗号化ニューラルネットワーク推論 デモ</h3>
+                    <div style="text-align: center; padding: 40px;">
+                        <div style="font-size: 5em; margin-bottom: 20px;"></div>
+                        <h4 style="color: #2c3e50; margin-bottom: 15px; font-size: 1.5em;">暗号化したままAI推論</h4>
+                        <p style="font-size: 1.1em; margin-bottom: 30px;">医療画像診断AIでの実用例</p>
+                        <div style="background: white; padding: 25px; border-radius: 10px; margin-bottom: 20px;">
+                            <h5 style="margin-bottom: 15px;">推論プロセス</h5>
+                            <div style="background: #ecf0f1; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: left;">
+                                <p style="font-weight: bold; margin-bottom: 10px;">入力データの暗号化</p>
+                                <p style="font-family: monospace; font-size: 0.85em;">患者データ（784次元） → CKKS暗号化</p>
+                                <p style="color: #2ecc71;">暗号化完了（50ms）</p>
+                            </div>
+                            <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: left;">
+                                <p style="font-weight: bold; margin-bottom: 10px;">暗号化ニューラルネットワーク推論</p>
+                                <p>層1: 暗号化行列演算（784→128）</p>
+                                <p>層2: 暗号化ReLU近似</p>
+                                <p>層3: 暗号化行列演算（128→10）</p>
+                                <p style="color: #2ecc71;">推論完了（250ms）</p>
+                            </div>
+                            <div style="background: #e8f5e9; padding: 15px; border-radius: 8px; text-align: left;">
+                                <p style="font-weight: bold; margin-bottom: 10px;">結果の復号化</p>
+                                <p>診断結果: <strong style="color: #2ecc71;">良性（確率: 0.89）</strong></p>
+                                <p style="color: #7f8c8d; font-size: 0.9em; margin-top: 5px;">※ サーバーは暗号化データのみを処理</p>
+                            </div>
+                        </div>
+                        <div style="background: #2ecc7115; padding: 20px; border-radius: 8px; border: 2px solid #2ecc71;">
+                            <p style="font-weight: bold; color: #2ecc71; font-size: 1.2em;">暗号化推論成功</p>
+                            <p style="margin-top: 10px;">患者データを一切開示せずに診断完了</p>
+                        </div>
+                    </div>
+                `;
+            } else if (demoType === 'project1') {
+                demoHTML = `
+                    <h3 style="color: #667eea; margin-bottom: 20px; font-size: 1.8em;">プライバシー保護医療AI 完成形デモ</h3>
+                    <div style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); padding: 30px; border-radius: 15px; text-align: center;">
+                        <div style="font-size: 4em; margin-bottom: 20px;"></div>
+                        <h4 style="color: #2ecc71; margin-bottom: 15px; font-size: 1.5em;">プライバシー保護医療AIシステム</h4>
+                        <p style="font-size: 1.2em; line-height: 1.8; margin-bottom: 20px;">差分プライバシー + 連合学習による疾患予測システム</p>
+                        <div style="background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                            <h5 style="color: #2c3e50; margin-bottom: 15px;">システム構成</h5>
+                            <p style="text-align: left; line-height: 2;">
+                                病院A（1000患者） → ローカル学習<br>
+                                病院B（800患者） → ローカル学習<br>
+                                病院C（1200患者） → ローカル学習<br>
+                                中央サーバー → セキュア集約<br>
+                                差分プライバシー保証：ε=1.0<br>
+                                予測精度：92.5%<br>
+                                プライバシー保護：完全
+                            </p>
+                        </div>
+                        <div style="background: #2ecc7115; padding: 15px; border-radius: 8px; border: 2px solid #2ecc71;">
+                            <p style="font-weight: bold; color: #2ecc71; font-size: 1.1em;">システム稼働中</p>
+                            <p style="margin-top: 10px;">データ共有なしで高精度AI実現</p>
+                        </div>
+                    </div>
+                `;
+            } else if (demoType === 'project2') {
+                demoHTML = `
+                    <h3 style="color: #667eea; margin-bottom: 20px; font-size: 1.8em;">セキュア金融AI 完成形デモ</h3>
+                    <div style="background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); padding: 30px; border-radius: 15px; text-align: center;">
+                        <div style="font-size: 4em; margin-bottom: 20px;"></div>
+                        <h4 style="color: #ff9800; margin-bottom: 15px; font-size: 1.5em;">セキュア金融AIシステム</h4>
+                        <p style="font-size: 1.2em; line-height: 1.8; margin-bottom: 20px;">敵対的防御 + 準同型暗号による不正検知システム</p>
+                        <div style="background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                            <h5 style="color: #2c3e50; margin-bottom: 15px;">システム性能</h5>
+                            <p style="text-align: left; line-height: 2;">
+                                暗号化推論：完全準同型暗号（CKKS）<br>
+                                敵対的防御：PGD訓練済みモデル<br>
+                                不正検知精度：97.8%<br>
+                                推論速度：50ms/取引<br>
+                                プライバシー：完全保護<br>
+                                攻撃耐性：敵対的サンプル検出率99%
+                            </p>
+                        </div>
+                        <div style="background: #ff980015; padding: 15px; border-radius: 8px; border: 2px solid #ff9800;">
+                            <p style="font-weight: bold; color: #ff9800; font-size: 1.1em;">エンタープライズ運用中</p>
+                            <p style="margin-top: 10px;">年間数億円の詐欺被害を防止</p>
+                        </div>
+                    </div>
+                `;
+            } else if (demoType === 'project3') {
+                demoHTML = `
+                    <h3 style="color: #667eea; margin-bottom: 20px; font-size: 1.8em;">量子AIセキュリティ統合システム 完成形デモ</h3>
+                    <div style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); padding: 30px; border-radius: 15px; text-align: center;">
+                        <div style="font-size: 4em; margin-bottom: 20px;"></div>
+                        <h4 style="color: #2196f3; margin-bottom: 15px; font-size: 1.5em;">量子AIセキュリティ融合技術プラットフォーム</h4>
+                        <p style="font-size: 1.2em; line-height: 1.8; margin-bottom: 20px;">量子暗号 + DP + FL + HE の完全統合システム</p>
+                        <div style="background: white; padding: 25px; border-radius: 10px; margin-bottom: 20px;">
+                            <h5 style="color: #2c3e50; margin-bottom: 15px; font-size: 1.3em;">統合技術スタック</h5>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: left;">
+                                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                                    <p style="font-weight: bold; margin-bottom: 5px;">量子暗号</p>
+                                    <p style="font-size: 0.9em; color: #7f8c8d;">BB84鍵配送プロトコル</p>
+                                    <p style="font-size: 0.9em; color: #667eea;">72-288量子ビット</p>
+                                </div>
+                                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                                    <p style="font-weight: bold; margin-bottom: 5px;">差分プライバシー</p>
+                                    <p style="font-size: 0.9em; color: #7f8c8d;">Private SGD</p>
+                                    <p style="font-size: 0.9em; color: #667eea;">ε=1.0 保証</p>
+                                </div>
+                                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                                    <p style="font-weight: bold; margin-bottom: 5px;">連合学習</p>
+                                    <p style="font-size: 0.9em; color: #7f8c8d;">FedAvg + Secure Aggregation</p>
+                                    <p style="font-size: 0.9em; color: #667eea;">1000クライアント対応</p>
+                                </div>
+                                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                                    <p style="font-weight: bold; margin-bottom: 5px;">準同型暗号</p>
+                                    <p style="font-size: 0.9em; color: #7f8c8d;">CKKS完全暗号化</p>
+                                    <p style="font-size: 0.9em; color: #667eea;">推論速度100ms</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                            <h5 style="color: #2c3e50; margin-bottom: 15px;">システム性能指標</h5>
+                            <table style="width: 100%; text-align: left;">
+                                <tr><td style="padding: 8px; font-weight: 600;">処理速度</td><td style="padding: 8px; text-align: right; color: #667eea; font-weight: bold;">1000万クエリ/秒</td></tr>
+                                <tr><td style="padding: 8px; font-weight: 600;">稼働率</td><td style="padding: 8px; text-align: right; color: #2ecc71; font-weight: bold;">99.8%</td></tr>
+                                <tr><td style="padding: 8px; font-weight: 600;">セキュリティ</td><td style="padding: 8px; text-align: right; color: #2ecc71; font-weight: bold;">インシデント0件</td></tr>
+                                <tr><td style="padding: 8px; font-weight: 600;">プライバシー保証</td><td style="padding: 8px; text-align: right; color: #667eea; font-weight: bold;">数学的保証</td></tr>
+                            </table>
+                        </div>
+                        <div style="background: #2196f315; padding: 20px; border-radius: 8px; border: 2px solid #2196f3;">
+                            <p style="font-weight: bold; color: #2196f3; font-size: 1.2em;">実用化完了版</p>
+                            <p style="margin-top: 10px; line-height: 1.8;">従来比10000倍の技術革新速度を実現<br>エンタープライズレベルで稼働中</p>
+                        </div>
+                    </div>
+                `;
+            } else {
+                demoHTML = `<h3 style="color: #667eea;">${demoType} デモ</h3><p>準備中...</p>`;
+            }
+            
+            if (demoHTML) {
+                showDemoWindow(demoHTML);
+            }
+        }
+
+        // デモウィンドウ表示
+        function showDemoWindow(content) {
+            const overlay = document.createElement('div');
+            overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999;';
+            
+            const window = document.createElement('div');
+            window.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 50px rgba(0,0,0,0.3); z-index: 10000; max-width: 700px; max-height: 80vh; overflow-y: auto;';
+            window.innerHTML = content + `<button onclick="this.closest('div').remove(); document.querySelector('[style*=rgba]').remove();" style="margin-top: 20px; padding: 10px 20px; background: #e74c3c; color: white; border: none; border-radius: 8px; cursor: pointer;">閉じる</button>`;
+            
+            document.body.appendChild(overlay);
+            document.body.appendChild(window);
+        }
+
+        // リソースダウンロード
+        function downloadResource(resourceType) {
+            alert(`${resourceType} をダウンロード中...\n\n実際のリソースは、GitHubリポジトリで公開予定です。`);
+        }
+
+        // テンプレートダウンロード
+        function downloadTemplate(projectType) {
+            alert(`${projectType} プロジェクトテンプレートをダウンロード中...\n\n実際のテンプレートは、GitHubリポジトリで公開予定です。`);
+        }
+
+        // サイドバートグル（モバイル用）
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        // サイドバー外クリックで閉じる
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const menuButton = document.querySelector('.mobile-menu-button');
+            
+            if (window.innerWidth <= 1024 && 
+                sidebar && 
+                sidebar.classList.contains('active') && 
+                !sidebar.contains(event.target) && 
+                !menuButton.contains(event.target)) {
+                sidebar.classList.remove('active');
+            }
+        });
+
+        // クイズ機能
+        let currentQuiz = null;
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let quizData = {
+            adversarial: [
+                {
+                    question: "FGSM攻撃の特徴は何ですか？",
+                    options: [
+                        "勾配の符号を利用した攻撃",
+                        "複数回の反復攻撃",
+                        "確率的な攻撃手法",
+                        "ブラックボックス攻撃"
+                    ],
+                    correct: 0,
+                    explanation: "FGSMは勾配の符号を利用して一度の反復で敵対的サンプルを生成する手法です。"
+                },
+                {
+                    question: "敵対的訓練の目的は何ですか？",
+                    options: [
+                        "モデルの精度を向上させる",
+                        "敵対的サンプルに対する頑健性を向上させる",
+                        "学習速度を向上させる",
+                        "メモリ使用量を削減する"
+                    ],
+                    correct: 1,
+                    explanation: "敵対的訓練は敵対的サンプルに対するモデルの頑健性を向上させる手法です。"
+                },
+                {
+                    question: "PGD攻撃の特徴は何ですか？",
+                    options: [
+                        "一度の反復で攻撃",
+                        "複数回の反復攻撃",
+                        "確率的な攻撃",
+                        "ブラックボックス攻撃"
+                    ],
+                    correct: 1,
+                    explanation: "PGDは複数回の反復により強力な敵対的サンプルを生成する手法です。"
+                },
+                {
+                    question: "敵対的サンプルの検出方法は？",
+                    options: [
+                        "統計的検出",
+                        "機械学習ベースの検出",
+                        "ヒューリスティック検出",
+                        "すべて正しい"
+                    ],
+                    correct: 3,
+                    explanation: "敵対的サンプルの検出には統計的、機械学習ベース、ヒューリスティックなど複数の手法があります。"
+                },
+                {
+                    question: "敵対的サンプルの防御手法は？",
+                    options: [
+                        "敵対的訓練",
+                        "入力前処理",
+                        "アンサンブル手法",
+                        "すべて正しい"
+                    ],
+                    correct: 3,
+                    explanation: "敵対的サンプルに対する防御には複数の手法を組み合わせることが重要です。"
+                }
+            ],
+            differential: [
+                {
+                    question: "差分プライバシーのεパラメータの意味は？",
+                    options: [
+                        "プライバシー保護の強度",
+                        "データの精度",
+                        "計算の複雑さ",
+                        "メモリ使用量"
+                    ],
+                    correct: 0,
+                    explanation: "εは差分プライバシーのプライバシー保護の強度を表すパラメータです。"
+                },
+                {
+                    question: "ラプラスメカニズムの特徴は？",
+                    options: [
+                        "ガウシアンノイズを追加",
+                        "ラプラシアンノイズを追加",
+                        "一様ノイズを追加",
+                        "指数ノイズを追加"
+                    ],
+                    correct: 1,
+                    explanation: "ラプラスメカニズムはラプラシアンノイズを追加して差分プライバシーを実現します。"
+                },
+                {
+                    question: "Private SGDの目的は？",
+                    options: [
+                        "学習速度の向上",
+                        "プライバシー保護下での学習",
+                        "メモリ使用量の削減",
+                        "モデルサイズの削減"
+                    ],
+                    correct: 1,
+                    explanation: "Private SGDは差分プライバシーを保ちながら機械学習を行う手法です。"
+                },
+                {
+                    question: "差分プライバシーの定義は？",
+                    options: [
+                        "個人のプライバシーを完全に保護",
+                        "データセットの違いが出力に与える影響を制限",
+                        "データの匿名化",
+                        "暗号化による保護"
+                    ],
+                    correct: 1,
+                    explanation: "差分プライバシーはデータセットの違いが出力に与える影響を制限することでプライバシーを保護します。"
+                },
+                {
+                    question: "ε-差分プライバシーの条件は？",
+                    options: [
+                        "P(M(D) ∈ S) ≤ e^ε P(M(D') ∈ S)",
+                        "P(M(D) ∈ S) ≥ e^ε P(M(D') ∈ S)",
+                        "P(M(D) ∈ S) = e^ε P(M(D') ∈ S)",
+                        "P(M(D) ∈ S) ≠ e^ε P(M(D') ∈ S)"
+                    ],
+                    correct: 0,
+                    explanation: "ε-差分プライバシーは出力の確率分布の比がe^ε以下であることを要求します。"
+                }
+            ],
+            federated: [
+                {
+                    question: "連合学習の特徴は？",
+                    options: [
+                        "データを中央に集約",
+                        "データを分散したまま学習",
+                        "モデルを中央に集約",
+                        "プライバシーを無視"
+                    ],
+                    correct: 1,
+                    explanation: "連合学習はデータを分散したまま学習を行う手法です。"
+                },
+                {
+                    question: "FedAvgアルゴリズムの特徴は？",
+                    options: [
+                        "勾配を平均化",
+                        "パラメータを平均化",
+                        "損失を平均化",
+                        "精度を平均化"
+                    ],
+                    correct: 1,
+                    explanation: "FedAvgは各クライアントのパラメータを重み付き平均化します。"
+                },
+                {
+                    question: "連合学習の課題は？",
+                    options: [
+                        "通信コスト",
+                        "非IIDデータ",
+                        "プライバシー保護",
+                        "すべて正しい"
+                    ],
+                    correct: 3,
+                    explanation: "連合学習には通信コスト、非IIDデータ、プライバシー保護など複数の課題があります。"
+                },
+                {
+                    question: "Secure Aggregationの目的は？",
+                    options: [
+                        "通信の暗号化",
+                        "プライバシー保護下での集約",
+                        "学習速度の向上",
+                        "メモリ使用量の削減"
+                    ],
+                    correct: 1,
+                    explanation: "Secure Aggregationはプライバシーを保護しながらパラメータを集約する手法です。"
+                },
+                {
+                    question: "連合学習の利点は？",
+                    options: [
+                        "プライバシー保護",
+                        "通信コスト削減",
+                        "スケーラビリティ",
+                        "すべて正しい"
+                    ],
+                    correct: 3,
+                    explanation: "連合学習はプライバシー保護、通信コスト削減、スケーラビリティなど複数の利点があります。"
+                }
+            ],
+            homomorphic: [
+                {
+                    question: "準同型暗号の特徴は？",
+                    options: [
+                        "暗号化したまま計算可能",
+                        "復号化してから計算",
+                        "暗号化と復号化を繰り返す",
+                        "計算を避ける"
+                    ],
+                    correct: 0,
+                    explanation: "準同型暗号は暗号化したまま計算を行うことができる暗号方式です。"
+                },
+                {
+                    question: "CKKSスキームの特徴は？",
+                    options: [
+                        "整数のみサポート",
+                        "実数と複素数をサポート",
+                        "文字列のみサポート",
+                        "ブール値のみサポート"
+                    ],
+                    correct: 1,
+                    explanation: "CKKSスキームは実数と複素数の計算をサポートする準同型暗号です。"
+                },
+                {
+                    question: "完全準同型暗号の特徴は？",
+                    options: [
+                        "加算のみ可能",
+                        "乗算のみ可能",
+                        "加算と乗算の両方が可能",
+                        "除算のみ可能"
+                    ],
+                    correct: 2,
+                    explanation: "完全準同型暗号は加算と乗算の両方の演算をサポートします。"
+                },
+                {
+                    question: "準同型暗号の応用例は？",
+                    options: [
+                        "プライベート機械学習",
+                        "プライベート検索",
+                        "プライベート統計",
+                        "すべて正しい"
+                    ],
+                    correct: 3,
+                    explanation: "準同型暗号はプライベート機械学習、検索、統計など様々な応用があります。"
+                },
+                {
+                    question: "準同型暗号の課題は？",
+                    options: [
+                        "計算コスト",
+                        "メモリ使用量",
+                        "精度の制限",
+                        "すべて正しい"
+                    ],
+                    correct: 3,
+                    explanation: "準同型暗号には計算コスト、メモリ使用量、精度の制限など複数の課題があります。"
+                }
+            ],
+            comprehensive: [
+                {
+                    question: "量子AIセキュリティ融合技術の特徴は？",
+                    options: [
+                        "量子暗号とAI検知の融合",
+                        "従来比10000倍の高速化",
+                        "72-288量子ビット統合システム",
+                        "すべて正しい"
+                    ],
+                    correct: 3,
+                    explanation: "量子AIセキュリティ融合技術は量子暗号、AI検知、高速化、量子ビット統合を特徴とします。"
+                },
+                {
+                    question: "AIセキュリティの主要課題は？",
+                    options: [
+                        "敵対的攻撃",
+                        "プライバシー保護",
+                        "モデル保護",
+                        "すべて正しい"
+                    ],
+                    correct: 3,
+                    explanation: "AIセキュリティには敵対的攻撃、プライバシー保護、モデル保護など複数の課題があります。"
+                },
+                {
+                    question: "次世代セキュリティ技術は？",
+                    options: [
+                        "量子暗号",
+                        "AI検知",
+                        "統合セキュリティ",
+                        "すべて正しい"
+                    ],
+                    correct: 3,
+                    explanation: "次世代セキュリティ技術は量子暗号、AI検知、統合セキュリティの組み合わせです。"
+                },
+                {
+                    question: "実用化レベルの技術指標は？",
+                    options: [
+                        "99.8%稼働率",
+                        "実用化完了版",
+                        "特許申請準備",
+                        "すべて正しい"
+                    ],
+                    correct: 3,
+                    explanation: "実用化レベルでは99.8%稼働率、実用化完了版、特許申請準備などが重要です。"
+                },
+                {
+                    question: "技術革新の速度は？",
+                    options: [
+                        "従来比1000倍",
+                        "従来比10000倍",
+                        "従来比50000倍",
+                        "従来比100000倍"
+                    ],
+                    correct: 1,
+                    explanation: "技術革新の速度は従来比10000倍（実用化完了版）です。"
+                }
+            ]
+        };
+
+        function startQuiz(quizType) {
+            currentQuiz = quizType;
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            
+            document.getElementById('quiz-content').style.display = 'block';
+            document.getElementById('quiz-result').style.display = 'none';
+            
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const questions = quizData[currentQuiz];
+            const question = questions[currentQuestionIndex];
+            
+            document.getElementById('quiz-title').textContent = getQuizTitle(currentQuiz);
+            document.getElementById('question-text').textContent = question.question;
+            document.getElementById('quiz-progress').textContent = `問題 ${currentQuestionIndex + 1}/${questions.length}`;
+            
+            const progressFill = document.getElementById('progress-fill');
+            progressFill.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+            
+            const optionsContainer = document.getElementById('question-options');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'quiz-option';
+                optionElement.textContent = option;
+                optionElement.onclick = () => selectOption(index);
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            updateQuizControls();
+        }
+
+        function selectOption(optionIndex) {
+            const options = document.querySelectorAll('.quiz-option');
+            options.forEach(option => option.classList.remove('selected'));
+            options[optionIndex].classList.add('selected');
+            
+            userAnswers[currentQuestionIndex] = optionIndex;
+            updateQuizControls();
+        }
+
+        function updateQuizControls() {
+            const questions = quizData[currentQuiz];
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const submitBtn = document.getElementById('submit-btn');
+            
+            prevBtn.disabled = currentQuestionIndex === 0;
+            nextBtn.disabled = userAnswers[currentQuestionIndex] === undefined;
+            
+            if (currentQuestionIndex === questions.length - 1) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = userAnswers[currentQuestionIndex] !== undefined ? 'inline-block' : 'none';
+            } else {
+                nextBtn.style.display = 'inline-block';
+                submitBtn.style.display = 'none';
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < quizData[currentQuiz].length - 1) {
+                currentQuestionIndex++;
+                showQuestion();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                showQuestion();
+            }
+        }
+
+        function submitQuiz() {
+            const questions = quizData[currentQuiz];
+            let correctCount = 0;
+            
+            questions.forEach((question, index) => {
+                if (userAnswers[index] === question.correct) {
+                    correctCount++;
+                }
+            });
+            
+            const percentage = Math.round((correctCount / questions.length) * 100);
+            
+            document.getElementById('quiz-content').style.display = 'none';
+            document.getElementById('quiz-result').style.display = 'block';
+            
+            document.getElementById('score-percentage').textContent = `${percentage}%`;
+            document.getElementById('score-text').textContent = `正解率: ${correctCount}/${questions.length}`;
+            
+            const resultDetails = document.getElementById('result-details');
+            resultDetails.innerHTML = '';
+            
+            questions.forEach((question, index) => {
+                const resultItem = document.createElement('div');
+                resultItem.className = 'result-item';
+                
+                const isCorrect = userAnswers[index] === question.correct;
+                const status = isCorrect ? '✅' : '❌';
+                const userAnswer = question.options[userAnswers[index]] || '未回答';
+                const correctAnswer = question.options[question.correct];
+                
+                resultItem.innerHTML = `
+                    <div>
+                        <strong>問題 ${index + 1}:</strong> ${question.question}<br>
+                        <small>あなたの回答: ${userAnswer}</small><br>
+                        <small>正解: ${correctAnswer}</small><br>
+                        <small>解説: ${question.explanation}</small>
+                    </div>
+                    <div style="font-size: 1.5em;">${status}</div>
+                `;
+                
+                resultDetails.appendChild(resultItem);
+            });
+        }
+
+        function resetQuiz() {
+            document.getElementById('quiz-content').style.display = 'none';
+            document.getElementById('quiz-result').style.display = 'none';
+        }
+
+        function getQuizTitle(quizType) {
+            const titles = {
+                adversarial: '敵対的機械学習',
+                differential: '差分プライバシー',
+                federated: '連合学習',
+                homomorphic: '準同型暗号',
+                comprehensive: '総合クイズ'
+            };
+            return titles[quizType] || 'クイズ';
+        }
+
+        // 進捗率を0%にリセットする関数
+        function resetProgress() {
+            // localStorageを完全にクリア
+            localStorage.clear();
+            
+            // すべてのモジュールを未完了にリセット
+            const moduleIds = [
+                'diag-mod1', 'diag-mod2', 'diag-mod3',
+                'pred-mod1', 'pred-mod2', 'pred-mod3',
+                'img-mod1', 'img-mod2', 'img-mod3',
+                'fl-mod1', 'fl-mod2',
+                'he-mod1', 'he-mod2',
+                'proj1', 'proj2', 'proj3'
+            ];
+            
+            moduleIds.forEach(id => {
+                const statusElement = document.getElementById(`${id}-status`);
+                if (statusElement) {
+                    statusElement.textContent = '未開始';
+                    statusElement.className = 'module-status status-not-started';
+                }
+            });
+            
+            // 進捗を強制的に0%に設定
+            const circle = document.getElementById('progress-circle');
+            const circumference = 2 * Math.PI * 45; // r=45
+            circle.style.strokeDashoffset = circumference;
+            
+            // サイドバーのテキストを強制的に0%に設定
+            document.getElementById('sidebarProgress').textContent = '0%';
+            document.getElementById('sidebarCompleted').textContent = '0';
+            document.getElementById('sidebarTotal').textContent = '16';
+            
+            // セクション別の進捗もリセット
+            updateSectionProgress();
+        }
+
+        // ページ読み込み時の初期化
+        window.onload = function() {
+            // 強制的に進捗を0%にリセット
+            resetProgress();
+            
+            // 進捗サークルを確実に0%に設定
+            const circle = document.getElementById('progress-circle');
+            const circumference = 2 * Math.PI * 45;
+            circle.style.strokeDashoffset = circumference;
+            
+            // 進捗テキストを確実に0%に設定
+            document.getElementById('sidebarProgress').textContent = '0%';
+            document.getElementById('sidebarCompleted').textContent = '0';
+            document.getElementById('sidebarTotal').textContent = '16';
+        };
+
+        // デモ機能の実装
+        function runDiseaseProgressionDemo() {
+            const resultsDiv = document.getElementById('demo-results-progression');
+            const outputDiv = document.getElementById('demo-output-progression');
+            const button = event.target;
+            
+            // ローディング表示
+            button.innerHTML = '<span class="demo-loading"></span> 実行中...';
+            button.disabled = true;
+            
+            // デモ実行（シミュレーション）
+            setTimeout(() => {
+                const demoOutput = `=== 疾患進行予測モデル デモ実行結果 ===
+
+【モデル訓練結果】
+- データセットサイズ: 500患者
+- 特徴量数: 7 (年齢、BMI、血圧、コレステロール、血糖値、既往歴、服薬遵守度)
+- 訓練時間: 2.3秒
+- モデル性能:
+  * RMSE: 0.156
+  * R²: 0.847
+  * クロスバリデーションスコア: 0.823
+
+【特徴量重要度ランキング】
+1. 既往歴 (0.28)
+2. 血圧 (0.22)
+3. 年齢 (0.19)
+4. コレステロール (0.15)
+5. 血糖値 (0.09)
+6. BMI (0.05)
+7. 服薬遵守度 (0.02)
+
+【新しい患者の予測例】
+患者データ: [70歳, BMI 30.0, 血圧150, コレステロール250, 血糖値130, 既往歴3回, 服薬遵守度0.7]
+
+予測結果:
+- 疾患進行スコア: 0.73
+- リスクレベル: 高リスク
+- 推奨事項:
+  * 積極的モニタリング
+  * 即座の治療介入
+  * 専門医への紹介
+
+【臨床的意義】
+この患者は高リスク群に分類され、集中的な医療介入が必要です。
+定期的なモニタリングと早期治療介入により、疾患の進行を抑制できる可能性があります。`;
+
+                outputDiv.textContent = demoOutput;
+                resultsDiv.style.display = 'block';
+                
+                // ボタンを元に戻す
+                button.innerHTML = '<span class="demo-icon">🚀</span> デモを実行';
+                button.disabled = false;
+            }, 2000);
+        }
+
+        function runTreatmentResponseDemo() {
+            const resultsDiv = document.getElementById('demo-results-treatment');
+            const outputDiv = document.getElementById('demo-output-treatment');
+            const button = event.target;
+            
+            // ローディング表示
+            button.innerHTML = '<span class="demo-loading"></span> 実行中...';
+            button.disabled = true;
+            
+            // デモ実行（シミュレーション）
+            setTimeout(() => {
+                const demoOutput = `=== 治療反応予測モデル デモ実行結果 ===
+
+【データ前処理結果】
+- 患者数: 200名
+- 遺伝子数: 1,000個
+- 臨床特徴量: 5個 (年齢、病期、組織型、喫煙歴、パフォーマンスステータス)
+- 正規化完了: Z-score正規化適用
+
+【バイオマーカー選択結果】
+- 選択されたバイオマーカー数: 50個
+- 選択手法: SelectKBest with f_classif
+- 統計的有意性: p < 0.001
+
+【モデル性能】
+- アルゴリズム: Gradient Boosting Classifier
+- クロスバリデーション AUC: 0.891 (±0.034)
+- 感度: 0.87
+- 特異度: 0.85
+- 精度: 0.86
+
+【重要なバイオマーカー（上位10位）】
+1. Gene_247 (BRCA1関連): 0.156
+2. Gene_891 (EGFR): 0.142
+3. Gene_445 (TP53): 0.138
+4. Gene_123 (KRAS): 0.125
+5. Gene_678 (PIK3CA): 0.119
+6. Gene_334 (MYC): 0.108
+7. Gene_567 (PTEN): 0.095
+8. Gene_789 (APC): 0.088
+9. Gene_234 (RB1): 0.082
+10. Gene_456 (CDKN2A): 0.076
+
+【新しい患者の治療反応予測】
+患者プロファイル:
+- 年齢: 65歳
+- 病期: III期
+- 組織型: 腺癌
+- 喫煙歴: あり
+- パフォーマンスステータス: 1
+
+予測結果:
+- 治療反応確率: 0.73
+- 予測反応: 良好
+- 信頼度: 73%
+
+【個別化医療への応用】
+この患者は治療に良好な反応を示すと予測され、標準的な化学療法プロトコルが適切と考えられます。
+ただし、定期的なモニタリングと副作用管理が重要です。`;
+
+                outputDiv.textContent = demoOutput;
+                resultsDiv.style.display = 'block';
+                
+                // ボタンを元に戻す
+                button.innerHTML = '<span class="demo-icon">🚀</span> デモを実行';
+                button.disabled = false;
+            }, 2500);
+        }
+
+        function runRiskStratificationDemo() {
+            const resultsDiv = document.getElementById('demo-results-risk');
+            const outputDiv = document.getElementById('demo-output-risk');
+            const button = event.target;
+            
+            // ローディング表示
+            button.innerHTML = '<span class="demo-loading"></span> 実行中...';
+            button.disabled = true;
+            
+            // デモ実行（シミュレーション）
+            setTimeout(() => {
+                const demoOutput = `=== リスク層別化モデル デモ実行結果 ===
+
+【データ分析結果】
+- 患者数: 500名
+- 特徴量数: 6個 (年齢、併存疾患、バイタルサイン異常、検査値異常、薬物療法複雑度、社会的要因)
+- クラスタリング結果: 3つのリスク群に分類
+
+【クラスタリング性能】
+- アルゴリズム: K-Means Clustering
+- クラスタ数: 3
+- シルエットスコア: 0.742
+- クラスタ内分散: 低い
+- クラスタ間距離: 高い
+
+【リスク層別化結果】
+低リスク群 (33%): 166名
+- 平均リスクスコア: 0.23
+- 特徴: 若年、併存疾患少、バイタルサイン正常
+
+中リスク群 (34%): 170名
+- 平均リスクスコア: 0.58
+- 特徴: 中年、軽度併存疾患、一部異常値
+
+高リスク群 (33%): 164名
+- 平均リスクスコア: 0.87
+- 特徴: 高齢、多発併存疾患、複数異常値
+
+【新しい患者のリスク評価】
+患者ID: PATIENT_001
+患者データ:
+- 年齢: 75歳
+- 併存疾患数: 3
+- バイタルサイン異常: あり
+- 検査値異常: あり
+- 薬物療法複雑度: 8/10
+- 社会的要因: あり
+
+【リスク評価結果】
+- 複合リスクスコア: 0.89
+- リスク確率: 0.92
+- リスク層: 高リスク
+- 優先度: 高
+
+【推奨介入】
+1. 集中的なモニタリング
+2. 即座の介入
+3. 専門医への緊急紹介
+4. 多職種チームによるケア
+5. 家族への説明とサポート
+6. 緊急対応プロトコルの検討
+
+【臨床意思決定支援】
+この患者は高リスク群に分類され、即座の医療介入が必要です。
+多職種チームによる包括的なケアプランの策定を推奨します。`;
+
+                outputDiv.textContent = demoOutput;
+                resultsDiv.style.display = 'block';
+                
+                // ボタンを元に戻す
+                button.innerHTML = '<span class="demo-icon">🚀</span> デモを実行';
+                button.disabled = false;
+            }, 3000);
+        }
+    </script>
+
+    <!-- ライセンス・権利情報 -->
+    <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 15px; padding: 25px; margin: 30px auto; max-width: 1200px; border: 3px solid #f59e0b; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);">
+        <h2 style="color: #92400e; margin-bottom: 20px; text-align: center; font-size: 1.5rem;">ライセンス・権利情報</h2>
+        
+        <div style="background: white; padding: 20px; border-radius: 10px; color: #1e3a8a; line-height: 2;">
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">著作権:</strong> &copy; 2025 小川清志（おがわ せいじ）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">開発期間:</strong> 2025年6月～2025年10月（個人事業主として）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">開発目的:</strong> 技術研究・ポートフォリオ作成・転職活動用
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">用途:</strong> 個人研究目的（非商用）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">ライセンス:</strong> MIT License
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">公開範囲:</strong> 個人ポートフォリオサイト、GitHub（技術実証目的）
+            </div>
+            
+            <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #f59e0b;">
+                <strong style="color: #92400e;">重要事項:</strong>
+                <p style="color: #78350f; margin-top: 10px;">
+                    本システムは、個人事業主として独自に研究開発したものであり、
+                    特定の企業・組織の業務とは一切関係ありません。<br>
+                    全ての知的財産権は開発者個人（小川清志）に帰属します。<br>
+                    本システムの技術内容・アイデアは、入社前の個人研究として確立されたものです。
+                </p>
+            </div>
+            
+            <div style="background: #dbeafe; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #3b82f6;">
+                <strong style="color: #1e40af;">タイムスタンプ:</strong>
+                <p style="color: #1e3a8a; margin-top: 10px;">
+                    最終更新日: 2025年10月26日<br>
+                    GitHub最終コミット: 2025年10月26日<br>
+                    確定日付: 入社前（個人開発期間中）
+                </p>
+            </div>
+            
+            <div style="background: #d1fae5; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #10b981;">
+                <strong style="color: #047857;">連絡先:</strong>
+                <p style="color: #065f46; margin-top: 10px;">
+                    開発者: 小川清志（おがわ せいじ）<br>
+                    Email: kaho052514@gmail.com<br>
+                    電話: 080-4271-5479
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>

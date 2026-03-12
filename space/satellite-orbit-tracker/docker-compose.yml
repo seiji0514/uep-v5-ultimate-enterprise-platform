@@ -1,0 +1,69 @@
+# 衛星軌道追跡システム - Docker Compose
+# 企業レベル本番環境対応
+
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: satellite-tracker-api
+    ports:
+      - "8000:8000"
+    environment:
+      - LOG_LEVEL=INFO
+      - HOST=0.0.0.0
+      - PORT=8000
+    volumes:
+      - ./logs:/app/logs
+      - ./sample_data:/app/sample_data
+    restart: unless-stopped
+    networks:
+      - satellite-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+  # Prometheus（監視）
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: satellite-tracker-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    networks:
+      - satellite-network
+    restart: unless-stopped
+
+  # Grafana（可視化）
+  grafana:
+    image: grafana/grafana:latest
+    container_name: satellite-tracker-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - satellite-network
+    restart: unless-stopped
+
+networks:
+  satellite-network:
+    driver: bridge
+
+volumes:
+  prometheus_data:
+  grafana_data:
+

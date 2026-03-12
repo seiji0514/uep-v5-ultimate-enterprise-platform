@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>宇宙船生命維持AI - 宇宙・航空技術統合システム</title>
+    <meta name="description" content="宇宙飛行士生命維持・環境制御・健康管理AIシステム。長期宇宙ミッションでの乗組員の安全を確保。">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .back-button {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .status-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .status-indicator {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .chart-container {
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .feature-icon {
+            font-size: 0.8rem;
+            margin-bottom: 15px;
+            text-align: center;
+            color: #667eea;
+            font-weight: bold;
+            background: rgba(102, 126, 234, 0.1);
+            padding: 4px 8px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .feature-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .feature-metrics {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .feature-metric {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .feature-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-align: center;
+            width: 100%;
+        }
+
+        .feature-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="space-aerospace-technology-system.html" class="back-button">← 宇宙・航空技術統合システムに戻る</a>
+        
+        <div class="header">
+            <h1>宇宙船生命維持AI</h1>
+            <p>宇宙飛行士生命維持プラットフォーム</p>
+            <div class="status-indicators">
+                <div class="status-indicator">🫁 大気監視中</div>
+                <div class="status-indicator">💧 水循環中</div>
+                <div class="status-indicator">⚡ リアルタイム</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="card">
+                <h2>環境パラメータ</h2>
+                <div class="chart-container">
+                    <canvas id="environmentParamsChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>乗組員健康状態</h2>
+                <div class="chart-container">
+                    <canvas id="crewHealthChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">[大気]</div>
+                <div class="feature-title">大気制御システム</div>
+                <div class="feature-description">
+                    酸素濃度・二酸化炭素除去・気圧制御システム。宇宙飛行士の呼吸環境を最適に維持。
+                </div>
+                <div class="feature-metrics">
+                    <div class="feature-metric">99.8% 精度</div>
+                    <div class="feature-metric">自動制御</div>
+                </div>
+                <a href="#" class="feature-link">詳細を見る</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">[水]</div>
+                <div class="feature-title">水循環システム</div>
+                <div class="feature-description">
+                    水の浄化・再利用・配給管理システム。限られた水資源を効率的に活用。
+                </div>
+                <div class="feature-metrics">
+                    <div class="feature-metric">98.5% 効率</div>
+                    <div class="feature-metric">水再利用</div>
+                </div>
+                <a href="#" class="feature-link">詳細を見る</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">[温度]</div>
+                <div class="feature-title">温度・湿度制御</div>
+                <div class="feature-description">
+                    船内温度・湿度・気流制御システム。快適な居住環境を維持。
+                </div>
+                <div class="feature-metrics">
+                    <div class="feature-metric">97.2% 制御精度</div>
+                    <div class="feature-metric">快適環境</div>
+                </div>
+                <a href="#" class="feature-link">詳細を見る</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">[健康]</div>
+                <div class="feature-title">健康監視システム</div>
+                <div class="feature-description">
+                    生体信号監視・健康状態評価・医療支援システム。乗組員の健康を継続的に監視。
+                </div>
+                <div class="feature-metrics">
+                    <div class="feature-metric">96.8% 監視精度</div>
+                    <div class="feature-metric">健康管理</div>
+                </div>
+                <a href="#" class="feature-link">詳細を見る</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">[食料]</div>
+                <div class="feature-title">食料管理システム</div>
+                <div class="feature-description">
+                    食料在庫管理・栄養バランス・保存期間管理システム。乗組員の栄養を最適化。
+                </div>
+                <div class="feature-metrics">
+                    <div class="feature-metric">94.3% 効率</div>
+                    <div class="feature-metric">栄養管理</div>
+                </div>
+                <a href="#" class="feature-link">詳細を見る</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">[廃棄物]</div>
+                <div class="feature-title">廃棄物処理システム</div>
+                <div class="feature-description">
+                    廃棄物分類・処理・再利用システム。宇宙環境での持続可能な生活を支援。
+                </div>
+                <div class="feature-metrics">
+                    <div class="feature-metric">92.7% 処理効率</div>
+                    <div class="feature-metric">循環利用</div>
+                </div>
+                <a href="#" class="feature-link">詳細を見る</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 環境パラメータチャート
+        const environmentParamsCtx = document.getElementById('environmentParamsChart').getContext('2d');
+        new Chart(environmentParamsCtx, {
+            type: 'line',
+            data: {
+                labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
+                datasets: [{
+                    label: '酸素濃度 (%)',
+                    data: [21.0, 20.8, 21.1, 20.9, 21.0, 20.7],
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }, {
+                    label: '二酸化炭素 (%)',
+                    data: [0.04, 0.05, 0.03, 0.04, 0.05, 0.06],
+                    borderColor: '#764ba2',
+                    backgroundColor: 'rgba(118, 75, 162, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '大気組成の時間変化'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: '濃度 (%)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // 乗組員健康状態チャート
+        const crewHealthCtx = document.getElementById('crewHealthChart').getContext('2d');
+        new Chart(crewHealthCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['良好', '注意', '要観察', '要治療'],
+                datasets: [{
+                    data: [85, 10, 4, 1],
+                    backgroundColor: [
+                        '#667eea',
+                        '#764ba2',
+                        '#F39C12',
+                        '#E74C3C'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '乗組員健康状態分布'
+                    }
+                }
+            }
+        });
+    </script>
+
+    <!-- ライセンス・権利情報 -->
+    <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 15px; padding: 25px; margin: 30px auto; max-width: 1200px; border: 3px solid #f59e0b; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);">
+        <h2 style="color: #92400e; margin-bottom: 20px; text-align: center; font-size: 1.5rem;">ライセンス・権利情報</h2>
+        
+        <div style="background: white; padding: 20px; border-radius: 10px; color: #1e3a8a; line-height: 2;">
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">著作権:</strong> &copy; 2025 小川清志（おがわ せいじ）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">開発期間:</strong> 2025年6月～2025年10月（個人事業主として）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">開発目的:</strong> 技術研究・ポートフォリオ作成・転職活動用
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">用途:</strong> 個人研究目的（非商用）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">ライセンス:</strong> MIT License
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">公開範囲:</strong> 個人ポートフォリオサイト、GitHub（技術実証目的）
+            </div>
+            
+            <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #f59e0b;">
+                <strong style="color: #92400e;">重要事項:</strong>
+                <p style="color: #78350f; margin-top: 10px;">
+                    本システムは、個人事業主として独自に研究開発したものであり、
+                    特定の企業・組織の業務とは一切関係ありません。<br>
+                    全ての知的財産権は開発者個人（小川清志）に帰属します。<br>
+                    本システムの技術内容・アイデアは、入社前の個人研究として確立されたものです。
+                </p>
+            </div>
+            
+            <div style="background: #dbeafe; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #3b82f6;">
+                <strong style="color: #1e40af;">タイムスタンプ:</strong>
+                <p style="color: #1e3a8a; margin-top: 10px;">
+                    最終更新日: 2025年10月26日<br>
+                    GitHub最終コミット: 2025年10月26日<br>
+                    確定日付: 入社前（個人開発期間中）
+                </p>
+            </div>
+            
+            <div style="background: #d1fae5; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #10b981;">
+                <strong style="color: #047857;">連絡先:</strong>
+                <p style="color: #065f46; margin-top: 10px;">
+                    開発者: 小川清志（おがわ せいじ）<br>
+                    Email: kaho052514@gmail.com<br>
+                    電話: 080-4271-5479
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>

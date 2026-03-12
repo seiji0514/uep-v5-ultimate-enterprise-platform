@@ -1,0 +1,17 @@
+# このファイルを .env にリネームして使用してください
+# サーバー設定
+SERVER_HOST=0.0.0.0
+SERVER_PORT=8001
+
+# OpenAI API Key（オプション）
+# 設定すると、より高精度な音声認識と応答生成が可能です
+# OPENAI_API_KEY=your_api_key_here
+
+# Whisperモデル（tiny, base, small, medium, large）
+# WHISPER_MODEL=base
+
+# AIモデル
+# AI_MODEL=gpt-3.5-turbo
+
+# TTSエンジン（pyttsx3, transformers）
+# TTS_ENGINE=pyttsx3

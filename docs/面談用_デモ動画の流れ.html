@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>面談用 デモの流れ</title>
+  <style>
+    body { font-family: "Yu Gothic", "Meiryo", sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; line-height: 1.6; font-size: 0.9rem; color: #333; }
+    h1 { font-size: 1.4rem; border-bottom: 2px solid #333; padding-bottom: 0.5rem; margin-bottom: 1rem; }
+    h2 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.5rem; color: #333; }
+    h3 { font-size: 1rem; margin-top: 1rem; margin-bottom: 0.3rem; color: #555; }
+    table { width: 100%; border-collapse: collapse; margin: 0.5rem 0; font-size: 0.9rem; }
+    th, td { border: 1px solid #666; padding: 0.5rem 0.8rem; text-align: left; }
+    th { background: #f0f0f0; font-weight: bold; }
+    ul { margin: 0.3rem 0; padding-left: 1.5rem; }
+    p { margin: 0.5rem 0; }
+    code { font-family: "Consolas", "Monaco", monospace; background: #f5f5f5; padding: 0.2rem 0.4rem; }
+    hr { border: none; border-top: 1px solid #ccc; margin: 1rem 0; }
+    .meta { color: #666; font-size: 0.85rem; margin-bottom: 1.5rem; }
+    @media print { body { padding: 1rem; } }
+  </style>
+</head>
+<body>
+
+<h1>面談用 デモの流れ</h1>
+<p class="meta">作成日: 2026年2月26日　用途: type フェア・Wantedly 面談でのデモ</p>
+
+<hr>
+
+<h2>方針：ライブデモ ＋ チャット説明</h2>
+<p><strong>動画は作成しない</strong>。面談中に画面共有で実物をライブデモし、チャットに説明文を送る。</p>
+<ul>
+  <li><strong>チャット説明文</strong>: <code>面談用_ライブデモ_チャット説明文.txt</code> を参照</li>
+  <li>各画面表示時に、該当する説明文をコピペしてチャットに送信</li>
+</ul>
+
+<hr>
+
+<h2>デモの構成（2パート）</h2>
+<table>
+  <tr><th style="width:25%">動画</th><th style="width:15%">長さ</th><th>内容</th></tr>
+  <tr><td><strong>パート1</strong></td><td>約2分</td><td>UEP v5.0 統合基盤・7コアシステム</td></tr>
+  <tr><td><strong>パート2</strong></td><td>約1分</td><td>インクルーシブ雇用AI</td></tr>
+</table>
+
+<hr>
+
+<h2>パート1: UEP v5.0（約2分）</h2>
+
+<h3>デモ前の準備</h3>
+<ol>
+  <li>バックエンド起動: <code>start-backend.bat</code></li>
+  <li>フロントエンド起動: <code>start-frontend.bat</code> または <code>npm start</code></li>
+  <li>ログイン: <code>kaho0525</code> / <code>kaho052514</code></li>
+  <li><code>面談用_ライブデモ_チャット説明文.txt</code> を開いておく</li>
+</ol>
+
+<h3>流れ（表示順）</h3>
+<table>
+  <tr><th style="width:8%">順</th><th style="width:15%">画面</th><th>内容</th><th style="width:12%">時間</th></tr>
+  <tr><td>1</td><td>ログイン画面</td><td>http://localhost:3000 にアクセス、ログイン</td><td>10秒</td></tr>
+  <tr><td>2</td><td>ダッシュボード</td><td>7つのコアシステムを一覧表示。サイドバーを軽く説明</td><td>20秒</td></tr>
+  <tr><td>3</td><td>Swagger UI</td><td>http://localhost:8000/docs を開く。APIエンドポイント一覧を表示</td><td>15秒</td></tr>
+  <tr><td>4</td><td>MLOps</td><td>サイドバーからMLOpsを選択。パイプライン一覧を表示</td><td>15秒</td></tr>
+  <tr><td>5</td><td>生成AI</td><td>生成AIを選択。テキスト生成またはRAG画面を表示</td><td>15秒</td></tr>
+  <tr><td>6</td><td>セキュリティコマンドセンター</td><td>セキュリティコマンドセンターを選択。イベント一覧を表示</td><td>10秒</td></tr>
+  <tr><td>7</td><td>クラウドインフラ</td><td>クラウドインフラを選択。リソース一覧を表示</td><td>10秒</td></tr>
+</table>
+<p>※各画面表示時に、チャット説明文をコピペして送信</p>
+
+<hr>
+
+<h2>パート2: インクルーシブ雇用AI（約1分）</h2>
+
+<h3>デモ前の準備</h3>
+<ol>
+  <li>UEP v5.0 が起動済みであること</li>
+  <li>ログイン済みであること</li>
+</ol>
+
+<h3>流れ（表示順）</h3>
+<table>
+  <tr><th style="width:8%">順</th><th style="width:20%">画面</th><th>内容</th><th style="width:12%">時間</th></tr>
+  <tr><td>1</td><td>サイドバー</td><td>「インクルーシブ雇用AI」をクリック</td><td>5秒</td></tr>
+  <tr><td>2</td><td>インクルーシブ雇用AI画面</td><td>障害者雇用マッチング、アクセシビリティ評価の画面を表示</td><td>20秒</td></tr>
+  <tr><td>3</td><td>主要機能</td><td>マッチング、相談、評価エージェントのオーケストレーションを説明</td><td>20秒</td></tr>
+  <tr><td>4</td><td>当事者視点UX評価</td><td>企業サイトのアクセシビリティ評価（WCAG 2.1）の説明</td><td>15秒</td></tr>
+</table>
+<p>※各画面表示時に、チャット説明文をコピペして送信</p>
+
+<hr>
+
+<h2>ライブデモのコツ</h2>
+<table>
+  <tr><th style="width:25%">項目</th><th>ポイント</th></tr>
+  <tr><td><strong>マウス</strong></td><td>ゆっくり動かす。クリック箇所を明確に</td></tr>
+  <tr><td><strong>チャット</strong></td><td>画面を表示してから説明文を送る。先に送ってもOK</td></tr>
+  <tr><td><strong>長さ</strong></td><td>各パート1〜2分程度。相手の反応を見て調整</td></tr>
+</table>
+
+<hr>
+
+<h2>トラブル時の代替</h2>
+<ul>
+  <li>画面共有が不安定な場合 → チャット説明文＋スクリーンショットを事前に送付</li>
+  <li>起動に失敗した場合 → スクリーンショットをスライド（PDF）にまとめて共有</li>
+</ul>
+
+<hr>
+<p><em>以上</em></p>
+
+</body>
+</html>

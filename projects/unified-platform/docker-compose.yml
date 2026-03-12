@@ -1,0 +1,87 @@
+# Phase 1-2: Unified Platform - Medical + Aviation + Space
+services:
+  app:
+    build:
+      context: .
+      args:
+        - VITE_APP_TITLE=${VITE_APP_TITLE:-統合基盤プラットフォーム}
+    ports:
+      - "0.0.0.0:8000:8000"
+    environment:
+      DEMO_LOGIN_ENABLED: "${DEMO_LOGIN_ENABLED:-false}"  # 専門システムのためデフォルト無効
+      DATABASE_URL: postgresql+asyncpg://unified:unified@db:5432/unified
+      DATABASE_URL_SYNC: postgresql://unified:unified@db:5432/unified
+      REDIS_URL: redis://redis:6379/0
+      JWT_SECRET: ${JWT_SECRET:-unified-prod-secret-change-me}
+      JWT_EXPIRE_MINUTES: ${JWT_EXPIRE_MINUTES:-30}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      AUDIT_LOG_ENABLED: "true"
+      DEPLOY_MODE: ${DEPLOY_MODE:-default}
+      NASA_API_KEY: ${NASA_API_KEY:-}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: unified
+      POSTGRES_PASSWORD: unified
+      POSTGRES_DB: unified
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"  # ホスト 5433（WSL 内 PostgreSQL と競合回避）
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U unified"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6380:6379"  # ホスト 6380（WSL 内 Redis と競合回避）
+    volumes:
+      - redisdata:/data
+
+  # Phase 3: Monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./k8s/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./k8s/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+    ports:
+      - "9090:9090"
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+    profiles:
+      - monitoring
+
+  grafana:
+    image: grafana/grafana:latest
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafanadata:/var/lib/grafana
+    depends_on:
+      - prometheus
+    profiles:
+      - monitoring
+
+volumes:
+  pgdata:
+  redisdata:
+  grafanadata:

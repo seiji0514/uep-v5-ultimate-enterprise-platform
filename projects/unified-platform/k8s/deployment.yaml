@@ -1,0 +1,92 @@
+# Phase 3: Kubernetes - Unified Platform
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: unified-platform
+  labels:
+    app: unified-platform
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: unified-platform
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: unified-platform
+    spec:
+      containers:
+      - name: app
+        image: unified-platform:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: unified-secrets
+              key: database-url
+        - name: REDIS_URL
+          valueFrom:
+            configMapKeyRef:
+              name: unified-config
+              key: redis-url
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: unified-secrets
+              key: jwt-secret
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 15
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: unified-platform
+spec:
+  selector:
+    app: unified-platform
+  ports:
+  - port: 80
+    targetPort: 8000
+  type: ClusterIP
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: unified-config
+data:
+  redis-url: "redis://redis:6379/0"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: unified-secrets
+type: Opaque
+stringData:
+  database-url: "postgresql+asyncpg://unified:unified@postgres:5432/unified"
+  jwt-secret: "change-me-in-production"

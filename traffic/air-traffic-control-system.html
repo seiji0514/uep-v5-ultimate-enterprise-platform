@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✈️ 航空管制システム - 技術仕様書 & 設計思想</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 50%, #1abc9c 100%);
+            color: #333;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .main-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .panel-title {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .panel-content {
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+
+        .panel-content p {
+            margin-bottom: 25px;
+            font-size: 1.2rem;
+            text-align: center;
+            color: #34495e;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .tech-card {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .tech-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+        }
+
+        .tech-icon {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            display: block;
+            text-align: center;
+        }
+
+        .tech-title {
+            color: white;
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .tech-specs {
+            list-style: none;
+            color: white;
+        }
+
+        .tech-specs li {
+            padding: 8px 0;
+            font-size: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .tech-specs li:last-child {
+            border-bottom: none;
+        }
+
+        .tech-specs li::before {
+            content: '✈️';
+            margin-right: 10px;
+            color: #f39c12;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .back-button:hover {
+            background: linear-gradient(135deg, #ee5a24 0%, #ff6b6b 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.6);
+        }
+
+        .atc-dashboard {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .atc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .atc-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .atc-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+
+        .atc-data {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #3498db;
+            margin: 10px 0;
+        }
+
+        .atc-label {
+            color: #34495e;
+            font-size: 0.9rem;
+        }
+
+        .control-panel {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            color: white;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .emergency-status {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .status-indicator {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            margin: 20px 0;
+        }
+
+        .real-time-monitoring {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+
+        .monitoring-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .monitoring-item {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            border-radius: 10px;
+            color: white;
+        }
+
+        .monitoring-value {
+            font-size: 2rem;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .monitoring-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 20px 15px;
+            }
+            
+            .tech-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .panel-title {
+                font-size: 2rem;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <a href="main-navigation-site.html" class="back-button">← メインサイトに戻る</a>
+
+    <div class="header">
+        <h1>✈️ 航空管制システム</h1>
+        <p>技術仕様書 & 設計思想 - 統合航空管制・空域管理・飛行安全・交通管制プラットフォーム</p>
+    </div>
+
+    <div class="container">
+        <!-- システム制御パネル -->
+        <div class="main-panel">
+            <h2 class="panel-title">🎛️ システム制御パネル</h2>
+            <div class="control-panel">
+                <h3 style="text-align: center; margin-bottom: 20px; font-size: 1.5rem;">🛠️ システム制御</h3>
+                <div class="control-buttons">
+                    <button class="control-btn" onclick="startSystem()">システム開始</button>
+                    <button class="control-btn" onclick="stopSystem()">システム停止</button>
+                    <button class="control-btn" onclick="runSimulation()">シミュレーション実行</button>
+                    <button class="control-btn" onclick="exportData()">データエクスポート</button>
+                    <button class="control-btn" onclick="generateReport()">レポート生成</button>
+                    <button class="control-btn" onclick="emergencyStop()" style="background: #e74c3c;">緊急停止</button>
+                </div>
+                <div id="systemStatus" style="text-align: center; margin-top: 20px; font-weight: bold; color: #1e90ff;">待機中</div>
+            </div>
+        </div>
+        <!-- リアルタイム監視 -->
+        <div class="main-panel">
+            <h2 class="panel-title">📊 リアルタイム監視</h2>
+            <div class="data-display">
+                <h3 style="text-align: center; margin-bottom: 20px; color: #1e90ff; font-size: 1.3rem; font-weight: bold; text-shadow: 0 0 15px rgba(30, 144, 255, 0.5);">航空管制データ監視</h3>
+                <div class="data-grid">
+                    <div class="data-item">
+                        <div class="data-value" id="activeFlights">128</div>
+                        <div class="data-label">管制中航空機数</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-value" id="landings">32</div>
+                        <div class="data-label">着陸回数</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-value" id="takeoffs">30</div>
+                        <div class="data-label">離陸回数</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-value" id="delays">2</div>
+                        <div class="data-label">遅延発生数</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-value" id="controllerRate">92.5%</div>
+                        <div class="data-label">管制官稼働率</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-value" id="weatherAlerts">1</div>
+                        <div class="data-label">天候警報数</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-value" id="systemUptime">99.99%</div>
+                        <div class="data-label">システム稼働率</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- シミュレーションパネル -->
+        <div class="main-panel">
+            <h2 class="panel-title">🎮 システムシミュレーション</h2>
+            <div class="simulation-panel">
+                <h3 style="text-align: center; margin-bottom: 20px; color: #1e90ff;">航空管制シミュレーション</h3>
+                <div class="control-buttons">
+                    <button class="control-btn" onclick="runTrafficSimulation()">航空機流量シミュレーション</button>
+                    <button class="control-btn" onclick="runDelaySimulation()">遅延シミュレーション</button>
+                    <button class="control-btn" onclick="runWeatherSimulation()">天候影響シミュレーション</button>
+                    <button class="control-btn" onclick="runEmergencySimulation()">緊急対応シミュレーション</button>
+                </div>
+                <div class="chart-container">
+                    <canvas id="simulationChart" width="800" height="300" style="position: absolute; top: 0; left: 0; z-index: 1;"></canvas>
+                    <div id="chartInfo" style="position: absolute; top: 10px; left: 10px; color: #1e90ff; font-weight: bold; z-index: 2;">シミュレーション準備完了</div>
+                </div>
+            </div>
+        </div>
+        <!-- システム概要 -->
+        <div class="main-panel fade-in">
+            <h2 class="panel-title">✈️ システム概要</h2>
+            <div class="panel-content">
+                <p>統合航空管制システムは、航空機の安全な飛行を確保するための包括的な管制・監視・通信プラットフォームです。</p>
+                
+                <div class="tech-grid">
+                    <div class="tech-card">
+                        <span class="tech-icon">📡</span>
+                        <h3 class="tech-title">航空機監視システム</h3>
+                        <ul class="tech-specs">
+                            <li><strong>レーダー監視:</strong> 一次・二次レーダー監視</li>
+                            <li><strong>ADS-B監視:</strong> 自動従属監視システム</li>
+                            <li><strong>衛星監視:</strong> 衛星ベース監視システム</li>
+                            <li><strong>飛行計画:</strong> 飛行計画管理システム</li>
+                            <li><strong>位置追跡:</strong> リアルタイム位置追跡</li>
+                            <li><strong>高度監視:</strong> 飛行高度監視システム</li>
+                        </ul>
+                    </div>
+
+                    <div class="tech-card">
+                        <span class="tech-icon">🎯</span>
+                        <h3 class="tech-title">空域管理システム</h3>
+                        <ul class="tech-specs">
+                            <li><strong>空域区分:</strong> 管制空域・非管制空域管理</li>
+                            <li><strong>飛行経路:</strong> 飛行経路設計・管理</li>
+                            <li><strong>制限空域:</strong> 制限空域・危険空域管理</li>
+                            <li><strong>気象情報:</strong> 空域気象情報提供</li>
+                            <li><strong>衝突回避:</strong> 航空機衝突回避システム</li>
+                            <li><strong>緊急対応:</strong> 緊急事態対応システム</li>
+                        </ul>
+                    </div>
+
+                    <div class="tech-card">
+                        <span class="tech-icon">📞</span>
+                        <h3 class="tech-title">通信システム</h3>
+                        <ul class="tech-specs">
+                            <li><strong>音声通信:</strong> 管制官・パイロット間通信</li>
+                            <li><strong>データ通信:</strong> デジタルデータ通信</li>
+                            <li><strong>緊急通信:</strong> 緊急時通信システム</li>
+                            <li><strong>衛星通信:</strong> 衛星通信システム</li>
+                            <li><strong>地上通信:</strong> 地上通信ネットワーク</li>
+                            <li><strong>記録システム:</strong> 通信記録・保存</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- リアルタイム航空管制監視 -->
+        <div class="main-panel fade-in">
+            <h2 class="panel-title">📊 リアルタイム航空管制監視</h2>
+            <div class="panel-content">
+                <p>現在の航空管制状況とリアルタイム監視データ</p>
+                
+                <!-- システム制御パネル -->
+                <div class="control-panel" style="margin-bottom: 30px;">
+                    <h3 style="text-align: center; margin-bottom: 20px; font-size: 1.8rem;">🛠️ システム制御パネル</h3>
+                    <div class="control-buttons">
+                        <button class="control-btn" onclick="startATCSystem()">システム開始</button>
+                        <button class="control-btn" onclick="stopATCSystem()">システム停止</button>
+                        <button class="control-btn" onclick="emergencyStop()" style="background: #e74c3c;">緊急停止</button>
+                        <button class="control-btn" onclick="resetATCSystem()">システムリセット</button>
+                        <button class="control-btn" onclick="exportATCData()">データエクスポート</button>
+                        <button class="control-btn" onclick="startAdvancedSimulation()">高度シミュレーション開始</button>
+                    </div>
+                    <div id="atcSystemStatus" style="text-align: center; margin-top: 20px; font-weight: bold; color: #f39c12;">待機中</div>
+                </div>
+                
+                <div class="real-time-monitoring">
+                    <div class="monitoring-grid">
+                        <div class="monitoring-item">
+                            <span class="monitoring-value" id="activeFlights">0</span>
+                            <span class="monitoring-label">アクティブ飛行機数</span>
+                        </div>
+                        <div class="monitoring-item">
+                            <span class="monitoring-value" id="airspaceUtilization">0%</span>
+                            <span class="monitoring-label">空域利用率</span>
+                        </div>
+                        <div class="monitoring-item">
+                            <span class="monitoring-value" id="weatherCondition">良好</span>
+                            <span class="monitoring-label">気象条件</span>
+                        </div>
+                        <div class="monitoring-item">
+                            <span class="monitoring-value" id="communicationStatus">正常</span>
+                            <span class="monitoring-label">通信状態</span>
+                        </div>
+                        <div class="monitoring-item">
+                            <span class="monitoring-value" id="safetyLevel">安全</span>
+                            <span class="monitoring-label">安全レベル</span>
+                        </div>
+                        <div class="monitoring-item">
+                            <span class="monitoring-value" id="emergencyAlerts">0</span>
+                            <span class="monitoring-label">緊急警報数</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 航空管制システム -->
+        <div class="main-panel fade-in">
+            <h2 class="panel-title">🎯 航空管制システム</h2>
+            <div class="panel-content">
+                <p>AI支援による航空管制と飛行安全システム</p>
+                
+                <div class="control-panel">
+                    <h3 style="text-align: center; margin-bottom: 20px; font-size: 1.8rem;">管制制御パネル</h3>
+                    <div class="control-buttons">
+                        <button class="control-btn" onclick="activateFlightControl()">飛行管制開始</button>
+                        <button class="control-btn" onclick="activateAirspaceManagement()">空域管理開始</button>
+                        <button class="control-btn" onclick="activateCollisionAvoidance()">衝突回避開始</button>
+                        <button class="control-btn" onclick="activateWeatherMonitoring()">気象監視開始</button>
+                        <button class="control-btn" onclick="activateEmergencyResponse()">緊急対応開始</button>
+                        <button class="control-btn" onclick="activateCommunicationSystem()">通信システム開始</button>
+                    </div>
+                    <div id="atcControlStatus" style="text-align: center; margin-top: 20px; font-weight: bold; color: #f39c12;">待機中</div>
+                </div>
+
+                <div class="atc-grid">
+                    <div class="atc-card">
+                        <h3>✈️ 飛行管制</h3>
+                        <div class="atc-data" id="flightControlStatus">正常</div>
+                        <div class="atc-label">現在の飛行管制状態</div>
+                    </div>
+                    <div class="atc-card">
+                        <h3>🗺️ 空域管理</h3>
+                        <div class="atc-data" id="airspaceStatus">正常</div>
+                        <div class="atc-label">空域管理状態</div>
+                    </div>
+                    <div class="atc-card">
+                        <h3>⚠️ 衝突回避</h3>
+                        <div class="atc-data" id="collisionStatus">安全</div>
+                        <div class="atc-label">衝突回避システム状態</div>
+                    </div>
+                    <div class="atc-card">
+                        <h3>🌤️ 気象監視</h3>
+                        <div class="atc-data" id="weatherStatus">良好</div>
+                        <div class="atc-label">気象監視状態</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 飛行安全システム -->
+        <div class="main-panel fade-in">
+            <h2 class="panel-title">🛡️ 飛行安全システム</h2>
+            <div class="panel-content">
+                <p>航空機の安全な飛行を確保する安全システム</p>
+                
+                <div class="control-panel">
+                    <h3 style="text-align: center; margin-bottom: 20px; font-size: 1.8rem;">安全システム制御パネル</h3>
+                    <div class="control-buttons">
+                        <button class="control-btn" onclick="activateSafetyMonitoring()">安全監視開始</button>
+                        <button class="control-btn" onclick="activateRiskAssessment()">リスク評価開始</button>
+                        <button class="control-btn" onclick="activateEmergencyProcedures()">緊急手順開始</button>
+                        <button class="control-btn" onclick="activateIncidentReporting()">インシデント報告開始</button>
+                        <button class="control-btn" onclick="activateSafetyTraining()">安全訓練開始</button>
+                        <button class="control-btn" onclick="activateSafetyAnalysis()">安全分析開始</button>
+                    </div>
+                    <div id="safetySystemStatus" style="text-align: center; margin-top: 20px; font-weight: bold; color: #f39c12;">待機中</div>
+                </div>
+
+                <div class="tech-grid">
+                    <div class="tech-card">
+                        <span class="tech-icon">🛡️</span>
+                        <h3 class="tech-title">安全監視システム</h3>
+                        <ul class="tech-specs">
+                            <li><strong>飛行監視:</strong> 航空機飛行状態監視</li>
+                            <li><strong>設備監視:</strong> 管制設備状態監視</li>
+                            <li><strong>環境監視:</strong> 飛行環境条件監視</li>
+                            <li><strong>通信監視:</strong> 通信システム監視</li>
+                            <li><strong>記録管理:</strong> 安全記録管理</li>
+                            <li><strong>分析機能:</strong> 安全データ分析</li>
+                        </ul>
+                    </div>
+
+                    <div class="tech-card">
+                        <span class="tech-icon">📋</span>
+                        <h3 class="tech-title">安全手順管理</h3>
+                        <ul class="tech-specs">
+                            <li><strong>標準手順:</strong> 標準安全手順</li>
+                            <li><strong>緊急手順:</strong> 緊急時安全手順</li>
+                            <li><strong>訓練プログラム:</strong> 安全訓練プログラム</li>
+                            <li><strong>評価システム:</strong> 安全評価システム</li>
+                            <li><strong>改善プロセス:</strong> 継続的安全改善</li>
+                            <li><strong>報告システム:</strong> 安全インシデント報告</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 交通管制システム -->
+        <div class="main-panel fade-in">
+            <h2 class="panel-title">🚦 交通管制システム</h2>
+            <div class="panel-content">
+                <p>航空交通の効率的な管制と最適化システム</p>
+                
+                <div class="control-panel" style="margin-bottom: 30px;">
+                    <h3 style="text-align: center; margin-bottom: 20px; font-size: 1.8rem;">🚦 交通管制制御パネル</h3>
+                    <div class="control-buttons">
+                        <button class="control-btn" onclick="activateTrafficFlow()">交通流管制開始</button>
+                        <button class="control-btn" onclick="activateCapacityManagement()">容量管理開始</button>
+                        <button class="control-btn" onclick="activateDelayManagement()">遅延管理開始</button>
+                    </div>
+                    <div id="trafficControlStatus" style="text-align: center; margin-top: 20px; font-weight: bold; color: #f39c12;">待機中</div>
+                </div>
+                
+                <div class="emergency-status">
+                    <h3>交通管制管理</h3>
+                    <div class="status-indicator">
+                        <div style="text-align: center;">
+                            <h4>🚦 交通管制システム</h4>
+                            <p>航空交通流の最適化</p>
+                            <p>空域容量の効率的利用</p>
+                            <p>遅延の最小化</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tech-grid">
+                    <div class="tech-card">
+                        <span class="tech-icon">📊</span>
+                        <h3 class="tech-title">交通流管制</h3>
+                        <ul class="tech-specs">
+                            <li><strong>交通流監視:</strong> 航空交通流の監視</li>
+                            <li><strong>最適化:</strong> 交通流の最適化</li>
+                            <li><strong>予測分析:</strong> 交通流予測分析</li>
+                            <li><strong>調整機能:</strong> 交通流調整機能</li>
+                            <li><strong>効率化:</strong> 飛行効率の向上</li>
+                            <li><strong>環境配慮:</strong> 環境への配慮</li>
+                        </ul>
+                    </div>
+
+                    <div class="tech-card">
+                        <span class="tech-icon">⚡</span>
+                        <h3 class="tech-title">容量管理</h3>
+                        <ul class="tech-specs">
+                            <li><strong>空域容量:</strong> 空域容量の管理</li>
+                            <li><strong>空港容量:</strong> 空港容量の管理</li>
+                            <li><strong>設備容量:</strong> 管制設備容量管理</li>
+                            <li><strong>人員配置:</strong> 管制官配置最適化</li>
+                            <li><strong>時間管理:</strong> 時間枠の効率的管理</li>
+                            <li><strong>予約システム:</strong> スロット予約システム</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 技術仕様詳細 -->
+        <div class="main-panel fade-in">
+            <h2 class="panel-title">🔧 技術仕様詳細</h2>
+            <div class="panel-content">
+                <p>システムの詳細な技術仕様と実装要件</p>
+                
+                <div class="tech-grid">
+                    <div class="tech-card">
+                        <span class="tech-icon">⚙️</span>
+                        <h3 class="tech-title">システム要件</h3>
+                        <ul class="tech-specs">
+                            <li><strong>CPU:</strong> 高性能マルチコアプロセッサ</li>
+                            <li><strong>メモリ:</strong> 512GB以上RAM</li>
+                            <li><strong>ストレージ:</strong> 100TB以上SSD</li>
+                            <li><strong>ネットワーク:</strong> 400Gbps高速通信</li>
+                            <li><strong>レーダー精度:</strong> 0.1m位置精度</li>
+                            <li><strong>データ更新頻度:</strong> 0.01秒間隔</li>
+                        </ul>
+                    </div>
+
+                    <div class="tech-card">
+                        <span class="tech-icon">🔐</span>
+                        <h3 class="tech-title">セキュリティ要件</h3>
+                        <ul class="tech-specs">
+                            <li><strong>データ暗号化:</strong> AES-2048暗号化</li>
+                            <li><strong>認証システム:</strong> 多要素認証</li>
+                            <li><strong>アクセス制御:</strong> ゼロトラストセキュリティ</li>
+                            <li><strong>監査ログ:</strong> 完全な操作ログ</li>
+                            <li><strong>バックアップ:</strong> リアルタイムバックアップ</li>
+                            <li><strong>災害復旧:</strong> 99.9999%可用性</li>
+                        </ul>
+                    </div>
+
+                    <div class="tech-card">
+                        <span class="tech-icon">🌐</span>
+                        <h3 class="tech-title">API仕様</h3>
+                        <ul class="tech-specs">
+                            <li><strong>RESTful API:</strong> 標準HTTP API</li>
+                            <li><strong>WebSocket:</strong> リアルタイム通信</li>
+                            <li><strong>GraphQL:</strong> 柔軟なデータ取得</li>
+                            <li><strong>認証:</strong> OAuth 2.0認証</li>
+                            <li><strong>レート制限:</strong> 100000req/min</li>
+                            <li><strong>ドキュメント:</strong> OpenAPI仕様</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 設計思想 -->
+        <div class="main-panel fade-in">
+            <h2 class="panel-title">💡 設計思想</h2>
+            <div class="panel-content">
+                <p>航空管制システムの設計哲学と理念</p>
+                
+                <div class="tech-grid">
+                    <div class="tech-card">
+                        <span class="tech-icon">🎯</span>
+                        <h3 class="tech-title">設計理念</h3>
+                        <ul class="tech-specs">
+                            <li><strong>安全第一:</strong> 飛行安全を最優先</li>
+                            <li><strong>効率性:</strong> 航空交通の効率化</li>
+                            <li><strong>精度重視:</strong> 高精度な管制システム</li>
+                            <li><strong>信頼性:</strong> 99.9999%のシステム可用性</li>
+                            <li><strong>拡張性:</strong> 将来技術への対応</li>
+                            <li><strong>ユーザビリティ:</strong> 直感的な操作</li>
+                        </ul>
+                    </div>
+
+                    <div class="tech-card">
+                        <span class="tech-icon">🌍</span>
+                        <h3 class="tech-title">社会貢献</h3>
+                        <ul class="tech-specs">
+                            <li><strong>飛行安全:</strong> 航空機の安全な飛行確保</li>
+                            <li><strong>交通効率:</strong> 航空交通の効率化</li>
+                            <li><strong>環境配慮:</strong> 環境への配慮</li>
+                            <li><strong>経済効果:</strong> 航空産業の発展支援</li>
+                            <li><strong>教育支援:</strong> 航空管制教育の支援</li>
+                            <li><strong>研究支援:</strong> 航空管制研究の支援</li>
+                        </ul>
+                    </div>
+
+                    <div class="tech-card">
+                        <span class="tech-icon">🔮</span>
+                        <h3 class="tech-title">将来展望</h3>
+                        <ul class="tech-specs">
+                            <li><strong>AI進化:</strong> より高精度な管制支援</li>
+                            <li><strong>自動化:</strong> 高度な自動管制システム</li>
+                            <li><strong>統合化:</strong> 他システムとの統合強化</li>
+                            <li><strong>グローバル化:</strong> 世界規模での展開</li>
+                            <li><strong>環境対応:</strong> 環境配慮の強化</li>
+                            <li><strong>新技術活用:</strong> 最新技術の活用</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // フェードインアニメーション
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // すべてのパネルを監視
+        document.querySelectorAll('.main-panel').forEach(panel => {
+            panel.style.opacity = '0';
+            panel.style.transform = 'translateY(30px)';
+            panel.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            observer.observe(panel);
+        });
+
+        // システム制御変数
+        let atcSystemStatus = '待機中';
+        let simulationActive = false;
+        let controlSystemActive = false;
+        let safetySystemActive = false;
+        let trafficControlActive = false;
+
+        // リアルタイムデータ更新
+        function updateATCData() {
+            const activeFlights = Math.floor(Math.random() * 1000) + 100;
+            const airspaceUtilization = Math.floor(Math.random() * 80) + 20;
+            const weatherConditions = ['良好', '注意', '悪化', '危険'];
+            const weatherCondition = weatherConditions[Math.floor(Math.random() * 4)];
+            const communicationStatuses = ['正常', '注意', '障害'];
+            const communicationStatus = communicationStatuses[Math.floor(Math.random() * 3)];
+            const safetyLevels = ['安全', '注意', '警戒', '危険'];
+            const safetyLevel = safetyLevels[Math.floor(Math.random() * 4)];
+            const emergencyAlerts = Math.floor(Math.random() * 5);
+
+            document.getElementById('activeFlights').textContent = activeFlights;
+            document.getElementById('airspaceUtilization').textContent = airspaceUtilization + '%';
+            document.getElementById('weatherCondition').textContent = weatherCondition;
+            document.getElementById('communicationStatus').textContent = communicationStatus;
+            document.getElementById('safetyLevel').textContent = safetyLevel;
+            document.getElementById('emergencyAlerts').textContent = emergencyAlerts;
+        }
+
+        // 5秒間隔でデータ更新
+        setInterval(updateATCData, 5000);
+
+        // システム制御機能
+        function startATCSystem() {
+            atcSystemStatus = '稼働中';
+            simulationActive = true;
+            updateSystemStatus();
+            console.log('航空管制システム: システム開始');
+        }
+
+        function stopATCSystem() {
+            atcSystemStatus = '停止中';
+            simulationActive = false;
+            updateSystemStatus();
+            console.log('航空管制システム: システム停止');
+        }
+
+        function emergencyStop() {
+            atcSystemStatus = '緊急停止';
+            simulationActive = false;
+            controlSystemActive = false;
+            safetySystemActive = false;
+            trafficControlActive = false;
+            updateSystemStatus();
+            console.log('航空管制システム: 緊急停止実行');
+        }
+
+        function resetATCSystem() {
+            atcSystemStatus = 'リセット中';
+            simulationActive = false;
+            controlSystemActive = false;
+            safetySystemActive = false;
+            trafficControlActive = false;
+            setTimeout(() => {
+                atcSystemStatus = '待機中';
+                updateSystemStatus();
+            }, 2000);
+            console.log('航空管制システム: システムリセット');
+        }
+
+        function exportATCData() {
+            const exportData = {
+                timestamp: new Date().toISOString(),
+                systemStatus: atcSystemStatus,
+                simulationActive: simulationActive,
+                controlSystemActive: controlSystemActive,
+                safetySystemActive: safetySystemActive,
+                trafficControlActive: trafficControlActive,
+                atcData: {
+                    activeFlights: document.getElementById('activeFlights').textContent,
+                    airspaceUtilization: document.getElementById('airspaceUtilization').textContent,
+                    weatherCondition: document.getElementById('weatherCondition').textContent,
+                    communicationStatus: document.getElementById('communicationStatus').textContent,
+                    safetyLevel: document.getElementById('safetyLevel').textContent,
+                    emergencyAlerts: document.getElementById('emergencyAlerts').textContent
+                }
+            };
+            console.log('航空管制システムデータエクスポート:', exportData);
+            alert('航空管制システムデータをエクスポートしました。コンソールを確認してください。');
+        }
+
+        function updateSystemStatus() {
+            const statusElements = document.querySelectorAll('[id*="Status"]');
+            statusElements.forEach(element => {
+                if (element.id === 'atcSystemStatus') {
+                    element.textContent = atcSystemStatus;
+                    if (atcSystemStatus === '稼働中') {
+                        element.style.color = '#27ae60';
+                    } else if (atcSystemStatus === '停止中') {
+                        element.style.color = '#f39c12';
+                    } else if (atcSystemStatus === '緊急停止') {
+                        element.style.color = '#e74c3c';
+                    } else if (atcSystemStatus === 'リセット中') {
+                        element.style.color = '#9b59b6';
+                    } else {
+                        element.style.color = '#f39c12';
+                    }
+                } else if (element.id === 'atcControlStatus') {
+                    element.textContent = controlSystemActive ? '管制システム稼働中' : '待機中';
+                    element.style.color = controlSystemActive ? '#3498db' : '#f39c12';
+                } else if (element.id === 'safetySystemStatus') {
+                    element.textContent = safetySystemActive ? '安全システム稼働中' : '待機中';
+                    element.style.color = safetySystemActive ? '#27ae60' : '#f39c12';
+                } else if (element.id === 'trafficControlStatus') {
+                    element.textContent = trafficControlActive ? '交通管制システム稼働中' : '待機中';
+                    element.style.color = trafficControlActive ? '#e67e22' : '#f39c12';
+                }
+            });
+        }
+
+        // 航空管制システム機能
+        function activateFlightControl() {
+            controlSystemActive = true;
+            document.getElementById('atcControlStatus').textContent = '飛行管制稼働中';
+            document.getElementById('atcControlStatus').style.color = '#3498db';
+            document.getElementById('flightControlStatus').textContent = '稼働中';
+            console.log('航空管制システム: 飛行管制システム開始');
+        }
+
+        function activateAirspaceManagement() {
+            controlSystemActive = true;
+            document.getElementById('atcControlStatus').textContent = '空域管理稼働中';
+            document.getElementById('atcControlStatus').style.color = '#3498db';
+            document.getElementById('airspaceStatus').textContent = '稼働中';
+            console.log('航空管制システム: 空域管理システム開始');
+        }
+
+        function activateCollisionAvoidance() {
+            controlSystemActive = true;
+            document.getElementById('atcControlStatus').textContent = '衝突回避稼働中';
+            document.getElementById('atcControlStatus').style.color = '#3498db';
+            document.getElementById('collisionStatus').textContent = '稼働中';
+            console.log('航空管制システム: 衝突回避システム開始');
+        }
+
+        function activateWeatherMonitoring() {
+            controlSystemActive = true;
+            document.getElementById('atcControlStatus').textContent = '気象監視稼働中';
+            document.getElementById('atcControlStatus').style.color = '#3498db';
+            document.getElementById('weatherStatus').textContent = '稼働中';
+            console.log('航空管制システム: 気象監視システム開始');
+        }
+
+        function activateEmergencyResponse() {
+            controlSystemActive = true;
+            document.getElementById('atcControlStatus').textContent = '緊急対応稼働中';
+            document.getElementById('atcControlStatus').style.color = '#3498db';
+            console.log('航空管制システム: 緊急対応システム開始');
+        }
+
+        function activateCommunicationSystem() {
+            controlSystemActive = true;
+            document.getElementById('atcControlStatus').textContent = '通信システム稼働中';
+            document.getElementById('atcControlStatus').style.color = '#3498db';
+            console.log('航空管制システム: 通信システム開始');
+        }
+
+        // 飛行安全システム機能
+        function activateSafetyMonitoring() {
+            safetySystemActive = true;
+            document.getElementById('safetySystemStatus').textContent = '安全監視稼働中';
+            document.getElementById('safetySystemStatus').style.color = '#27ae60';
+            console.log('航空管制システム: 安全監視システム開始');
+        }
+
+        function activateRiskAssessment() {
+            safetySystemActive = true;
+            document.getElementById('safetySystemStatus').textContent = 'リスク評価稼働中';
+            document.getElementById('safetySystemStatus').style.color = '#27ae60';
+            console.log('航空管制システム: リスク評価システム開始');
+        }
+
+        function activateEmergencyProcedures() {
+            safetySystemActive = true;
+            document.getElementById('safetySystemStatus').textContent = '緊急手順稼働中';
+            document.getElementById('safetySystemStatus').style.color = '#27ae60';
+            console.log('航空管制システム: 緊急手順システム開始');
+        }
+
+        function activateIncidentReporting() {
+            safetySystemActive = true;
+            document.getElementById('safetySystemStatus').textContent = 'インシデント報告稼働中';
+            document.getElementById('safetySystemStatus').style.color = '#27ae60';
+            console.log('航空管制システム: インシデント報告システム開始');
+        }
+
+        function activateSafetyTraining() {
+            safetySystemActive = true;
+            document.getElementById('safetySystemStatus').textContent = '安全訓練稼働中';
+            document.getElementById('safetySystemStatus').style.color = '#27ae60';
+            console.log('航空管制システム: 安全訓練システム開始');
+        }
+
+        function activateSafetyAnalysis() {
+            safetySystemActive = true;
+            document.getElementById('safetySystemStatus').textContent = '安全分析稼働中';
+            document.getElementById('safetySystemStatus').style.color = '#27ae60';
+            console.log('航空管制システム: 安全分析システム開始');
+        }
+
+        // 交通管制システム機能
+        function activateTrafficFlow() {
+            trafficControlActive = true;
+            document.getElementById('trafficControlStatus').textContent = '交通流管制稼働中';
+            document.getElementById('trafficControlStatus').style.color = '#e67e22';
+            console.log('航空管制システム: 交通流管制システム開始');
+        }
+
+        function activateCapacityManagement() {
+            trafficControlActive = true;
+            document.getElementById('trafficControlStatus').textContent = '容量管理稼働中';
+            document.getElementById('trafficControlStatus').style.color = '#e67e22';
+            console.log('航空管制システム: 容量管理システム開始');
+        }
+
+        function activateDelayManagement() {
+            trafficControlActive = true;
+            document.getElementById('trafficControlStatus').textContent = '遅延管理稼働中';
+            document.getElementById('trafficControlStatus').style.color = '#e67e22';
+            console.log('航空管制システム: 遅延管理システム開始');
+        }
+
+        // 高度シミュレーション機能
+        function startAdvancedSimulation() {
+            simulationActive = true;
+            console.log('航空管制システム: 高度シミュレーション開始');
+            
+            // より詳細なデータ更新
+            setInterval(() => {
+                if (simulationActive) {
+                    updateATCData();
+                    
+                    // 航空管制状況の動的変化
+                    const atcEvents = ['飛行機接近', '気象変化', '通信障害', '緊急事態', '空域混雑'];
+                    const randomEvent = atcEvents[Math.floor(Math.random() * atcEvents.length)];
+                    
+                    if (Math.random() < 0.03) { // 3%の確率でイベント発生
+                        console.log(`航空管制システム: ${randomEvent}が検出されました`);
+                    }
+                }
+            }, 3000);
+        }
+
+        // システム制御機能
+        function startSystem() {
+            systemActive = true;
+            document.getElementById('systemStatus').textContent = '稼働中';
+            document.getElementById('systemStatus').style.color = '#1e90ff';
+            setInterval(updateATCData, 2000);
+            alert('航空管制システムが開始されました。リアルタイムデータ更新を開始中...');
+        }
+        function stopSystem() {
+            systemActive = false;
+            document.getElementById('systemStatus').textContent = '停止中';
+            document.getElementById('systemStatus').style.color = '#f39c12';
+            alert('システムが停止されました。');
+        }
+        function emergencyStop() {
+            systemActive = false;
+            simulationActive = false;
+            document.getElementById('systemStatus').textContent = '緊急停止';
+            document.getElementById('systemStatus').style.color = '#e74c3c';
+            alert('緊急停止が実行されました。');
+        }
+        function runSimulation() {
+            simulationActive = true;
+            alert('システムシミュレーションが開始されました。');
+        }
+        function exportData() {
+            const exportData = {
+                timestamp: new Date().toISOString(),
+                activeFlights, landings, takeoffs, delays, controllerRate, weatherAlerts, systemUptime
+            };
+            console.log('航空管制システムデータエクスポート:', exportData);
+            alert('データをエクスポートしました。コンソールを確認してください。');
+        }
+        function generateReport() {
+            alert('包括的レポートが生成されました。');
+        }
+        // シミュレーション機能
+        function runTrafficSimulation() {
+            const canvas = document.getElementById('simulationChart');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, 800, 300);
+            ctx.strokeStyle = '#1e90ff';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            for (let i = 0; i < 800; i += 10) {
+                const y = 150 + Math.sin(i / 40) * 70 + Math.random() * 25;
+                if (i === 0) ctx.moveTo(i, y);
+                else ctx.lineTo(i, y);
+            }
+            ctx.stroke();
+            document.getElementById('chartInfo').textContent = '航空機流量シミュレーション実行中...';
+        }
+        function runDelaySimulation() {
+            const canvas = document.getElementById('simulationChart');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, 800, 300);
+            ctx.strokeStyle = '#e67e22';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            for (let i = 0; i < 800; i += 10) {
+                const y = 150 + Math.cos(i / 30) * 60 + Math.random() * 30;
+                if (i === 0) ctx.moveTo(i, y);
+                else ctx.lineTo(i, y);
+            }
+            ctx.stroke();
+            document.getElementById('chartInfo').textContent = '遅延シミュレーション実行中...';
+        }
+        function runWeatherSimulation() {
+            const canvas = document.getElementById('simulationChart');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, 800, 300);
+            ctx.strokeStyle = '#00c3ff';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            for (let i = 0; i < 800; i += 10) {
+                const y = 150 + Math.sin(i / 20) * 80 + Math.random() * 20;
+                if (i === 0) ctx.moveTo(i, y);
+                else ctx.lineTo(i, y);
+            }
+            ctx.stroke();
+            document.getElementById('chartInfo').textContent = '天候影響シミュレーション実行中...';
+        }
+        function runEmergencySimulation() {
+            const canvas = document.getElementById('simulationChart');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, 800, 300);
+            ctx.strokeStyle = '#e74c3c';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            for (let i = 0; i < 800; i += 10) {
+                const y = 150 + Math.cos(i / 50) * 100 + Math.random() * 35;
+                if (i === 0) ctx.moveTo(i, y);
+                else ctx.lineTo(i, y);
+            }
+            ctx.stroke();
+            document.getElementById('chartInfo').textContent = '緊急対応シミュレーション実行中...';
+        }
+        // 初期化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('航空管制システム: システム初期化完了');
+            updateATCData();
+            updateSystemStatus();
+        });
+    </script>
+</body>
+</html> 

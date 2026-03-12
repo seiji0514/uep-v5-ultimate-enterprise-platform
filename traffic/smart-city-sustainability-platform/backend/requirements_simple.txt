@@ -1,0 +1,23 @@
+# 簡素化版 - 最小限の依存関係
+
+# FastAPI関連
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+
+# データベース関連
+sqlalchemy==2.0.23
+psycopg2-binary==2.9.9  # PostgreSQL使用時のみ
+
+# HTTPクライアント
+httpx==0.25.2
+
+# 日時処理
+python-dateutil==2.8.2
+
+# ログ
+loguru==0.7.2
+
+# その他
+python-dotenv==1.0.0
+

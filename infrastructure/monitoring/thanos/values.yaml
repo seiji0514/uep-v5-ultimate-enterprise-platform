@@ -1,0 +1,17 @@
+# Thanos 設定（UEP v5.0）
+# 補強スキル: Prometheus 長期保存
+objstoreConfig: |
+  type: S3
+  config:
+    bucket: uep-prometheus
+    endpoint: s3.ap-northeast-1.amazonaws.com
+    # region: ap-northeast-1
+compact:
+  enabled: true
+storegateway:
+  enabled: true
+query:
+  enabled: true
+  replicaCount: 2
+bucketweb:
+  enabled: true

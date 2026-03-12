@@ -42,9 +42,9 @@ function TabPanel(props: TabPanelProps) {
 
 export const AIDevPage: React.FC = () => {
   const [tabValue, setTabValue] = useState(0);
-  const [description, setDescription] = useState('');
-  const [code, setCode] = useState('');
-  const [docContent, setDocContent] = useState('');
+  const [description, setDescription] = useState('FastAPIでJWT認証を行うエンドポイントを実装');
+  const [code, setCode] = useState('def add(a, b):\n    return a + b');
+  const [docContent, setDocContent] = useState('auth_api.py - 認証モジュール');
   const [result, setResult] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');

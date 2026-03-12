@@ -45,7 +45,7 @@ start-frontend.bat
 ## 認証情報
 
 デモユーザー：
-- **管理者**: `kaho0525` / `kaho052514`
+- **管理者**: `kaho0525` / `0525`
 - **開発者**: `developer` / `dev123`
 - **閲覧者**: `viewer` / `view123`
 

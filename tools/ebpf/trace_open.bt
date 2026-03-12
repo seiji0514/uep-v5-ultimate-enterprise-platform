@@ -1,0 +1,8 @@
+#!/usr/bin/env bpftrace
+// UEP v5.0 eBPF サンプル: openat システムコール追跡
+// 実行: sudo bpftrace trace_open.bt
+
+tracepoint:syscalls:sys_enter_openat
+{
+    printf("%-16s openat %s\n", comm, str(args->filename));
+}

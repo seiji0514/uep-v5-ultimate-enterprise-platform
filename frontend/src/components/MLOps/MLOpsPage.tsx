@@ -96,7 +96,8 @@ export const MLOpsPage: React.FC = () => {
     }
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string | undefined | null) => {
+    if (status == null || typeof status !== 'string') return 'default';
     switch (status.toLowerCase()) {
       case 'running':
       case 'active':

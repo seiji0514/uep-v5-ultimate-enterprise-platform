@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>宇宙探査AI - 宇宙・航空技術統合システム</title>
+    <meta name="description" content="自律宇宙探査・科学観測・発見分析AIシステム。未知の宇宙を効率的に探査し新たな発見を支援。">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .back-button {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .status-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .status-indicator {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .chart-container {
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .feature-icon {
+            font-size: 0.8rem;
+            margin-bottom: 15px;
+            text-align: center;
+            color: #667eea;
+            font-weight: bold;
+            background: rgba(102, 126, 234, 0.1);
+            padding: 4px 8px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .feature-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .feature-metrics {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .feature-metric {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .feature-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-align: center;
+            width: 100%;
+        }
+
+        .feature-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="space-aerospace-technology-system.html" class="back-button">← 宇宙・航空技術統合システムに戻る</a>
+        
+        <div class="header">
+            <h1>宇宙探査AI</h1>
+            <p>自律宇宙探査プラットフォーム</p>
+            <div class="status-indicators">
+                <div class="status-indicator">🔍 探査中</div>
+                <div class="status-indicator">🌌 観測中</div>
+                <div class="status-indicator">⚡ リアルタイム</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="card">
+                <h2>発見数推移</h2>
+                <div class="chart-container">
+                    <canvas id="discoveryChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>探査効率</h2>
+                <div class="chart-container">
+                    <canvas id="explorationEfficiencyChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">[自律]</div>
+                <div class="feature-title">自律探査</div>
+                <div class="feature-description">
+                    自律ローバー・探査機・観測衛星制御システム。人間の介入なしで宇宙探査を実行。
+                </div>
+                <div class="feature-metrics">
+                    <div class="feature-metric">97.8% 自律度</div>
+                    <div class="feature-metric">自動探査</div>
+                </div>
+                <a href="#" class="feature-link">詳細を見る</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">[観測]</div>
+                <div class="feature-title">科学観測</div>
+                <div class="feature-description">
+                    天体観測・環境測定・データ収集システム。宇宙の謎を解明するための科学的観測を実行。
+                </div>
+                <div class="feature-metrics">
+                    <div class="feature-metric">99.2% 精度</div>
+                    <div class="feature-metric">科学観測</div>
+                </div>
+                <a href="#" class="feature-link">詳細を見る</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">[分析]</div>
+                <div class="feature-title">データ分析</div>
+                <div class="feature-description">
+                    観測データ解析・パターン認識・仮説生成システム。膨大な観測データから新たな発見を導出。
+                </div>
+                <div class="feature-metrics">
+                    <div class="feature-metric">96.5% 分析精度</div>
+                    <div class="feature-metric">発見支援</div>
+                </div>
+                <a href="#" class="feature-link">詳細を見る</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">[計画]</div>
+                <div class="feature-title">探査計画</div>
+                <div class="feature-description">
+                    探査目標設定・ルート計画・リソース配分システム。効率的な宇宙探査計画を立案。
+                </div>
+                <div class="feature-metrics">
+                    <div class="feature-metric">94.7% 効率</div>
+                    <div class="feature-metric">計画最適化</div>
+                </div>
+                <a href="#" class="feature-link">詳細を見る</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">[発見]</div>
+                <div class="feature-title">発見管理</div>
+                <div class="feature-description">
+                    新発見の記録・分類・優先度評価システム。重要な発見を効率的に管理・報告。
+                </div>
+                <div class="feature-metrics">
+                    <div class="feature-metric">98.3% 管理精度</div>
+                    <div class="feature-metric">発見管理</div>
+                </div>
+                <a href="#" class="feature-link">詳細を見る</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">[協力]</div>
+                <div class="feature-title">国際協力</div>
+                <div class="feature-description">
+                    国際宇宙機関との連携・データ共有・共同研究システム。グローバルな宇宙探査を推進。
+                </div>
+                <div class="feature-metrics">
+                    <div class="feature-metric">95.6% 協力度</div>
+                    <div class="feature-metric">国際連携</div>
+                </div>
+                <a href="#" class="feature-link">詳細を見る</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 発見数推移チャート
+        const discoveryCtx = document.getElementById('discoveryChart').getContext('2d');
+        new Chart(discoveryCtx, {
+            type: 'line',
+            data: {
+                labels: ['2020', '2021', '2022', '2023', '2024', '2025', '2026'],
+                datasets: [{
+                    label: '新発見数',
+                    data: [12, 18, 25, 34, 42, 38, 45],
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '宇宙探査発見数推移'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: '発見数'
+                        }
+                    }
+                }
+            }
+        });
+
+        // 探査効率チャート
+        const explorationEfficiencyCtx = document.getElementById('explorationEfficiencyChart').getContext('2d');
+        new Chart(explorationEfficiencyCtx, {
+            type: 'bar',
+            data: {
+                labels: ['太陽系内', '小惑星帯', '外惑星', 'カイパーベルト', 'オールトの雲', '恒星間空間'],
+                datasets: [{
+                    label: '探査効率 (%)',
+                    data: [95, 88, 75, 62, 45, 28],
+                    backgroundColor: '#764ba2'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '領域別探査効率'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: '効率 (%)'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+    <!-- ライセンス・権利情報 -->
+    <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 15px; padding: 25px; margin: 30px auto; max-width: 1200px; border: 3px solid #f59e0b; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);">
+        <h2 style="color: #92400e; margin-bottom: 20px; text-align: center; font-size: 1.5rem;">ライセンス・権利情報</h2>
+        
+        <div style="background: white; padding: 20px; border-radius: 10px; color: #1e3a8a; line-height: 2;">
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">著作権:</strong> &copy; 2025 小川清志（おがわ せいじ）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">開発期間:</strong> 2025年6月～2025年10月（個人事業主として）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">開発目的:</strong> 技術研究・ポートフォリオ作成・転職活動用
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">用途:</strong> 個人研究目的（非商用）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">ライセンス:</strong> MIT License
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">公開範囲:</strong> 個人ポートフォリオサイト、GitHub（技術実証目的）
+            </div>
+            
+            <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #f59e0b;">
+                <strong style="color: #92400e;">重要事項:</strong>
+                <p style="color: #78350f; margin-top: 10px;">
+                    本システムは、個人事業主として独自に研究開発したものであり、
+                    特定の企業・組織の業務とは一切関係ありません。<br>
+                    全ての知的財産権は開発者個人（小川清志）に帰属します。<br>
+                    本システムの技術内容・アイデアは、入社前の個人研究として確立されたものです。
+                </p>
+            </div>
+            
+            <div style="background: #dbeafe; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #3b82f6;">
+                <strong style="color: #1e40af;">タイムスタンプ:</strong>
+                <p style="color: #1e3a8a; margin-top: 10px;">
+                    最終更新日: 2025年10月26日<br>
+                    GitHub最終コミット: 2025年10月26日<br>
+                    確定日付: 入社前（個人開発期間中）
+                </p>
+            </div>
+            
+            <div style="background: #d1fae5; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #10b981;">
+                <strong style="color: #047857;">連絡先:</strong>
+                <p style="color: #065f46; margin-top: 10px;">
+                    開発者: 小川清志（おがわ せいじ）<br>
+                    Email: kaho052514@gmail.com<br>
+                    電話: 080-4271-5479
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>

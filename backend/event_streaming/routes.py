@@ -12,12 +12,15 @@ from auth.jwt_auth import get_current_active_user
 from .cqrs import Command, Query, cqrs_bus
 from .event_sourcing import DomainEvent, EventSourcingHandler, EventStore
 from .kafka_client import KafkaClient
+from .saga import OutboxStore, Saga, SagaStatus, SagaStep, create_outbox_event
 from .models import (
     CommandCreate,
     DomainEventCreate,
     EventConsume,
     EventPublish,
+    OutboxCreate,
     QueryCreate,
+    SagaCreate,
     TopicCreate,
 )
 
@@ -90,12 +93,17 @@ async def publish_event(
 ):
     """イベントを発行"""
     try:
-        success = kafka_client.publish_event(
-            topic=event_data.topic,
-            event_type=event_data.event_type,
-            data=event_data.data,
-            key=event_data.key,
-        )
+        from monitoring.tracing import tracing_handler
+        with tracing_handler.span("event_streaming.publish", {
+            "event.topic": event_data.topic,
+            "event.type": event_data.event_type,
+        }):
+            success = kafka_client.publish_event(
+                topic=event_data.topic,
+                event_type=event_data.event_type,
+                data=event_data.data,
+                key=event_data.key,
+            )
         if success:
             return {
                 "message": "Event published successfully",
@@ -280,3 +288,73 @@ async def execute_query(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
         )
+
+
+# Saga・アウトボックスパターン エンドポイント（補強スキル: イベント駆動）
+@router.post("/saga", status_code=status.HTTP_201_CREATED)
+async def create_saga(
+    data: SagaCreate,
+    current_user: Dict[str, Any] = Depends(get_current_active_user),
+):
+    """Sagaオーケストレーションを開始"""
+    saga_steps = [
+        SagaStep(
+            step_id=s.step_id or str(i),
+            action=s.action,
+            compensate_action=s.compensate_action,
+            payload=s.payload,
+        )
+        for i, s in enumerate(data.steps)
+    ]
+    saga = Saga(
+        saga_id=str(uuid.uuid4()),
+        saga_type=data.saga_type,
+        steps=saga_steps,
+        status=SagaStatus.PENDING,
+    )
+    return {
+        "saga_id": saga.saga_id,
+        "saga_type": saga.saga_type,
+        "status": saga.status.value,
+        "steps_count": len(saga.steps),
+    }
+
+
+@router.post("/outbox", status_code=status.HTTP_201_CREATED)
+async def create_outbox(
+    data: OutboxCreate,
+    current_user: Dict[str, Any] = Depends(get_current_active_user),
+):
+    """アウトボックスパターン: イベントをトランザクションと同時に永続化"""
+    event = create_outbox_event(
+        aggregate_type=data.aggregate_type,
+        aggregate_id=data.aggregate_id,
+        event_type=data.event_type,
+        payload=data.payload,
+    )
+    return {
+        "event_id": event.event_id,
+        "aggregate_type": event.aggregate_type,
+        "event_type": event.event_type,
+        "created_at": event.created_at.isoformat(),
+    }
+
+
+@router.get("/outbox/unpublished")
+async def list_unpublished_outbox(
+    current_user: Dict[str, Any] = Depends(get_current_active_user),
+):
+    """未公開アウトボックスイベント一覧"""
+    events = OutboxStore.get_unpublished()
+    return {
+        "events": [
+            {
+                "event_id": e.event_id,
+                "aggregate_type": e.aggregate_type,
+                "event_type": e.event_type,
+                "created_at": e.created_at.isoformat(),
+            }
+            for e in events
+        ],
+        "count": len(events),
+    }

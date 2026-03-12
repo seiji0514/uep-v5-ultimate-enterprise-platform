@@ -1,0 +1,4 @@
+# Shell scripts: always LF (WSL/Linux で実行するため)
+*.sh text eol=lf
+scripts/*.sh text eol=lf
+projects/unified-platform/scripts/*.sh text eol=lf

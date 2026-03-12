@@ -16,6 +16,20 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  go-cli:
+    name: Go CLI Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+      - name: Build uep-cli
+        run: |
+          cd tools/uep-cli
+          go mod tidy
+          go build -o uep-cli .
+
   lint:
     name: Lint & Format Check
     runs-on: ubuntu-latest

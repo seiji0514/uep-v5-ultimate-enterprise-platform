@@ -1,0 +1,92 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word">
+<head>
+<meta charset="UTF-8">
+<meta name="ProgId" content="Word.Document">
+<meta name="Generator" content="Microsoft Word">
+<title>統合セキュリティ・防衛プラットフォーム - 起動方法と構成</title>
+<style>
+body { font-family: "游ゴシック", "Yu Gothic", "メイリオ", Meiryo, sans-serif; font-size: 11pt; line-height: 1.5; }
+h1 { font-size: 18pt; margin-top: 24pt; margin-bottom: 12pt; border-bottom: 2pt solid #333; }
+h2 { font-size: 14pt; margin-top: 18pt; margin-bottom: 8pt; }
+h3 { font-size: 12pt; margin-top: 12pt; margin-bottom: 6pt; }
+table { border-collapse: collapse; margin: 12pt 0; width: 100%; }
+th, td { border: 1pt solid #333; padding: 6pt 8pt; text-align: left; }
+th { background-color: #f0f0f0; font-weight: bold; }
+pre, code { font-family: "Consolas", "Courier New", monospace; font-size: 10pt; background-color: #f5f5f5; padding: 4pt 6pt; }
+pre { white-space: pre-wrap; margin: 8pt 0; padding: 12pt; }
+ul, ol { margin: 8pt 0; padding-left: 24pt; }
+li { margin: 4pt 0; }
+.note { color: #666; font-size: 10pt; margin-top: 4pt; }
+</style>
+</head>
+<body>
+
+<h1>統合セキュリティ・防衛プラットフォーム</h1>
+<p>UEP v5.0・統合基盤に属さない<strong>個別システム</strong>。UEP 起動時には含まれません。</p>
+
+<p><strong>詳細</strong>: docs/起動方法と使用方法.md を参照</p>
+
+<hr>
+
+<h2>1. 起動方法（個別）</h2>
+
+<h3>1.1 バックエンド（API）</h3>
+<pre>cd C:\uep-v5-ultimate-enterprise-platform\security_defense_platform
+.\start-backend.bat</pre>
+
+<table>
+<tr><th>項目</th><th>内容</th></tr>
+<tr><td>ポート</td><td>9001</td></tr>
+<tr><td>API</td><td>http://localhost:9001/api/v1/security-defense-platform</td></tr>
+<tr><td>Docs</td><td>http://localhost:9001/docs</td></tr>
+</table>
+
+<p class="note">※ UEP の backend/venv を利用するため、初回は UEP の start-backend.bat で venv を作成してください。</p>
+
+<h3>1.2 フロントエンド</h3>
+<p><strong>コマンドプロンプト:</strong></p>
+<pre>cd C:\uep-v5-ultimate-enterprise-platform\security_defense_platform
+.\start-frontend.bat</pre>
+
+<p><strong>PowerShell:</strong></p>
+<pre>cd C:\uep-v5-ultimate-enterprise-platform\security_defense_platform
+.\start-frontend.ps1</pre>
+
+<table>
+<tr><th>項目</th><th>内容</th></tr>
+<tr><td>ポート</td><td>3001</td></tr>
+<tr><td>URL</td><td>http://localhost:3001</td></tr>
+</table>
+
+<p class="note">※ バックエンド（ポート9001）を先に起動してください。</p>
+
+<hr>
+
+<h2>2. 構成</h2>
+<pre>security_defense_platform/
+├── README.md
+├── main.py              ← 個別起動用（API）
+├── start-backend.bat    ← バックエンド起動
+├── start-frontend.bat   ← フロントエンド起動
+├── start-frontend.ps1   ← フロントエンド起動（PowerShell）
+├── backend/
+│   ├── __init__.py
+│   └── routes.py
+└── frontend/
+    ├── package.json
+    ├── src/
+    │   ├── App.tsx
+    │   ├── api/
+    │   └── components/
+    └── public/</pre>
+
+<hr>
+
+<h2>3. 内部実装（参照）</h2>
+<ul>
+<li><strong>backend/security_center/</strong> - イベント・インシデント・リスク・Falco</li>
+<li><strong>backend/cyber_defense/</strong> - IDS/IPS, EDR, SIEM, 脅威インテリジェンス, コンプライアンス</li>
+</ul>
+
+</body>
+</html>

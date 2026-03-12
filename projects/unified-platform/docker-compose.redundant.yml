@@ -1,0 +1,61 @@
+# Phase 2: 冗長化 - 複数 app + nginx ロードバランサー
+# 使用方法: docker compose -f docker-compose.yml -f docker-compose.redundant.yml --profile redundant up -d
+# ポート 8080 で nginx、app1/app2 へ振り分け。単一 app は起動しない。
+
+services:
+  app:
+    profiles:
+      - single  # redundant 時は app を無効化
+  app1:
+    profiles:
+      - redundant
+    build: .
+    environment:
+      DATABASE_URL: postgresql+asyncpg://unified:unified@db:5432/unified
+      DATABASE_URL_SYNC: postgresql://unified:unified@db:5432/unified
+      REDIS_URL: redis://redis:6379/0
+      JWT_SECRET: ${JWT_SECRET:-unified-prod-secret-change-me}
+      AUDIT_LOG_ENABLED: "true"
+      DEPLOY_MODE: ${DEPLOY_MODE:-redundant}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+  app2:
+    profiles:
+      - redundant
+    build: .
+    environment:
+      DATABASE_URL: postgresql+asyncpg://unified:unified@db:5432/unified
+      DATABASE_URL_SYNC: postgresql://unified:unified@db:5432/unified
+      REDIS_URL: redis://redis:6379/0
+      JWT_SECRET: ${JWT_SECRET:-unified-prod-secret-change-me}
+      AUDIT_LOG_ENABLED: "true"
+      DEPLOY_MODE: ${DEPLOY_MODE:-redundant}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+  nginx:
+    profiles:
+      - redundant
+    image: nginx:alpine
+    ports:
+      - "0.0.0.0:8080:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - app1
+      - app2

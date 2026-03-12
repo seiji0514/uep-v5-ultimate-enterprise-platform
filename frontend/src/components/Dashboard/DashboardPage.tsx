@@ -1,172 +1,321 @@
 /**
  * ダッシュボードページ
+ * 統合ダッシュボード・画面構成（24カラムグリッド、パネル、左寄せタイトル）
  */
 import React from 'react';
 import {
+  Box,
+  Typography,
   Grid,
   Paper,
-  Typography,
-  Box,
-  Card,
-  CardContent,
-  CardActions,
-  Button,
+  IconButton,
 } from '@mui/material';
 import {
   Science,
-  Psychology,
-  Security,
   Cloud,
   Build,
-  Layers,
-  Groups,
-  Star,
   Public,
+  FolderSpecial,
+  ArrowForward,
+  BugReport,
+  Work,
+  PrecisionManufacturing,
+  AccountBalance,
+  Bolt,
+  LocalHospital,
+  Satellite,
+  Traffic,
+  Hub,
+  OpenInNew,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
-interface DashboardCardProps {
+const getIndustryUnifiedUrl = () => {
+  const base = process.env.REACT_APP_INDUSTRY_UNIFIED_URL || 'http://localhost:3010';
+  const token = typeof localStorage !== 'undefined' ? localStorage.getItem('access_token') : null;
+  return token ? `${base}?token=${encodeURIComponent(token)}` : base;
+};
+
+const getEOHUrl = () => {
+  const base = process.env.REACT_APP_EOH_URL || 'http://localhost:3020';
+  const token = typeof localStorage !== 'undefined' ? localStorage.getItem('access_token') : null;
+  return token ? `${base}?token=${encodeURIComponent(token)}` : base;
+};
+
+interface PanelProps {
   title: string;
   description: string;
   icon: React.ReactNode;
   path: string;
   color: string;
+  span?: number; // 1-24（24カラムグリッド）
+  external?: boolean; // 外部リンク（別アプリ）の場合 true
 }
 
-const DashboardCard: React.FC<DashboardCardProps> = ({ title, description, icon, path, color }) => {
+const DashboardPanel: React.FC<PanelProps> = ({ title, description, icon, path, color, span = 8, external }) => {
   const navigate = useNavigate();
-
+  const handleClick = () => {
+    if (external) {
+      window.open(path, '_blank', 'noopener,noreferrer');
+    } else {
+      navigate(path);
+    }
+  };
   return (
-    <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <CardContent sx={{ flexGrow: 1 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-          <Box sx={{ color, mr: 2 }}>{icon}</Box>
-          <Typography variant="h5" component="h2">
-            {title}
-          </Typography>
+    <Grid item xs={12} sm={12} md={span} lg={span}>
+      <Paper
+        component="article"
+        role="button"
+        tabIndex={0}
+        aria-label={`${title}へ移動`}
+        sx={{
+          p: 2,
+          height: '100%',
+          minHeight: 140,
+          cursor: 'pointer',
+          transition: 'border-color 0.2s',
+          '&:hover': {
+            borderColor: color,
+            '& .panel-action': { opacity: 1 },
+          },
+          '&:focus-visible': {
+            outline: '2px solid',
+            outlineColor: 'primary.main',
+          },
+        }}
+        onClick={handleClick}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(); } }}
+        elevation={0}
+      >
+        {/* 左寄せパネルヘッダー */}
+        <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 1.5 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box sx={{ color, display: 'flex', alignItems: 'center' }}>{icon}</Box>
+            <Typography variant="subtitle1" fontWeight={600} sx={{ color: 'text.primary' }}>
+              {title}
+            </Typography>
+          </Box>
+          <IconButton size="small" className="panel-action" sx={{ opacity: 0.6 }} aria-hidden>
+            {external ? <OpenInNew fontSize="small" /> : <ArrowForward fontSize="small" />}
+          </IconButton>
         </Box>
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.5 }}>
           {description}
         </Typography>
-      </CardContent>
-      <CardActions>
-        <Button size="small" onClick={() => navigate(path)}>
-          詳細を見る
-        </Button>
-      </CardActions>
-    </Card>
+      </Paper>
+    </Grid>
   );
 };
 
 export const DashboardPage: React.FC = () => {
   const { user } = useAuth();
 
-  const dashboardCards = [
+  const panels: PanelProps[] = [
     {
-      title: 'MLOps',
-      description: 'MLパイプラインの設計と実装、モデル管理、実験追跡',
-      icon: <Science fontSize="large" />,
-      path: '/mlops',
-      color: '#1976d2',
+      title: 'プロジェクト一覧',
+      description: 'プロジェクト単位で横断管理。チーム開発・役割分担を想定',
+      icon: <FolderSpecial />,
+      path: '/projects',
+      color: '#F46800',
+      span: 12,
     },
     {
-      title: '生成AI',
-      description: 'LLM統合、RAG、CoT推論、生成AIアプリケーション開発',
-      icon: <Psychology fontSize="large" />,
-      path: '/generative-ai',
-      color: '#9c27b0',
+      title: '産業統合プラットフォーム',
+      description: '製造・医療・金融・セキュリティ等を1画面でシミュレーション。実務学習付き',
+      icon: <Hub />,
+      path: getIndustryUnifiedUrl(),
+      color: '#5794F2',
+      span: 12,
+      external: true,
     },
     {
-      title: 'セキュリティコマンドセンター',
-      description: 'セキュリティ監視、インシデント対応、リスク分析',
-      icon: <Security fontSize="large" />,
-      path: '/security-center',
-      color: '#d32f2f',
+      title: '企業横断オペレーション基盤',
+      description: '観測・タスク・リスクの一元管理。要対応の横断把握・エクスポート',
+      icon: <Hub />,
+      path: getEOHUrl(),
+      color: '#73BF69',
+      span: 12,
+      external: true,
     },
     {
-      title: 'クラウドインフラ',
-      description: 'クラウド設計・運用、IaC運用、コンテナ化・オーケストレーション',
-      icon: <Cloud fontSize="large" />,
+      title: 'インフラ基盤',
+      description: 'クラウドインフラ、インフラ構築専用。設計→構築→デプロイ→検証',
+      icon: <Cloud />,
       path: '/cloud-infra',
-      color: '#0288d1',
+      color: '#5794F2',
+      span: 8,
     },
     {
-      title: 'IDOP',
-      description: '開発から運用まで、ソフトウェア開発ライフサイクル全体をカバー',
-      icon: <Build fontSize="large" />,
+      title: 'AI・ML',
+      description: 'MLOps、生成AI、AI支援開発。MLパイプライン、RAG、CoT推論',
+      icon: <Science />,
+      path: '/mlops',
+      color: '#B4B4B4',
+      span: 8,
+    },
+    {
+      title: 'インクルーシブ雇用AI',
+      description: '障害者雇用マッチング、アクセシビリティ特化AI、当事者視点UX評価',
+      icon: <Work />,
+      path: '/inclusive-work',
+      color: '#73BF69',
+      span: 8,
+    },
+    {
+      title: '開発・運用',
+      description: 'IDOP。開発から運用までソフトウェア開発ライフサイクル全体',
+      icon: <Build />,
       path: '/idop',
-      color: '#f57c00',
+      color: '#73BF69',
+      span: 8,
     },
     {
-      title: 'AI支援開発',
-      description: 'コード生成支援、テスト自動化、コードレビュー支援',
-      icon: <Build fontSize="large" />,
-      path: '/ai-dev',
-      color: '#388e3c',
-    },
-    {
-      title: 'プラットフォーム (Level 2)',
-      description: 'マルチテナント、SaaS化、APIマーケットプレイス',
-      icon: <Layers fontSize="large" />,
-      path: '/platform',
-      color: '#00838f',
-    },
-    {
-      title: 'エコシステム (Level 3)',
-      description: 'パートナー統合、モデル共有、コミュニティフォーラム、業界標準',
-      icon: <Groups fontSize="large" />,
-      path: '/ecosystem',
-      color: '#7b1fa2',
-    },
-    {
-      title: 'インダストリー (Level 4)',
-      description: 'グローバルCDN、多言語対応、最先端AI、業界標準の確立',
-      icon: <Star fontSize="large" />,
-      path: '/industry-leader',
-      color: '#e65100',
-    },
-    {
-      title: 'グローバル (Level 5)',
-      description: 'マルチリージョン、高可用性99.99%、ゼロダウンタイム、コンプライアンス、DR',
-      icon: <Public fontSize="large" />,
+      title: 'プラットフォーム拡張',
+      description: 'Level 2〜5。マルチテナント、エコシステム、グローバル展開',
+      icon: <Public />,
       path: '/global-enterprise',
-      color: '#1565c0',
+      color: '#F46800',
+      span: 8,
+    },
+    {
+      title: 'テスト',
+      description: 'API・セキュリティ・契約・統合・E2E のテスト種別・内容・結果',
+      icon: <BugReport />,
+      path: '/tests',
+      color: '#73BF69',
+      span: 8,
+    },
+    {
+      title: '製造・IoT',
+      description: '予知保全・品質管理。インフラ・監視・MLOpsとの相性が良く、製造業DXの需要が高い',
+      icon: <PrecisionManufacturing />,
+      path: '/manufacturing',
+      color: '#5794F2',
+      span: 8,
+    },
+    {
+      title: '金融・FinTech',
+      description: '決済・リスク管理。高可用性・低レイテンシ・監視の経験をそのまま活かせる',
+      icon: <AccountBalance />,
+      path: '/fintech',
+      color: '#F46800',
+      span: 8,
+    },
+    {
+      title: 'エネルギー',
+      description: 'スマートグリッド・需給予測。時系列予測・リアルタイム制御・監視基盤の経験を活かせる',
+      icon: <Bolt />,
+      path: '/energy',
+      color: '#73BF69',
+      span: 8,
+    },
+    {
+      title: '医療',
+      description: 'AI診断、音声応答、異常検知、医療プラットフォーム。MLOpsとの相性が良い',
+      icon: <LocalHospital />,
+      path: '/medical',
+      color: '#E02F44',
+      span: 8,
+    },
+    {
+      title: '宇宙・航空',
+      description: '衛星軌道追跡、航空宇宙システム、時空操作',
+      icon: <Satellite />,
+      path: '/space',
+      color: '#5794F2',
+      span: 8,
+    },
+    {
+      title: '交通',
+      description: '交通管理、航空管制、スマートシティ持続可能性プラットフォーム',
+      icon: <Traffic />,
+      path: '/traffic',
+      color: '#73BF69',
+      span: 8,
     },
   ];
 
   return (
-    <Box>
-      <Typography variant="h4" component="h1" gutterBottom>
-        ダッシュボード
-      </Typography>
-      <Typography variant="body1" color="text.secondary" paragraph>
-        ようこそ、{user?.full_name || user?.username}さん
-      </Typography>
-      <Typography variant="body2" color="primary.main" sx={{ mb: 2 }}>
-        ⭐ 実用的最高難易度 - 本番環境対応・Level 1〜5 統合
-      </Typography>
+    <Box sx={{ p: 0 }}>
+      {/* コンパクトなヘッダー */}
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="h5" fontWeight={600} gutterBottom>
+          Dashboards
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {user?.full_name || user?.username} · 4分割統合プラットフォーム
+        </Typography>
+      </Box>
 
-      <Grid container spacing={3} sx={{ mt: 2 }}>
-        {dashboardCards.map((card) => (
-          <Grid item xs={12} sm={6} md={4} key={card.title}>
-            <DashboardCard {...card} />
+      {/* 大きなKPI（Statsパネル） */}
+      <Box component="section" sx={{ mb: 3 }}>
+        <Typography variant="overline" color="text.secondary" sx={{ display: 'block', mb: 1.5 }}>
+          Stats Overview
+        </Typography>
+        <Grid container spacing={2}>
+          <Grid item xs={6} sm={3}>
+            <Paper sx={{ p: 2, textAlign: 'center' }} elevation={0}>
+              <Typography variant="h3" fontWeight={700} sx={{ color: '#73BF69' }}>
+                99.995%
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                稼働率
+              </Typography>
+            </Paper>
           </Grid>
-        ))}
-      </Grid>
+          <Grid item xs={6} sm={3}>
+            <Paper sx={{ p: 2, textAlign: 'center' }} elevation={0}>
+              <Typography variant="h3" fontWeight={700} sx={{ color: '#5794F2' }}>
+                5
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                プロジェクト
+              </Typography>
+            </Paper>
+          </Grid>
+          <Grid item xs={6} sm={3}>
+            <Paper sx={{ p: 2, textAlign: 'center' }} elevation={0}>
+              <Typography variant="h3" fontWeight={700} sx={{ color: '#F46800' }}>
+                50+
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                API
+              </Typography>
+            </Paper>
+          </Grid>
+          <Grid item xs={6} sm={3}>
+            <Paper sx={{ p: 2, textAlign: 'center' }} elevation={0}>
+              <Typography variant="h3" fontWeight={700} sx={{ color: '#73BF69' }}>
+                &lt;10ms
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                推論レイテンシ
+              </Typography>
+            </Paper>
+          </Grid>
+        </Grid>
+      </Box>
 
-      <Paper sx={{ p: 3, mt: 4 }}>
-        <Typography variant="h6" gutterBottom>
+      {/* 24カラムグリッド（Row 1） */}
+      <Box component="section" sx={{ mb: 3 }}>
+        <Typography variant="overline" color="text.secondary" sx={{ display: 'block', mb: 1.5 }}>
+          Overview
+        </Typography>
+        <Grid container spacing={2}>
+          {panels.map((panel) => (
+            <DashboardPanel key={panel.title} {...panel} />
+          ))}
+        </Grid>
+      </Box>
+
+      {/* システム情報パネル */}
+      <Paper sx={{ p: 2 }} elevation={0}>
+        <Typography variant="subtitle2" color="text.secondary" gutterBottom>
           システム情報
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          <strong>バージョン:</strong> 5.0.0
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          <strong>環境:</strong> 開発環境
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          <strong>ユーザー:</strong> {user?.username} ({user?.roles.join(', ')})
+          バージョン 5.0.0 · 4分割構成 · {user?.username}
         </Typography>
       </Paper>
     </Box>

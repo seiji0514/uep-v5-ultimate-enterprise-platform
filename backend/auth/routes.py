@@ -1,7 +1,10 @@
 """
 認証・認可APIエンドポイント
 """
+import json
+import os
 from datetime import timedelta
+from pathlib import Path
 from typing import Any, Dict
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -34,7 +37,7 @@ def _init_demo_users():
             "kaho0525": {
                 "username": "kaho0525",
                 "email": "kaho0525@example.com",
-                "hashed_password": JWTAuth.get_password_hash("kaho052514"),
+                "hashed_password": JWTAuth.get_password_hash("0525"),
                 "full_name": "管理者",
                 "department": "IT",
                 "roles": ["admin"],
@@ -46,6 +49,7 @@ def _init_demo_users():
                     "manage_users",
                     "manage_roles",
                     "manage_ecosystem",
+                    "manage_infrastructure",
                 ],
                 "is_active": True,
                 "security_level": 5,
@@ -63,6 +67,7 @@ def _init_demo_users():
                     "manage_mlops",
                     "manage_ai",
                     "manage_ecosystem",
+                    "manage_infrastructure",
                 ],
                 "is_active": True,
                 "security_level": 3,
@@ -93,24 +98,62 @@ _demo_users_cache: Dict[str, Dict[str, Any]] = {}
 _users_initialized = False
 
 
+def _load_production_users() -> Dict[str, Dict[str, Any]]:
+    """本番ユーザーファイルから読み込み"""
+    path = os.environ.get("PRODUCTION_USERS_FILE")
+    if not path:
+        return {}
+    p = Path(path)
+    if not p.exists():
+        return {}
+    try:
+        with open(p, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        return data if isinstance(data, dict) else {}
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).error(f"Failed to load production users: {e}")
+        return {}
+
+
+def _save_production_users(users: Dict[str, Dict[str, Any]]) -> None:
+    """本番ユーザーをファイルに保存"""
+    path = os.environ.get("PRODUCTION_USERS_FILE")
+    if not path:
+        return
+    p = Path(path)
+    try:
+        p.parent.mkdir(parents=True, exist_ok=True)
+        with open(p, "w", encoding="utf-8") as f:
+            json.dump(users, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).error(f"Failed to save production users: {e}")
+
+
 def get_demo_users() -> Dict[str, Dict[str, Any]]:
     """デモユーザーを取得（必要時に初期化）"""
     global _demo_users_cache, _users_initialized
     if not _users_initialized:
         try:
-            _demo_users_cache = _init_demo_users()
-            _users_initialized = True
+            env = os.environ.get("ENVIRONMENT", "production")
+            prod_file = os.environ.get("PRODUCTION_USERS_FILE")
             import logging
-
-            logging.getLogger(__name__).info(
-                f"Demo users loaded: {list(_demo_users_cache.keys())}"
-            )
+            if env == "production" and prod_file:
+                _demo_users_cache = _load_production_users()
+                logging.getLogger(__name__).info(
+                    f"Production users loaded from {prod_file}: {list(_demo_users_cache.keys())}"
+                )
+            else:
+                _demo_users_cache = _init_demo_users()
+                logging.getLogger(__name__).info(
+                    f"Demo users loaded: {list(_demo_users_cache.keys())}"
+                )
+            _users_initialized = True
         except Exception as e:
-            # 初期化エラー時は空の辞書を返す
             import logging
             import traceback
-
-            logging.getLogger(__name__).error(f"Failed to initialize demo users: {e}")
+            logging.getLogger(__name__).error(f"Failed to initialize users: {e}")
             traceback.print_exc()
             _demo_users_cache = {}
     return _demo_users_cache
@@ -142,6 +185,7 @@ async def register(user_data: UserCreate):
     }
 
     users[user_data.username] = user
+    _save_production_users(users)
 
     return UserResponse(
         username=user["username"],
@@ -301,5 +345,6 @@ async def change_password(
         users[current_user["username"]]["hashed_password"] = JWTAuth.get_password_hash(
             password_data.new_password
         )
+        _save_production_users(users)
 
     return {"message": "Password changed successfully"}

@@ -38,8 +38,10 @@ pip install -r requirements.txt
 
 # 環境変数の設定（.envファイルがない場合）
 if [ ! -f ".env" ]; then
-    echo "   .envファイルを作成中..."
+    echo "   .envファイルを作成中（本番運用モード）..."
     cat > .env << EOF
+ENVIRONMENT=production
+DEBUG=false
 DATABASE_URL=sqlite:///./uep_db.sqlite
 REDIS_URL=redis://localhost:6379/0
 SECRET_KEY=$(openssl rand -hex 32 2>/dev/null || python -c "import secrets; print(secrets.token_hex(32))")

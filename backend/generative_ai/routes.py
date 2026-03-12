@@ -9,9 +9,10 @@ from auth.jwt_auth import get_current_active_user
 from auth.rbac import require_permission
 
 from .llm_integration import LLMProvider, llm_client
-from .models import GenerateRequest, RAGRequest, ReasoningRequest
+from .models import GenerateRequest, RAGRequest, ReasoningRequest, ReasoningRoutingRequest
 from .rag import get_rag_system
 from .reasoning import get_reasoning_engine
+from .reasoning_routing import assess_task_difficulty, get_routing_decision
 
 router = APIRouter(prefix="/api/v1/generative-ai", tags=["生成AI"])
 
@@ -37,12 +38,16 @@ async def generate_text(
 async def rag_query(
     request: RAGRequest, current_user: Dict[str, Any] = Depends(get_current_active_user)
 ):
-    """RAGを使用して回答を生成（ChromaDB ベクトル検索 + 評価指標）"""
+    """RAGを使用して回答を生成（ハイブリッド検索 + 再ランキング + 評価指標）"""
     system = get_rag_system()
-    # コレクション未指定時はデモ用 uep_docs を使用
     collection = request.collection or "uep_docs"
     result = await system.generate(
-        query=request.query, collection=collection, context=request.context
+        query=request.query,
+        collection=collection,
+        context=request.context,
+        use_hybrid=request.use_hybrid,
+        use_rerank=request.use_rerank,
+        top_k=request.top_k,
     )
     return result
 
@@ -68,6 +73,43 @@ async def reasoning(
         result = await engine.solve_problem(
             problem=problem, reasoning_type=request.reasoning_type
         )
+    return result
+
+
+@router.post("/reasoning-routing")
+@require_permission("read")
+async def reasoning_routing(
+    request: ReasoningRoutingRequest,
+    current_user: Dict[str, Any] = Depends(get_current_active_user),
+):
+    """推論AI（o1系）ルーティング: タスク難度に応じて CoT/直接推論を自動選択して実行"""
+    problem = request.get_problem()
+    if not problem:
+        raise HTTPException(status_code=422, detail="problem または question が必要です")
+
+    difficulty, reason = assess_task_difficulty(problem)
+    routing = get_routing_decision(difficulty)
+
+    engine = get_reasoning_engine()
+    model = routing.get("recommended_model")
+    if routing["reasoning_type"] == "cot":
+        result = await engine.chain_of_thought(
+            problem=problem, max_steps=routing["max_steps"], model=model
+        )
+        result["answer"] = result.get("final_answer", "")
+    else:
+        result = await engine.solve_problem(
+            problem=problem, reasoning_type="direct", model=model
+        )
+
+    result["routing"] = {
+        "difficulty_score": difficulty,
+        "difficulty_reason": reason,
+        "model_type": routing["model_type"],
+        "reasoning_type": routing["reasoning_type"],
+        "description": routing["description"],
+        "recommended_model": routing.get("recommended_model"),
+    }
     return result
 
 
@@ -99,9 +141,15 @@ async def add_document(
     collection: str,
     document: str,
     metadata: Optional[Dict[str, Any]] = None,
+    chunk_size: int = 0,
+    chunk_overlap: int = 50,
     current_user: Dict[str, Any] = Depends(get_current_active_user),
 ):
-    """ドキュメントをRAGシステムに追加"""
+    """ドキュメントをRAGシステムに追加（chunk_size>0 でチャンク分割）"""
     system = get_rag_system()
-    system.add_document(collection, document, metadata)
+    system.add_document(
+        collection, document, metadata,
+        chunk_size=chunk_size,
+        chunk_overlap=chunk_overlap,
+    )
     return {"message": "Document added successfully", "collection": collection}

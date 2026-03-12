@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>医療データ異常検知MLOpsプラットフォーム</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', 'Noto Sans JP', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            text-align: center;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .badge {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 700;
+            margin: 0 5px;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .metric-card {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid #3b82f6;
+        }
+        
+        .metric-card h3 {
+            color: #1e40af;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+        
+        .metric-card .value {
+            color: #1f2937;
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+        
+        .alert-box {
+            background: #fee2e2;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #dc2626;
+            margin: 20px 0;
+        }
+        
+        .alert-box.normal {
+            background: #d1fae5;
+            border-left-color: #10b981;
+        }
+        
+        .control-panel {
+            background: #f9fafb;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .log-box {
+            background: #1f2937;
+            color: #10b981;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: monospace;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        
+        .log-entry {
+            margin-bottom: 5px;
+        }
+        
+        .log-entry.anomaly {
+            color: #ef4444;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>医療データ異常検知MLOpsプラットフォーム</h1>
+        <div class="subtitle">
+            てんかん脳波データMLOps環境 参考実装 | Fusic面接デモ用<br>
+            <span class="badge">Isolation Forest</span>
+            <span class="badge">MLOps基盤</span>
+            <span class="badge">リアルタイム監視</span>
+        </div>
+        
+        <!-- メトリクス表示 -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <h3>モデル精度</h3>
+                <div class="value" id="accuracy">--</div>
+                <div style="color: #64748b; margin-top: 5px;">Accuracy</div>
+            </div>
+            
+            <div class="metric-card">
+                <h3>総データ数</h3>
+                <div class="value" id="totalSamples">--</div>
+                <div style="color: #64748b; margin-top: 5px;">Samples</div>
+            </div>
+            
+            <div class="metric-card">
+                <h3>異常検知数</h3>
+                <div class="value" id="anomalyCount">--</div>
+                <div style="color: #64748b; margin-top: 5px;">Anomalies</div>
+            </div>
+            
+            <div class="metric-card">
+                <h3>システム稼働時間</h3>
+                <div class="value" id="uptime">99.9%</div>
+                <div style="color: #64748b; margin-top: 5px;">Uptime</div>
+            </div>
+        </div>
+        
+        <!-- ステータス -->
+        <div class="alert-box normal" id="statusBox">
+            <h3 style="margin-bottom: 10px; color: #047857;">システム状態: 正常</h3>
+            <p style="color: #065f46;">異常検知モデルは正常に動作しています。監視を継続中。</p>
+        </div>
+        
+        <!-- コントロールパネル -->
+        <div class="control-panel">
+            <h2 style="color: #1f2937; margin-bottom: 20px;">コントロールパネル</h2>
+            <button onclick="loadMetadata()">モデル情報を取得</button>
+            <button onclick="testPrediction()">異常検知テスト</button>
+            <button onclick="simulateRealtime()">リアルタイム監視シミュレーション</button>
+        </div>
+        
+        <!-- ログ表示 -->
+        <div>
+            <h3 style="color: #1f2937; margin-bottom: 10px;">監視ログ</h3>
+            <div class="log-box" id="logBox">
+                <div class="log-entry">[システム起動] 医療データ異常検知MLOps プラットフォーム v1.0</div>
+                <div class="log-entry">[待機中] モデル情報を取得してください</div>
+            </div>
+        </div>
+        
+        <!-- 技術スタック -->
+        <div style="margin-top: 30px; padding: 20px; background: #f0f9ff; border-radius: 10px; border-left: 4px solid #3b82f6;">
+            <h3 style="color: #1e40af; margin-bottom: 15px;">技術スタック</h3>
+            <div style="color: #1f2937; line-height: 1.8;">
+                <strong>機械学習:</strong> Isolation Forest（異常検知）、scikit-learn<br>
+                <strong>MLOps:</strong> モデル管理、バージョン管理、メタデータ記録<br>
+                <strong>API:</strong> FastAPI、RESTful API<br>
+                <strong>インフラ:</strong> Python 3.11、Docker対応可能<br>
+                <strong>監視:</strong> リアルタイムダッシュボード、アラート機能
+            </div>
+        </div>
+        
+        <!-- ライセンス -->
+        <div style="margin-top: 30px; padding: 20px; background: #f9fafb; border-radius: 10px; text-align: center;">
+            <p style="color: #6b7280;">
+                © 2025 小川清志 | AIエンジニア<br>
+                医療データ異常検知MLOpsプラットフォーム - Fusic面接デモ用
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        const API_URL = 'http://localhost:8000';
+        
+        async function loadMetadata() {
+            addLog('[実行] モデル情報取得中...');
+            try {
+                const response = await fetch(`${API_URL}/metadata`);
+                const data = await response.json();
+                
+                addLog(`[成功] モデルバージョン: ${data.version}`);
+                addLog(`[情報] アルゴリズム: ${data.algorithm}`);
+                addLog(`[情報] 精度: ${(data.accuracy * 100).toFixed(2)}%`);
+                addLog(`[情報] 学習サンプル数: ${data.samples}件`);
+                
+                document.getElementById('accuracy').textContent = (data.accuracy * 100).toFixed(1) + '%';
+                document.getElementById('totalSamples').textContent = data.samples;
+                
+            } catch (error) {
+                addLog('[エラー] APIサーバーが起動していません', true);
+                alert('APIサーバーを起動してください: uvicorn api_server:app --reload');
+            }
+        }
+        
+        async function testPrediction() {
+            addLog('[実行] 異常検知テスト実行中...');
+            
+            // テストデータ（異常っぽいデータ）
+            const testData = {
+                channel1: Math.random() > 0.5 ? Math.random() * 10 : Math.random(),
+                channel2: Math.random() > 0.5 ? Math.random() * 10 : Math.random(),
+                channel3: Math.random() > 0.5 ? Math.random() * 10 : Math.random()
+            };
+            
+            try {
+                const response = await fetch(`${API_URL}/predict`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(testData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.is_anomaly) {
+                    addLog(`[検知] 異常を検出しました！ スコア: ${result.anomaly_score.toFixed(3)}`, true);
+                    document.getElementById('statusBox').className = 'alert-box';
+                    document.getElementById('statusBox').innerHTML = 
+                        '<h3 style="margin-bottom: 10px; color: #991b1b;">⚠️ 異常検知</h3>' +
+                        '<p style="color: #7f1d1d;">医療データに異常が検出されました。詳細確認が必要です。</p>';
+                    
+                    let count = parseInt(document.getElementById('anomalyCount').textContent || '0');
+                    document.getElementById('anomalyCount').textContent = count + 1;
+                } else {
+                    addLog(`[正常] データは正常範囲内です。スコア: ${result.anomaly_score.toFixed(3)}`);
+                }
+                
+            } catch (error) {
+                addLog('[エラー] APIサーバーに接続できません', true);
+            }
+        }
+        
+        function simulateRealtime() {
+            addLog('[開始] リアルタイム監視シミュレーション開始');
+            
+            let count = 0;
+            const interval = setInterval(() => {
+                count++;
+                
+                if (count > 10) {
+                    clearInterval(interval);
+                    addLog('[完了] リアルタイム監視シミュレーション完了');
+                    return;
+                }
+                
+                // ランダムにテスト
+                testPrediction();
+                
+            }, 2000);
+        }
+        
+        function addLog(message, isAnomaly = false) {
+            const logBox = document.getElementById('logBox');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = isAnomaly ? 'log-entry anomaly' : 'log-entry';
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logBox.appendChild(logEntry);
+            logBox.scrollTop = logBox.scrollHeight;
+        }
+        
+        // 初期化
+        window.addEventListener('load', () => {
+            addLog('[起動] ダッシュボード準備完了');
+            addLog('[ヒント] 「モデル情報を取得」ボタンをクリックしてください');
+        });
+    </script>
+</body>
+</html>
+

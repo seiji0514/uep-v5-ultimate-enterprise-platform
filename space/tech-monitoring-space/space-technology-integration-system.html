@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>宇宙技術統合システム</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            z-index: 1000;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .system-overview {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .system-overview h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .overview-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .overview-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .overview-text {
+            flex: 1;
+        }
+
+        .overview-text h3 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        .overview-text p {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .performance-metrics {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .performance-metrics h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .features {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .features h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-title {
+            color: #2c3e50;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .feature-description {
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .feature-metrics {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .feature-metric {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-container h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 400px;
+        }
+
+        .footer {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .footer h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .footer p {
+            color: #7f8c8d;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="http://127.0.0.1:5500/nextgen-technology-integration-system.html" class="back-button">← 次世代技術統合システムに戻る</a>
+        
+        <div class="header">
+            <h1>宇宙技術統合システム</h1>
+            <p>宇宙探査・開発技術による次世代宇宙プラットフォーム</p>
+        </div>
+
+        <div class="main-content">
+            <div class="system-overview">
+                <h2>システム概要</h2>
+                <div class="overview-item">
+                    <div class="overview-icon">S</div>
+                    <div class="overview-text">
+                        <h3>宇宙探査</h3>
+                        <p>深宇宙探査と天体観測</p>
+                    </div>
+                </div>
+                <div class="overview-item">
+                    <div class="overview-icon">L</div>
+                    <div class="overview-text">
+                        <h3>打ち上げ</h3>
+                        <p>再利用可能ロケット技術</p>
+                    </div>
+                </div>
+                <div class="overview-item">
+                    <div class="overview-icon">S</div>
+                    <div class="overview-text">
+                        <h3>衛星システム</h3>
+                        <p>小型衛星コンステレーション</p>
+                    </div>
+                </div>
+                <div class="overview-item">
+                    <div class="overview-icon">C</div>
+                    <div class="overview-text">
+                        <h3>宇宙基地</h3>
+                        <p>月面・火星基地建設</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="performance-metrics">
+                <h2>性能指標</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value">100万km</div>
+                        <div class="metric-label">探査距離</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">99.9%</div>
+                        <div class="metric-label">ミッション成功率</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">1000台</div>
+                        <div class="metric-label">衛星数</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">24時間</div>
+                        <div class="metric-label">通信継続時間</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="features">
+            <h2>宇宙技術統合機能</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-title">深宇宙探査</div>
+                    <div class="feature-description">
+                        太陽系外惑星探査と天体観測。遠隔操作ロボットによる詳細調査。
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">[深宇宙探査]</div>
+                        <div class="feature-metric">[惑星探査]</div>
+                        <div class="feature-metric">[天体観測]</div>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-title">再利用ロケット</div>
+                    <div class="feature-description">
+                        再利用可能ロケット技術。コスト削減と頻繁な打ち上げを実現。
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">[再利用ロケット]</div>
+                        <div class="feature-metric">[コスト削減]</div>
+                        <div class="feature-metric">[頻繁打ち上げ]</div>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-title">衛星コンステレーション</div>
+                    <div class="feature-description">
+                        小型衛星の大量展開。グローバル通信と地球観測。
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">[衛星コンステレーション]</div>
+                        <div class="feature-metric">[グローバル通信]</div>
+                        <div class="feature-metric">[地球観測]</div>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-title">宇宙基地建設</div>
+                    <div class="feature-description">
+                        月面・火星基地の建設支援。3Dプリンティングによる建設。
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">[宇宙基地]</div>
+                        <div class="feature-metric">[月面基地]</div>
+                        <div class="feature-metric">[火星基地]</div>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-title">宇宙資源開発</div>
+                    <div class="feature-description">
+                        小惑星資源の採掘。希少元素と燃料の確保。
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">[宇宙資源]</div>
+                        <div class="feature-metric">[小惑星採掘]</div>
+                        <div class="feature-metric">[希少元素]</div>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-title">宇宙天気予報</div>
+                    <div class="feature-description">
+                        太陽活動と宇宙環境の予測。宇宙機と宇宙飛行士の安全確保。
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">[宇宙天気]</div>
+                        <div class="feature-metric">[太陽活動]</div>
+                        <div class="feature-metric">[安全確保]</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h2>宇宙技術統合システム性能</h2>
+            <div class="chart-wrapper">
+                <canvas id="spaceTechChart"></canvas>
+            </div>
+        </div>
+
+        <div class="footer">
+            <h3>宇宙技術統合システム</h3>
+            <p>宇宙探査・開発技術により、人類の宇宙進出を支援し、地球外資源の活用と新しいフロンティアを開拓します。</p>
+        </div>
+    </div>
+
+    <script>
+        // 宇宙技術統合システム性能チャート
+        const ctx = document.getElementById('spaceTechChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['地球周回', '月面', '火星', '小惑星帯', '木星系', '太陽系外'],
+                datasets: [{
+                    label: '到達距離 (AU)',
+                    data: [0.002, 0.0025, 1.5, 2.5, 5.2, 100],
+                    backgroundColor: 'rgba(102, 126, 234, 0.8)',
+                    borderColor: 'rgba(102, 126, 234, 1)',
+                    borderWidth: 2
+                }, {
+                    label: 'ミッション成功率 (%)',
+                    data: [99.9, 95.0, 85.0, 75.0, 60.0, 30.0],
+                    backgroundColor: 'rgba(118, 75, 162, 0.8)',
+                    borderColor: 'rgba(118, 75, 162, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        type: 'logarithmic',
+                        title: {
+                            display: true,
+                            text: '性能指標 (対数スケール)'
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '宇宙技術統合システムの性能比較'
+                    }
+                }
+            }
+        });
+
+        // アニメーション効果
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.feature-card, .metric-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+
+    <!-- ライセンス・権利情報 -->
+    <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 15px; padding: 25px; margin: 30px auto; max-width: 1200px; border: 3px solid #f59e0b; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);">
+        <h2 style="color: #92400e; margin-bottom: 20px; text-align: center; font-size: 1.5rem;">ライセンス・権利情報</h2>
+        
+        <div style="background: white; padding: 20px; border-radius: 10px; color: #1e3a8a; line-height: 2;">
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">著作権:</strong> &copy; 2025 小川清志（おがわ せいじ）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">開発期間:</strong> 2025年6月～2025年10月（個人事業主として）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">開発目的:</strong> 技術研究・ポートフォリオ作成・転職活動用
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">用途:</strong> 個人研究目的（非商用）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">ライセンス:</strong> MIT License
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">公開範囲:</strong> 個人ポートフォリオサイト、GitHub（技術実証目的）
+            </div>
+            
+            <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #f59e0b;">
+                <strong style="color: #92400e;">重要事項:</strong>
+                <p style="color: #78350f; margin-top: 10px;">
+                    本システムは、個人事業主として独自に研究開発したものであり、
+                    特定の企業・組織の業務とは一切関係ありません。<br>
+                    全ての知的財産権は開発者個人（小川清志）に帰属します。<br>
+                    本システムの技術内容・アイデアは、入社前の個人研究として確立されたものです。
+                </p>
+            </div>
+            
+            <div style="background: #dbeafe; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #3b82f6;">
+                <strong style="color: #1e40af;">タイムスタンプ:</strong>
+                <p style="color: #1e3a8a; margin-top: 10px;">
+                    最終更新日: 2025年10月26日<br>
+                    GitHub最終コミット: 2025年10月26日<br>
+                    確定日付: 入社前（個人開発期間中）
+                </p>
+            </div>
+            
+            <div style="background: #d1fae5; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #10b981;">
+                <strong style="color: #047857;">連絡先:</strong>
+                <p style="color: #065f46; margin-top: 10px;">
+                    開発者: 小川清志（おがわ せいじ）<br>
+                    Email: kaho052514@gmail.com<br>
+                    電話: 080-4271-5479
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>

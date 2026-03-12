@@ -34,17 +34,17 @@ export interface Risk {
 
 export const securityCenterApi = {
   async getEvents(): Promise<SecurityEvent[]> {
-    const response = await apiClient.get<SecurityEvent[]>('/api/v1/security-center/events');
+    const response = await apiClient.get<SecurityEvent[]>('/api/v1/security-defense-platform/events');
     return response.data;
   },
 
   async getIncidents(): Promise<Incident[]> {
-    const response = await apiClient.get<Incident[]>('/api/v1/security-center/incidents');
+    const response = await apiClient.get<Incident[]>('/api/v1/security-defense-platform/incidents');
     return response.data;
   },
 
   async getRisks(): Promise<Risk[]> {
-    const response = await apiClient.get<Risk[]>('/api/v1/security-center/risks');
+    const response = await apiClient.get<Risk[]>('/api/v1/security-defense-platform/risks');
     return response.data;
   },
 };

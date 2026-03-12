@@ -1,0 +1,120 @@
+# サイバー対策 レベル4 - オープンソースツール
+# 使用方法: docker-compose -f docker-compose.yml -f infrastructure/cyber-defense/docker-compose.cyber-defense.yml up -d
+
+version: "3.8"
+
+services:
+  # Suricata IDS/IPS
+  suricata:
+    image: jasonish/suricata:latest
+    container_name: uep-suricata
+    volumes:
+      - ./suricata/suricata.yaml:/etc/suricata/suricata.yaml
+      - suricata-logs:/var/log/suricata
+    networks:
+      - uep-network
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+    # 本番では network_mode: host でパケットキャプチャ
+    profiles:
+      - cyber-defense
+
+  # Wazuh Manager (EDR)
+  wazuh-manager:
+    image: wazuh/wazuh-manager:4.7.0
+    container_name: uep-wazuh-manager
+    hostname: wazuh-manager
+    ports:
+      - "1514:1514"   # Agent enrollment
+      - "1515:1515"   # Agent communication
+      - "5500:5500"   # API
+    environment:
+      - INDEXER_URL=https://opensearch:9200
+      - INDEXER_USERNAME=admin
+      - INDEXER_PASSWORD=admin
+      - FILEBEAT_SSL_VERIFICATION_MODE=none
+      - SSL_CERTIFICATE_AUTHORITIES=/etc/ssl/root-ca.pem
+      - SSL_CERTIFICATE=/etc/ssl/manager.pem
+      - SSL_KEY=/etc/ssl/manager.pem
+    volumes:
+      - wazuh-api-config:/var/ossec/api/configuration
+      - wazuh-etc:/var/ossec/etc
+      - wazuh-logs:/var/ossec/logs
+      - wazuh-var:/var/ossec/var
+    networks:
+      - uep-network
+    profiles:
+      - cyber-defense
+
+  # OpenSearch (SIEM)
+  opensearch:
+    image: opensearchproject/opensearch:2.11.0
+    container_name: uep-opensearch
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - plugins.security.ssl.http.enabled=false
+      - plugins.security.disabled=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data
+    networks:
+      - uep-network
+    profiles:
+      - cyber-defense
+
+  # MISP (脅威インテリジェンス)
+  misp:
+    image: coolacid/misp-core:latest
+    container_name: uep-misp
+    ports:
+      - "443:443"
+    environment:
+      - MYSQL_HOST=misp-db
+      - MYSQL_DATABASE=misp
+      - MYSQL_USER=misp
+      - MYSQL_PASSWORD=misp
+      - MISP_ADMIN_EMAIL=admin@localhost
+      - MISP_BASEURL=https://localhost
+    volumes:
+      - misp-data:/var/www/MISP
+    networks:
+      - uep-network
+    depends_on:
+      - misp-db
+    profiles:
+      - cyber-defense
+
+  misp-db:
+    image: mysql:8.0
+    container_name: uep-misp-db
+    environment:
+      - MYSQL_DATABASE=misp
+      - MYSQL_USER=misp
+      - MYSQL_PASSWORD=misp
+      - MYSQL_ROOT_PASSWORD=rootroot
+    volumes:
+      - misp-db-data:/var/lib/mysql
+    networks:
+      - uep-network
+    profiles:
+      - cyber-defense
+
+volumes:
+  suricata-logs:
+  wazuh-api-config:
+  wazuh-etc:
+  wazuh-logs:
+  wazuh-var:
+  opensearch-data:
+  misp-data:
+  misp-db-data:
+
+# メインの docker-compose.yml と併用時は uep-network を共有

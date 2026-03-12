@@ -180,7 +180,7 @@
         <li><strong>技術的な深掘りをされたとき</strong> UEP v5.0 を起動し、Swagger UIとフロントのダッシュボードを中心に説明する。</li>
         <li><strong>AI用語の意味を聞かれたとき</strong> 上記「デモで使うAI用語集」を参照し、簡潔に説明してから実装例を補足。</li>
         <li><strong>時間が足りない／話題が別のとき</strong> 無理にデモはせず、口頭で概要（Level 1～5 統合、技術スタック、品質指標など）を説明する。</li>
-        <li><strong>事前にしておくこと</strong> start-backend.bat、フロントエンド（cd frontend → npm start）で起動できる状態にしておく。本手順書を開いておく。Zoom/Meetの画面共有を確認しておく。</li>
+        <li><strong>事前にしておくこと</strong> ローカル: start-backend.bat、フロントエンド（cd frontend → npm start）で起動。クラウド: <a href="https://uep-backend-9m5v.onrender.com/health" target="_blank" rel="noopener">/health</a> にアクセスしてRenderを起こす。本手順書を開いておく。Zoom/Meetの画面共有を確認しておく。</li>
       </ul>
     </div>
 
@@ -227,12 +227,14 @@
     <div id="start">
       <h2>面談当日の起動手順</h2>
       <h3>ステップ1: システムの起動（面談開始5分前）</h3>
-      <p><strong>個別起動（推奨）:</strong> バックエンド <code>start-backend.bat</code>、フロントエンド <code>cd frontend</code> → <code>npm start</code>（初回は <code>npm install</code> を先に実行）</p>
+      <p><strong>ローカル起動（推奨）:</strong> バックエンド <code>start-backend.bat</code>、フロントエンド <code>cd frontend</code> → <code>npm start</code>（初回は <code>npm install</code> を先に実行）</p>
+      <p><strong>クラウド起動:</strong> <a href="https://uep-v5-ultimate-enterprise-platform.vercel.app" target="_blank" rel="noopener">https://uep-v5-ultimate-enterprise-platform.vercel.app</a>（事前に <a href="https://uep-backend-9m5v.onrender.com/health" target="_blank" rel="noopener">/health</a> にアクセスしてRenderを起こす）</p>
       <h3>ステップ2: ブラウザの準備</h3>
       <ul>
-        <li><a href="http://localhost:3000">http://localhost:3000</a>（フロントエンド）</li>
-        <li><a href="http://localhost:8000/docs">http://localhost:8000/docs</a> または <a href="http://localhost:8001/docs">http://localhost:8001/docs</a>（Swagger UI）</li>
-        <li><a href="http://localhost:8000/health">http://localhost:8000/health</a> または <a href="http://localhost:8001/health">http://localhost:8001/health</a>（ヘルスチェック）</li>
+        <li>ローカル: <a href="http://localhost:3000">http://localhost:3000</a>（フロントエンド）</li>
+        <li>ローカル: <a href="http://localhost:8000/docs">http://localhost:8000/docs</a> または <a href="http://localhost:8001/docs">http://localhost:8001/docs</a>（Swagger UI）</li>
+        <li>ローカル: <a href="http://localhost:8000/health">http://localhost:8000/health</a> または <a href="http://localhost:8001/health">http://localhost:8001/health</a>（ヘルスチェック）</li>
+        <li>クラウド: <a href="https://uep-v5-ultimate-enterprise-platform.vercel.app" target="_blank" rel="noopener">Vercel</a> / <a href="https://uep-backend-9m5v.onrender.com/docs" target="_blank" rel="noopener">Swagger UI</a></li>
       </ul>
     </div>
 
@@ -273,9 +275,9 @@
 
     <div id="trouble">
       <h2>トラブル時の対応</h2>
-      <p><strong>バックエンドが起動しない:</strong> ポート8000が使用中の場合は8001で起動。それでもダメなら Swagger UI のスクリーンショットで説明。</p>
-      <p><strong>フロントエンドが起動しない:</strong> node_modules 削除 → npm install。それでもダメなら Swagger UI でAPI実演。</p>
-      <p><strong>ログインできない:</strong> バックエンド起動確認 → 認証情報確認。それでもダメなら Swagger UI でAPI実演。</p>
+      <p><strong>バックエンドが起動しない:</strong> ポート8000が使用中の場合は8001で起動。それでもダメなら クラウド（<a href="https://uep-v5-ultimate-enterprise-platform.vercel.app" target="_blank" rel="noopener">Vercel</a>）に切り替え、または Swagger UI のスクリーンショットで説明。</p>
+      <p><strong>フロントエンドが起動しない:</strong> node_modules 削除 → npm install。それでもダメなら クラウドに切り替え、または Swagger UI でAPI実演。</p>
+      <p><strong>ログインできない:</strong> バックエンド起動確認 → 認証情報確認。クラウドの場合、事前に <a href="https://uep-backend-9m5v.onrender.com/health" target="_blank" rel="noopener">/health</a> でRenderを起こす。それでもダメなら Swagger UI でAPI実演。</p>
     </div>
 
     <hr />

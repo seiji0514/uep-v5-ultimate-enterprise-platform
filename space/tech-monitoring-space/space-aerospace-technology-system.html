@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>宇宙・航空技術統合システム - 宇宙開発・航空技術プラットフォーム</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1A237E 0%, #3F51B5 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1A237E, #3F51B5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .status-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .status-item {
+            background: linear-gradient(135deg, #1A237E, #3F51B5);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(26, 35, 126, 0.3);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #333;
+            border-bottom: 3px solid #1A237E;
+            padding-bottom: 10px;
+        }
+
+        .space-features {
+            grid-column: 1 / -1;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #f8f9ff, #e8eaf6);
+            border: 2px solid #1A237E;
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #1A237E, #3F51B5);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(26, 35, 126, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .feature-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .feature-description {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .feature-metrics {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .feature-metric {
+            background: linear-gradient(135deg, #1A237E, #3F51B5);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .feature-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #1A237E, #3F51B5);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-align: center;
+        }
+
+        .feature-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(26, 35, 126, 0.3);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, #1A237E, #3F51B5);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(26, 35, 126, 0.3);
+            z-index: 1000;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(26, 35, 126, 0.4);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #1A237E, #3F51B5);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(26, 35, 126, 0.3);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .technical-fellow-description {
+            text-align: center;
+            margin: 30px 0;
+            padding: 30px;
+            background: linear-gradient(135deg, #E74C3C, #C0392B);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(231, 76, 60, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .technical-fellow-description::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            pointer-events: none;
+        }
+
+        .technical-fellow-description h3 {
+            color: white;
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 0;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="../../technical-fellow-peak-level-ai-systems-dashboard-v4.0.html" class="back-button">← ダッシュボードに戻る</a>
+    
+    <div class="container">
+        <div class="header">
+            <h1>宇宙・航空技術統合システム</h1>
+            <p>宇宙開発・航空技術プラットフォーム</p>
+            <div class="status-indicators">
+                <div class="status-item">システム稼働中</div>
+                <div class="status-item">99.9% 稼働率</div>
+                <div class="status-item">宇宙監視中</div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">98.9%</div>
+                <div class="stat-label">軌道計算精度</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">500+</div>
+                <div class="stat-label">衛星管理数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">96.7%</div>
+                <div class="stat-label">打ち上げ成功率</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">∞</div>
+                <div class="stat-label">宇宙の可能性</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="card">
+                <h2>宇宙ミッション進捗</h2>
+                <div class="chart-container">
+                    <canvas id="spaceMissionChart"></canvas>
+                </div>
+                <p>宇宙探査・衛星運用・宇宙ステーション活動の進捗分析</p>
+            </div>
+
+            <div class="card">
+                <h2>航空技術性能</h2>
+                <div class="chart-container">
+                    <canvas id="aerospacePerformanceChart"></canvas>
+                </div>
+                <p>航空機性能・安全性・効率性の総合評価</p>
+            </div>
+        </div>
+
+        <div class="space-features">
+            <h2>宇宙・航空技術機能</h2>
+            
+            <!-- テクニカルフェロー級システム説明セクション -->
+            <div class="technical-fellow-description">
+                <h3>テクニカルフェロー級の宇宙・航空AI技術による次世代宇宙開発システム</h3>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <div class="feature-title">衛星軌道管理AI</div>
+                    <div class="feature-description">
+                        衛星軌道管理・軌道予測・衝突回避AIシステム。宇宙ミッションの安全性と効率性を確保。
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">98.7% 精度</div>
+                        <div class="feature-metric">リアルタイム</div>
+                    </div>
+                    <a href="satellite-orbital-management-ai.html" class="feature-link">詳細を見る</a>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <div class="feature-title">宇宙船ナビゲーションAI</div>
+                    <div class="feature-description">
+                        宇宙船自律航行・軌道制御・ミッション計画AIシステム。深宇宙探査を支援。
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">99.2% 精度</div>
+                        <div class="feature-metric">自律制御</div>
+                    </div>
+                    <a href="spacecraft-navigation-ai.html" class="feature-link">詳細を見る</a>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <div class="feature-title">宇宙ミッション計画AI</div>
+                    <div class="feature-description">
+                        宇宙ミッション設計・計画・実行管理AIシステム。複雑な宇宙探査ミッションを最適化。
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">97.8% 成功率</div>
+                        <div class="feature-metric">最適設計</div>
+                    </div>
+                    <a href="space-mission-planning-ai.html" class="feature-link">詳細を見る</a>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <div class="feature-title">宇宙天気監視AI</div>
+                    <div class="feature-description">
+                        太陽活動・磁気嵐・放射線環境監視AIシステム。宇宙環境の変化を予測し宇宙ミッションを保護。
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">96.3% 予測精度</div>
+                        <div class="feature-metric">早期警報</div>
+                    </div>
+                    <a href="space-weather-monitoring-ai.html" class="feature-link">詳細を見る</a>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <div class="feature-title">スペースデブリ追跡AI</div>
+                    <div class="feature-description">
+                        宇宙デブリ監視・追跡・衝突回避AIシステム。宇宙環境の安全性を確保し宇宙ミッションを保護。
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">98.7% 精度</div>
+                        <div class="feature-metric">衝突回避</div>
+                    </div>
+                    <a href="space-debris-tracking-ai.html" class="feature-link">詳細を見る</a>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <div class="feature-title">宇宙船生命維持AI</div>
+                    <div class="feature-description">
+                        宇宙飛行士生命維持・環境制御・健康管理AIシステム。長期宇宙ミッションでの乗組員の安全を確保。
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">99.8% 精度</div>
+                        <div class="feature-metric">生命維持</div>
+                    </div>
+                    <a href="spacecraft-life-support-ai.html" class="feature-link">詳細を見る</a>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <div class="feature-title">宇宙通信AI</div>
+                    <div class="feature-description">
+                        深宇宙通信・信号処理・データ転送AIシステム。地球と宇宙機の安定した通信を確保。
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">99.2% 精度</div>
+                        <div class="feature-metric">深宇宙通信</div>
+                    </div>
+                    <a href="space-communication-ai.html" class="feature-link">詳細を見る</a>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <div class="feature-title">宇宙資源利用AI</div>
+                    <div class="feature-description">
+                        宇宙資源探査・採掘・利用AIシステム。小惑星・月・火星の資源を効率的に活用。
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">96.8% 精度</div>
+                        <div class="feature-metric">資源発見</div>
+                    </div>
+                    <a href="space-resource-utilization-ai.html" class="feature-link">詳細を見る</a>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <div class="feature-title">宇宙コロニー管理AI</div>
+                    <div class="feature-description">
+                        宇宙コロニー運営・住民管理・インフラ制御AIシステム。持続可能な宇宙居住を実現。
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">99.5% 管理精度</div>
+                        <div class="feature-metric">自動管理</div>
+                    </div>
+                    <a href="space-colony-management-ai.html" class="feature-link">詳細を見る</a>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <div class="feature-title">宇宙探査AI</div>
+                    <div class="feature-description">
+                        自律宇宙探査・科学観測・発見分析AIシステム。未知の宇宙を効率的に探査し新たな発見を支援。
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">97.8% 自律度</div>
+                        <div class="feature-metric">自動探査</div>
+                    </div>
+                    <a href="space-exploration-ai.html" class="feature-link">詳細を見る</a>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <div class="feature-title">宇宙ミッション自動化AI</div>
+                    <div class="feature-description">
+                        宇宙ミッション自動化・ロボット制御・無人運用AIシステム。宇宙活動の完全自動化を実現。
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">98.7% 制御精度</div>
+                        <div class="feature-metric">自律制御</div>
+                    </div>
+                    <a href="space-mission-automation-ai.html" class="feature-link">詳細を見る</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 宇宙ミッション進捗チャート
+        const spaceMissionCtx = document.getElementById('spaceMissionChart').getContext('2d');
+        new Chart(spaceMissionCtx, {
+            type: 'line',
+            data: {
+                labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+                datasets: [{
+                    label: 'ミッション成功率（%）',
+                    data: [95, 97, 96, 98, 99, 97, 98, 99, 100, 98, 99, 100],
+                    borderColor: '#1A237E',
+                    backgroundColor: 'rgba(26, 35, 126, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }, {
+                    label: '衛星運用数',
+                    data: [450, 460, 470, 480, 490, 500, 510, 520, 530, 540, 550, 560],
+                    borderColor: '#3F51B5',
+                    backgroundColor: 'rgba(63, 81, 181, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '宇宙ミッション進捗'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // 航空技術性能チャート
+        const aerospacePerformanceCtx = document.getElementById('aerospacePerformanceChart').getContext('2d');
+        new Chart(aerospacePerformanceCtx, {
+            type: 'radar',
+            data: {
+                labels: ['安全性', '効率性', '速度', '航続距離', 'ペイロード', '環境性能'],
+                datasets: [{
+                    label: '現在の性能',
+                    data: [95, 88, 92, 85, 90, 87],
+                    borderColor: '#1A237E',
+                    backgroundColor: 'rgba(26, 35, 126, 0.2)',
+                    tension: 0.4
+                }, {
+                    label: '目標性能',
+                    data: [100, 95, 98, 95, 95, 95],
+                    borderColor: '#3F51B5',
+                    backgroundColor: 'rgba(63, 81, 181, 0.2)',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '航空技術性能評価'
+                    }
+                },
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+
+        // リアルタイム更新
+        setInterval(() => {
+            // チャートデータの更新
+            const missionChart = Chart.getChart('spaceMissionChart');
+            const performanceChart = Chart.getChart('aerospacePerformanceChart');
+            
+            if (missionChart) {
+                // ミッション進捗データの更新
+                missionChart.data.datasets[0].data = missionChart.data.datasets[0].data.map(value => 
+                    Math.min(100, value + (Math.random() - 0.5) * 1)
+                );
+                missionChart.data.datasets[1].data = missionChart.data.datasets[1].data.map(value => 
+                    value + Math.floor(Math.random() * 3)
+                );
+                missionChart.update();
+            }
+            
+            if (performanceChart) {
+                // 性能データの更新
+                performanceChart.data.datasets[0].data = performanceChart.data.datasets[0].data.map(value => 
+                    Math.min(100, value + (Math.random() - 0.5) * 2)
+                );
+                performanceChart.update();
+            }
+        }, 5000);
+    </script>
+
+    <!-- ライセンス・権利情報 -->
+    <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 15px; padding: 25px; margin: 30px auto; max-width: 1200px; border: 3px solid #f59e0b; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);">
+        <h2 style="color: #92400e; margin-bottom: 20px; text-align: center; font-size: 1.5rem;">ライセンス・権利情報</h2>
+        
+        <div style="background: white; padding: 20px; border-radius: 10px; color: #1e3a8a; line-height: 2;">
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">著作権:</strong> &copy; 2025 小川清志（おがわ せいじ）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">開発期間:</strong> 2025年6月～2025年10月（個人事業主として）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">開発目的:</strong> 技術研究・ポートフォリオ作成・転職活動用
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">用途:</strong> 個人研究目的（非商用）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">ライセンス:</strong> MIT License
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">公開範囲:</strong> 個人ポートフォリオサイト、GitHub（技術実証目的）
+            </div>
+            
+            <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #f59e0b;">
+                <strong style="color: #92400e;">重要事項:</strong>
+                <p style="color: #78350f; margin-top: 10px;">
+                    本システムは、個人事業主として独自に研究開発したものであり、
+                    特定の企業・組織の業務とは一切関係ありません。<br>
+                    全ての知的財産権は開発者個人（小川清志）に帰属します。<br>
+                    本システムの技術内容・アイデアは、入社前の個人研究として確立されたものです。
+                </p>
+            </div>
+            
+            <div style="background: #dbeafe; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #3b82f6;">
+                <strong style="color: #1e40af;">タイムスタンプ:</strong>
+                <p style="color: #1e3a8a; margin-top: 10px;">
+                    最終更新日: 2025年10月26日<br>
+                    GitHub最終コミット: 2025年10月26日<br>
+                    確定日付: 入社前（個人開発期間中）
+                </p>
+            </div>
+            
+            <div style="background: #d1fae5; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #10b981;">
+                <strong style="color: #047857;">連絡先:</strong>
+                <p style="color: #065f46; margin-top: 10px;">
+                    開発者: 小川清志（おがわ せいじ）<br>
+                    Email: kaho052514@gmail.com<br>
+                    電話: 080-4271-5479
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>

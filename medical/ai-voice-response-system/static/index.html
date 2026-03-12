@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI自動音声応答システム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
+
+        .status {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .status.disconnected {
+            background: #fee;
+            color: #c33;
+        }
+
+        .status.connected {
+            background: #efe;
+            color: #3c3;
+        }
+
+        .status.processing {
+            background: #eef;
+            color: #33c;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .btn-start {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-stop {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-reset {
+            background: #ff9800;
+            color: white;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .conversation {
+            background: #f5f5f5;
+            border-radius: 10px;
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 10px;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            background: #e3f2fd;
+            text-align: right;
+        }
+
+        .message.assistant {
+            background: #f1f8e9;
+            text-align: left;
+        }
+
+        .message-label {
+            font-weight: bold;
+            font-size: 0.8em;
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        .message-text {
+            color: #333;
+            word-wrap: break-word;
+        }
+
+        .info {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #856404;
+        }
+
+        .info h3 {
+            margin-bottom: 10px;
+        }
+
+        .info ul {
+            margin-left: 20px;
+        }
+
+        .info li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎤 AI自動音声応答システム</h1>
+        <p class="subtitle">リアルタイムで音声を認識し、AIが自動的に応答します</p>
+
+        <div id="status" class="status disconnected">
+            接続待機中...
+        </div>
+
+        <div class="controls">
+            <button id="btnStart" class="btn-start" onclick="startConversation()">
+                🎤 会話を開始
+            </button>
+            <button id="btnStop" class="btn-stop" onclick="stopConversation()" disabled>
+                ⏹️ 会話を停止
+            </button>
+            <button id="btnReset" class="btn-reset" onclick="resetConversation()" disabled>
+                🔄 履歴をリセット
+            </button>
+        </div>
+
+        <div class="conversation" id="conversation">
+            <div style="text-align: center; color: #999; padding: 20px;">
+                会話が始まると、ここに表示されます
+            </div>
+        </div>
+
+        <div class="info">
+            <h3>📋 使用方法</h3>
+            <ul>
+                <li>「会話を開始」ボタンをクリックしてマイクの使用を許可してください</li>
+                <li>マイクに向かって話すと、自動的に音声が認識されます</li>
+                <li>AIが応答を生成し、音声で返答します</li>
+                <li>「会話を停止」でマイクを停止、「履歴をリセット」で会話履歴をクリアできます</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let ws = null;
+        let mediaRecorder = null;
+        let audioContext = null;
+        let isRecording = false;
+        // ポート番号を動的に取得（現在のページのポートを使用）
+        const WS_PORT = window.location.port || '8000';
+        const WS_URL = `ws://${window.location.hostname}:${WS_PORT}/ws/voice-chat`;
+
+        // WebSocket接続
+        function connectWebSocket() {
+            ws = new WebSocket(WS_URL);
+
+            ws.onopen = () => {
+                updateStatus('connected', '接続完了');
+                document.getElementById('btnStart').disabled = false;
+            };
+
+            ws.onmessage = async (event) => {
+                if (event.data instanceof Blob) {
+                    // 音声データを受信
+                    await playAudio(event.data);
+                } else {
+                    // JSONメッセージを受信
+                    const message = JSON.parse(event.data);
+                    handleMessage(message);
+                }
+            };
+
+            ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                updateStatus('disconnected', '接続エラー');
+            };
+
+            ws.onclose = () => {
+                updateStatus('disconnected', '接続が切断されました');
+                document.getElementById('btnStart').disabled = false;
+                document.getElementById('btnStop').disabled = true;
+                document.getElementById('btnReset').disabled = true;
+            };
+        }
+
+        // 会話開始
+        async function startConversation() {
+            try {
+                // マイクアクセス
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                
+                // AudioContext作成
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const source = audioContext.createMediaStreamSource(stream);
+                
+                // MediaRecorder作成
+                mediaRecorder = new MediaRecorder(stream, {
+                    mimeType: 'audio/webm'
+                });
+
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0 && ws && ws.readyState === WebSocket.OPEN) {
+                        // 音声データをWebSocketで送信
+                        ws.send(event.data);
+                    }
+                };
+
+                // 100msごとにデータを送信
+                mediaRecorder.start(100);
+                isRecording = true;
+
+                // サーバーに開始通知
+                if (ws && ws.readyState === WebSocket.OPEN) {
+                    ws.send(JSON.stringify({ type: 'start' }));
+                }
+
+                updateStatus('processing', '録音中... 話してください');
+                document.getElementById('btnStart').disabled = true;
+                document.getElementById('btnStop').disabled = false;
+                document.getElementById('btnReset').disabled = false;
+
+            } catch (error) {
+                console.error('マイクアクセスエラー:', error);
+                alert('マイクへのアクセスが拒否されました。ブラウザの設定を確認してください。');
+            }
+        }
+
+        // 会話停止
+        function stopConversation() {
+            if (mediaRecorder && isRecording) {
+                mediaRecorder.stop();
+                isRecording = false;
+            }
+
+            if (audioContext) {
+                audioContext.close();
+                audioContext = null;
+            }
+
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ type: 'stop' }));
+            }
+
+            updateStatus('connected', '停止しました');
+            document.getElementById('btnStart').disabled = false;
+            document.getElementById('btnStop').disabled = true;
+        }
+
+        // 会話履歴リセット
+        function resetConversation() {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ type: 'reset' }));
+            }
+            document.getElementById('conversation').innerHTML = 
+                '<div style="text-align: center; color: #999; padding: 20px;">会話が始まると、ここに表示されます</div>';
+        }
+
+        // メッセージ処理
+        function handleMessage(message) {
+            const { type, text, message: msg } = message;
+
+            switch (type) {
+                case 'connected':
+                    updateStatus('connected', msg || '接続完了');
+                    break;
+                
+                case 'transcription':
+                    addMessage('user', text);
+                    break;
+                
+                case 'response_text':
+                    addMessage('assistant', text);
+                    break;
+                
+                case 'processing':
+                    updateStatus('processing', msg || '処理中...');
+                    break;
+                
+                case 'error':
+                    updateStatus('disconnected', `エラー: ${msg}`);
+                    break;
+                
+                case 'started':
+                    updateStatus('processing', '会話を開始しました');
+                    break;
+                
+                case 'stopped':
+                    updateStatus('connected', '会話を停止しました');
+                    break;
+                
+                case 'reset':
+                    updateStatus('connected', '履歴をリセットしました');
+                    break;
+            }
+        }
+
+        // メッセージ追加
+        function addMessage(role, text) {
+            const conversation = document.getElementById('conversation');
+            
+            // 初期メッセージを削除
+            if (conversation.children.length === 1 && conversation.children[0].textContent.includes('会話が始まると')) {
+                conversation.innerHTML = '';
+            }
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            messageDiv.innerHTML = `
+                <div class="message-label">${role === 'user' ? '👤 あなた' : '🤖 AI'}</div>
+                <div class="message-text">${escapeHtml(text)}</div>
+            `;
+            
+            conversation.appendChild(messageDiv);
+            conversation.scrollTop = conversation.scrollHeight;
+        }
+
+        // 音声再生
+        async function playAudio(audioBlob) {
+            try {
+                const arrayBuffer = await audioBlob.arrayBuffer();
+                const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+                const source = audioContext.createBufferSource();
+                source.buffer = audioBuffer;
+                source.connect(audioContext.destination);
+                source.start();
+            } catch (error) {
+                console.error('音声再生エラー:', error);
+            }
+        }
+
+        // ステータス更新
+        function updateStatus(status, message) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = `status ${status}`;
+            statusDiv.textContent = message;
+        }
+
+        // HTMLエスケープ
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // 初期化
+        window.onload = () => {
+            connectWebSocket();
+        };
+
+        // ページ離脱時に接続を閉じる
+        window.onbeforeunload = () => {
+            if (ws) {
+                ws.close();
+            }
+            if (mediaRecorder && isRecording) {
+                mediaRecorder.stop();
+            }
+        };
+    </script>
+</body>
+</html>

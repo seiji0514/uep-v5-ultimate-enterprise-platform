@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>市民サービス - SmartCity Platform</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body { 
+      font-family: 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif; 
+      background: #f8fafc;
+      color: #2d3748;
+      margin: 0; 
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+    
+    /* 市民サービス専用明るい背景 */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(72, 187, 120, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(66, 153, 225, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(237, 137, 54, 0.08) 0%, transparent 50%),
+        linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e0 100%);
+      animation: backgroundShift 30s ease-in-out infinite;
+      z-index: -2;
+    }
+    
+    /* 動的グリッド背景 */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(72, 187, 120, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(72, 187, 120, 0.05) 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: gridMove 20s linear infinite;
+      z-index: -1;
+    }
+    
+    @keyframes backgroundShift {
+      0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+      25% { transform: translate(-20px, -20px) scale(1.1) rotate(1deg); }
+      50% { transform: translate(20px, -10px) scale(1.05) rotate(-1deg); }
+      75% { transform: translate(-10px, 20px) scale(1.08) rotate(0.5deg); }
+    }
+    
+    @keyframes gridMove {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(50px, 50px); }
+    }
+    
+    /* サイドバー */
+    .sidebar {
+      width: 320px;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      border-right: 1px solid rgba(72, 187, 120, 0.2);
+      padding: 30px 0;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .sidebar-header {
+      padding: 0 30px 30px;
+      border-bottom: 1px solid rgba(72, 187, 120, 0.2);
+      margin-bottom: 30px;
+    }
+    
+    .sidebar-logo {
+      font-size: 24px;
+      font-weight: 700;
+      color: #2d3748;
+      text-decoration: none;
+      display: block;
+      margin-bottom: 15px;
+      background: linear-gradient(135deg, #48bb78, #4299e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: logoGlow 3s ease-in-out infinite alternate;
+    }
+    
+    @keyframes logoGlow {
+      from { filter: drop-shadow(0 0 10px rgba(72, 187, 120, 0.3)); }
+      to { filter: drop-shadow(0 0 20px rgba(72, 187, 120, 0.5)); }
+    }
+    
+    .nav-menu {
+      padding: 0 30px;
+    }
+    
+    .nav-item {
+      margin-bottom: 12px;
+    }
+    
+    .nav-link {
+      display: flex;
+      align-items: center;
+      padding: 16px 20px;
+      color: #4a5568;
+      text-decoration: none;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      font-size: 16px;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+    
+    .nav-link::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(72, 187, 120, 0.1), transparent);
+      transition: left 0.6s ease;
+    }
+    
+    .nav-link:hover::before {
+      left: 100%;
+    }
+    
+    .nav-link:hover {
+      background: rgba(72, 187, 120, 0.1);
+      transform: translateX(8px);
+      color: #2d3748;
+      box-shadow: 0 8px 25px rgba(72, 187, 120, 0.2);
+    }
+    
+    .nav-link.active {
+      background: linear-gradient(135deg, rgba(72, 187, 120, 0.2), rgba(66, 153, 225, 0.2));
+      color: #2d3748;
+      font-weight: 600;
+      box-shadow: 0 8px 25px rgba(72, 187, 120, 0.3);
+    }
+    
+    /* メインコンテンツ */
+    .main-content {
+      flex: 1;
+      margin-left: 320px;
+      padding: 30px;
+      background: transparent;
+    }
+    
+    /* アラートシステム */
+    .alert-container {
+      position: fixed;
+      top: 30px;
+      right: 30px;
+      z-index: 1002;
+      max-width: 350px;
+    }
+    
+    .alert {
+      background: rgba(72, 187, 120, 0.9);
+      backdrop-filter: blur(20px);
+      color: white;
+      padding: 20px 25px;
+      border-radius: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 8px 32px rgba(72, 187, 120, 0.3);
+      animation: slideInRight 0.6s ease-out, alertPulse 3s infinite;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    @keyframes slideInRight {
+      from { transform: translateX(100%) scale(0.8); opacity: 0; }
+      to { transform: translateX(0) scale(1); opacity: 1; }
+    }
+    
+    @keyframes alertPulse {
+      0%, 100% { box-shadow: 0 8px 32px rgba(72, 187, 120, 0.3); }
+      50% { box-shadow: 0 8px 40px rgba(72, 187, 120, 0.5); }
+    }
+    
+    /* ヒーローセクション */
+    .hero-section {
+      background: linear-gradient(135deg, rgba(72, 187, 120, 0.1), rgba(66, 153, 225, 0.1));
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(72, 187, 120, 0.2);
+      color: #2d3748;
+      padding: 60px 50px;
+      border-radius: 25px;
+      text-align: center;
+      margin-bottom: 50px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero-section::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(72, 187, 120, 0.05), transparent);
+      animation: shimmer 4s infinite;
+    }
+    
+    @keyframes shimmer {
+      0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+      100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+    }
+    
+    .hero-section h1 {
+      font-size: 3.5em;
+      margin-bottom: 25px;
+      font-weight: 300;
+      position: relative;
+      z-index: 1;
+      background: linear-gradient(135deg, #2d3748, #4a5568);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .hero-section p {
+      font-size: 1.4em;
+      opacity: 0.8;
+      margin-bottom: 40px;
+      position: relative;
+      z-index: 1;
+      line-height: 1.6;
+      color: #4a5568;
+    }
+    
+    /* 市民サービス計器 */
+    .gauges-section {
+      margin-bottom: 50px;
+    }
+    
+    .section-title {
+      font-size: 2.2em;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 40px;
+      background: linear-gradient(135deg, #48bb78, #4299e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .gauges-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+    
+    .gauge-card {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(72, 187, 120, 0.2);
+      padding: 35px;
+      border-radius: 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s ease;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+    
+    .gauge-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #48bb78, #4299e1);
+    }
+    
+    .gauge-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      background: rgba(255, 255, 255, 0.9);
+    }
+    
+    .gauge-title {
+      font-size: 1.3em;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 20px;
+    }
+    
+    .gauge-value {
+      font-size: 3.5em;
+      font-weight: 700;
+      color: #48bb78;
+      margin-bottom: 15px;
+      animation: numberUpdate 0.8s ease-out;
+    }
+    
+    @keyframes numberUpdate {
+      0% { transform: scale(1.2); color: #e53e3e; }
+      100% { transform: scale(1); color: #48bb78; }
+    }
+    
+    .gauge-unit {
+      font-size: 1.1em;
+      color: #4a5568;
+      margin-bottom: 20px;
+    }
+    
+    .gauge-bar {
+      width: 100%;
+      height: 12px;
+      background: rgba(72, 187, 120, 0.1);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 15px;
+      position: relative;
+    }
+    
+    .gauge-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #48bb78, #4299e1);
+      border-radius: 6px;
+      transition: width 0.8s ease;
+      position: relative;
+    }
+    
+    .gauge-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      animation: shimmer 2s infinite;
+    }
+    
+    .gauge-status {
+      font-size: 1em;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 25px;
+      display: inline-block;
+      backdrop-filter: blur(10px);
+    }
+    
+    .status-normal { 
+      background: rgba(72, 187, 120, 0.2); 
+      color: #38a169; 
+      border: 1px solid rgba(72, 187, 120, 0.3);
+    }
+    .status-warning { 
+      background: rgba(237, 137, 54, 0.2); 
+      color: #dd6b20; 
+      border: 1px solid rgba(237, 137, 54, 0.3);
+    }
+    .status-critical { 
+      background: rgba(245, 101, 101, 0.2); 
+      color: #e53e3e; 
+      border: 1px solid rgba(245, 101, 101, 0.3);
+    }
+    
+    /* サービスカード */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+      margin-bottom: 50px;
+    }
+    
+    .service-card {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(72, 187, 120, 0.2);
+      padding: 40px;
+      border-radius: 20px;
+      text-align: center;
+      transition: all 0.4s ease;
+      cursor: pointer;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(72, 187, 120, 0.1), transparent);
+      transition: left 0.6s ease;
+    }
+    
+    .service-card:hover::before {
+      left: 100%;
+    }
+    
+    .service-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      background: rgba(255, 255, 255, 0.9);
+    }
+    
+    .service-icon {
+      font-size: 3em;
+      margin-bottom: 25px;
+      animation: iconFloat 4s ease-in-out infinite;
+    }
+    
+    @keyframes iconFloat {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-10px) rotate(5deg); }
+    }
+    
+    .service-card h3 {
+      color: #48bb78;
+      margin-bottom: 20px;
+      font-size: 1.6em;
+      font-weight: 600;
+    }
+    
+    .service-card p {
+      color: #4a5568;
+      line-height: 1.7;
+      font-size: 1.1em;
+      margin-bottom: 20px;
+    }
+    
+    .service-status {
+      font-size: 1em;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 25px;
+      display: inline-block;
+      backdrop-filter: blur(10px);
+    }
+    
+    /* モバイルメニューボタン */
+    .mobile-menu-btn {
+      display: none;
+      position: fixed;
+      top: 30px;
+      left: 30px;
+      z-index: 1001;
+      background: rgba(72, 187, 120, 0.9);
+      backdrop-filter: blur(20px);
+      color: white;
+      border: none;
+      padding: 15px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 20px;
+      box-shadow: 0 8px 32px rgba(72, 187, 120, 0.3);
+    }
+    
+    /* レスポンシブ */
+    @media (max-width: 1200px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.4s ease;
+      }
+      
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      
+      .main-content {
+        margin-left: 0;
+      }
+      
+      .mobile-menu-btn {
+        display: block;
+      }
+      
+      .gauges-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .services-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .hero-section {
+        padding: 40px 30px;
+      }
+      
+      .hero-section h1 {
+        font-size: 2.5em;
+      }
+      
+      .gauge-card {
+        padding: 25px;
+      }
+      
+      .service-card {
+        padding: 30px;
+      }
+      
+      .main-content {
+        padding: 20px;
+      }
+      
+      .section-title {
+        font-size: 1.8em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- アラート通知 -->
+  <div class="alert-container" id="alertContainer"></div>
+  
+  <!-- モバイルメニューボタン -->
+  <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+  
+  <!-- サイドバー -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="smartcity_platform.html" class="sidebar-logo">🏙️ SmartCity Platform v2.0</a>
+    </div>
+    <nav class="nav-menu">
+      <div class="nav-item">
+        <a href="smartcity_platform.html" class="nav-link">🏠 ダッシュボード</a>
+      </div>
+      <div class="nav-item">
+        <a href="traffic_control.html" class="nav-link">🚦 交通管制</a>
+      </div>
+      <div class="nav-item">
+        <a href="infrastructure.html" class="nav-link">🏗️ インフラ管理</a>
+      </div>
+      <div class="nav-item">
+        <a href="environment.html" class="nav-link">🌱 環境モニタリング</a>
+      </div>
+      <div class="nav-item">
+        <a href="citizen_services.html" class="nav-link active">👥 市民サービス</a>
+      </div>
+      <div class="nav-item">
+        <a href="data_analysis.html" class="nav-link">📊 データ分析</a>
+      </div>
+      <div class="nav-item">
+        <a href="settings.html" class="nav-link">⚙️ システム設定</a>
+      </div>
+      <div class="nav-item">
+        <a href="air_traffic_control.html" class="nav-link">✈️ 航空管制</a>
+      </div>
+    </nav>
+  </div>
+
+  <div class="main-content">
+    <!-- ヒーローセクション -->
+    <div class="hero-section">
+      <h1>👥 市民サービスセンター</h1>
+      <p>AI駆動のデジタル市民サービス<br>24時間365日、市民の利便性を最優先に</p>
+    </div>
+
+    <!-- 市民サービス計器 -->
+    <div class="gauges-section">
+      <h2 class="section-title">📊 リアルタイムサービス監視</h2>
+      <div class="gauges-grid">
+        <div class="gauge-card">
+          <div class="gauge-title">🤖 AIチャットボット</div>
+          <div class="gauge-value" id="chatbot-usage">94%</div>
+          <div class="gauge-unit">満足度</div>
+          <div class="gauge-bar">
+            <div class="gauge-fill" id="chatbot-fill" style="width: 94%"></div>
+          </div>
+          <div class="gauge-status status-normal">優秀</div>
+        </div>
+        
+        <div class="gauge-card">
+          <div class="gauge-title">📱 モバイルアプリ</div>
+          <div class="gauge-value" id="mobile-users">12,847</div>
+          <div class="gauge-unit">アクティブユーザー</div>
+          <div class="gauge-bar">
+            <div class="gauge-fill" id="mobile-fill" style="width: 85%"></div>
+          </div>
+          <div class="gauge-status status-normal">良好</div>
+        </div>
+        
+        <div class="gauge-card">
+          <div class="gauge-title">⏱️ 平均応答時間</div>
+          <div class="gauge-value" id="response-time">1.2</div>
+          <div class="gauge-unit">秒</div>
+          <div class="gauge-bar">
+            <div class="gauge-fill" id="response-fill" style="width: 90%"></div>
+          </div>
+          <div class="gauge-status status-normal">高速</div>
+        </div>
+        
+        <div class="gauge-card">
+          <div class="gauge-title">🎯 サービス稼働率</div>
+          <div class="gauge-value" id="service-uptime">99.8%</div>
+          <div class="gauge-unit">可用性</div>
+          <div class="gauge-bar">
+            <div class="gauge-fill" id="uptime-fill" style="width: 99.8%"></div>
+          </div>
+          <div class="gauge-status status-normal">優秀</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- サービスカード -->
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-icon">🏛️</div>
+        <h3>行政手続きオンライン</h3>
+        <p>住民票、戸籍謄本、各種証明書の申請を24時間オンラインで受付。AIによる自動審査で迅速な処理を実現。</p>
+        <div class="service-status status-normal">稼働中</div>
+      </div>
+      
+      <div class="service-card">
+        <div class="service-icon">🚑</div>
+        <h3>緊急通報システム</h3>
+        <p>救急・消防・警察への緊急通報をAIが自動振り分け。位置情報と音声認識で迅速な対応を支援。</p>
+        <div class="service-status status-normal">稼働中</div>
+      </div>
+      
+      <div class="service-card">
+        <div class="service-icon">🚌</div>
+        <h3>公共交通案内</h3>
+        <p>リアルタイムのバス・電車の運行状況、混雑予測、最適ルート案内をAIが提供。</p>
+        <div class="service-status status-normal">稼働中</div>
+      </div>
+      
+      <div class="service-card">
+        <div class="service-icon">🏥</div>
+        <h3>医療予約システム</h3>
+        <p>病院の空き状況、症状に応じた適切な医療機関の案内、オンライン予約を一元管理。</p>
+        <div class="service-status status-normal">稼働中</div>
+      </div>
+      
+      <div class="service-card">
+        <div class="service-icon">🎓</div>
+        <h3>教育支援サービス</h3>
+        <p>オンライン学習、学校行事の案内、給食メニュー、登下校の安全確認を統合管理。</p>
+        <div class="service-status status-normal">稼働中</div>
+      </div>
+      
+      <div class="service-card">
+        <div class="service-icon">🌱</div>
+        <h3>環境情報サービス</h3>
+        <p>大気質、花粉情報、災害警報、避難所情報をリアルタイムで配信。市民の安全を守る。</p>
+        <div class="service-status status-normal">稼働中</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('open');
+    }
+    
+    // モバイルでサイドバー外をクリックした時に閉じる
+    document.addEventListener('click', function(event) {
+      const sidebar = document.getElementById('sidebar');
+      const mobileBtn = document.querySelector('.mobile-menu-btn');
+      
+      if (window.innerWidth <= 1200) {
+        if (!sidebar.contains(event.target) && !mobileBtn.contains(event.target)) {
+          sidebar.classList.remove('open');
+        }
+      }
+    });
+    
+    // 市民サービス専用アラートシステム
+    function showAlert(message, type = 'info') {
+      const alertContainer = document.getElementById('alertContainer');
+      const alert = document.createElement('div');
+      alert.className = 'alert';
+      alert.textContent = message;
+      
+      alertContainer.appendChild(alert);
+      
+      // 6秒後に自動削除
+      setTimeout(() => {
+        alert.style.animation = 'slideInRight 0.6s ease-out reverse';
+        setTimeout(() => alert.remove(), 600);
+      }, 6000);
+    }
+    
+    // 市民サービス専用ランダムアラート生成
+    function generateCitizenAlert() {
+      const alerts = [
+        '👥 新しい市民サービスが追加されました',
+        '🤖 AIチャットボットが新しい質問パターンを学習しました',
+        '📱 モバイルアプリの利用者が増加しています',
+        '⚡ 行政手続きの処理速度が向上しました',
+        '🚑 緊急通報システムが正常に稼働しています',
+        '🚌 公共交通のリアルタイム情報が更新されました',
+        '🏥 医療予約システムの利用が活発です',
+        '🎓 教育支援サービスの利用者が増加しています'
+      ];
+      
+      const randomAlert = alerts[Math.floor(Math.random() * alerts.length)];
+      showAlert(randomAlert);
+    }
+    
+    // 市民サービス専用リアルタイム計器更新
+    function updateCitizenGauges() {
+      // AIチャットボット満足度のランダム更新
+      const chatbotUsage = Math.floor(Math.random() * 10) + 90; // 90-100%
+      document.getElementById('chatbot-usage').textContent = chatbotUsage + '%';
+      document.getElementById('chatbot-fill').style.width = chatbotUsage + '%';
+      
+      // モバイルユーザー数のランダム更新
+      const mobileUsers = Math.floor(Math.random() * 1000) + 12000; // 12000-13000
+      document.getElementById('mobile-users').textContent = mobileUsers.toLocaleString();
+      document.getElementById('mobile-fill').style.width = (mobileUsers / 15000 * 100) + '%';
+      
+      // 平均応答時間のランダム更新
+      const responseTime = (0.8 + Math.random() * 0.8).toFixed(1); // 0.8-1.6秒
+      document.getElementById('response-time').textContent = responseTime;
+      document.getElementById('response-fill').style.width = (1.6 - responseTime) / 1.6 * 100 + '%';
+      
+      // サービス稼働率は高安定
+      const serviceUptime = 99.8 - (Math.random() * 0.2); // 99.6-99.8%
+      document.getElementById('service-uptime').textContent = serviceUptime.toFixed(1) + '%';
+      document.getElementById('uptime-fill').style.width = serviceUptime + '%';
+      
+      // ステータス更新
+      updateCitizenStatus('chatbot-usage', chatbotUsage);
+      updateCitizenStatus('mobile-users', mobileUsers / 15000 * 100);
+      updateCitizenStatus('response-time', (1.6 - responseTime) / 1.6 * 100);
+      updateCitizenStatus('service-uptime', serviceUptime);
+    }
+    
+    function updateCitizenStatus(elementId, value) {
+      const element = document.getElementById(elementId);
+      const statusElement = element.parentElement.nextElementSibling.nextElementSibling.nextElementSibling;
+      
+      if (value > 80) {
+        statusElement.className = 'gauge-status status-normal';
+        statusElement.textContent = elementId === 'chatbot-usage' ? '優秀' : 
+                                  elementId === 'mobile-users' ? '良好' : 
+                                  elementId === 'response-time' ? '高速' : '優秀';
+      } else if (value > 60) {
+        statusElement.className = 'gauge-status status-warning';
+        statusElement.textContent = '注意';
+      } else {
+        statusElement.className = 'gauge-status status-critical';
+        statusElement.textContent = '警告';
+      }
+    }
+    
+    // 3秒ごとに計器を更新
+    setInterval(updateCitizenGauges, 3000);
+    
+    // 15-45秒ごとにランダムアラートを表示
+    setInterval(generateCitizenAlert, Math.random() * 30000 + 15000);
+    
+    // 初期更新
+    updateCitizenGauges();
+    
+    // 初期アラート
+    setTimeout(() => {
+      showAlert('👥 市民サービスセンターが正常に稼働しています');
+    }, 2000);
+    
+    setTimeout(() => {
+      showAlert('🤖 AIチャットボットが市民からの質問に回答中です');
+    }, 5000);
+  </script>
+</body>
+</html> 

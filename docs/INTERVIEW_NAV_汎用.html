@@ -9,6 +9,7 @@
     h1 { font-size: 1.3rem; border-bottom: 2px solid #333; padding-bottom: 0.4rem; }
     h2 { font-size: 1.15rem; margin-top: 1.5rem; color: #333; border-bottom: 1px solid #ccc; }
     h3 { font-size: 1rem; margin-top: 1rem; color: #555; }
+    h4 { font-size: 0.95rem; margin-top: 0.8rem; color: #666; }
     nav { background: #e8f4f8; padding: 0.8rem; border-radius: 4px; margin-bottom: 1.5rem; border-left: 4px solid #0066cc; }
     nav ul { list-style: none; padding: 0; margin: 0; }
     nav li { margin: 0.3rem 0; }
@@ -19,6 +20,7 @@
     .customize { background: #e8f5e9; padding: 0.8rem; border-radius: 4px; margin: 0.5rem 0; border-left: 4px solid #4caf50; }
     .term { background: #f8f9fa; padding: 0.6rem 0.8rem; margin: 0.5rem 0; border-radius: 4px; border-left: 3px solid #0066cc; }
     .term-name { font-weight: bold; color: #0066cc; }
+    .oral { background: #fff9e6; padding: 0.5rem 0.8rem; margin: 0.5rem 0; border-radius: 4px; font-style: italic; }
     p, ul { margin: 0.4rem 0; padding-left: 1.2rem; }
     ul { padding-left: 1.5rem; }
     hr { border: none; border-top: 1px solid #ddd; margin: 1rem 0; }
@@ -27,7 +29,7 @@
 <body>
 
 <h1>面談用ナビ - 汎用版（企業・職種対応）</h1>
-<p><em>どの企業・どの職種の面談にも対応可能。面談前に「0. 企業・職種に合わせたポイント」をカスタマイズしてください。株式会社ラスク向け詳細版は <a href="INTERVIEW_NAV_RASUKU.html">INTERVIEW_NAV_RASUKU.html</a> を参照</em></p>
+<p><em>どの企業・どの職種の面談にも対応可能。面談前に「0. 企業・職種に合わせたポイント」をカスタマイズしてください。企業別: <a href="INTERVIEW_NAV_VLabo.html">VLabo（開発エンジニア）</a> / <a href="INTERVIEW_NAV_エクストリーム.html">エクストリーム（インフラ・30分）</a> / <a href="INTERVIEW_NAV_DIVE_IN.html">DIVE IN（インフラエンジニア）</a> / <a href="INTERVIEW_NAV_SEZO.html">SEZO（インフラエンジニア）</a> / <a href="INTERVIEW_NAV_RASUKU.html">ラスク</a> / <a href="INTERVIEW_NAV_CLARIFY.html">クラリファイ</a></em></p>
 
 <nav>
   <p><strong>▼ クリックで該当箇所に移動</strong></p>
@@ -97,6 +99,18 @@
     <p><strong>使い方:</strong> 「Webアクセシビリティ検査員検定L1～3（書面あり）を取得し、誰もが使いやすいAIシステムの開発に貢献できます。」</p>
   </div>
 
+  <div class="term">
+    <span class="term-name">Git のブランチ戦略</span>
+    <p><strong>意味:</strong> 複数人で同じリポジトリを扱う際のブランチの分け方・運用ルール。main（本番）、develop（開発）、feature/機能名（新機能）など。PR（プルリクエスト）でレビューしてからマージ。</p>
+    <p><strong>使い方:</strong> 「feature ブランチでの開発、PR によるマージの流れは理解しています。実務での経験は浅いので、入社後は実践しながら学びます。」</p>
+  </div>
+
+  <div class="term">
+    <span class="term-name">チーム開発のフロー</span>
+    <p><strong>意味:</strong> 企画→設計→タスク分割→実装→コードレビュー→マージ・テスト→デプロイ→運用。役割分担と連携の流れ。</p>
+    <p><strong>使い方:</strong> 「チーム実務経験は浅いですが、一方で、個人プロジェクトでも企画から運用まで一般的な流れを網羅しています。フローの理解と実装力はあり、貢献できると考えています。」</p>
+  </div>
+
   <p><em>※その他（LLM、生成AI、AIエージェント、MCP/A2A、デジタルデバイド等）は docs/INTERVIEW_NAV_RASUKU.html を参照</em></p>
 </div>
 
@@ -137,6 +151,7 @@
   <p><span class="q">Q: キャリアプラン？</span> AI駆動開発・生成AIでLLM・RAG・CoT・MLOps/LLMOpsの専門知識を活かし貢献。【企業の事業に合わせて】アクセシビリティ・インクルーシブ雇用AIで誰もが使いやすいシステム開発に貢献。</p>
   <p><span class="q">Q: 興味のある案件？</span> AI駆動開発・生成AI・データ系・MLOps/LLMOps。Python、TypeScript、React、PostgreSQL、Dockerなど。</p>
   <p><span class="q">Q: チーム開発経験・個人開発ばかりで大丈夫？</span> 個人開発が中心ですが、Webアクセシビリティ検査は1人では完遂できないためJCIで2年2ヶ月チーム協働。派遣社員統括（30～40名・3年7ヶ月）・台風対策通行止判断の統括（最大50名・5年）の経験もあり、チームでの役割遂行は可能です。フルリモート勤務でSlack・Teams・Google Meetを日常的に使用。非同期コミュニケーションとオンライン会議には慣れています。コードレビューは経験が浅いので、指摘を素直に受け止め、質問しながら学ぶ姿勢で臨みます。</p>
+  <p><span class="q">Q: チーム開発への懸念（Git・フロー・100システムの価値）？</span> チーム実務経験は浅いです。一方で、Gitは使用しており、個人プロジェクトでも企画→設計→実装→レビュー→マージ→運用の流れを網羅しています。100システム以上の実績は実装力・設計力の裏付けであり、無駄ではありません。フローの理解と実装力はあり、入社後はチームでの協働を学びながら貢献したいです。</p>
   <p><span class="q">Q: 51歳で大丈夫か？</span> 影響なし。myiq IQ127（認知機能評価レポート書面あり）、少林寺拳法で学んだ目標設定・効率的学習、8ヶ月で100システム以上の実績で学習・実行力を証明。デモで動作をご確認いただけます。</p>
   <p><span class="q">Q: インクルーシブ雇用AIの信頼性は？</span> 身体障害者としての当事者視点と、Webアクセシビリティ検査員検定L1～3（書面あり）の専門知識で補強。誰もが使いやすい設計に貢献できます。デモで実装をご確認いただけます。</p>
   <p><em>※企業・職種に合わせて「0. 企業・職種に合わせたポイント」の内容を質問回答に反映してください</em></p>
@@ -148,14 +163,48 @@
   <h2>6. ITエンジニア実務経験・チーム開発について</h2>
   <p><strong>実務経験:</strong> KDDIエボルバ（11ヶ月・ヘルプデスク・サーバー処理）、AI技術研究開発（8ヶ月・100システム以上）、JCI（2年2ヶ月・Webアクセシビリティ検査）。</p>
   <p><strong>チーム開発:</strong> Webアクセシビリティ検査は1人では完遂できないためJCIで2年2ヶ月チーム協働。派遣統括・台風対策統括の経験もあり。個人開発が中心だが、フルリモートでSlack・Teams・Meetを日常使用。コードレビューは経験が浅いが、指摘を素直に受け止め学ぶ姿勢。</p>
+  <p><strong>Git・チーム開発フロー:</strong> チーム実務経験は浅い。一方で、Gitは使用可能。個人プロジェクトで企画→設計→実装→レビュー→マージ→運用の流れを網羅。100システム以上は実装力・設計力の裏付けであり、無駄ではない。フローの理解と実装力はあり、入社後は協働を学びながら貢献する姿勢。</p>
 </div>
 
 <hr>
 
 <div id="demo">
   <h2>7. デモ手順</h2>
-  <p><strong>進め方</strong> 実績を聞かれたら「画面共有でデモできます」と伝え、了承されたら実施。start-backend.bat、cd frontend → npm start で起動。</p>
+  <p><strong>進め方</strong> 実績を聞かれたら「画面共有でデモできます」と伝え、了承されたら実施。</p>
+  <p><strong>起動</strong> ローカル: start-backend.bat、cd frontend → npm start。フロントエンド: <a href="http://localhost:3000">http://localhost:3000</a>。バックエンド: <a href="http://localhost:8000">http://localhost:8000</a> または <a href="http://localhost:8080">http://localhost:8080</a>（8000がWindows予約の場合は8080に自動切り替え）。API Docs: <a href="http://localhost:8000/docs">http://localhost:8000/docs</a> または <a href="http://localhost:8080/docs">http://localhost:8080/docs</a>。クラウド: <a href="https://uep-v5-ultimate-enterprise-platform.vercel.app" target="_blank" rel="noopener">https://uep-v5-ultimate-enterprise-platform.vercel.app</a>（事前に <a href="https://uep-backend-9m5v.onrender.com/health" target="_blank" rel="noopener">/health</a> にアクセスしてRenderを起こす）</p>
   <p><strong>強調ポイント</strong> 実際に動作するシステム／稼働率99.995%・推論レイテンシ&lt;10ms／MLOps・生成AI・インクルーシブ雇用AI／Level 1～5 統合／Chaos Engineering・GraphQL・Contract Testing</p>
+
+  <h3>デモンストレーションの流れ（時間に応じて3段階）</h3>
+  <h4>【5分程度】最小限デモ</h4>
+  <ol>
+    <li><strong>システム概要（1-2分）</strong> 口頭でUEP（ユーイーピー）v5.0の概要（Level 1～5、稼働率99.995%、100システム以上）</li>
+    <li><strong>ログイン・ダッシュボード（2-3分）</strong> <a href="http://localhost:3000">http://localhost:3000</a> でログイン → ダッシュボード一覧を表示し、Level 1～5 の構成を説明</li>
+  </ol>
+  <h4>【10分程度】標準デモ</h4>
+  <p>上記5分に加えて:</p>
+  <ol start="3">
+    <li><strong>バックエンドAPI（2-3分）</strong> Swagger UI（スワッガーユーアイ）で主要API（エーピーアイ）を一覧表示、auth・mlops・inclusive-work 等を説明</li>
+    <li><strong>インクルーシブ雇用AI（2-3分）</strong> マッチング・アクセシビリティAI・UX評価の画面を簡潔に実演</li>
+  </ol>
+  <h4>【15-20分程度】フルデモ</h4>
+  <p>上記10分に加えて:</p>
+  <ol start="5">
+    <li><strong>Chaos Engineering（カオスエンジニアリング）</strong> 遅延注入・エラー注入の実行</li>
+    <li><strong>GraphQL（グラフキューエル）</strong> hello / health / services クエリ実行</li>
+    <li><strong>WebAssembly（ウェブアセンブリ）</strong> 加算・乗算・合計の計算デモ</li>
+    <li><strong>技術スタック・アーキテクチャ・品質指標</strong> 口頭で補足</li>
+  </ol>
+
+  <h4>詳細手順（フルデモ用）</h4>
+  <p><strong>1. システム概要（2-3分）</strong></p>
+  <div class="oral">「UEP（ユーイーピー）v5.0はレベル5グローバルエンタープライズ対応システムです。インクルーシブ雇用AI（障害者雇用マッチング・アクセシビリティ特化AI・当事者視点UX評価）も統合済み。Level 1（7コア）～Level 5（マルチリージョン・高可用性・コンプライアンス）まで統合。Level 4には2025-2026最新技術（推論AI（スイロンエーアイ）・MCP（エムシーピー）/A2A（エーツーエー）・ガバナンス・端末内AI）とビジネス領域12種（DX・EX・CX・UX・BX・HX・SX・BPR・BPM・CRM・ERP・HRTech）を統合済み。稼働率99.995%、推論レイテンシ（スイロンレイテンシ）10ms未満を達成し、個人開発で100システム以上を実装した実際に動作するシステムです。」</div>
+  <p><strong>2. バックエンドAPI（3-4分）</strong> <a href="http://localhost:8000/docs">http://localhost:8000/docs</a> または <a href="http://localhost:8080/docs">http://localhost:8080/docs</a>（8000がWindows予約の場合は8080）を開く → Swagger UI（スワッガーユーアイ）を共有 → 主要API（エーピーアイ）を説明。auth、mlops、generative-ai、inclusive-work、Chaos Engineering、GraphQL 等。</p>
+  <p><strong>3. フロントエンドUI（5-6分）</strong> ログイン → ダッシュボード（MLOps、生成AI、インクルーシブ雇用AI、セキュリティ、クラウドインフラ、IDOP、AI支援開発、プラットフォーム、エコシステム、インダストリー、グローバル）</p>
+  <p><strong>4. 技術スタック（2-3分）</strong> Python、FastAPI、React、TypeScript、Docker、Kubernetes、Terraform、MLOps、RAG、CoT推論、Prometheus、Grafana 等を口頭で</p>
+  <p><strong>5. アーキテクチャ（2-3分）</strong> マイクロサービス、イベント駆動、API Gateway（Kong、Envoy）</p>
+  <p><strong>6. 品質指標（1-2分）</strong> 稼働率99.995%、推論レイテンシ10ms未満、セキュリティインシデント0件</p>
+  <p><strong>7. インクルーシブ雇用AI（2-3分）</strong> マッチング・アクセシビリティAI・UX評価を実演</p>
+
   <p><em>※詳細は docs/DEMO_INTERVIEW_NAV_RASUKU.html または docs/DEMO_INTERVIEW_NAV_汎用.html を参照</em></p>
 </div>
 

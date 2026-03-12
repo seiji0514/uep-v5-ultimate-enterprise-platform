@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>航空管制 - SmartCity Platform</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body { 
+      font-family: 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif; 
+      background: #f8fafc;
+      color: #2d3748;
+      margin: 0; 
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+    
+    /* 航空管制専用明るい背景 */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(66, 153, 225, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(255, 215, 0, 0.08) 0%, transparent 50%),
+        linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e0 100%);
+      animation: backgroundShift 30s ease-in-out infinite;
+      z-index: -2;
+    }
+    
+    /* 動的グリッド背景 */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(66, 153, 225, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(66, 153, 225, 0.05) 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: gridMove 20s linear infinite;
+      z-index: -1;
+    }
+    
+    @keyframes backgroundShift {
+      0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+      25% { transform: translate(-20px, -20px) scale(1.1) rotate(1deg); }
+      50% { transform: translate(20px, -10px) scale(1.05) rotate(-1deg); }
+      75% { transform: translate(-10px, 20px) scale(1.08) rotate(0.5deg); }
+    }
+    
+    @keyframes gridMove {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(50px, 50px); }
+    }
+    
+    /* サイドバー */
+    .sidebar {
+      width: 320px;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      border-right: 1px solid rgba(66, 153, 225, 0.2);
+      padding: 30px 0;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .sidebar-header {
+      padding: 0 30px 30px;
+      border-bottom: 1px solid rgba(66, 153, 225, 0.2);
+      margin-bottom: 30px;
+    }
+    
+    .sidebar-logo {
+      font-size: 24px;
+      font-weight: 700;
+      color: #2d3748;
+      text-decoration: none;
+      display: block;
+      margin-bottom: 15px;
+      background: linear-gradient(135deg, #4299e1, #ffd700);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: logoGlow 3s ease-in-out infinite alternate;
+    }
+    
+    @keyframes logoGlow {
+      from { filter: drop-shadow(0 0 10px rgba(66, 153, 225, 0.3)); }
+      to { filter: drop-shadow(0 0 20px rgba(66, 153, 225, 0.5)); }
+    }
+    
+    .nav-menu {
+      padding: 0 30px;
+    }
+    
+    .nav-item {
+      margin-bottom: 12px;
+    }
+    
+    .nav-link {
+      display: flex;
+      align-items: center;
+      padding: 16px 20px;
+      color: #4a5568;
+      text-decoration: none;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      font-size: 16px;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+    
+    .nav-link::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(66, 153, 225, 0.1), transparent);
+      transition: left 0.6s ease;
+    }
+    
+    .nav-link:hover::before {
+      left: 100%;
+    }
+    
+    .nav-link:hover {
+      background: rgba(66, 153, 225, 0.1);
+      transform: translateX(8px);
+      color: #2d3748;
+      box-shadow: 0 8px 25px rgba(66, 153, 225, 0.2);
+    }
+    
+    .nav-link.active {
+      background: linear-gradient(135deg, rgba(66, 153, 225, 0.2), rgba(255, 215, 0, 0.2));
+      color: #2d3748;
+      font-weight: 600;
+      box-shadow: 0 8px 25px rgba(66, 153, 225, 0.3);
+    }
+    
+    /* メインコンテンツ */
+    .main-content {
+      flex: 1;
+      margin-left: 320px;
+      padding: 30px;
+      background: transparent;
+    }
+    
+    /* アラートシステム */
+    .alert-container {
+      position: fixed;
+      top: 30px;
+      right: 30px;
+      z-index: 1002;
+      max-width: 350px;
+    }
+    
+    .alert {
+      background: rgba(66, 153, 225, 0.9);
+      backdrop-filter: blur(20px);
+      color: white;
+      padding: 20px 25px;
+      border-radius: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 8px 32px rgba(66, 153, 225, 0.3);
+      animation: slideInRight 0.6s ease-out, alertPulse 3s infinite;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    @keyframes slideInRight {
+      from { transform: translateX(100%) scale(0.8); opacity: 0; }
+      to { transform: translateX(0) scale(1); opacity: 1; }
+    }
+    
+    @keyframes alertPulse {
+      0%, 100% { box-shadow: 0 8px 32px rgba(66, 153, 225, 0.3); }
+      50% { box-shadow: 0 8px 40px rgba(66, 153, 225, 0.5); }
+    }
+    
+    /* ヒーローセクション */
+    .hero-section {
+      background: linear-gradient(135deg, rgba(66, 153, 225, 0.1), rgba(255, 215, 0, 0.1));
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(66, 153, 225, 0.2);
+      color: #2d3748;
+      padding: 60px 50px;
+      border-radius: 25px;
+      text-align: center;
+      margin-bottom: 50px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero-section::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(66, 153, 225, 0.05), transparent);
+      animation: shimmer 4s infinite;
+    }
+    
+    @keyframes shimmer {
+      0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+      100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+    }
+    
+    .hero-section h1 {
+      font-size: 3.5em;
+      margin-bottom: 25px;
+      font-weight: 300;
+      position: relative;
+      z-index: 1;
+      background: linear-gradient(135deg, #2d3748, #4a5568);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .hero-section p {
+      font-size: 1.4em;
+      opacity: 0.8;
+      margin-bottom: 40px;
+      position: relative;
+      z-index: 1;
+      line-height: 1.6;
+      color: #4a5568;
+    }
+    
+    /* 航空管制計器 */
+    .gauges-section {
+      margin-bottom: 50px;
+    }
+    
+    .section-title {
+      font-size: 2.2em;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 40px;
+      background: linear-gradient(135deg, #4299e1, #ffd700);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .gauges-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+    
+    .gauge-card {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(66, 153, 225, 0.2);
+      padding: 35px;
+      border-radius: 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s ease;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+    
+    .gauge-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #4299e1, #ffd700);
+    }
+    
+    .gauge-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      background: rgba(255, 255, 255, 0.9);
+    }
+    
+    .gauge-title {
+      font-size: 1.3em;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 20px;
+    }
+    
+    .gauge-value {
+      font-size: 3.5em;
+      font-weight: 700;
+      color: #4299e1;
+      margin-bottom: 15px;
+      animation: numberUpdate 0.8s ease-out;
+    }
+    
+    @keyframes numberUpdate {
+      0% { transform: scale(1.2); color: #e53e3e; }
+      100% { transform: scale(1); color: #4299e1; }
+    }
+    
+    .gauge-unit {
+      font-size: 1.1em;
+      color: #4a5568;
+      margin-bottom: 20px;
+    }
+    
+    .gauge-bar {
+      width: 100%;
+      height: 12px;
+      background: rgba(66, 153, 225, 0.1);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 15px;
+      position: relative;
+    }
+    
+    .gauge-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4299e1, #ffd700);
+      border-radius: 6px;
+      transition: width 0.8s ease;
+      position: relative;
+    }
+    
+    .gauge-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      animation: shimmer 2s infinite;
+    }
+    
+    .gauge-status {
+      font-size: 1em;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 25px;
+      display: inline-block;
+      backdrop-filter: blur(10px);
+    }
+    
+    .status-normal { 
+      background: rgba(72, 187, 120, 0.2); 
+      color: #38a169; 
+      border: 1px solid rgba(72, 187, 120, 0.3);
+    }
+    .status-warning { 
+      background: rgba(237, 137, 54, 0.2); 
+      color: #dd6b20; 
+      border: 1px solid rgba(237, 137, 54, 0.3);
+    }
+    .status-critical { 
+      background: rgba(245, 101, 101, 0.2); 
+      color: #e53e3e; 
+      border: 1px solid rgba(245, 101, 101, 0.3);
+    }
+    
+    /* 管制カード */
+    .control-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+      margin-bottom: 50px;
+    }
+    
+    .control-card {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(66, 153, 225, 0.2);
+      padding: 40px;
+      border-radius: 20px;
+      text-align: center;
+      transition: all 0.4s ease;
+      cursor: pointer;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .control-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(66, 153, 225, 0.1), transparent);
+      transition: left 0.6s ease;
+    }
+    
+    .control-card:hover::before {
+      left: 100%;
+    }
+    
+    .control-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      background: rgba(255, 255, 255, 0.9);
+    }
+    
+    .control-icon {
+      font-size: 3em;
+      margin-bottom: 25px;
+      animation: iconFloat 4s ease-in-out infinite;
+    }
+    
+    @keyframes iconFloat {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-10px) rotate(5deg); }
+    }
+    
+    .control-card h3 {
+      color: #4299e1;
+      margin-bottom: 20px;
+      font-size: 1.6em;
+      font-weight: 600;
+    }
+    
+    .control-card p {
+      color: #4a5568;
+      line-height: 1.7;
+      font-size: 1.1em;
+      margin-bottom: 20px;
+    }
+    
+    .control-status {
+      font-size: 1em;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 25px;
+      display: inline-block;
+      backdrop-filter: blur(10px);
+    }
+    
+    /* モバイルメニューボタン */
+    .mobile-menu-btn {
+      display: none;
+      position: fixed;
+      top: 30px;
+      left: 30px;
+      z-index: 1001;
+      background: rgba(66, 153, 225, 0.9);
+      backdrop-filter: blur(20px);
+      color: white;
+      border: none;
+      padding: 15px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 20px;
+      box-shadow: 0 8px 32px rgba(66, 153, 225, 0.3);
+    }
+    
+    /* レスポンシブ */
+    @media (max-width: 1200px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.4s ease;
+      }
+      
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      
+      .main-content {
+        margin-left: 0;
+      }
+      
+      .mobile-menu-btn {
+        display: block;
+      }
+      
+      .gauges-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .control-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .hero-section {
+        padding: 40px 30px;
+      }
+      
+      .hero-section h1 {
+        font-size: 2.5em;
+      }
+      
+      .gauge-card {
+        padding: 25px;
+      }
+      
+      .control-card {
+        padding: 30px;
+      }
+      
+      .main-content {
+        padding: 20px;
+      }
+      
+      .section-title {
+        font-size: 1.8em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- アラート通知 -->
+  <div class="alert-container" id="alertContainer"></div>
+  
+  <!-- モバイルメニューボタン -->
+  <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+  
+  <!-- サイドバー -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="smartcity_platform.html" class="sidebar-logo">🏙️ SmartCity Platform v2.0</a>
+    </div>
+    <nav class="nav-menu">
+      <div class="nav-item">
+        <a href="smartcity_platform.html" class="nav-link">🏠 ダッシュボード</a>
+      </div>
+      <div class="nav-item">
+        <a href="traffic_control.html" class="nav-link">🚦 交通管制</a>
+      </div>
+      <div class="nav-item">
+        <a href="infrastructure.html" class="nav-link">🏗️ インフラ管理</a>
+      </div>
+      <div class="nav-item">
+        <a href="environment.html" class="nav-link">🌱 環境モニタリング</a>
+      </div>
+      <div class="nav-item">
+        <a href="citizen_services.html" class="nav-link">👥 市民サービス</a>
+      </div>
+      <div class="nav-item">
+        <a href="data_analysis.html" class="nav-link">📊 データ分析</a>
+      </div>
+      <div class="nav-item">
+        <a href="settings.html" class="nav-link">⚙️ システム設定</a>
+      </div>
+      <div class="nav-item">
+        <a href="air_traffic_control.html" class="nav-link active">✈️ 航空管制</a>
+      </div>
+    </nav>
+  </div>
+
+  <div class="main-content">
+    <!-- ヒーローセクション -->
+    <div class="hero-section">
+      <h1>✈️ 次世代航空管制センター</h1>
+      <p>AI駆動の航空交通管理システム<br>安全性と効率性を両立した空港運営</p>
+    </div>
+
+    <!-- 航空管制計器 -->
+    <div class="gauges-section">
+      <h2 class="section-title">📊 リアルタイム管制監視</h2>
+      <div class="gauges-grid">
+        <div class="gauge-card">
+          <div class="gauge-title">✈️ 飛行機数</div>
+          <div class="gauge-value" id="aircraft-count">47</div>
+          <div class="gauge-unit">管制下</div>
+          <div class="gauge-bar">
+            <div class="gauge-fill" id="aircraft-fill" style="width: 78%"></div>
+          </div>
+          <div class="gauge-status status-normal">安全</div>
+        </div>
+        
+        <div class="gauge-card">
+          <div class="gauge-title">🛬 着陸間隔</div>
+          <div class="gauge-value" id="landing-interval">2.8</div>
+          <div class="gauge-unit">分</div>
+          <div class="gauge-bar">
+            <div class="gauge-fill" id="landing-fill" style="width: 85%"></div>
+          </div>
+          <div class="gauge-status status-normal">最適</div>
+        </div>
+        
+        <div class="gauge-card">
+          <div class="gauge-title">🌤️ 視界距離</div>
+          <div class="gauge-value" id="visibility">12.5</div>
+          <div class="gauge-unit">km</div>
+          <div class="gauge-bar">
+            <div class="gauge-fill" id="visibility-fill" style="width: 92%"></div>
+          </div>
+          <div class="gauge-status status-normal">良好</div>
+        </div>
+        
+        <div class="gauge-card">
+          <div class="gauge-title">⚡ 管制精度</div>
+          <div class="gauge-value" id="control-accuracy">99.7%</div>
+          <div class="gauge-unit">精度</div>
+          <div class="gauge-bar">
+            <div class="gauge-fill" id="accuracy-fill" style="width: 99.7%"></div>
+          </div>
+          <div class="gauge-status status-normal">優秀</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 管制カード -->
+    <div class="control-grid">
+      <div class="control-card">
+        <div class="control-icon">🛫</div>
+        <h3>離着陸管制</h3>
+        <p>AIによる最適な離着陸スケジュール管理。天候、風向き、航空機性能を考慮した安全な運航を実現。</p>
+        <div class="control-status status-normal">稼働中</div>
+      </div>
+      
+      <div class="control-card">
+        <div class="control-icon">🗺️</div>
+        <h3>空域管理</h3>
+        <p>3次元空域のリアルタイム監視と衝突回避システム。AI予測による安全な飛行経路の自動生成。</p>
+        <div class="control-status status-normal">稼働中</div>
+      </div>
+      
+      <div class="control-card">
+        <div class="control-icon">🌦️</div>
+        <h3>気象監視</h3>
+        <p>リアルタイム気象データの統合分析。風向き、視界、乱気流の予測で安全な運航を支援。</p>
+        <div class="control-status status-normal">稼働中</div>
+      </div>
+      
+      <div class="control-card">
+        <div class="control-icon">🚨</div>
+        <h3>緊急対応</h3>
+        <p>緊急事態発生時の自動検知と迅速な対応システム。AIによる最適な避難経路と代替空港の提案。</p>
+        <div class="control-status status-normal">稼働中</div>
+      </div>
+      
+      <div class="control-card">
+        <div class="control-icon">📡</div>
+        <h3>通信システム</h3>
+        <p>航空機との安全な通信を確保。AIによる音声認識と自動翻訳で国際線の管制を支援。</p>
+        <div class="control-status status-normal">稼働中</div>
+      </div>
+      
+      <div class="control-card">
+        <div class="control-icon">📊</div>
+        <h3>運航分析</h3>
+        <p>過去の運航データとAI予測による効率化。燃料消費の最適化と環境負荷の軽減を実現。</p>
+        <div class="control-status status-normal">稼働中</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('open');
+    }
+    
+    // モバイルでサイドバー外をクリックした時に閉じる
+    document.addEventListener('click', function(event) {
+      const sidebar = document.getElementById('sidebar');
+      const mobileBtn = document.querySelector('.mobile-menu-btn');
+      
+      if (window.innerWidth <= 1200) {
+        if (!sidebar.contains(event.target) && !mobileBtn.contains(event.target)) {
+          sidebar.classList.remove('open');
+        }
+      }
+    });
+    
+    // 航空管制専用アラートシステム
+    function showAlert(message, type = 'info') {
+      const alertContainer = document.getElementById('alertContainer');
+      const alert = document.createElement('div');
+      alert.className = 'alert';
+      alert.textContent = message;
+      
+      alertContainer.appendChild(alert);
+      
+      // 6秒後に自動削除
+      setTimeout(() => {
+        alert.style.animation = 'slideInRight 0.6s ease-out reverse';
+        setTimeout(() => alert.remove(), 600);
+      }, 6000);
+    }
+    
+    // 航空管制専用ランダムアラート生成
+    function generateAirTrafficAlert() {
+      const alerts = [
+        '✈️ 新しい航空機が管制空域に入りました',
+        '🛬 着陸スケジュールが最適化されました',
+        '🌤️ 気象条件が良好です',
+        '🗺️ 空域管理システムが正常に稼働しています',
+        '⚡ 管制精度が向上しました',
+        '🚨 緊急対応システムが待機中です',
+        '📡 通信システムが安定しています',
+        '📊 運航分析データが更新されました'
+      ];
+      
+      const randomAlert = alerts[Math.floor(Math.random() * alerts.length)];
+      showAlert(randomAlert);
+    }
+    
+    // 航空管制専用リアルタイム計器更新
+    function updateAirTrafficGauges() {
+      // 飛行機数のランダム更新
+      const aircraftCount = Math.floor(Math.random() * 20) + 40; // 40-60機
+      document.getElementById('aircraft-count').textContent = aircraftCount;
+      document.getElementById('aircraft-fill').style.width = (aircraftCount / 60 * 100) + '%';
+      
+      // 着陸間隔のランダム更新
+      const landingInterval = (2.0 + Math.random() * 2.0).toFixed(1); // 2.0-4.0分
+      document.getElementById('landing-interval').textContent = landingInterval;
+      document.getElementById('landing-fill').style.width = (4.0 - landingInterval) / 4.0 * 100 + '%';
+      
+      // 視界距離のランダム更新
+      const visibility = (8.0 + Math.random() * 8.0).toFixed(1); // 8.0-16.0km
+      document.getElementById('visibility').textContent = visibility;
+      document.getElementById('visibility-fill').style.width = (visibility / 20.0 * 100) + '%';
+      
+      // 管制精度は高安定
+      const controlAccuracy = 99.5 - (Math.random() * 0.4); // 99.1-99.5%
+      document.getElementById('control-accuracy').textContent = controlAccuracy.toFixed(1) + '%';
+      document.getElementById('accuracy-fill').style.width = controlAccuracy + '%';
+      
+      // ステータス更新
+      updateAirTrafficStatus('aircraft-count', aircraftCount / 60 * 100);
+      updateAirTrafficStatus('landing-interval', (4.0 - landingInterval) / 4.0 * 100);
+      updateAirTrafficStatus('visibility', visibility / 20.0 * 100);
+      updateAirTrafficStatus('control-accuracy', controlAccuracy);
+    }
+    
+    function updateAirTrafficStatus(elementId, value) {
+      const element = document.getElementById(elementId);
+      const statusElement = element.parentElement.nextElementSibling.nextElementSibling.nextElementSibling;
+      
+      if (value > 80) {
+        statusElement.className = 'gauge-status status-normal';
+        statusElement.textContent = elementId === 'aircraft-count' ? '安全' : 
+                                  elementId === 'landing-interval' ? '最適' : 
+                                  elementId === 'visibility' ? '良好' : '優秀';
+      } else if (value > 60) {
+        statusElement.className = 'gauge-status status-warning';
+        statusElement.textContent = '注意';
+      } else {
+        statusElement.className = 'gauge-status status-critical';
+        statusElement.textContent = '警告';
+      }
+    }
+    
+    // 3秒ごとに計器を更新
+    setInterval(updateAirTrafficGauges, 3000);
+    
+    // 15-45秒ごとにランダムアラートを表示
+    setInterval(generateAirTrafficAlert, Math.random() * 30000 + 15000);
+    
+    // 初期更新
+    updateAirTrafficGauges();
+    
+    // 初期アラート
+    setTimeout(() => {
+      showAlert('✈️ 航空管制センターが正常に稼働しています');
+    }, 2000);
+    
+    setTimeout(() => {
+      showAlert('🛫 AI管制システムが安全な運航を監視中です');
+    }, 5000);
+  </script>
+</body>
+</html> 

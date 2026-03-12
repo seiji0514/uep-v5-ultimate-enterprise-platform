@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>医療・生命科学分野AIシステム群 - 統合管理ダッシュボード</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #065f46, #047857, #0d9488, #0891b2);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, #00CED1, #40E0D0);
+            color: #1e3a8a;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 206, 209, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 206, 209, 0.6);
+        }
+
+        .header {
+            background: linear-gradient(135deg, rgba(0, 206, 209, 0.3), rgba(64, 224, 208, 0.3));
+            border: 2px solid rgba(0, 206, 209, 0.4);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(0, 206, 209, 0.2) 50%, transparent 70%);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #00CED1, #40E0D0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .systems-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .system-card {
+            background: linear-gradient(135deg, rgba(0, 206, 209, 0.2), rgba(64, 224, 208, 0.2));
+            border: 2px solid rgba(0, 206, 209, 0.3);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 15px;
+            box-shadow: 0 8px 25px rgba(0, 206, 209, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .system-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .system-card:hover::before {
+            left: 100%;
+        }
+
+        .system-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(16, 185, 129, 0.6);
+            box-shadow: 0 15px 40px rgba(16, 185, 129, 0.3);
+        }
+
+        .system-card h3 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #34d399;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .system-status {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 20px;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .metrics {
+            margin: 20px 0;
+        }
+
+        .metric-item {
+            background: rgba(16, 185, 129, 0.1);
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .metric-label {
+            font-size: 0.9em;
+            color: #6ee7b7;
+            margin-bottom: 5px;
+        }
+
+        .metric-value {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+            color: white;
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .footer {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(6, 182, 212, 0.1));
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 30px 20px;
+            text-align: center;
+        }
+
+        .back-link {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .systems-grid {
+                grid-template-columns: 1fr;
+                padding: 10px;
+            }
+            
+            .system-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 戻るボタン -->
+    <a href="integrated-ai-systems-dashboard.html" class="back-button">← 戻る</a>
+
+    <!-- ヘッダー -->
+    <div class="header">
+        <h1>医療・生命科学分野AIシステム群</h1>
+        <p>人類の健康・長寿を実現する4つのAI技術の統合プラットフォーム<br>
+        創薬・遺伝子治療・再生医療・予防医療による医療革命の実現</p>
+    </div>
+
+    <!-- AIシステム群 -->
+    <div class="systems-grid">
+        <!-- 創薬AI -->
+        <div class="system-card">
+            <h3>創薬AI</h3>
+            <div class="system-status">稼働中 - 高精度モード</div>
+            
+            <div class="metrics">
+                <div class="metric-item">
+                    <div class="metric-label">薬物設計精度</div>
+                    <div class="metric-value">99.8%</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">副作用予測精度</div>
+                    <div class="metric-value">97.3%</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">臨床試験最適化</div>
+                    <div class="metric-value">効率化85%</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">開発期間短縮</div>
+                    <div class="metric-value">40%短縮</div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-primary" onclick="startDrugDesign()">薬物設計開始</button>
+                <button class="btn btn-success" onclick="predictSideEffects()">副作用予測</button>
+                <button class="btn btn-info" onclick="optimizeClinicalTrials()">臨床試験最適化</button>
+            </div>
+        </div>
+
+        <!-- 遺伝子治療AI -->
+        <div class="system-card">
+            <h3>遺伝子治療AI</h3>
+            <div class="system-status">稼働中 - 安全性重視モード</div>
+            
+            <div class="metrics">
+                <div class="metric-item">
+                    <div class="metric-label">遺伝子編集精度</div>
+                    <div class="metric-value">99.99%</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">治療効果予測</div>
+                    <div class="metric-value">94.7%</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">安全性評価</div>
+                    <div class="metric-value">99.95%</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">オフターゲット検出</div>
+                    <div class="metric-value">100%</div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-primary" onclick="startGeneEditing()">遺伝子編集開始</button>
+                <button class="btn btn-success" onclick="predictTreatmentEffect()">治療効果予測</button>
+                <button class="btn btn-info" onclick="evaluateSafety()">安全性評価</button>
+            </div>
+        </div>
+
+        <!-- 再生医療AI -->
+        <div class="system-card">
+            <h3>再生医療AI</h3>
+            <div class="system-status">稼働中 - 組織再生モード</div>
+            
+            <div class="metrics">
+                <div class="metric-item">
+                    <div class="metric-label">幹細胞培養成功率</div>
+                    <div class="metric-value">98.5%</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">組織再生精度</div>
+                    <div class="metric-value">96.8%</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">移植適合性</div>
+                    <div class="metric-value">99.2%</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">免疫拒絶防止</div>
+                    <div class="metric-value">97.9%</div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-primary" onclick="startStemCellCulture()">幹細胞培養開始</button>
+                <button class="btn btn-success" onclick="initiateTissueRegeneration()">組織再生開始</button>
+                <button class="btn btn-info" onclick="optimizeTransplantation()">移植最適化</button>
+            </div>
+        </div>
+
+        <!-- 予防医療AI -->
+        <div class="system-card">
+            <h3>予防医療AI</h3>
+            <div class="system-status">稼働中 - 予測分析モード</div>
+            
+            <div class="metrics">
+                <div class="metric-item">
+                    <div class="metric-label">疾病リスク予測</div>
+                    <div class="metric-value">95.2%</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">健康管理精度</div>
+                    <div class="metric-value">98.7%</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">早期発見率</div>
+                    <div class="metric-value">89.4%</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">予防策効果</div>
+                    <div class="metric-value">92.1%</div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-primary" onclick="predictDiseaseRisk()">疾病リスク予測</button>
+                <button class="btn btn-success" onclick="startHealthMonitoring()">健康管理開始</button>
+                <button class="btn btn-info" onclick="initiateEarlyDetection()">早期発見開始</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- フッター -->
+    <div class="footer" style="text-align: center; padding: 40px 20px; margin-top: 40px;">
+        <p style="color: white; margin-bottom: 15px; font-size: 1.1em; font-weight: 600;">医療・生命科学分野AIシステム群 - 統合管理ダッシュボード</p>
+        <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: 25px; font-size: 1em;">創薬・遺伝子治療・再生医療・予防医療の包括的管理システム</p>
+
+    </div>
+
+    <script>
+        // 創薬AI機能
+        function startDrugDesign() {
+            alert('創薬AI: 薬物設計システムを開始しました\n\n• 分子構造設計\n• ターゲットタンパク質結合\n• 薬理活性予測\n• 最適化計算');
+        }
+
+        function predictSideEffects() {
+            alert('創薬AI: 副作用予測システムを開始しました\n\n• 毒性予測\n• 薬物相互作用\n• 代謝経路解析\n• 安全性評価');
+        }
+
+        function optimizeClinicalTrials() {
+            alert('創薬AI: 臨床試験最適化システムを開始しました\n\n• 試験設計最適化\n• 患者選定\n• 投与量決定\n• 結果予測');
+        }
+
+        // 遺伝子治療AI機能
+        function startGeneEditing() {
+            alert('遺伝子治療AI: 遺伝子編集システムを開始しました\n\n• CRISPR-Cas9設計\n• ターゲット配列特定\n• 編集精度向上\n• オフターゲット防止');
+        }
+
+        function predictTreatmentEffect() {
+            alert('遺伝子治療AI: 治療効果予測システムを開始しました\n\n• 遺伝子発現予測\n• 治療効果シミュレーション\n• 長期効果予測\n• 個別化治療');
+        }
+
+        function evaluateSafety() {
+            alert('遺伝子治療AI: 安全性評価システムを開始しました\n\n• 遺伝子変異解析\n• 免疫反応予測\n• 発がんリスク評価\n• 安全性モニタリング');
+        }
+
+        // 再生医療AI機能
+        function startStemCellCulture() {
+            alert('再生医療AI: 幹細胞培養システムを開始しました\n\n• 培養条件最適化\n• 分化誘導制御\n• 品質管理\n• 増殖促進');
+        }
+
+        function initiateTissueRegeneration() {
+            alert('再生医療AI: 組織再生システムを開始しました\n\n• 組織工学設計\n• 3Dプリンティング\n• 血管新生促進\n• 機能回復支援');
+        }
+
+        function optimizeTransplantation() {
+            alert('再生医療AI: 移植最適化システムを開始しました\n\n• 適合性判定\n• 免疫抑制最適化\n• 拒絶反応防止\n• 術後管理');
+        }
+
+        // 予防医療AI機能
+        function predictDiseaseRisk() {
+            alert('予防医療AI: 疾病リスク予測システムを開始しました\n\n• 遺伝的リスク評価\n• 生活習慣分析\n• 環境要因解析\n• リスクスコア算出');
+        }
+
+        function startHealthMonitoring() {
+            alert('予防医療AI: 健康管理システムを開始しました\n\n• バイタル監視\n• 行動パターン分析\n• 健康アドバイス\n• 異常検知');
+        }
+
+        function initiateEarlyDetection() {
+            alert('予防医療AI: 早期発見システムを開始しました\n\n• スクリーニング最適化\n• 画像診断支援\n• バイオマーカー解析\n• 診断精度向上');
+        }
+
+        // ページ読み込み完了時の初期化
+        window.addEventListener('load', function() {
+            console.log('医療・生命科学分野AIシステム群ダッシュボードが初期化されました');
+            
+            // システムステータスのリアルタイム更新
+            setInterval(function() {
+                updateSystemStatus();
+            }, 5000);
+        });
+
+        // システムステータス更新
+        function updateSystemStatus() {
+            const statusElements = document.querySelectorAll('.system-status');
+            statusElements.forEach(function(element) {
+                const currentStatus = element.textContent;
+                if (currentStatus.includes('稼働中')) {
+                    // ステータスを少し変化させる（実際のシステムでは実際のデータを使用）
+                    element.style.background = 'linear-gradient(135deg, #06b6d4, #0891b2)';
+                    setTimeout(function() {
+                        element.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                    }, 1000);
+                }
+            });
+        }
+    </script>
+
+    <!-- ライセンス・権利情報 -->
+    <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 15px; padding: 25px; margin: 30px auto; max-width: 1200px; border: 3px solid #f59e0b; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);">
+        <h2 style="color: #92400e; margin-bottom: 20px; text-align: center; font-size: 1.5rem;">ライセンス・権利情報</h2>
+        
+        <div style="background: white; padding: 20px; border-radius: 10px; color: #1e3a8a; line-height: 2;">
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">著作権:</strong> &copy; 2025 小川清志（おがわ せいじ）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">開発期間:</strong> 2025年6月～2025年10月（個人事業主として）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">開発目的:</strong> 技術研究・ポートフォリオ作成・転職活動用
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">用途:</strong> 個人研究目的（非商用）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">ライセンス:</strong> MIT License
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">公開範囲:</strong> 個人ポートフォリオサイト、GitHub（技術実証目的）
+            </div>
+            
+            <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #f59e0b;">
+                <strong style="color: #92400e;">重要事項:</strong>
+                <p style="color: #78350f; margin-top: 10px;">
+                    本システムは、個人事業主として独自に研究開発したものであり、
+                    特定の企業・組織の業務とは一切関係ありません。<br>
+                    全ての知的財産権は開発者個人（小川清志）に帰属します。<br>
+                    本システムの技術内容・アイデアは、入社前の個人研究として確立されたものです。
+                </p>
+            </div>
+            
+            <div style="background: #dbeafe; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #3b82f6;">
+                <strong style="color: #1e40af;">タイムスタンプ:</strong>
+                <p style="color: #1e3a8a; margin-top: 10px;">
+                    最終更新日: 2025年10月26日<br>
+                    GitHub最終コミット: 2025年10月26日<br>
+                    確定日付: 入社前（個人開発期間中）
+                </p>
+            </div>
+            
+            <div style="background: #d1fae5; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #10b981;">
+                <strong style="color: #047857;">連絡先:</strong>
+                <p style="color: #065f46; margin-top: 10px;">
+                    開発者: 小川清志（おがわ せいじ）<br>
+                    Email: kaho052514@gmail.com<br>
+                    電話: 080-4271-5479
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>

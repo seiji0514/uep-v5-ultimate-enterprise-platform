@@ -1,0 +1,49 @@
+# 衛星軌道追跡システム - 依存関係（企業レベル）
+# 作成日: 2025年11月2日
+
+# Web Framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+pydantic-settings==2.1.0
+
+# 数値計算
+numpy==1.26.2
+scipy==1.11.4
+
+# 日付・時刻
+python-dateutil==2.8.2
+
+# テスト
+pytest==7.4.3
+pytest-cov==4.1.0
+pytest-asyncio==0.21.1
+httpx==0.25.2
+
+# ログ
+python-json-logger==2.0.7
+
+# 環境変数管理
+python-dotenv==1.0.0
+
+# HTTP クライアント（ヘルスチェック用）
+requests==2.31.0
+
+# 型チェック
+mypy==1.7.1
+
+# コードフォーマット
+black==23.11.0
+flake8==6.1.0
+isort==5.12.0
+
+# セキュリティ
+cryptography==41.0.7
+
+# 監視・メトリクス
+prometheus-client==0.19.0
+
+# AWS SDK（将来の統合用）
+boto3==1.34.0
+botocore==1.34.0
+

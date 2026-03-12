@@ -22,6 +22,12 @@ export interface ReasoningRequest {
   reasoning_steps?: number;
 }
 
+export interface ReasoningRoutingRequest {
+  question?: string;
+  problem?: string;
+  auto_route?: boolean;
+}
+
 export const generativeAiApi = {
   async generate(request: GenerateRequest) {
     const response = await apiClient.post('/api/v1/generative-ai/generate', request);
@@ -35,6 +41,11 @@ export const generativeAiApi = {
 
   async reasoning(request: ReasoningRequest) {
     const response = await apiClient.post('/api/v1/generative-ai/reasoning', request);
+    return response.data;
+  },
+
+  async reasoningRouting(request: ReasoningRoutingRequest) {
+    const response = await apiClient.post('/api/v1/generative-ai/reasoning-routing', request);
     return response.data;
   },
 };

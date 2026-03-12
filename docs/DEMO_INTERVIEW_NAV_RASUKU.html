@@ -96,11 +96,12 @@
   </head>
   <body>
     <h1>UEP v5.0 デモンストレーション手順書 - 株式会社ラスク用</h1>
-    <p><em>目的: ラスク面談での UEP v5.0 デモンストレーション手順。AI用語の説明付き。汎用版（どの企業・職種でも対応）は <a href="DEMO_INTERVIEW_NAV_汎用.html">DEMO_INTERVIEW_NAV_汎用.html</a> を参照</em></p>
+    <p><em>目的: ラスク面談での UEP v5.0 デモンストレーション手順。AI用語の説明付き。汎用版は <a href="DEMO_INTERVIEW_NAV_汎用.html">DEMO_INTERVIEW_NAV_汎用.html</a>。企業別: <a href="INTERVIEW_NAV_DIVE_IN.html">DIVE IN（インフラエンジニア）</a></em></p>
 
     <nav>
       <p><strong>▼ クリックで該当箇所に移動</strong></p>
       <ul>
+        <li><a href="#dive-infra">DIVE IN インフラエンジニア向けデモ（重点）</a></li>
         <li><a href="#terms">デモで使うAI用語集</a></li>
         <li><a href="#flow">デモの進め方</a></li>
         <li><a href="#demo-prep">デモ・面接の準備</a></li>
@@ -115,6 +116,37 @@
         <li><a href="#after">面談後</a></li>
       </ul>
     </nav>
+
+    <div id="dive-infra">
+      <h2>DIVE IN インフラエンジニア向けデモ（重点）</h2>
+      <p><em>ＤＩＶＥ ＩＮ株式会社・インフラエンジニア面談では、UEP v5.0の<strong>インフラ構成</strong>を画面共有で見せられるようにしておく。</em></p>
+
+      <h3>インフラ構成の強調ポイント</h3>
+      <ul>
+        <li><strong>API Gateway</strong> Kong（コン）、Envoy（エンボイ）の設計・構築</li>
+        <li><strong>監視基盤</strong> Prometheus（プロメテウス）、Grafana（グラファナ）で稼働率99.995%測定</li>
+        <li><strong>イベントストリーミング</strong> Apache Kafka（アパッチカフカ）</li>
+        <li><strong>オブジェクトストレージ</strong> MinIO（ミニオー）</li>
+        <li><strong>コンテナ環境</strong> Docker（ドッカー）、Kubernetes（クーバネティス）、Terraform（テラフォーム）</li>
+        <li><strong>セキュリティ</strong> Zero Trust（ゼロトラスト）、mTLS（エムティーエルエス）、Vault（ボルト）</li>
+      </ul>
+
+      <h3>デモの流れ（インフラエンジニア向け・約10分）</h3>
+      <ol>
+        <li><strong>システム概要（1-2分）</strong> 口頭でインフラ構成を説明。API Gateway、Kafka、監視基盤、コンテナ環境</li>
+        <li><strong>ダッシュボード（2-3分）</strong> ログイン → クラウドインフラ、<strong>インフラ構築専用</strong>、MLOps、監視の画面を表示</li>
+        <li><strong>Swagger UI（2-3分）</strong> auth、mlops、cloud-infra、Chaos Engineering 等のAPIを一覧表示</li>
+        <li><strong>インフラ構築専用（2-3分）</strong> サイドメニュー「インフラ構築」→ 設計→構築→デプロイ→検証のワークフロー、ブループリント、パイプラインを実演</li>
+        <li><strong>Chaos Engineering（1-2分）</strong> 遅延注入・エラー注入でレジリエンス検証</li>
+      </ol>
+
+      <h3>口頭説明例</h3>
+      <div class="oral">「UEP v5.0のインフラ構成をご説明します。API GatewayはKong（コン）とEnvoy（エンボイ）。イベントストリーミングはApache Kafka（アパッチカフカ）。オブジェクトストレージはMinIO（ミニオー）。監視はPrometheus（プロメテウス）とGrafana（グラファナ）で稼働率99.995%を測定。コンテナはDocker（ドッカー）とKubernetes（クーバネティス）、IaCはTerraform（テラフォーム）。AI基盤としてMLOpsの監視・パイプライン、データパイプラインも実装しています。」</div>
+
+      <p><em>※面談ナビは <a href="INTERVIEW_NAV_DIVE_IN.html">INTERVIEW_NAV_DIVE_IN.html</a> を参照</em></p>
+    </div>
+
+    <hr />
 
     <div id="terms">
       <h2>デモで使うAI用語集（聞かれたときの説明用）</h2>
@@ -282,22 +314,48 @@
     <hr />
 
     <div id="demo">
-      <h2>デモンストレーションの流れ（約15-20分）</h2>
+      <h2>デモンストレーションの流れ（時間に応じて3段階）</h2>
 
-      <h3>1. システム概要（2-3分）</h3>
+      <h3>【5分程度】最小限デモ</h3>
+      <ol>
+        <li><strong>システム概要（1-2分）</strong> 口頭でUEP（ユーイーピー）v5.0の概要（Level 1～5、稼働率99.995%、100システム以上）</li>
+        <li><strong>ログイン・ダッシュボード（2-3分）</strong> http://localhost:3000 でログイン → ダッシュボード一覧を表示し、Level 1～5 の構成を説明</li>
+      </ol>
+
+      <h3>【10分程度】標準デモ</h3>
+      <p>上記5分に加えて:</p>
+      <ol start="3">
+        <li><strong>バックエンドAPI（2-3分）</strong> Swagger UI（スワッガーユーアイ）で主要API（エーピーアイ）を一覧表示、auth・mlops・inclusive-work 等を説明</li>
+        <li><strong>インクルーシブ雇用AI（2-3分）</strong> マッチング・アクセシビリティAI・UX評価の画面を簡潔に実演</li>
+      </ol>
+
+      <h3>【15-20分程度】フルデモ</h3>
+      <p>上記10分に加えて:</p>
+      <ol start="5">
+        <li><strong>Chaos Engineering（カオスエンジニアリング）</strong> 遅延注入・エラー注入の実行</li>
+        <li><strong>GraphQL（グラフキューエル）</strong> hello / health / services クエリ実行</li>
+        <li><strong>WebAssembly（ウェブアセンブリ）</strong> 加算・乗算・合計の計算デモ</li>
+        <li><strong>技術スタック・アーキテクチャ・品質指標</strong> 口頭で補足</li>
+      </ol>
+
+      <hr style="margin: 1.5rem 0;" />
+
+      <h3>詳細手順（フルデモ用）</h3>
+
+      <h4>1. システム概要（2-3分）</h4>
       <div class="oral">
         「UEP（ユーイーピー）v5.0はレベル5グローバルエンタープライズ対応システムです。インクルーシブ雇用AI（障害者雇用マッチング・アクセシビリティ特化AI・当事者視点UX評価）も統合済み。Level 1（7コア）～Level 5（マルチリージョン・高可用性・コンプライアンス）まで統合。Level
         4には2025-2026最新技術（推論AI（スイロンエーアイ）・MCP（エムシーピー）/A2A（エーツーエー）・ガバナンス・端末内AI）とビジネス領域12種（DX・EX・CX・UX・BX・HX・SX・BPR・BPM・CRM・ERP・HRTech）を統合済み。稼働率99.995%、推論レイテンシ（スイロンレイテンシ）10ms未満を達成し、個人開発で100システム以上を実装した実際に動作するシステムです。」
       </div>
 
-      <h3>2. バックエンドAPI（3-4分）</h3>
+      <h4>2. バックエンドAPI（3-4分）</h4>
       <p><strong>手順:</strong> <a href="http://localhost:8000/docs">http://localhost:8000/docs</a> または <a href="http://localhost:8001/docs">http://localhost:8001/docs</a> を開く → Swagger UI（スワッガーユーアイ）を共有 → 主要API（エーピーアイ）を説明</p>
       <p>auth（オース）、mlops（エムエルオプス）、generative-ai（ジェネラティブエーアイ）、inclusive-work（インクルーシブ雇用AI）、Chaos Engineering（カオスエンジニアリング）、security-center、cloud-infra、idop（アイドップ）、ai-dev、platform、ecosystem、industry-leader、global-enterprise、GraphQL（グラフキューエル）</p>
       <div class="oral">「FastAPI（ファストエーピーアイ）でRESTful API（レストフルエーピーアイ）を実装し、OpenAPI（オープンエーピーアイ）でドキュメントを自動生成しています。Chaos Engineering（カオスエンジニアリング）で遅延・エラー注入によるレジリエンス検証、RESTに加えてGraphQL（グラフキューエル）エンドポイントも提供。Contract Testing（契約テスト）でAPI品質を保証しています。」</div>
       <p><strong>オプション:</strong> /api/v1/auth/login で Try it out → username: kaho0525, password: kaho052514 → Execute</p>
       <div class="oral">「JWT（ジェイダブリューティー）認証が動作していることをご確認いただけます。」</div>
 
-      <h3>3. フロントエンドUI（5-6分）</h3>
+      <h4>3. フロントエンドUI（5-6分）</h4>
       <p><strong>ログイン:</strong> http://localhost:3000 → kaho0525 / kaho052514 → ログイン</p>
       <div class="oral">「React（リアクト）とTypeScript（タイプスクリプト）、Material-UI（マテリアルユーアイ）で実装した認証付きUI（ユーアイ）です。」</div>
       <p><strong>ダッシュボード:</strong> MLOps（エムエルオプス）、生成AI（セイセイエーアイ）、インクルーシブ雇用AI、セキュリティコマンドセンター、クラウドインフラ、IDOP（アイドップ）、AI（エーアイ）支援開発、プラットフォーム(Level 2)、エコシステム(Level 3)、インダストリー(Level 4)、グローバル(Level 5)</p>
@@ -305,19 +363,19 @@
       <p><strong>時間があれば:</strong> インクルーシブ雇用AI（マッチング・アクセシビリティAI・UX評価）、MLOps（エムエルオプス）（パイプライン・モデル・実験）、生成AI（セイセイエーアイ）（RAG（ラグ）・CoT（コット））、セキュリティ（イベント・インシデント・リスク分析）、インダストリー（推論AI（スイロンエーアイ）・MCP（エムシーピー）/A2A（エーツーエー）・ガバナンス・端末内AI、ビジネス領域12種：DX・EX・CX・UX等）</p>
       <div class="oral">「MLOps（エムエルオプス）、生成AI（セイセイエーアイ）（RAG（ラグ）・CoT（コット））、セキュリティ、2025-2026最新技術、ビジネス領域12種など各システムの実装をご確認いただけます。」</div>
 
-      <h3>4. 技術スタック（2-3分）</h3>
+      <h4>4. 技術スタック（2-3分）</h4>
       <div class="oral">
         「バックエンドはPython（パイソン）、FastAPI（ファストエーピーアイ）、PostgreSQL（ポストグレスキューエル）。フロントはTypeScript（タイプスクリプト）、React（リアクト）、MUI（エムユーアイ）。インフラはDocker（ドッカー）、Kubernetes（クバネティス）、Terraform（テラフォーム）。AI（エーアイ）/ML（エムエル）はMLOps（エムエルオプス）、RAG（ラグ）、CoT（コット）推論、推論AI（スイロンエーアイ）、MCP（エムシーピー）/A2A（エーツーエー）、ガバナンス・ワークフロー、端末内AI、インクルーシブ雇用AI。Chaos Engineering（カオスエンジニアリング）、GraphQL（グラフキューエル）、Contract Testing（契約テスト）。ビジネス領域はDX・EX・CX・UX・BX・HX・SX・BPR・BPM・CRM・ERP・HRTechの12種。監視はPrometheus（プロメテウス）、Grafana（グラファナ）。セキュリティはZero
         Trust（ゼロトラスト）、mTLS（エムティーエルエス）、Vault（ボルト）です。」
       </div>
 
-      <h3>5. アーキテクチャ（2-3分）</h3>
+      <h4>5. アーキテクチャ（2-3分）</h4>
       <div class="oral">「マイクロサービスでLevel 1～5 を独立実装。イベント駆動で疎結合。API（エーピーアイ）GatewayはKong（コン）とEnvoy（エンボイ）。監視はPrometheus（プロメテウス）とGrafana（グラファナ）でリアルタイム監視しています。」</div>
 
-      <h3>6. 品質指標（1-2分）</h3>
+      <h4>6. 品質指標（1-2分）</h4>
       <div class="oral">「稼働率99.995%、推論レイテンシ（スイロンレイテンシ）10ms未満、セキュリティインシデント0件。個人開発ながら実務レベルの品質を達成しています。」</div>
 
-      <h3 id="inclusive">7. インクルーシブ雇用AI（2-3分）</h3>
+      <h4 id="inclusive">7. インクルーシブ雇用AI（2-3分）</h4>
       <p><strong>手順:</strong> サイドメニュー「インクルーシブ雇用AI」→ マッチングタブでスキル「Python, React」入力 → 検索 → 求人一覧を説明。アクセシビリティAIタブで「求人」と入力 → 送信。UX評価タブでURL入力 → 評価。</p>
       <div class="oral">「障害者雇用マッチング、アクセシビリティ特化AI、当事者視点UX評価を統合したプラットフォームです。身体障害者としての当事者視点とアクセシビリティ専門知識を活かした実装です。」</div>
     </div>

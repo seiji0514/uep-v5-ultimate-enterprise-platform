@@ -1,6 +1,6 @@
 """
 RAG (Retrieval-Augmented Generation) モジュール
-ChromaDB によるベクトル検索 + 評価指標
+ChromaDB によるベクトル検索 + ハイブリッド検索・再ランキング・チャンク分割
 """
 import time
 import uuid
@@ -9,6 +9,11 @@ from typing import Any, Dict, List, Optional
 from pydantic import BaseModel
 
 from .llm_integration import LLMClient
+from .rag_enhancements import (
+    chunk_text,
+    keyword_search_score,
+    reciprocal_rank_fusion,
+)
 
 # ChromaDB の利用可否
 CHROMADB_AVAILABLE = False
@@ -104,34 +109,40 @@ class RAGSystem:
             self.add_document(coll, text, meta)
 
     def add_document(
-        self, collection: str, document: str, metadata: Optional[Dict[str, Any]] = None
+        self,
+        collection: str,
+        document: str,
+        metadata: Optional[Dict[str, Any]] = None,
+        chunk_size: int = 0,
+        chunk_overlap: int = 50,
     ):
-        """ドキュメントを追加"""
+        """ドキュメントを追加（chunk_size>0 でチャンク分割して投入）"""
         meta = metadata or {}
-        doc_id = str(uuid.uuid4())
+        docs_to_add = [document]
+        if chunk_size > 0 and len(document) > chunk_size:
+            docs_to_add = chunk_text(document, chunk_size, chunk_overlap)
 
-        # ChromaDB に追加
-        if self._use_chromadb:
-            coll = _get_or_create_collection(collection)
-            if coll:
-                try:
-                    coll.add(documents=[document], metadatas=[meta], ids=[doc_id])
-                    return
-                except Exception:
-                    pass
+        for idx, doc_text in enumerate(docs_to_add):
+            doc_id = str(uuid.uuid4())
+            doc_meta = {**meta, "chunk_index": idx} if len(docs_to_add) > 1 else meta
 
-        # フォールバック: メモリ
-        if collection not in self._knowledge_base:
-            self._knowledge_base[collection] = []
-        self._knowledge_base[collection].append(
-            {"text": document, "metadata": meta, "id": doc_id}
-        )
+            if self._use_chromadb:
+                coll = _get_or_create_collection(collection)
+                if coll:
+                    try:
+                        coll.add(documents=[doc_text], metadatas=[doc_meta], ids=[doc_id])
+                        continue
+                    except Exception:
+                        pass
 
-    async def retrieve(
-        self, query: str, collection: str, top_k: int = 5
-    ) -> List[Dict[str, Any]]:
-        """関連ドキュメントをベクトル検索"""
-        # ChromaDB で検索
+            if collection not in self._knowledge_base:
+                self._knowledge_base[collection] = []
+            self._knowledge_base[collection].append(
+                {"text": doc_text, "metadata": doc_meta, "id": doc_id}
+            )
+
+    def _retrieve_vector(self, query: str, collection: str, top_k: int) -> List[Dict[str, Any]]:
+        """ベクトル検索のみ"""
         if self._use_chromadb:
             coll = _get_or_create_collection(collection)
             if coll:
@@ -149,7 +160,6 @@ class RAGSystem:
                                 if result.get("distances")
                                 else 0
                             )
-                            # コサイン距離→類似度（1 - distance）
                             score = 1.0 - dist if dist is not None else 1.0
                             docs.append(
                                 {
@@ -163,28 +173,79 @@ class RAGSystem:
                         return docs
                 except Exception:
                     pass
+        return []
 
-        # フォールバック: キーワードマッチ
+    def _retrieve_keyword(
+        self, query: str, collection: str, top_k: int
+    ) -> List[Dict[str, Any]]:
+        """キーワード検索（スコア付き）"""
         documents = self._knowledge_base.get(collection, [])
-        query_lower = query.lower()
-        matched = []
+        if self._use_chromadb:
+            coll = _get_or_create_collection(collection)
+            if coll:
+                try:
+                    all_data = coll.get(include=["documents", "metadatas"])
+                    if all_data and all_data.get("documents"):
+                        documents = [
+                            {
+                                "text": d,
+                                "metadata": all_data["metadatas"][i] if all_data.get("metadatas") else {},
+                                "id": all_data["ids"][i] if all_data.get("ids") else str(i),
+                            }
+                            for i, d in enumerate(all_data["documents"])
+                        ]
+                except Exception:
+                    pass
+
+        scored = []
         for doc in documents:
-            if query_lower in doc["text"].lower():
-                matched.append({**doc, "score": 1.0})
-        return matched[:top_k]
+            text = doc.get("text", "")
+            score = keyword_search_score(query, text)
+            if score > 0:
+                scored.append({**doc, "score": round(score, 4)})
+        scored.sort(key=lambda x: x["score"], reverse=True)
+        return scored[:top_k]
+
+    async def retrieve(
+        self,
+        query: str,
+        collection: str,
+        top_k: int = 5,
+        use_hybrid: bool = True,
+        use_rerank: bool = True,
+    ) -> List[Dict[str, Any]]:
+        """関連ドキュメントを検索（ハイブリッド検索 + 再ランキング）"""
+        vector_results = self._retrieve_vector(query, collection, top_k * 2)
+        keyword_results = self._retrieve_keyword(query, collection, top_k * 2)
+
+        if use_hybrid and (vector_results or keyword_results):
+            results_list = [r for r in [vector_results, keyword_results] if r]
+            merged = (
+                reciprocal_rank_fusion(results_list)
+                if use_rerank and len(results_list) > 1
+                else (vector_results or keyword_results)
+            )
+            return merged[:top_k]
+
+        return vector_results[:top_k] if vector_results else keyword_results[:top_k]
 
     async def generate(
         self,
         query: str,
         collection: Optional[str] = None,
         context: Optional[str] = None,
+        use_hybrid: bool = True,
+        use_rerank: bool = True,
+        top_k: int = 5,
     ) -> Dict[str, Any]:
         """RAG で回答を生成（評価指標付き）"""
         start_time = time.perf_counter()
         retrieved_docs: List[Dict[str, Any]] = []
 
         if collection:
-            retrieved_docs = await self.retrieve(query, collection)
+            retrieved_docs = await self.retrieve(
+                query, collection, top_k=top_k, use_hybrid=use_hybrid, use_rerank=use_rerank
+            )
 
         retrieve_latency_ms = (time.perf_counter() - start_time) * 1000
 
@@ -229,6 +290,7 @@ class RAGSystem:
             "model": result.get("model"),
             "provider": result.get("provider"),
             "metrics": metrics,
+            "cached": result.get("cached", False),
         }
 
 

@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚁 航空・宇宙統合システム - 技術仕様書 & 設計思想</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+            color: #00d4ff;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 100%);
+            color: #00d4ff;
+            padding: 40px 0;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .main-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .panel-title {
+            color: #0c0c0c;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .panel-content {
+            color: #0c0c0c;
+            font-size: 1.1rem;
+        }
+
+        .panel-content p {
+            margin-bottom: 25px;
+            font-size: 1.2rem;
+            text-align: center;
+            color: #1a1a2e;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .tech-card {
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 100%);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .tech-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+        }
+
+        .tech-icon {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            display: block;
+            text-align: center;
+        }
+
+        .tech-title {
+            color: #00d4ff;
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .tech-specs {
+            list-style: none;
+            color: #ffffff;
+        }
+
+        .tech-specs li {
+            padding: 8px 0;
+            font-size: 1rem;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .tech-specs li:last-child {
+            border-bottom: none;
+        }
+
+        .tech-specs li::before {
+            content: '🚁';
+            margin-right: 10px;
+            color: #00d4ff;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            color: #000;
+            padding: 15px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .back-button:hover {
+            background: linear-gradient(135deg, #0099cc 0%, #00d4ff 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 212, 255, 0.6);
+        }
+
+        /* 新機能用スタイル */
+        .control-panel {
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            color: white;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .control-btn {
+            background: rgba(0, 212, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            background: rgba(0, 212, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .data-display {
+            background: rgba(0, 212, 255, 0.15);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid rgba(0, 212, 255, 0.5);
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.2);
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .data-item {
+            background: linear-gradient(135deg, rgba(12, 12, 12, 0.9) 0%, rgba(26, 26, 46, 0.9) 100%);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            border: 2px solid rgba(0, 212, 255, 0.5);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .data-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .data-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #00d4ff;
+            margin-bottom: 8px;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+            letter-spacing: 1px;
+        }
+
+        .data-label {
+            font-size: 1rem;
+            color: #ffffff;
+            font-weight: 600;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            letter-spacing: 0.5px;
+        }
+
+        .simulation-panel {
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border: 2px solid #00d4ff;
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 100%);
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px solid #00d4ff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(0, 212, 255, 0.1) 50%, transparent 70%);
+            animation: dataFlow 2s linear infinite;
+        }
+
+        @keyframes dataFlow {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 20px 15px;
+            }
+            
+            .tech-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .panel-title {
+                font-size: 2rem;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <a href="main-navigation-site.html" class="back-button">← メインサイトに戻る</a>
+
+    <div class="header">
+        <h1>🚁 航空・宇宙統合システム</h1>
+        <p>技術仕様書 & 設計思想 - ドローンシステム・衛星技術・宇宙開発統合プラットフォーム</p>
+    </div>
+
+    <div class="container">
+        <!-- システム制御パネル -->
+        <div class="main-panel fade-in">
+            <h2 class="panel-title">🎛️ システム制御パネル</h2>
+            <div class="panel-content">
+                <div class="control-panel">
+                    <h3 style="text-align: center; margin-bottom: 20px; font-size: 1.8rem;">🛠️ システム制御</h3>
+                    <div class="control-buttons">
+                        <button class="control-btn" onclick="startSystem()">システム開始</button>
+                        <button class="control-btn" onclick="stopSystem()">システム停止</button>
+                        <button class="control-btn" onclick="runSimulation()">シミュレーション実行</button>
+                        <button class="control-btn" onclick="exportData()">データエクスポート</button>
+                        <button class="control-btn" onclick="generateReport()">レポート生成</button>
+                        <button class="control-btn" onclick="emergencyStop()" style="background: #e74c3c;">緊急停止</button>
+                    </div>
+                    <div id="systemStatus" style="text-align: center; margin-top: 20px; font-weight: bold; color: #00d4ff;">待機中</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- リアルタイムデータ監視 -->
+        <div class="main-panel fade-in">
+            <h2 class="panel-title">📊 リアルタイムデータ監視</h2>
+            <div class="panel-content">
+                <div class="data-display">
+                    <h3 style="text-align: center; margin-bottom: 20px; color: #00d4ff; font-size: 1.8rem; font-weight: bold; text-shadow: 0 0 15px rgba(0, 212, 255, 0.5);">📊 航空・宇宙データ監視</h3>
+                    <div class="data-grid">
+                        <div class="data-item">
+                            <div class="data-value" id="activeDrones">1,250</div>
+                            <div class="data-label">アクティブドローン</div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-value" id="satelliteCoverage">98.5%</div>
+                            <div class="data-label">衛星カバレッジ</div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-value" id="spaceMissions">45</div>
+                            <div class="data-label">宇宙ミッション</div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-value" id="communicationSpeed">10.2Gbps</div>
+                            <div class="data-label">通信速度</div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-value" id="gpsAccuracy">0.01m</div>
+                            <div class="data-label">GPS精度</div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-value" id="missionSuccess">99.8%</div>
+                            <div class="data-label">ミッション成功率</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- システム概要 -->
+        <div class="main-panel fade-in">
+            <h2 class="panel-title">🚁 システム概要</h2>
+            <div class="panel-content">
+                <p>航空・宇宙統合システムは、次世代の航空宇宙技術を統合した包括的なプラットフォームです。</p>
+                
+                <div class="tech-grid">
+                    <div class="tech-card">
+                        <span class="tech-icon">🚁</span>
+                        <h3 class="tech-title">ドローンシステム</h3>
+                        <ul class="tech-specs">
+                            <li><strong>自律飛行:</strong> AI支援自動飛行システム</li>
+                            <li><strong>監視・偵察:</strong> 高精度監視・偵察機能</li>
+                            <li><strong>配送サービス:</strong> 自動配送・物流システム</li>
+                            <li><strong>災害対応:</strong> 緊急時対応・救援活動</li>
+                            <li><strong>農業支援:</strong> 精密農業・作物監視</li>
+                            <li><strong>環境監視:</strong> 大気・水質・生態系監視</li>
+                        </ul>
+                    </div>
+
+                    <div class="tech-card">
+                        <span class="tech-icon">🛰️</span>
+                        <h3 class="tech-title">衛星技術</h3>
+                        <ul class="tech-specs">
+                            <li><strong>通信衛星:</strong> グローバル通信ネットワーク</li>
+                            <li><strong>地球観測:</strong> 高解像度地球観測</li>
+                            <li><strong>GPSシステム:</strong> 精密位置測位システム</li>
+                            <li><strong>気象衛星:</strong> 気象予報・気候監視</li>
+                            <li><strong>ナビゲーション:</strong> 衛星ナビゲーション</li>
+                            <li><strong>データ中継:</strong> 衛星データ中継システム</li>
+                        </ul>
+                    </div>
+
+                    <div class="tech-card">
+                        <span class="tech-icon">🚀</span>
+                        <h3 class="tech-title">宇宙開発</h3>
+                        <ul class="tech-specs">
+                            <li><strong>宇宙探査:</strong> 惑星・小惑星探査</li>
+                            <li><strong>宇宙ステーション:</strong> 国際宇宙ステーション運用</li>
+                            <li><strong>火星探査:</strong> 火星有人探査計画</li>
+                            <li><strong>宇宙資源:</strong> 小惑星資源開発</li>
+                            <li><strong>宇宙観光:</strong> 民間宇宙旅行</li>
+                            <li><strong>宇宙製造:</strong> 宇宙環境での製造</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- シミュレーションパネル -->
+        <div class="main-panel fade-in">
+            <h2 class="panel-title">🎮 システムシミュレーション</h2>
+            <div class="panel-content">
+                <div class="simulation-panel">
+                    <h3 style="text-align: center; margin-bottom: 20px; color: #00d4ff;">航空・宇宙シミュレーション</h3>
+                    <div class="control-buttons">
+                        <button class="control-btn" onclick="runDroneSimulation()">ドローンシミュレーション</button>
+                        <button class="control-btn" onclick="runSatelliteSimulation()">衛星シミュレーション</button>
+                        <button class="control-btn" onclick="runSpaceSimulation()">宇宙開発シミュレーション</button>
+                        <button class="control-btn" onclick="runMissionSimulation()">ミッションシミュレーション</button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="simulationChart" width="800" height="300" style="position: absolute; top: 0; left: 0; z-index: 1;"></canvas>
+                        <div id="chartInfo" style="position: absolute; top: 10px; left: 10px; color: #00d4ff; font-weight: bold; z-index: 2;">シミュレーション準備完了</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 詳細技術仕様 -->
+        <div class="main-panel fade-in">
+            <h2 class="panel-title">🔧 詳細技術仕様</h2>
+            <div class="panel-content">
+                <p>システムの詳細な技術仕様と実装要件</p>
+                
+                <div class="tech-grid">
+                    <div class="tech-card">
+                        <span class="tech-icon">⚙️</span>
+                        <h3 class="tech-title">システム要件</h3>
+                        <ul class="tech-specs">
+                            <li><strong>CPU:</strong> 高性能マルチコアプロセッサ</li>
+                            <li><strong>メモリ:</strong> 2TB以上RAM</li>
+                            <li><strong>ストレージ:</strong> 1PB以上SSD</li>
+                            <li><strong>ネットワーク:</strong> 10Tbps高速通信</li>
+                            <li><strong>位置精度:</strong> 0.01m位置精度</li>
+                            <li><strong>通信遅延:</strong> 1ms以下低遅延</li>
+                        </ul>
+                    </div>
+
+                    <div class="tech-card">
+                        <span class="tech-icon">🔐</span>
+                        <h3 class="tech-title">セキュリティ要件</h3>
+                        <ul class="tech-specs">
+                            <li><strong>データ暗号化:</strong> AES-512暗号化</li>
+                            <li><strong>認証システム:</strong> 多要素認証</li>
+                            <li><strong>アクセス制御:</strong> ゼロトラストセキュリティ</li>
+                            <li><strong>監査ログ:</strong> 完全な操作ログ</li>
+                            <li><strong>バックアップ:</strong> リアルタイムバックアップ</li>
+                            <li><strong>災害復旧:</strong> 99.99999%可用性</li>
+                        </ul>
+                    </div>
+
+                    <div class="tech-card">
+                        <span class="tech-icon">🌐</span>
+                        <h3 class="tech-title">API仕様</h3>
+                        <ul class="tech-specs">
+                            <li><strong>RESTful API:</strong> 標準HTTP API</li>
+                            <li><strong>WebSocket:</strong> リアルタイム通信</li>
+                            <li><strong>GraphQL:</strong> 柔軟なデータ取得</li>
+                            <li><strong>認証:</strong> OAuth 2.0認証</li>
+                            <li><strong>レート制限:</strong> 1000000req/min</li>
+                            <li><strong>ドキュメント:</strong> OpenAPI仕様</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 設計思想 -->
+        <div class="main-panel fade-in">
+            <h2 class="panel-title">💡 設計思想</h2>
+            <div class="panel-content">
+                <p>航空・宇宙統合システムの設計哲学と理念</p>
+                
+                <div class="tech-grid">
+                    <div class="tech-card">
+                        <span class="tech-icon">🎯</span>
+                        <h3 class="tech-title">設計理念</h3>
+                        <ul class="tech-specs">
+                            <li><strong>安全性:</strong> 最高レベルの安全性確保</li>
+                            <li><strong>信頼性:</strong> 99.99999%のシステム可用性</li>
+                            <li><strong>効率性:</strong> 最適化された運用・管理</li>
+                            <li><strong>革新性:</strong> 最新技術の積極的活用</li>
+                            <li><strong>持続可能性:</strong> 環境配慮の宇宙開発</li>
+                            <li><strong>国際協力:</strong> グローバル協力体制</li>
+                        </ul>
+                    </div>
+
+                    <div class="tech-card">
+                        <span class="tech-icon">🌍</span>
+                        <h3 class="tech-title">社会貢献</h3>
+                        <ul class="tech-specs">
+                            <li><strong>通信インフラ:</strong> グローバル通信網構築</li>
+                            <li><strong>災害対応:</strong> 災害監視・救援支援</li>
+                            <li><strong>環境保護:</strong> 地球環境監視・保護</li>
+                            <li><strong>科学発展:</strong> 宇宙科学・技術発展</li>
+                            <li><strong>経済発展:</strong> 宇宙産業経済発展</li>
+                            <li><strong>教育支援:</strong> 宇宙教育・啓蒙活動</li>
+                        </ul>
+                    </div>
+
+                    <div class="tech-card">
+                        <span class="tech-icon">🔮</span>
+                        <h3 class="tech-title">将来展望</h3>
+                        <ul class="tech-specs">
+                            <li><strong>火星移住:</strong> 人類の火星移住実現</li>
+                            <li><strong>宇宙資源:</strong> 宇宙資源開発・活用</li>
+                            <li><strong>宇宙観光:</strong> 民間宇宙旅行普及</li>
+                            <li><strong>深宇宙探査:</strong> 太陽系外探査実現</li>
+                            <li><strong>宇宙製造:</strong> 宇宙環境での製造業</li>
+                            <li><strong>宇宙都市:</strong> 宇宙都市建設実現</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // システム制御変数
+        let systemActive = false;
+        let simulationActive = false;
+        let activeDrones = 1250;
+        let satelliteCoverage = 98.5;
+        let spaceMissions = 45;
+        let communicationSpeed = 10.2;
+        let gpsAccuracy = 0.01;
+        let missionSuccess = 99.8;
+
+        // リアルタイムデータ更新
+        function updateAerospaceData() {
+            if (systemActive) {
+                activeDrones += Math.random() * 10;
+                satelliteCoverage = Math.min(99.9, satelliteCoverage + Math.random() * 0.1);
+                spaceMissions += Math.random() * 0.5;
+                communicationSpeed += Math.random() * 0.1;
+                gpsAccuracy = Math.max(0.001, gpsAccuracy - Math.random() * 0.001);
+                missionSuccess = Math.min(99.9, missionSuccess + Math.random() * 0.05);
+
+                document.getElementById('activeDrones').textContent = Math.floor(activeDrones);
+                document.getElementById('satelliteCoverage').textContent = satelliteCoverage.toFixed(1) + '%';
+                document.getElementById('spaceMissions').textContent = Math.floor(spaceMissions);
+                document.getElementById('communicationSpeed').textContent = communicationSpeed.toFixed(1) + 'Gbps';
+                document.getElementById('gpsAccuracy').textContent = gpsAccuracy.toFixed(3) + 'm';
+                document.getElementById('missionSuccess').textContent = missionSuccess.toFixed(1) + '%';
+            }
+        }
+
+        // システム制御機能
+        function startSystem() {
+            systemActive = true;
+            document.getElementById('systemStatus').textContent = '稼働中';
+            document.getElementById('systemStatus').style.color = '#00d4ff';
+            console.log('航空・宇宙システム: システム開始');
+            
+            setInterval(updateAerospaceData, 2000);
+            alert('航空・宇宙統合システムが開始されました。リアルタイムデータ更新を開始中...');
+        }
+
+        function stopSystem() {
+            systemActive = false;
+            document.getElementById('systemStatus').textContent = '停止中';
+            document.getElementById('systemStatus').style.color = '#f39c12';
+            console.log('航空・宇宙システム: システム停止');
+            alert('システムが停止されました。');
+        }
+
+        function emergencyStop() {
+            systemActive = false;
+            simulationActive = false;
+            document.getElementById('systemStatus').textContent = '緊急停止';
+            document.getElementById('systemStatus').style.color = '#e74c3c';
+            console.log('航空・宇宙システム: 緊急停止実行');
+            alert('緊急停止が実行されました。');
+        }
+
+        function runSimulation() {
+            simulationActive = true;
+            console.log('航空・宇宙システム: シミュレーション開始');
+            alert('システムシミュレーションが開始されました。');
+        }
+
+        function exportData() {
+            const exportData = {
+                timestamp: new Date().toISOString(),
+                activeDrones: activeDrones,
+                satelliteCoverage: satelliteCoverage,
+                spaceMissions: spaceMissions,
+                communicationSpeed: communicationSpeed,
+                gpsAccuracy: gpsAccuracy,
+                missionSuccess: missionSuccess
+            };
+            console.log('航空・宇宙システムデータエクスポート:', exportData);
+            alert('データをエクスポートしました。コンソールを確認してください。');
+        }
+
+        function generateReport() {
+            console.log('航空・宇宙システム: レポート生成実行');
+            alert('包括的レポートが生成されました。');
+        }
+
+        // シミュレーション機能
+        function runDroneSimulation() {
+            const canvas = document.getElementById('simulationChart');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, 800, 300);
+            
+            ctx.strokeStyle = '#00d4ff';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            
+            for (let i = 0; i < 800; i += 10) {
+                const y = 150 + Math.sin(i / 30) * 60 + Math.random() * 20;
+                if (i === 0) ctx.moveTo(i, y);
+                else ctx.lineTo(i, y);
+            }
+            ctx.stroke();
+            
+            document.getElementById('chartInfo').textContent = 'ドローンシミュレーション実行中...';
+            console.log('航空・宇宙システム: ドローンシミュレーション実行');
+        }
+
+        function runSatelliteSimulation() {
+            const canvas = document.getElementById('simulationChart');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, 800, 300);
+            
+            ctx.strokeStyle = '#ff6b6b';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            
+            for (let i = 0; i < 800; i += 5) {
+                const y = 150 + Math.cos(i / 20) * 80 + Math.random() * 15;
+                if (i === 0) ctx.moveTo(i, y);
+                else ctx.lineTo(i, y);
+            }
+            ctx.stroke();
+            
+            document.getElementById('chartInfo').textContent = '衛星シミュレーション実行中...';
+            console.log('航空・宇宙システム: 衛星シミュレーション実行');
+        }
+
+        function runSpaceSimulation() {
+            const canvas = document.getElementById('simulationChart');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, 800, 300);
+            
+            ctx.strokeStyle = '#f39c12';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            
+            for (let i = 0; i < 800; i += 8) {
+                const y = 150 + Math.sin(i / 25) * 70 + Math.random() * 30;
+                if (i === 0) ctx.moveTo(i, y);
+                else ctx.lineTo(i, y);
+            }
+            ctx.stroke();
+            
+            document.getElementById('chartInfo').textContent = '宇宙開発シミュレーション実行中...';
+            console.log('航空・宇宙システム: 宇宙開発シミュレーション実行');
+        }
+
+        function runMissionSimulation() {
+            const canvas = document.getElementById('simulationChart');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, 800, 300);
+            
+            ctx.strokeStyle = '#9b59b6';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            
+            for (let i = 0; i < 800; i += 12) {
+                const y = 150 + Math.cos(i / 45) * 90 + Math.random() * 25;
+                if (i === 0) ctx.moveTo(i, y);
+                else ctx.lineTo(i, y);
+            }
+            ctx.stroke();
+            
+            document.getElementById('chartInfo').textContent = 'ミッションシミュレーション実行中...';
+            console.log('航空・宇宙システム: ミッションシミュレーション実行');
+        }
+
+        // フェードインアニメーション
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // すべてのパネルを監視
+        document.querySelectorAll('.main-panel').forEach(panel => {
+            panel.style.opacity = '0';
+            panel.style.transform = 'translateY(30px)';
+            panel.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            observer.observe(panel);
+        });
+
+        // 定期的なデータ更新
+        setInterval(updateAerospaceData, 5000);
+
+        // 初期化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('航空・宇宙統合システム 技術仕様書: 機能システム初期化完了');
+            updateAerospaceData();
+        });
+    </script>
+</body>
+</html> 

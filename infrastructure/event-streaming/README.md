@@ -105,6 +105,23 @@ curl -X GET "http://localhost:8000/api/v1/events/consume?topic=user-events&group
 
 ---
 
+## 📦 Kafka Streams（Docker 実行）
+
+イベント件数集計の Kafka Streams サンプルを Docker 内で実行する場合：
+
+```bash
+# Zookeeper + Kafka + トピック作成 + Kafka Streams を起動
+docker compose --profile event-streaming up -d zookeeper kafka
+
+# ログ確認
+docker compose logs -f kafka-streams
+```
+
+- **トピック**: `uep-events`（kafka-init で自動作成）
+- **接続**: Docker 内では `kafka:29092`、ホストからは `localhost:9092`
+
+---
+
 ## 📚 参考資料
 
 - [Apache Kafka Documentation](https://kafka.apache.org/documentation/)

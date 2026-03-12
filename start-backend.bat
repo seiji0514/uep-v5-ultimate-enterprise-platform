@@ -1,6 +1,7 @@
 @echo off
+setlocal enabledelayedexpansion
 chcp 65001 >nul
-REM UEP v5.0 - バックエンドAPI起動スクリプト（Windows）
+REM UEP v5.0 - バックエンドAPI起動スクリプト（Windows）※常に本番モード
 
 echo ==========================================
 echo UEP v5.0 - バックエンドAPI起動
@@ -22,18 +23,9 @@ if errorlevel 1 (
 REM バックエンドディレクトリに移動
 cd backend
 
-REM ポート8000を使用しているプロセスを解放
-echo ポート8000の解放を確認中...
-set USE_PORT=8000
-powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0scripts\kill-and-check-port-8000.ps1"
-if errorlevel 1 (
-    echo.
-    echo ポート8000が使用中のため、ポート8001で起動します。
-    echo URL: http://localhost:8001
-    echo 診断時: set PORT=8001 ^&^& python test_chaos_endpoint.py
-    echo.
-    set USE_PORT=8001
-)
+REM ポート8080を使用（8000はWindows予約範囲7938-8037に含まれる場合あり）
+set USE_PORT=8080
+echo ポート%USE_PORT%で起動します。
 
 REM 仮想環境の作成
 if not exist "venv" (
@@ -68,13 +60,33 @@ pip install -r requirements.txt
 
 REM 環境変数の設定（.envファイルがない場合）
 if not exist ".env" (
-    echo .envファイルを作成中...
+    echo .envファイルを作成中（本番用）...
+    for /f "delims=" %%i in ('powershell -NoProfile -Command "[BitConverter]::ToString([System.Security.Cryptography.RandomNumberGenerator]::GetBytes(32)).Replace('-','').ToLower()"') do set GEN_KEY=%%i
     (
+        echo ENVIRONMENT=production
+        echo DEBUG=false
         echo DATABASE_URL=sqlite:///./uep_db.sqlite
         echo REDIS_URL=redis://localhost:6379/0
-        echo SECRET_KEY=your-secret-key-change-in-production
+        echo SECRET_KEY=!GEN_KEY!
+        echo PRODUCTION_USERS_FILE=./data/production_users.json
     ) > .env
 )
+
+REM 既存 .env に PRODUCTION_USERS_FILE が無い場合は追記
+if exist ".env" (
+    findstr /C:"PRODUCTION_USERS_FILE" .env >nul 2>&1
+    if errorlevel 1 (
+        echo PRODUCTION_USERS_FILE=./data/production_users.json>>.env
+        echo .env に本番ユーザー永続化を追加しました
+    )
+)
+
+REM data ディレクトリを用意
+if not exist "data" mkdir data
+
+REM 本番モードで起動（常に）
+set ENVIRONMENT=production
+set DEBUG=false
 
 REM 起動直前にもポートを再確認（USE_PORT=8000の場合のみ）
 if "%USE_PORT%"=="8000" (
@@ -87,7 +99,7 @@ echo ==========================================
 echo バックエンドAPIを起動中...
 set PORT=%USE_PORT%
 echo URL: http://localhost:%USE_PORT%
-echo API Docs: http://localhost:%USE_PORT%/docs
+echo API Docs: 本番時は無効
 echo.
 echo 停止: Ctrl+C
 echo ==========================================

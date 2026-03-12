@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI統合ヘルスケアプラットフォーム - 次世代医療AIシステム</title>
+    <meta name="description" content="AI統合ヘルスケアプラットフォーム - リアルタイム診断支援、予測医療、バイタル監視を統合した次世代医療AIシステム">
+    <meta name="keywords" content="AI, ヘルスケア, 医療, 診断支援, 予測医療, バイタル監視, マイクロサービス">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ai-healthcare-platform.com/">
+    <meta property="og:title" content="AI統合ヘルスケアプラットフォーム">
+    <meta property="og:description" content="次世代医療AIシステム - リアルタイム診断支援、予測医療、バイタル監視">
+    <meta property="og:image" content="https://ai-healthcare-platform.com/images/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://ai-healthcare-platform.com/">
+    <meta property="twitter:title" content="AI統合ヘルスケアプラットフォーム">
+    <meta property="twitter:description" content="次世代医療AIシステム - リアルタイム診断支援、予測医療、バイタル監視">
+    <meta property="twitter:image" content="https://ai-healthcare-platform.com/images/twitter-image.jpg">
+
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- ナビゲーションバー -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-text">[HEALTH]</span>
+                <span>AI Healthcare Platform</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#features" class="nav-link">機能</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#architecture" class="nav-link">アーキテクチャ</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#demo" class="nav-link">デモ</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#contact" class="nav-link">お問い合わせ</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle">他のプラットフォーム</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="../enterprise-ai-platform/index.html">エンタープライズAI統合プラットフォーム</a></li>
+                        <li><a href="../digital-transformation-platform/index.html">次世代デジタル変革プラットフォーム</a></li>
+                        <li><a href="../global-ai-research-platform/index.html">グローバルAI研究開発プラットフォーム</a></li>
+                        <li><a href="../comprehensive-security-platform/index.html">包括的セキュリティ統合プラットフォーム</a></li>
+                        <li><a href="../quantum-computing-platform/index.html">量子コンピューティング統合プラットフォーム</a></li>
+                        <li><a href="../edge-computing-platform/index.html">エッジコンピューティング統合プラットフォーム</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ヒーローセクション -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span class="gradient-text">AI統合ヘルスケア</span>
+                    <br><span class="gradient-text">プラットフォーム</span>
+                    <br>次世代医療AIシステム
+                </h1>
+                <p class="hero-description">
+                    リアルタイム診断支援、予測医療、バイタル監視を統合した<br>
+                    テクニカルアーキテクトレベルの医療AIプラットフォーム
+                </p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">99.99%</div>
+                        <div class="stat-label">可用性</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">&lt;100ms</div>
+                        <div class="stat-label">レスポンス</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">HIPAA</div>
+                        <div class="stat-label">準拠</div>
+                    </div>
+                </div>
+                <div class="hero-buttons">
+                    <a href="#demo" class="btn btn-primary">
+                        <span class="icon-text">[PLAY]</span>
+                        デモを見る
+                    </a>
+                    <a href="#architecture" class="btn btn-secondary">
+                        <span class="icon-text">[CODE]</span>
+                        アーキテクチャ
+                    </a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="dashboard-preview">
+                    <div class="dashboard-header">
+                        <div class="dashboard-title">リアルタイム監視ダッシュボード</div>
+                        <div class="status-indicator online"></div>
+                    </div>
+                    <div class="dashboard-content">
+                        <div class="vital-card">
+                            <div class="vital-label">心拍数</div>
+                            <div class="vital-value">72 <span class="vital-unit">bpm</span></div>
+                            <div class="vital-trend up">↗ +2</div>
+                        </div>
+                        <div class="vital-card">
+                            <div class="vital-label">血圧</div>
+                            <div class="vital-value">120/80 <span class="vital-unit">mmHg</span></div>
+                            <div class="vital-trend stable">→ 0</div>
+                        </div>
+                        <div class="vital-card">
+                            <div class="vital-label">体温</div>
+                            <div class="vital-value">36.5 <span class="vital-unit">°C</span></div>
+                            <div class="vital-trend down">↘ -0.1</div>
+                        </div>
+                        <div class="ai-insight">
+                            <div class="insight-icon">[AI]</div>
+                            <div class="insight-text">AI分析: 正常範囲内</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 機能セクション -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">コア機能</h2>
+                <p class="section-description">
+                    テクニカルアーキテクトレベルの実装による高度な医療AI機能
+                </p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <span class="icon-text">[DOCTOR]</span>
+                    </div>
+                    <h3 class="feature-title">AI診断支援</h3>
+                    <p class="feature-description">
+                        症状・検査結果・画像を統合したAI診断支援システム。機械学習モデルによる高精度な診断提案。
+                    </p>
+                    <ul class="feature-list">
+                        <li>症状ベース診断支援</li>
+                        <li>画像診断支援（X線・CT・MRI）</li>
+                        <li>薬剤相互作用チェック</li>
+                        <li>診断精度: 95%以上</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <span class="icon-text">[HEART]</span>
+                    </div>
+                    <h3 class="feature-title">リアルタイム監視</h3>
+                    <p class="feature-description">
+                        バイタルサインのリアルタイム監視と異常検知。Server-Sent Eventsによる低レイテンシストリーミング。
+                    </p>
+                    <ul class="feature-list">
+                        <li>リアルタイムバイタル監視</li>
+                        <li>異常検知・アラート</li>
+                        <li>予測アラート設定</li>
+                        <li>レスポンス時間: &lt;100ms</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <span class="icon-text">[CHART]</span>
+                    </div>
+                    <h3 class="feature-title">予測医療</h3>
+                    <p class="feature-description">
+                        患者データを基にした疾患リスク予測と予防医療提案。機械学習による個人化された健康管理。
+                    </p>
+                    <ul class="feature-list">
+                        <li>疾患リスク予測</li>
+                        <li>予防医療提案</li>
+                        <li>ライフスタイル推奨</li>
+                        <li>予測精度: 90%以上</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <span class="icon-text">[SHIELD]</span>
+                    </div>
+                    <h3 class="feature-title">セキュリティ</h3>
+                    <p class="feature-description">
+                        HIPAA準拠のセキュリティ設計。患者データの完全なプライバシー保護とアクセス制御。
+                    </p>
+                    <ul class="feature-list">
+                        <li>HIPAA準拠</li>
+                        <li>データ暗号化</li>
+                        <li>アクセス制御</li>
+                        <li>監査ログ</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- アーキテクチャセクション -->
+    <section id="architecture" class="architecture">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">システムアーキテクチャ</h2>
+                <p class="section-description">
+                    テクニカルアーキテクトレベルのマイクロサービスアーキテクチャ
+                </p>
+            </div>
+            <div class="architecture-content">
+                <div class="architecture-diagram">
+                    <div class="service-layer">
+                        <h3>マイクロサービス層</h3>
+                        <div class="services-grid">
+                            <div class="service-card">
+                                <div class="service-icon">[USER]</div>
+                                <div class="service-name">Patient Management</div>
+                                <div class="service-desc">患者情報管理・HIPAA準拠</div>
+                            </div>
+                            <div class="service-card">
+                                <div class="service-icon">[AI]</div>
+                                <div class="service-name">AI Diagnostic Engine</div>
+                                <div class="service-desc">AI診断支援・機械学習</div>
+                            </div>
+                            <div class="service-card">
+                                <div class="service-icon">[DATA]</div>
+                                <div class="service-name">Realtime Monitoring</div>
+                                <div class="service-desc">リアルタイム監視・ストリーミング</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="integration-layer">
+                        <h3>統合層</h3>
+                        <div class="integration-items">
+                            <div class="integration-item">
+                                <span class="icon-text">[SYNC]</span>
+                                <span>API Gateway</span>
+                            </div>
+                            <div class="integration-item">
+                                <span class="icon-text">[STREAM]</span>
+                                <span>Event Streaming</span>
+                            </div>
+                            <div class="integration-item">
+                                <span class="icon-text">[DB]</span>
+                                <span>Data Integration</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="infrastructure-layer">
+                        <h3>インフラ層</h3>
+                        <div class="infrastructure-items">
+                            <div class="infrastructure-item">
+                                <i class="fab fa-aws"></i>
+                                <span>AWS Cloud</span>
+                            </div>
+                            <div class="infrastructure-item">
+                                <span class="icon-text">[K8S]</span>
+                                <span>Kubernetes</span>
+                            </div>
+                            <div class="infrastructure-item">
+                                <span class="icon-text">[SERVER]</span>
+                                <span>High Availability</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="architecture-features">
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <span class="icon-text">[CHIP]</span>
+                        </div>
+                        <div class="feature-content">
+                            <h4>マイクロサービスアーキテクチャ</h4>
+                            <p>独立したサービスによる高可用性とスケーラビリティ</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <span class="icon-text">[FAST]</span>
+                        </div>
+                        <div class="feature-content">
+                            <h4>イベント駆動アーキテクチャ</h4>
+                            <p>リアルタイムデータ処理と非同期通信</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <span class="icon-text">[CLOUD]</span>
+                        </div>
+                        <div class="feature-content">
+                            <h4>クラウドネイティブ</h4>
+                            <p>Kubernetes・Docker・AWS統合</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <span class="icon-text">[LOCK]</span>
+                        </div>
+                        <div class="feature-content">
+                            <h4>セキュリティファースト</h4>
+                            <p>HIPAA準拠・暗号化・アクセス制御</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- デモセクション -->
+    <section id="demo" class="demo">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">ライブデモ</h2>
+                <p class="section-description">
+                    実際のシステム動作をリアルタイムで体験
+                </p>
+            </div>
+            <div class="demo-content">
+                <div class="demo-tabs">
+                    <button class="tab-button active" data-tab="monitoring">リアルタイム監視</button>
+                    <button class="tab-button" data-tab="diagnosis">AI診断支援</button>
+                    <button class="tab-button" data-tab="prediction">予測医療</button>
+                </div>
+                <div class="demo-panel active" id="monitoring">
+                    <div class="demo-dashboard">
+                        <div class="dashboard-header">
+                            <h3>リアルタイムバイタル監視</h3>
+                            <div class="live-indicator">
+                                <span class="pulse"></span>
+                                LIVE
+                            </div>
+                        </div>
+                        <div class="vital-monitors">
+                            <div class="vital-monitor">
+                                <div class="vital-label">心拍数</div>
+                                <div class="vital-display">
+                                    <div class="vital-number" id="heart-rate">72</div>
+                                    <div class="vital-unit">bpm</div>
+                                </div>
+                                <div class="vital-chart">
+                                    <canvas id="heart-rate-chart" width="200" height="60"></canvas>
+                                </div>
+                            </div>
+                            <div class="vital-monitor">
+                                <div class="vital-label">血圧</div>
+                                <div class="vital-display">
+                                    <div class="vital-number" id="blood-pressure">120/80</div>
+                                    <div class="vital-unit">mmHg</div>
+                                </div>
+                                <div class="vital-chart">
+                                    <canvas id="blood-pressure-chart" width="200" height="60"></canvas>
+                                </div>
+                            </div>
+                            <div class="vital-monitor">
+                                <div class="vital-label">体温</div>
+                                <div class="vital-display">
+                                    <div class="vital-number" id="temperature">36.5</div>
+                                    <div class="vital-unit">°C</div>
+                                </div>
+                                <div class="vital-chart">
+                                    <canvas id="temperature-chart" width="200" height="60"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ai-analysis">
+                            <div class="analysis-header">
+                                <span class="icon-text">[ROBOT]</span>
+                                <span>AI分析結果</span>
+                            </div>
+                            <div class="analysis-content">
+                                <div class="analysis-item">
+                                    <span class="analysis-label">状態:</span>
+                                    <span class="analysis-value normal">正常</span>
+                                </div>
+                                <div class="analysis-item">
+                                    <span class="analysis-label">リスク:</span>
+                                    <span class="analysis-value low">低</span>
+                                </div>
+                                <div class="analysis-item">
+                                    <span class="analysis-label">推奨:</span>
+                                    <span class="analysis-value">継続監視</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="demo-panel" id="diagnosis">
+                    <div class="diagnosis-demo">
+                        <h3>AI診断支援デモ</h3>
+                        <div class="diagnosis-input">
+                            <div class="input-group">
+                                <label>症状:</label>
+                                <input type="text" placeholder="症状を入力してください" id="symptom-input">
+                            </div>
+                            <div class="input-group">
+                                <label>年齢:</label>
+                                <input type="number" placeholder="年齢" id="age-input">
+                            </div>
+                            <button class="btn btn-primary" onclick="runDiagnosis()">
+                                <span class="icon-text">[SEARCH]</span>
+                                診断実行
+                            </button>
+                        </div>
+                        <div class="diagnosis-result" id="diagnosis-result">
+                            <div class="result-placeholder">
+                                <span class="icon-text">[STETH]</span>
+                                <p>症状を入力して診断を実行してください</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="demo-panel" id="prediction">
+                    <div class="prediction-demo">
+                        <h3>予測医療デモ</h3>
+                        <div class="prediction-input">
+                            <div class="input-group">
+                                <label>患者ID:</label>
+                                <input type="text" placeholder="患者ID" id="patient-id-input">
+                            </div>
+                            <button class="btn btn-primary" onclick="runPrediction()">
+                                <span class="icon-text">[PREDICT]</span>
+                                リスク評価実行
+                            </button>
+                        </div>
+                        <div class="prediction-result" id="prediction-result">
+                            <div class="result-placeholder">
+                                <span class="icon-text">[CHART]</span>
+                                <p>患者IDを入力してリスク評価を実行してください</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 技術仕様セクション -->
+    <section class="tech-specs">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">技術仕様</h2>
+                <p class="section-description">
+                    テクニカルアーキテクトレベルの技術実装詳細
+                </p>
+            </div>
+            <div class="specs-grid">
+                <div class="spec-category">
+                    <h3>パフォーマンス</h3>
+                    <div class="spec-items">
+                        <div class="spec-item">
+                            <span class="spec-label">レスポンス時間:</span>
+                            <span class="spec-value">&lt;100ms</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">可用性:</span>
+                            <span class="spec-value">99.99%</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">スループット:</span>
+                            <span class="spec-value">10,000 req/sec</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="spec-category">
+                    <h3>セキュリティ</h3>
+                    <div class="spec-items">
+                        <div class="spec-item">
+                            <span class="spec-label">HIPAA準拠:</span>
+                            <span class="spec-value">完全準拠</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">暗号化:</span>
+                            <span class="spec-value">AES-256</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">アクセス制御:</span>
+                            <span class="spec-value">RBAC</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="spec-category">
+                    <h3>AI/ML</h3>
+                    <div class="spec-items">
+                        <div class="spec-item">
+                            <span class="spec-label">診断精度:</span>
+                            <span class="spec-value">95%以上</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">予測精度:</span>
+                            <span class="spec-value">90%以上</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">モデル更新:</span>
+                            <span class="spec-value">リアルタイム</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="spec-category">
+                    <h3>インフラ</h3>
+                    <div class="spec-items">
+                        <div class="spec-item">
+                            <span class="spec-label">クラウド:</span>
+                            <span class="spec-value">AWS</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">コンテナ:</span>
+                            <span class="spec-value">Kubernetes</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">データベース:</span>
+                            <span class="spec-value">PostgreSQL</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- お問い合わせセクション -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">お問い合わせ</h2>
+                <p class="section-description">
+                    テクニカルアーキテクトレベルの医療AIシステムについて
+                </p>
+            </div>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <span class="icon-text">[USER]</span>
+                        </div>
+                        <div class="contact-details">
+                            <h4>開発者</h4>
+                            <p>OGAWA SEIJI</p>
+                            <p>テクニカルアーキテクト</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <span class="icon-text">[MAIL]</span>
+                        </div>
+                        <div class="contact-details">
+                            <h4>メール</h4>
+                            <p>contact@ai-healthcare-platform.com</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fab fa-github"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>GitHub</h4>
+                            <p>github.com/ogawa-seiji</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <form id="contact-form">
+                        <div class="form-group">
+                            <label for="name">お名前</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">メールアドレス</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="subject">件名</label>
+                            <input type="text" id="subject" name="subject" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">メッセージ</label>
+                            <textarea id="message" name="message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <span class="icon-text">[SEND]</span>
+                            送信
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <span class="icon-text">[HEALTH]</span>
+                        <span>AI Healthcare Platform</span>
+                    </div>
+                    <p>次世代医療AIシステム - テクニカルアーキテクトレベルの実装</p>
+                </div>
+                <div class="footer-section">
+                    <h4>技術</h4>
+                    <ul>
+                        <li>マイクロサービス</li>
+                        <li>AI/ML統合</li>
+                        <li>リアルタイム処理</li>
+                        <li>クラウドネイティブ</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>機能</h4>
+                    <ul>
+                        <li>AI診断支援</li>
+                        <li>リアルタイム監視</li>
+                        <li>予測医療</li>
+                        <li>セキュリティ</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>リンク</h4>
+                    <ul>
+                        <li><a href="#features">機能</a></li>
+                        <li><a href="#architecture">アーキテクチャ</a></li>
+                        <li><a href="#demo">デモ</a></li>
+                        <li><a href="#contact">お問い合わせ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>他のプラットフォーム</h4>
+                    <ul>
+                        <li><a href="../enterprise-ai-platform/index.html">エンタープライズAI統合プラットフォーム</a></li>
+                        <li><a href="../digital-transformation-platform/index.html">次世代デジタル変革プラットフォーム</a></li>
+                        <li><a href="../global-ai-research-platform/index.html">グローバルAI研究開発プラットフォーム</a></li>
+                        <li><a href="../comprehensive-security-platform/index.html">包括的セキュリティ統合プラットフォーム</a></li>
+                        <li><a href="../quantum-computing-platform/index.html">量子コンピューティング統合プラットフォーム</a></li>
+                        <li><a href="../edge-computing-platform/index.html">エッジコンピューティング統合プラットフォーム</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 AI Healthcare Platform. All rights reserved.</p>
+                <p>Developed by OGAWA SEIJI - Technical Architect</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+
+    <!-- ライセンス・権利情報 -->
+    <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 15px; padding: 25px; margin: 30px auto; max-width: 1200px; border: 3px solid #f59e0b; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);">
+        <h2 style="color: #92400e; margin-bottom: 20px; text-align: center; font-size: 1.5rem;">ライセンス・権利情報</h2>
+        
+        <div style="background: white; padding: 20px; border-radius: 10px; color: #1e3a8a; line-height: 2;">
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">著作権:</strong> &copy; 2025 小川清志（おがわ せいじ）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">開発期間:</strong> 2025年6月～2025年10月（個人事業主として）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">開発目的:</strong> 技術研究・ポートフォリオ作成・転職活動用
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">用途:</strong> 個人研究目的（非商用）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">ライセンス:</strong> MIT License
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">公開範囲:</strong> 個人ポートフォリオサイト、GitHub（技術実証目的）
+            </div>
+            
+            <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #f59e0b;">
+                <strong style="color: #92400e;">重要事項:</strong>
+                <p style="color: #78350f; margin-top: 10px;">
+                    本システムは、個人事業主として独自に研究開発したものであり、
+                    特定の企業・組織の業務とは一切関係ありません。<br>
+                    全ての知的財産権は開発者個人（小川清志）に帰属します。<br>
+                    本システムの技術内容・アイデアは、入社前の個人研究として確立されたものです。
+                </p>
+            </div>
+            
+            <div style="background: #dbeafe; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #3b82f6;">
+                <strong style="color: #1e40af;">タイムスタンプ:</strong>
+                <p style="color: #1e3a8a; margin-top: 10px;">
+                    最終更新日: 2025年10月26日<br>
+                    GitHub最終コミット: 2025年10月26日<br>
+                    確定日付: 入社前（個人開発期間中）
+                </p>
+            </div>
+            
+            <div style="background: #d1fae5; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #10b981;">
+                <strong style="color: #047857;">連絡先:</strong>
+                <p style="color: #065f46; margin-top: 10px;">
+                    開発者: 小川清志（おがわ せいじ）<br>
+                    Email: kaho052514@gmail.com<br>
+                    電話: 080-4271-5479
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>

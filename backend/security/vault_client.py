@@ -150,6 +150,77 @@ class VaultClient:
             print(f"Failed to revoke lease: {e}")
             return False
 
+    def create_dynamic_secret(
+        self,
+        role: str,
+        mount_point: str = "database",
+        ttl: Optional[str] = "1h",
+    ) -> Optional[Dict[str, Any]]:
+        """
+        動的シークレットを生成（短期有効）
+        補強スキル: Vault 動的シークレット
+
+        Args:
+            role: ロール名
+            mount_point: マウントポイント
+            ttl: 有効期限（例: 1h, 24h）
+
+        Returns:
+            認証情報（username, password, lease_id 等）
+        """
+        try:
+            creds = self.generate_dynamic_credentials(role, mount_point)
+            if creds:
+                creds["ttl"] = ttl
+            return creds
+        except Exception as e:
+            print(f"Failed to create dynamic secret: {e}")
+            return None
+
+    def transit_encrypt(
+        self,
+        key_name: str,
+        plaintext: str,
+        mount_point: str = "transit",
+    ) -> Optional[str]:
+        """
+        Transit シークレットエンジンで暗号化
+        """
+        try:
+            response = self.client.secrets.transit.encrypt_data(
+                name=key_name,
+                plaintext=plaintext.encode("utf-8") if isinstance(plaintext, str) else plaintext,
+                mount_point=mount_point,
+            )
+            return response.get("data", {}).get("ciphertext")
+        except Exception as e:
+            print(f"Failed to encrypt: {e}")
+            return None
+
+    def transit_decrypt(
+        self,
+        key_name: str,
+        ciphertext: str,
+        mount_point: str = "transit",
+    ) -> Optional[str]:
+        """
+        Transit シークレットエンジンで復号
+        """
+        try:
+            response = self.client.secrets.transit.decrypt_data(
+                name=key_name,
+                ciphertext=ciphertext,
+                mount_point=mount_point,
+            )
+            plaintext = response.get("data", {}).get("plaintext")
+            if plaintext:
+                import base64
+                return base64.b64decode(plaintext).decode("utf-8")
+            return None
+        except Exception as e:
+            print(f"Failed to decrypt: {e}")
+            return None
+
 
 # グローバルインスタンス
 vault_client = VaultClient()

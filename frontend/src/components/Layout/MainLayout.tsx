@@ -1,5 +1,7 @@
 /**
  * メインレイアウトコンポーネント
+ * 統合ダッシュボードUI・4〜5分割（企業向けデモ）
+ * サイドバー折りたたみ・パンくず・アクセシビリティ対応
  */
 import React, { useState } from 'react';
 import {
@@ -18,12 +20,17 @@ import {
   Avatar,
   Menu,
   MenuItem,
+  Collapse,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
+  ChevronLeft,
+  ChevronRight,
   Dashboard,
   Security,
+  Shield,
   Cloud,
+  Construction,
   Science,
   Psychology,
   Build,
@@ -34,58 +41,150 @@ import {
   Public,
   Star,
   Layers,
-  Business,
+  ExpandLess,
+  ExpandMore,
+  FolderSpecial,
   BugReport,
-  Accessibility,
+  Work,
+  PrecisionManufacturing,
+  AccountBalance,
+  Bolt,
+  Inventory,
+  Hub,
+  OpenInNew,
+  Domain,
+  Store,
+  School,
+  Gavel,
+  LocalShipping,
+  LocalHospital,
+  Traffic,
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { Breadcrumbs } from './Breadcrumbs';
 
-const DRAWER_WIDTH = 240;
+const DRAWER_WIDTH = 320;
+const DRAWER_WIDTH_COLLAPSED = 72;
+const getIndustryUnifiedUrl = () => {
+  const base = process.env.REACT_APP_INDUSTRY_UNIFIED_URL || 'http://localhost:3010';
+  const token = typeof localStorage !== 'undefined' ? localStorage.getItem('access_token') : null;
+  return token ? `${base}?token=${encodeURIComponent(token)}` : base;
+};
+
+const getEOHUrl = () => {
+  const base = process.env.REACT_APP_EOH_URL || 'http://localhost:3020';
+  const token = typeof localStorage !== 'undefined' ? localStorage.getItem('access_token') : null;
+  return token ? `${base}?token=${encodeURIComponent(token)}` : base;
+};
 
 interface NavItem {
   text: string;
   icon: React.ReactNode;
   path: string;
+  external?: boolean;
 }
 
-const menuItems: NavItem[] = [
+interface NavGroup {
+  title: string;
+  icon: React.ReactNode;
+  items: NavItem[];
+}
+
+// 4〜5分割（企業向けデモ）
+const navGroups: NavGroup[] = [
+  {
+    title: 'インフラ基盤',
+    icon: <Cloud />,
+    items: [
+      { text: 'クラウドインフラ', icon: <Cloud />, path: '/cloud-infra' },
+      { text: 'インフラ構築専用', icon: <Construction />, path: '/infra-builder' },
+    ],
+  },
+  {
+    title: 'AI・ML',
+    icon: <Science />,
+    items: [
+      { text: 'MLOps', icon: <Science />, path: '/mlops' },
+      { text: '生成AI', icon: <Psychology />, path: '/generative-ai' },
+      { text: '最適化・精度向上', icon: <Star />, path: '/optimization' },
+      { text: 'AI支援開発', icon: <Build />, path: '/ai-dev' },
+      { text: 'インクルーシブ雇用AI', icon: <Work />, path: '/inclusive-work' },
+    ],
+  },
+  {
+    title: '開発・運用',
+    icon: <Build />,
+    items: [
+      { text: 'IDOP', icon: <Build />, path: '/idop' },
+    ],
+  },
+  {
+    title: 'プラットフォーム拡張',
+    icon: <Public />,
+    items: [
+      { text: 'プラットフォーム (Level 2)', icon: <Layers />, path: '/platform' },
+      { text: 'エコシステム (Level 3)', icon: <Groups />, path: '/ecosystem' },
+      { text: 'インダストリー (Level 4)', icon: <Star />, path: '/industry-leader' },
+      { text: 'グローバル (Level 5)', icon: <Public />, path: '/global-enterprise' },
+    ],
+  },
+  {
+    title: 'ビジネス領域',
+    icon: <Build />,
+    items: [
+      { text: 'ERP（統合基幹）', icon: <Inventory />, path: '/erp' },
+      { text: '製造・IoT', icon: <PrecisionManufacturing />, path: '/manufacturing' },
+      { text: '金融・FinTech', icon: <AccountBalance />, path: '/fintech' },
+      { text: 'エネルギー', icon: <Bolt />, path: '/energy' },
+      { text: '医療', icon: <LocalHospital />, path: '/medical' },
+      { text: '交通', icon: <Traffic />, path: '/traffic' },
+      { text: '公共・官公庁', icon: <Domain />, path: '/public-sector' },
+      { text: '小売・EC', icon: <Store />, path: '/retail' },
+      { text: '教育', icon: <School />, path: '/education' },
+      { text: '法務', icon: <Gavel />, path: '/legal' },
+      { text: 'サプライチェーン', icon: <LocalShipping />, path: '/supply-chain' },
+      { text: '産業統合プラットフォーム', icon: <Hub />, path: 'industry-unified', external: true },
+      { text: '企業横断オペレーション基盤', icon: <Hub />, path: 'eoh', external: true },
+    ],
+  },
+];
+
+const topItems: NavItem[] = [
+  { text: 'プロジェクト一覧', icon: <FolderSpecial />, path: '/projects' },
   { text: 'ダッシュボード', icon: <Dashboard />, path: '/' },
-  { text: 'MLOps', icon: <Science />, path: '/mlops' },
-  { text: '生成AI', icon: <Psychology />, path: '/generative-ai' },
-  { text: 'セキュリティコマンドセンター', icon: <Security />, path: '/security-center' },
-  { text: 'クラウドインフラ', icon: <Cloud />, path: '/cloud-infra' },
-  { text: 'IDOP', icon: <Build />, path: '/idop' },
-  { text: 'AI支援開発', icon: <Build />, path: '/ai-dev' },
-  { text: 'Chaos Engineering', icon: <BugReport />, path: '/chaos' },
-  { text: 'インクルーシブ雇用AI', icon: <Accessibility />, path: '/inclusive-work' },
+];
+
+const bottomItems: NavItem[] = [
+  { text: '個人会計', icon: <AccountBalance />, path: '/personal-accounting' },
+  { text: 'テスト', icon: <BugReport />, path: '/tests' },
+  { text: 'Chaos Engineering', icon: <Build />, path: '/chaos' },
   { text: 'GraphQL', icon: <Build />, path: '/graphql' },
-  { text: 'WebAssembly', icon: <Build />, path: '/wasm' },
-  { text: '統合ビジネスプラットフォーム', icon: <Business />, path: '/unified-business' },
-  { text: 'プラットフォーム (Level 2)', icon: <Layers />, path: '/platform' },
-  { text: 'エコシステム (Level 3)', icon: <Groups />, path: '/ecosystem' },
-  { text: 'インダストリー (Level 4)', icon: <Star />, path: '/industry-leader' },
-  { text: 'グローバル (Level 5)', icon: <Public />, path: '/global-enterprise' },
   { text: '設定', icon: <Settings />, path: '/settings' },
 ];
 
 export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [drawerCollapsed, setDrawerCollapsed] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
+    'インフラ基盤': true,
+    'AI・ML': true,
+    '監視・セキュリティ': true,
+    '開発・運用': true,
+    'プラットフォーム拡張': true,
+    'ビジネス領域': true,
+  });
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
 
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
+  const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget);
+  const handleMenuClose = () => setAnchorEl(null);
 
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
+  const handleGroupToggle = (title: string) => {
+    setOpenGroups((prev) => ({ ...prev, [title]: !prev[title] }));
   };
 
   const handleLogout = () => {
@@ -94,26 +193,104 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
     handleMenuClose();
   };
 
+  const nav = (path: string) => {
+    navigate(path);
+    setMobileOpen(false);
+  };
+
+  const drawerWidth = drawerCollapsed ? DRAWER_WIDTH_COLLAPSED : DRAWER_WIDTH;
+
   const drawer = (
-    <div>
-      <Toolbar>
-        <Typography variant="h6" noWrap component="div">
-          UEP v5.0
-        </Typography>
+    <div role="navigation" aria-label="メインメニュー">
+      <Toolbar sx={{ justifyContent: drawerCollapsed ? 'center' : 'space-between', minHeight: 64 }}>
+        {!drawerCollapsed && (
+          <Typography variant="h6" noWrap component="div">
+            UEP v5.0
+          </Typography>
+        )}
+        <IconButton
+          onClick={() => setDrawerCollapsed(!drawerCollapsed)}
+          aria-label={drawerCollapsed ? 'サイドバーを展開' : 'サイドバーを折りたたむ'}
+          sx={{ display: { xs: 'none', sm: 'flex' }, '&:focus-visible': { outline: '2px solid', outlineColor: 'primary.main' } }}
+        >
+          {drawerCollapsed ? <ChevronRight /> : <ChevronLeft />}
+        </IconButton>
       </Toolbar>
       <Divider />
-      <List>
-        {menuItems.map((item) => (
+      <List dense>
+        {topItems.map((item) => (
           <ListItem key={item.text} disablePadding>
             <ListItemButton
               selected={location.pathname === item.path}
-              onClick={() => {
-                navigate(item.path);
-                setMobileOpen(false);
-              }}
+              onClick={() => nav(item.path)}
+              aria-label={item.text}
+              sx={{ '&:focus-visible': { outline: '2px solid', outlineColor: 'primary.main' } }}
             >
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
+              <ListItemIcon sx={{ minWidth: 36 }} aria-hidden>{item.icon}</ListItemIcon>
+              {!drawerCollapsed && (
+                <ListItemText primary={item.text} primaryTypographyProps={{ variant: 'body2' }} />
+              )}
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+      <Divider sx={{ my: 1 }} />
+      <List dense sx={{ display: drawerCollapsed ? 'none' : 'block' }}>
+        {navGroups.map((group) => (
+          <React.Fragment key={group.title}>
+            <ListItemButton
+              onClick={() => handleGroupToggle(group.title)}
+              aria-expanded={openGroups[group.title]}
+              aria-label={`${group.title}メニュー`}
+              sx={{ '&:focus-visible': { outline: '2px solid', outlineColor: 'primary.main' } }}
+            >
+              <ListItemIcon sx={{ minWidth: 36 }} aria-hidden>{group.icon}</ListItemIcon>
+              <ListItemText primary={group.title} primaryTypographyProps={{ variant: 'body2', fontWeight: 600 }} />
+              {openGroups[group.title] ? <ExpandLess /> : <ExpandMore />}
+            </ListItemButton>
+            <Collapse in={openGroups[group.title]} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                {group.items.map((item) => (
+                  <ListItem key={item.path} disablePadding sx={{ pl: 3 }}>
+                    <ListItemButton
+                      selected={!item.external && location.pathname === item.path}
+                      onClick={() => {
+                        if (item.external) {
+                          const url = item.path === 'industry-unified' ? getIndustryUnifiedUrl() : item.path === 'eoh' ? getEOHUrl() : item.path;
+                          window.open(url, '_blank', 'noopener,noreferrer');
+                          setMobileOpen(false);
+                        } else {
+                          nav(item.path);
+                        }
+                      }}
+                      aria-label={item.text}
+                      sx={{ '&:focus-visible': { outline: '2px solid', outlineColor: 'primary.main' } }}
+                    >
+                      <ListItemIcon sx={{ minWidth: 32 }} aria-hidden>{item.icon}</ListItemIcon>
+                      <ListItemText primary={item.text} primaryTypographyProps={{ variant: 'body2' }} />
+                      {item.external && <OpenInNew sx={{ fontSize: 14, ml: 0.5, opacity: 0.6 }} />}
+                    </ListItemButton>
+                  </ListItem>
+                ))}
+              </List>
+            </Collapse>
+          </React.Fragment>
+        ))}
+      </List>
+      <Divider sx={{ my: 1 }} />
+      <List dense>
+        {bottomItems.map((item) => (
+          <ListItem key={item.text} disablePadding>
+            <ListItemButton
+              selected={location.pathname === item.path}
+              onClick={() => nav(item.path)}
+              aria-label={item.text}
+              sx={{ '&:focus-visible': { outline: '2px solid', outlineColor: 'primary.main' } }}
+            >
+              <ListItemIcon sx={{ minWidth: 36 }} aria-hidden>{item.icon}</ListItemIcon>
+              {!drawerCollapsed && (
+                <ListItemText primary={item.text} primaryTypographyProps={{ variant: 'body2' }} />
+              )}
             </ListItemButton>
           </ListItem>
         ))}
@@ -125,86 +302,64 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
     <Box sx={{ display: 'flex' }}>
       <AppBar
         position="fixed"
-        sx={{
-          width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` },
-          ml: { sm: `${DRAWER_WIDTH}px` },
-        }}
+        sx={{ width: { sm: `calc(100% - ${drawerWidth}px)` }, ml: { sm: `${drawerWidth}px` } }}
       >
         <Toolbar>
           <IconButton
             color="inherit"
-            aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
             sx={{ mr: 2, display: { sm: 'none' } }}
+            aria-label="メニューを開く"
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            次世代エンタープライズ統合プラットフォーム v5.0 (UEP v5.0) - レベル5グローバルエンタープライズ対応システム
+          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1, fontSize: { xs: '0.9rem', sm: '1rem' } }}>
+            UEP v5.0 · 統合ダッシュボード
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Typography variant="body2">{user?.full_name || user?.username}</Typography>
-            <IconButton onClick={handleMenuOpen} size="small">
-              <Avatar sx={{ width: 32, height: 32 }}>
-                {user?.username?.charAt(0).toUpperCase()}
-              </Avatar>
-            </IconButton>
-            <Menu
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={handleMenuClose}
+            <IconButton
+              onClick={handleMenuOpen}
+              size="small"
+              aria-label="アカウントメニュー"
+              aria-haspopup="true"
+              aria-expanded={Boolean(anchorEl)}
             >
-              <MenuItem onClick={() => { navigate('/profile'); handleMenuClose(); }}>
-                <AccountCircle sx={{ mr: 1 }} />
-                プロフィール
+              <Avatar sx={{ width: 32, height: 32 }}>{user?.username?.charAt(0).toUpperCase()}</Avatar>
+            </IconButton>
+            <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+              <MenuItem onClick={() => { nav('/profile'); handleMenuClose(); }}>
+                <AccountCircle sx={{ mr: 1 }} /> プロフィール
               </MenuItem>
               <MenuItem onClick={handleLogout}>
-                <Logout sx={{ mr: 1 }} />
-                ログアウト
+                <Logout sx={{ mr: 1 }} /> ログアウト
               </MenuItem>
             </Menu>
           </Box>
         </Toolbar>
       </AppBar>
-      <Box
-        component="nav"
-        sx={{ width: { sm: DRAWER_WIDTH }, flexShrink: { sm: 0 } }}
-      >
+      <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}>
         <Drawer
           variant="temporary"
           open={mobileOpen}
           onClose={handleDrawerToggle}
-          ModalProps={{
-            keepMounted: true,
-          }}
-          sx={{
-            display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: DRAWER_WIDTH },
-          }}
+          ModalProps={{ keepMounted: true }}
+          sx={{ display: { xs: 'block', sm: 'none' }, '& .MuiDrawer-paper': { boxSizing: 'border-box', width: DRAWER_WIDTH } }}
         >
           {drawer}
         </Drawer>
         <Drawer
           variant="permanent"
-          sx={{
-            display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: DRAWER_WIDTH },
-          }}
+          sx={{ display: { xs: 'none', sm: 'block' }, '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, transition: 'width 0.2s' } }}
           open
         >
           {drawer}
         </Drawer>
       </Box>
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: 3,
-          width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` },
-        }}
-      >
+      <Box component="main" sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}>
         <Toolbar />
+        <Breadcrumbs />
         {children}
       </Box>
     </Box>

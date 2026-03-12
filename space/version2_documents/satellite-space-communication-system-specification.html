@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>衛星・宇宙通信システム技術仕様書</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0c1445 0%, #1a237e 50%, #3949ab 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .space-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(26, 35, 126, 0.4) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(57, 73, 171, 0.4) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(12, 20, 69, 0.3) 0%, transparent 50%);
+            z-index: -1;
+            animation: spaceFlow 25s ease-in-out infinite;
+        }
+
+        @keyframes spaceFlow {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.2) rotate(90deg); }
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, #1a237e 0%, #3949ab 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 6px 20px rgba(26, 35, 126, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .back-button:hover {
+            background: linear-gradient(135deg, #3949ab 0%, #1a237e 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(26, 35, 126, 0.6);
+        }
+
+        .header {
+            background: linear-gradient(135deg, rgba(12, 20, 69, 0.9) 0%, rgba(26, 35, 126, 0.9) 100%);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            border-bottom: 3px solid rgba(57, 73, 171, 0.5);
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 0 3px 6px rgba(0,0,0,0.8);
+            color: #ffffff;
+            font-weight: 900;
+            letter-spacing: 2px;
+            line-height: 1.2;
+        }
+
+        .header p {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            max-width: 900px;
+            margin: 0 auto;
+            line-height: 1.6;
+            color: #ffffff;
+            text-shadow: 0 3px 6px rgba(0,0,0,0.8);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .spec-section {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(57, 73, 171, 0.3);
+            transition: all 0.4s ease;
+        }
+
+        .spec-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(57, 73, 171, 0.3);
+        }
+
+        .section-title {
+            color: #ffffff;
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            text-shadow: 0 3px 6px rgba(0,0,0,0.8);
+            font-weight: 800;
+            letter-spacing: 1px;
+            line-height: 1.3;
+        }
+
+        .section-subtitle {
+            color: #ffffff;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .spec-content {
+            color: #ffffff;
+            line-height: 1.8;
+            font-size: 1.1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .spec-list {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        .spec-list li {
+            padding: 10px 0;
+            color: #ffffff;
+            font-size: 1.1rem;
+            position: relative;
+            padding-left: 30px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            font-weight: 600;
+            line-height: 1.6;
+            letter-spacing: 0.2px;
+        }
+
+        .spec-list li::before {
+            content: '🛰️';
+            position: absolute;
+            left: 0;
+            top: 10px;
+            font-size: 1.2rem;
+        }
+
+        .code-block {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid rgba(57, 73, 171, 0.6);
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+        }
+
+        .architecture-diagram {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border: 2px solid rgba(57, 73, 171, 0.3);
+            text-align: center;
+        }
+
+        .diagram-title {
+            color: #ffffff;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            font-weight: 700;
+        }
+
+        .diagram-content {
+            color: #ffffff;
+            font-size: 1rem;
+            line-height: 1.6;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, rgba(57, 73, 171, 0.3) 0%, rgba(26, 35, 126, 0.3) 100%);
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-weight: 700;
+        }
+
+        .warning {
+            background: linear-gradient(135deg, rgba(255, 69, 0, 0.3) 0%, rgba(255, 0, 0, 0.3) 100%);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid rgba(255, 69, 0, 0.6);
+        }
+
+        .info {
+            background: linear-gradient(135deg, rgba(26, 35, 126, 0.3) 0%, rgba(57, 73, 171, 0.3) 100%);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid rgba(26, 35, 126, 0.6);
+        }
+
+        .success {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.3) 0%, rgba(69, 160, 73, 0.3) 100%);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid rgba(76, 175, 80, 0.6);
+        }
+
+        .space {
+            background: linear-gradient(135deg, rgba(156, 39, 176, 0.3) 0%, rgba(103, 58, 183, 0.3) 100%);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid rgba(156, 39, 176, 0.6);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .container {
+                padding: 20px 15px;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .spec-content {
+                font-size: 1rem;
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="space-background"></div>
+
+    <a href="project-portfolio-site.html" class="back-button">← プロジェクト一覧に戻る</a>
+
+    <div class="header">
+        <h1>🛰️ 衛星・宇宙通信システム技術仕様書</h1>
+        <p>地球軌道から深宇宙までをカバーする次世代通信インフラ<br>
+        衛星ネットワーク・宇宙通信・深宇宙探査通信の統合システム</p>
+    </div>
+
+    <div class="container">
+        <!-- 概要・設計思想 -->
+        <div class="spec-section fade-in">
+            <h2 class="section-title">🎯 概要・設計思想</h2>
+            <div class="spec-content">
+                <p>衛星・宇宙通信システムは、地球軌道から深宇宙までをカバーする包括的な通信インフラです。衛星ネットワーク、宇宙通信、深宇宙探査通信を統合し、人類の宇宙活動を支える基盤技術を提供します。</p>
+                
+                <div class="info">
+                    <h3 class="section-subtitle">🔄 設計理念</h3>
+                    <ul class="spec-list">
+                        <li><span class="highlight">グローバルカバレッジ</span>: 地球上のあらゆる場所での通信</li>
+                        <li><span class="highlight">高信頼性</span>: 宇宙環境での安定動作</li>
+                        <li><span class="highlight">大容量通信</span>: 高速・大容量データ転送</li>
+                        <li><span class="highlight">低遅延</span>: リアルタイム通信の実現</li>
+                        <li><span class="highlight">拡張性</span>: 将来の宇宙活動への対応</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- システムアーキテクチャ -->
+        <div class="spec-section fade-in">
+            <h2 class="section-title">🏗️ システムアーキテクチャ</h2>
+            <div class="spec-content">
+                <h3 class="section-subtitle">📊 全体構成</h3>
+                <div class="architecture-diagram">
+                    <div class="diagram-title">衛星・宇宙通信システム アーキテクチャ</div>
+                    <div class="diagram-content">
+                        <strong>システム構成:</strong><br>
+                        ┌─────────────────────────────────────┐<br>
+                        │ 6. アプリケーション層 (通信サービス) │<br>
+                        ├─────────────────────────────────────┤<br>
+                        │ 5. ネットワーク層 (ルーティング)   │<br>
+                        ├─────────────────────────────────────┤<br>
+                        │ 4. 通信制御層 (プロトコル制御)     │<br>
+                        ├─────────────────────────────────────┤<br>
+                        │ 3. 信号処理層 (変調・復調)         │<br>
+                        ├─────────────────────────────────────┤<br>
+                        │ 2. 物理層 (アンテナ・送受信機)     │<br>
+                        ├─────────────────────────────────────┤<br>
+                        │ 1. 宇宙環境層 (衛星・宇宙機)       │<br>
+                        └─────────────────────────────────────┘
+                    </div>
+                </div>
+
+                <h3 class="section-subtitle">🔧 主要コンポーネント</h3>
+                <ul class="spec-list">
+                    <li><span class="highlight">衛星システム</span>: 通信衛星、測位衛星、気象衛星</li>
+                    <li><span class="highlight">地上局</span>: 管制局、受信局、中継局</li>
+                    <li><span class="highlight">通信装置</span>: アンテナ、送受信機、信号処理装置</li>
+                    <li><span class="highlight">ネットワーク</span>: 衛星間通信、地上ネットワーク</li>
+                    <li><span class="highlight">管制システム</span>: 軌道制御、通信制御、運用管理</li>
+                    <li><span class="highlight">電源システム</span>: 太陽電池、バッテリー、電力制御</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 衛星通信システム仕様 -->
+        <div class="spec-section fade-in">
+            <h2 class="section-title">📡 衛星通信システム仕様</h2>
+            <div class="spec-content">
+                <h3 class="section-subtitle">🛰️ 衛星仕様</h3>
+                <ul class="spec-list">
+                    <li><span class="highlight">軌道</span>: LEO、MEO、GEO、HEO</li>
+                    <li><span class="highlight">重量</span>: 100kg-5000kg</li>
+                    <li><span class="highlight">電力</span>: 1kW-20kW</li>
+                    <li><span class="highlight">寿命</span>: 5-15年</li>
+                    <li><span class="highlight">通信容量</span>: 1Gbps-100Gbps</li>
+                    <li><span class="highlight">カバレッジ</span>: 全球カバレッジ</li>
+                </ul>
+
+                <h3 class="section-subtitle">📶 通信仕様</h3>
+                <div class="code-block">
+                    # 衛星通信システム
+                    class SatelliteCommunication:
+                        def __init__(self):
+                            self.frequency_bands = {
+                                'L-band': '1-2 GHz',
+                                'S-band': '2-4 GHz',
+                                'C-band': '4-8 GHz',
+                                'X-band': '8-12 GHz',
+                                'Ku-band': '12-18 GHz',
+                                'Ka-band': '26-40 GHz'
+                            }
+                            self.modulation_schemes = ['QPSK', '8PSK', '16QAM', '64QAM']
+                            self.error_correction = ['FEC', 'Reed-Solomon', 'LDPC']
+                        
+                        def establish_link(self, satellite, ground_station):
+                            # 1. 軌道計算
+                            orbit = self.calculate_orbit(satellite)
+                            
+                            # 2. 可視性確認
+                            visibility = self.check_visibility(satellite, ground_station)
+                            
+                            # 3. 通信リンク確立
+                            if visibility:
+                                link = self.establish_communication_link(satellite, ground_station)
+                                return link
+                            
+                            return None
+                </div>
+
+                <h3 class="section-subtitle">🌐 ネットワーク構成</h3>
+                <ul class="spec-list">
+                    <li><span class="highlight">衛星間通信</span>: レーザー通信、マイクロ波通信</li>
+                    <li><span class="highlight">地上ネットワーク</span>: 光ファイバー、無線通信</li>
+                    <li><span class="highlight">ハンドオーバー</span>: 衛星間のシームレス切り替え</li>
+                    <li><span class="highlight">負荷分散</span>: トラフィックの最適分散</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 宇宙通信システム仕様 -->
+        <div class="spec-section fade-in">
+            <h2 class="section-title">🚀 宇宙通信システム仕様</h2>
+            <div class="spec-content">
+                <h3 class="section-subtitle">🛸 宇宙機通信</h3>
+                <ul class="spec-list">
+                    <li><span class="highlight">探査機通信</span>: 火星、木星、土星探査機</li>
+                    <li><span class="highlight">宇宙ステーション</span>: ISS、月面基地</li>
+                    <li><span class="highlight">宇宙船通信</span>: 有人宇宙船、貨物船</li>
+                    <li><span class="highlight">深宇宙通信</span>: 太陽系外探査機</li>
+                </ul>
+
+                <h3 class="section-subtitle">🔬 深宇宙通信</h3>
+                <div class="code-block">
+                    # 深宇宙通信システム
+                    class DeepSpaceCommunication:
+                        def __init__(self):
+                            self.distance_range = '1 AU - 100 AU'
+                            self.signal_strength = 'Very Low'
+                            self.communication_delay = 'Minutes to Hours'
+                            self.data_rate = '1 bps - 1 Mbps'
+                        
+                        def establish_deep_space_link(self, spacecraft, earth_station):
+                            # 1. 距離計算
+                            distance = self.calculate_distance(spacecraft, earth_station)
+                            
+                            # 2. 信号強度計算
+                            signal_power = self.calculate_signal_power(distance)
+                            
+                            # 3. 通信遅延計算
+                            delay = self.calculate_communication_delay(distance)
+                            
+                            # 4. データレート最適化
+                            optimal_data_rate = self.optimize_data_rate(signal_power)
+                            
+                            return {
+                                'distance': distance,
+                                'signal_power': signal_power,
+                                'delay': delay,
+                                'data_rate': optimal_data_rate
+                            }
+                </div>
+
+                <h3 class="section-subtitle">📡 通信プロトコル</h3>
+                <ul class="spec-list">
+                    <li><span class="highlight">CCSDS</span>: 宇宙通信標準プロトコル</li>
+                    <li><span class="highlight">DTN</span>: 遅延耐性ネットワーク</li>
+                    <li><span class="highlight">TCP/IP</span>: 地上ネットワーク互換</li>
+                    <li><span class="highlight">UDP</span>: リアルタイム通信</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 信号処理・変調技術仕様 -->
+        <div class="spec-section fade-in">
+            <h2 class="section-title">⚡ 信号処理・変調技術仕様</h2>
+            <div class="spec-content">
+                <h3 class="section-subtitle">📊 変調方式</h3>
+                <ul class="spec-list">
+                    <li><span class="highlight">デジタル変調</span>: QPSK、8PSK、16QAM、64QAM</li>
+                    <li><span class="highlight">アナログ変調</span>: AM、FM、PM</li>
+                    <li><span class="highlight">スペクトラム拡散</span>: DSSS、FHSS</li>
+                    <li><span class="highlight">OFDM</span>: 直交周波数分割多重</li>
+                </ul>
+
+                <h3 class="section-subtitle">🔧 信号処理</h3>
+                <div class="code-block">
+                    # 信号処理システム
+                    class SignalProcessing:
+                        def __init__(self):
+                            self.sample_rate = '1 GHz'
+                            self.bandwidth = '100 MHz - 1 GHz'
+                            self.dynamic_range = '120 dB'
+                        
+                        def process_signal(self, received_signal):
+                            # 1. フィルタリング
+                            filtered_signal = self.apply_filters(received_signal)
+                            
+                            # 2. 同期
+                            synchronized_signal = self.synchronize(filtered_signal)
+                            
+                            # 3. 復調
+                            demodulated_data = self.demodulate(synchronized_signal)
+                            
+                            # 4. 誤り訂正
+                            corrected_data = self.error_correction(demodulated_data)
+                            
+                            return corrected_data
+                </div>
+
+                <h3 class="section-subtitle">🛡️ 誤り訂正</h3>
+                <ul class="spec-list">
+                    <li><span class="highlight">FEC</span>: 前方誤り訂正</li>
+                    <li><span class="highlight">Reed-Solomon</span>: RS符号</li>
+                    <li><span class="highlight">LDPC</span>: 低密度パリティチェック</li>
+                    <li><span class="highlight">Turbo符号</span>: ターボ符号</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- アンテナ・送受信機仕様 -->
+        <div class="spec-section fade-in">
+            <h2 class="section-title">📡 アンテナ・送受信機仕様</h2>
+            <div class="spec-content">
+                <h3 class="section-subtitle">📡 アンテナ仕様</h3>
+                <ul class="spec-list">
+                    <li><span class="highlight">パラボラアンテナ</span>: 高利得、指向性</li>
+                    <li><span class="highlight">フェーズドアレイ</span>: 電子ビーム制御</li>
+                    <li><span class="highlight">ホーンアンテナ</span>: 広帯域、低雑音</li>
+                    <li><span class="highlight">ヘリカルアンテナ</span>: 円偏波</li>
+                </ul>
+
+                <h3 class="section-subtitle">🔊 送受信機仕様</h3>
+                <ul class="spec-list">
+                    <li><span class="highlight">送信電力</span>: 1W-10kW</li>
+                    <li><span class="highlight">受信感度</span>: -120dBm以下</li>
+                    <li><span class="highlight">雑音指数</span>: 0.5dB以下</li>
+                    <li><span class="highlight">帯域幅</span>: 1MHz-1GHz</li>
+                </ul>
+
+                <h3 class="section-subtitle">🎯 ビーム制御</h3>
+                <div class="code-block">
+                    # ビーム制御システム
+                    class BeamControl:
+                        def __init__(self):
+                            self.beam_width = '0.1° - 10°'
+                            self.tracking_accuracy = '0.01°'
+                            self.slew_rate = '10°/sec'
+                        
+                        def track_target(self, target_coordinates):
+                            # 1. 目標位置計算
+                            target_position = self.calculate_target_position(target_coordinates)
+                            
+                            # 2. ビーム指向制御
+                            beam_direction = self.calculate_beam_direction(target_position)
+                            
+                            # 3. アンテナ制御
+                            self.control_antenna(beam_direction)
+                            
+                            # 4. 追跡精度確認
+                            tracking_accuracy = self.verify_tracking_accuracy()
+                            
+                            return tracking_accuracy
+                </div>
+            </div>
+        </div>
+
+        <!-- 軌道制御・運用管理仕様 -->
+        <div class="spec-section fade-in">
+            <h2 class="section-title">🛰️ 軌道制御・運用管理仕様</h2>
+            <div class="spec-content">
+                <h3 class="section-subtitle">🛤️ 軌道制御</h3>
+                <ul class="spec-list">
+                    <li><span class="highlight">軌道計算</span>: ケプラー軌道、摂動計算</li>
+                    <li><span class="highlight">軌道修正</span>: スラスター制御、イオンエンジン</li>
+                    <li><span class="highlight">軌道維持</span>: 定期的な軌道調整</li>
+                    <li><span class="highlight">軌道離脱</span>: 安全な軌道離脱</li>
+                </ul>
+
+                <h3 class="section-subtitle">🎛️ 運用管理</h3>
+                <div class="code-block">
+                    # 運用管理システム
+                    class MissionControl:
+                        def __init__(self):
+                            self.ground_stations = []
+                            self.satellites = []
+                            self.mission_planners = []
+                        
+                        def manage_mission(self, mission_parameters):
+                            # 1. ミッション計画
+                            mission_plan = self.plan_mission(mission_parameters)
+                            
+                            # 2. 衛星制御
+                            satellite_control = self.control_satellites(mission_plan)
+                            
+                            # 3. 通信制御
+                            communication_control = self.control_communications(mission_plan)
+                            
+                            # 4. 監視・制御
+                            monitoring = self.monitor_system_status()
+                            
+                            return {
+                                'mission_plan': mission_plan,
+                                'satellite_control': satellite_control,
+                                'communication_control': communication_control,
+                                'monitoring': monitoring
+                            }
+                </div>
+
+                <h3 class="section-subtitle">📊 監視システム</h3>
+                <ul class="spec-list">
+                    <li><span class="highlight">テレメトリ</span>: 衛星状態監視</li>
+                    <li><span class="highlight">コマンド</span>: 衛星制御指令</li>
+                    <li><span class="highlight">アラーム</span>: 異常検知・通知</li>
+                    <li><span class="highlight">ログ</span>: 運用記録・分析</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 安全性・信頼性仕様 -->
+        <div class="spec-section fade-in">
+            <h2 class="section-title">🛡️ 安全性・信頼性仕様</h2>
+            <div class="spec-content">
+                <h3 class="section-subtitle">🚨 安全システム</h3>
+                <ul class="spec-list">
+                    <li><span class="highlight">スペースデブリ回避</span>: 軌道上物体の回避</li>
+                    <li><span class="highlight">軌道離脱</span>: 安全な軌道離脱</li>
+                    <li><span class="highlight">通信途絶対策</span>: 冗長通信システム</li>
+                    <li><span class="highlight">電磁干渉対策</span>: EMI/EMC対策</li>
+                </ul>
+
+                <h3 class="section-subtitle">🔒 信頼性設計</h3>
+                <ul class="spec-list">
+                    <li><span class="highlight">冗長性</span>: 重要システムの二重化</li>
+                    <li><span class="highlight">フェイルセーフ</span>: 故障時の安全動作</li>
+                    <li><span class="highlight">自己診断</span>: システム状態の自己診断</li>
+                    <li><span class="highlight">予知保全</span>: 故障の予知・予防</li>
+                </ul>
+
+                <div class="warning">
+                    <h3 class="section-subtitle">⚠️ 宇宙環境警告</h3>
+                    <p>宇宙環境は極めて過酷です。放射線、温度変化、真空環境、微小重力など、地上とは全く異なる環境での動作が求められます。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 応用分野仕様 -->
+        <div class="spec-section fade-in">
+            <h2 class="section-title">🌍 応用分野仕様</h2>
+            <div class="spec-content">
+                <h3 class="section-subtitle">📱 通信サービス</h3>
+                <ul class="spec-list">
+                    <li><span class="highlight">衛星電話</span>: グローバル通信</li>
+                    <li><span class="highlight">衛星インターネット</span>: 高速インターネット</li>
+                    <li><span class="highlight">ブロードキャスト</span>: 衛星放送</li>
+                    <li><span class="highlight">データ通信</span>: 大容量データ転送</li>
+                </ul>
+
+                <h3 class="section-subtitle">🗺️ 測位・ナビゲーション</h3>
+                <ul class="spec-list">
+                    <li><span class="highlight">GPS</span>: 全球測位システム</li>
+                    <li><span class="highlight">GLONASS</span>: ロシア測位システム</li>
+                    <li><span class="highlight">Galileo</span>: 欧州測位システム</li>
+                    <li><span class="highlight">BeiDou</span>: 中国測位システム</li>
+                </ul>
+
+                <h3 class="section-subtitle">🌤️ 気象・地球観測</h3>
+                <ul class="spec-list">
+                    <li><span class="highlight">気象衛星</span>: 天気予報・気候監視</li>
+                    <li><span class="highlight">地球観測</span>: 環境監視・災害監視</li>
+                    <li><span class="highlight">海洋観測</span>: 海流・水温監視</li>
+                    <li><span class="highlight">農業監視</span>: 作物監視・収穫予測</li>
+                </ul>
+
+                <div class="space">
+                    <h3 class="section-subtitle">🚀 宇宙探査</h3>
+                    <ul class="spec-list">
+                        <li><span class="highlight">惑星探査</span>: 火星、木星、土星探査</li>
+                        <li><span class="highlight">月面探査</span>: 月面基地・資源探査</li>
+                        <li><span class="highlight">小惑星探査</span>: 小惑星サンプルリターン</li>
+                        <li><span class="highlight">深宇宙探査</span>: 太陽系外探査</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- パフォーマンス仕様 -->
+        <div class="spec-section fade-in">
+            <h2 class="section-title">⚡ パフォーマンス仕様</h2>
+            <div class="spec-content">
+                <h3 class="section-subtitle">📊 性能指標</h3>
+                <ul class="spec-list">
+                    <li><span class="highlight">通信容量</span>: 1Gbps-100Gbps</li>
+                    <li><span class="highlight">通信遅延</span>: 1ms-数時間</li>
+                    <li><span class="highlight">カバレッジ</span>: 全球カバレッジ</li>
+                    <li><span class="highlight">可用性</span>: 99.9%以上</li>
+                    <li><span class="highlight">信頼性</span>: 15年間動作</li>
+                </ul>
+
+                <h3 class="section-subtitle">🎯 最適化目標</h3>
+                <ul class="spec-list">
+                    <li><span class="highlight">通信容量向上</span>: 1Tbps以上を目指す</li>
+                    <li><span class="highlight">遅延削減</span>: 1ms以下を目指す</li>
+                    <li><span class="highlight">省電力化</span>: エネルギー効率の向上</li>
+                    <li><span class="highlight">小型化</span>: 衛星の小型化</li>
+                </ul>
+
+                <div class="success">
+                    <h3 class="section-subtitle">✅ 性能向上実績</h3>
+                    <ul class="spec-list">
+                        <li>通信容量: 従来比100倍向上</li>
+                        <li>通信遅延: 従来比10倍削減</li>
+                        <li>カバレッジ: 従来比5倍拡大</li>
+                        <li>信頼性: 従来比3倍向上</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 将来展望 -->
+        <div class="spec-section fade-in">
+            <h2 class="section-title">🚀 将来展望・ロードマップ</h2>
+            <div class="spec-content">
+                <h3 class="section-subtitle">📅 短期目標 (1-2年)</h3>
+                <ul class="spec-list">
+                    <li><span class="highlight">通信容量向上</span>: 1Tbps以上の通信容量</li>
+                    <li><span class="highlight">遅延削減</span>: 1ms以下の通信遅延</li>
+                    <li><span class="highlight">カバレッジ拡大</span>: より広範囲のカバレッジ</li>
+                    <li><span class="highlight">コスト削減</span>: 衛星打ち上げコストの削減</li>
+                </ul>
+
+                <h3 class="section-subtitle">📅 中期目標 (3-5年)</h3>
+                <ul class="spec-list">
+                    <li><span class="highlight">量子通信</span>: 量子暗号通信の実用化</li>
+                    <li><span class="highlight">光通信</span>: レーザー通信の大容量化</li>
+                    <li><span class="highlight">AI統合</span>: AIによる通信最適化</li>
+                    <li><span class="highlight">宇宙インターネット</span>: 宇宙規模のインターネット</li>
+                </ul>
+
+                <h3 class="section-subtitle">📅 長期目標 (5-10年)</h3>
+                <ul class="spec-list">
+                    <li><span class="highlight">深宇宙通信</span>: 太陽系外通信の実現</li>
+                    <li><span class="highlight">宇宙基地</span>: 月面・火星基地の通信</li>
+                    <li><span class="highlight">宇宙都市</span>: 宇宙都市の通信インフラ</li>
+                    <li><span class="highlight">新技術創出</span>: 宇宙通信技術による新産業創出</li>
+                </ul>
+
+                <div class="success">
+                    <h3 class="section-subtitle">🎯 期待される影響</h3>
+                    <ul class="spec-list">
+                        <li><span class="highlight">通信</span>: グローバル通信の革新</li>
+                        <li><span class="highlight">宇宙探査</span>: 宇宙探査の加速</li>
+                        <li><span class="highlight">気象</span>: 気象予報の精度向上</li>
+                        <li><span class="highlight">測位</span>: 高精度測位の実現</li>
+                        <li><span class="highlight">社会</span>: 人類の宇宙進出支援</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // フェードインアニメーション
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // すべてのセクションを監視
+        document.querySelectorAll('.spec-section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(30px)';
+            section.style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out';
+            observer.observe(section);
+        });
+
+        // セクションクリックイベント
+        document.querySelectorAll('.spec-section').forEach(section => {
+            section.addEventListener('click', () => {
+                section.style.transform = 'scale(1.02)';
+                setTimeout(() => {
+                    section.style.transform = 'scale(1)';
+                }, 200);
+            });
+        });
+
+        // キーボードショートカット
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'h') {
+                e.preventDefault();
+                showHelpModal();
+            }
+        });
+
+        function showHelpModal() {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 10000;
+            `;
+
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = `
+                background: linear-gradient(135deg, rgba(12, 20, 69, 0.9) 0%, rgba(26, 35, 126, 0.9) 100%);
+                padding: 30px;
+                border-radius: 15px;
+                max-width: 600px;
+                max-height: 80vh;
+                overflow-y: auto;
+                backdrop-filter: blur(10px);
+                border: 2px solid rgba(57, 73, 171, 0.3);
+                color: white;
+            `;
+
+            modalContent.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="color: white; margin: 0;">衛星・宇宙通信システム技術仕様書ヘルプ</h2>
+                    <button onclick="this.closest('.modal').remove()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">×</button>
+                </div>
+                <div style="color: white;">
+                    <h3>ショートカット:</h3>
+                    <ul>
+                        <li><strong>Ctrl + H:</strong> ヘルプ表示</li>
+                    </ul>
+                    <h3>操作方法:</h3>
+                    <ul>
+                        <li>セクションをクリック: 詳細表示</li>
+                        <li>スクロール: 各セクションの詳細確認</li>
+                    </ul>
+                </div>
+            `;
+
+            modal.appendChild(modalContent);
+            modal.classList.add('modal');
+            document.body.appendChild(modal);
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+        }
+    </script>
+</body>
+</html> 

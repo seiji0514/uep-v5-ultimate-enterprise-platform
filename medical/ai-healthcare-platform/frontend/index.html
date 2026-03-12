@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI統合ヘルスケアプラットフォーム - テクニカルアーキテクトレベル実装</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .tech-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin: 5px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .patient-icon { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .ai-icon { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .monitor-icon { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        .analytics-icon { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .card-subtitle {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        .feature-list li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            color: #555;
+        }
+
+        .feature-list li i {
+            color: #667eea;
+            margin-right: 10px;
+            width: 16px;
+        }
+
+        .tech-stack {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .tech-stack h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+        }
+
+        .tech-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .tech-category {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .tech-category h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .tech-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            color: #555;
+        }
+
+        .tech-item i {
+            color: #667eea;
+            margin-right: 10px;
+            width: 16px;
+        }
+
+        .architecture-diagram {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .architecture-diagram h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+        }
+
+        .architecture-flow {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .arch-component {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            min-width: 150px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .arch-component h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .arch-component p {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        .arch-arrow {
+            font-size: 1.5rem;
+            color: #667eea;
+        }
+
+        .performance-metrics {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .performance-metrics h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .metric-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .cta-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .cta-section h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .cta-section p {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .cta-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .architecture-flow {
+                flex-direction: column;
+            }
+            
+            .arch-arrow {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- ヘッダー -->
+        <div class="header">
+            <h1>🏥 AI統合ヘルスケアプラットフォーム</h1>
+            <p>テクニカルアーキテクトレベルの実装例 - マイクロサービス・AI・リアルタイム監視</p>
+            <div>
+                <span class="tech-badge">Spring Boot</span>
+                <span class="tech-badge">マイクロサービス</span>
+                <span class="tech-badge">AI/ML</span>
+                <span class="tech-badge">リアルタイム</span>
+                <span class="tech-badge">HIPAA準拠</span>
+            </div>
+        </div>
+
+        <!-- ダッシュボードグリッド -->
+        <div class="dashboard-grid">
+            <!-- 患者管理サービス -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon patient-icon">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <div>
+                        <div class="card-title">Patient Management Service</div>
+                        <div class="card-subtitle">患者情報・診断支援・リスク評価</div>
+                    </div>
+                </div>
+                <ul class="feature-list">
+                    <li><i class="fas fa-check"></i> HIPAA準拠セキュリティ</li>
+                    <li><i class="fas fa-check"></i> リアルタイムバイタル監視</li>
+                    <li><i class="fas fa-check"></i> AI診断支援</li>
+                    <li><i class="fas fa-check"></i> 予測医療・リスク評価</li>
+                    <li><i class="fas fa-check"></i> 高度な患者検索</li>
+                </ul>
+            </div>
+
+            <!-- AI診断エンジン -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon ai-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div>
+                        <div class="card-title">AI Diagnostic Engine</div>
+                        <div class="card-subtitle">機械学習・画像診断・予測分析</div>
+                    </div>
+                </div>
+                <ul class="feature-list">
+                    <li><i class="fas fa-check"></i> バイタル異常検知</li>
+                    <li><i class="fas fa-check"></i> 画像診断支援</li>
+                    <li><i class="fas fa-check"></i> 症状ベース診断</li>
+                    <li><i class="fas fa-check"></i> 薬剤相互作用チェック</li>
+                    <li><i class="fas fa-check"></i> 予測医療・リスク評価</li>
+                </ul>
+            </div>
+
+            <!-- リアルタイム監視サービス -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon monitor-icon">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <div>
+                        <div class="card-title">Realtime Monitoring Service</div>
+                        <div class="card-subtitle">ストリーミング・アラート・ダッシュボード</div>
+                    </div>
+                </div>
+                <ul class="feature-list">
+                    <li><i class="fas fa-check"></i> Server-Sent Events</li>
+                    <li><i class="fas fa-check"></i> リアルタイムダッシュボード</li>
+                    <li><i class="fas fa-check"></i> 異常検知アラート</li>
+                    <li><i class="fas fa-check"></i> バイタル履歴分析</li>
+                    <li><i class="fas fa-check"></i> 予測アラート設定</li>
+                </ul>
+            </div>
+
+            <!-- ヘルスデータ分析 -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon analytics-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div>
+                        <div class="card-title">Health Data Analytics</div>
+                        <div class="card-subtitle">データ分析・可視化・インサイト</div>
+                    </div>
+                </div>
+                <ul class="feature-list">
+                    <li><i class="fas fa-check"></i> 時系列データ分析</li>
+                    <li><i class="fas fa-check"></i> 異常検知・アノマリー</li>
+                    <li><i class="fas fa-check"></i> 予測分析・トレンド</li>
+                    <li><i class="fas fa-check"></i> パフォーマンス監視</li>
+                    <li><i class="fas fa-check"></i> レポート生成</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 技術スタック -->
+        <div class="tech-stack">
+            <h2>🛠️ テクニカルアーキテクトレベルの技術スタック</h2>
+            <div class="tech-categories">
+                <div class="tech-category">
+                    <h3>🏗️ アーキテクチャ</h3>
+                    <div class="tech-item"><i class="fas fa-cube"></i> マイクロサービスアーキテクチャ</div>
+                    <div class="tech-item"><i class="fas fa-network-wired"></i> イベント駆動アーキテクチャ</div>
+                    <div class="tech-item"><i class="fas fa-cloud"></i> クラウドネイティブ設計</div>
+                    <div class="tech-item"><i class="fas fa-shield-alt"></i> セキュリティファースト</div>
+                </div>
+                <div class="tech-category">
+                    <h3>🤖 AI/ML</h3>
+                    <div class="tech-item"><i class="fas fa-brain"></i> 機械学習モデル統合</div>
+                    <div class="tech-item"><i class="fas fa-eye"></i> コンピュータビジョン</div>
+                    <div class="tech-item"><i class="fas fa-language"></i> 自然言語処理</div>
+                    <div class="tech-item"><i class="fas fa-chart-line"></i> 予測分析</div>
+                </div>
+                <div class="tech-category">
+                    <h3>⚡ パフォーマンス</h3>
+                    <div class="tech-item"><i class="fas fa-tachometer-alt"></i> リアルタイム処理</div>
+                    <div class="tech-item"><i class="fas fa-stream"></i> ストリーミング処理</div>
+                    <div class="tech-item"><i class="fas fa-sync"></i> 非同期処理</div>
+                    <div class="tech-item"><i class="fas fa-expand-arrows-alt"></i> 水平スケーリング</div>
+                </div>
+                <div class="tech-category">
+                    <h3>🔒 セキュリティ</h3>
+                    <div class="tech-item"><i class="fas fa-lock"></i> HIPAA準拠</div>
+                    <div class="tech-item"><i class="fas fa-key"></i> 暗号化</div>
+                    <div class="tech-item"><i class="fas fa-user-shield"></i> アクセス制御</div>
+                    <div class="tech-item"><i class="fas fa-audit"></i> 監査ログ</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- アーキテクチャ図 -->
+        <div class="architecture-diagram">
+            <h2>🏛️ システムアーキテクチャ</h2>
+            <div class="architecture-flow">
+                <div class="arch-component">
+                    <h4>患者データ</h4>
+                    <p>バイタル・症状・検査結果</p>
+                </div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-component">
+                    <h4>Patient Management</h4>
+                    <p>患者情報管理</p>
+                </div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-component">
+                    <h4>AI Diagnostic</h4>
+                    <p>AI診断エンジン</p>
+                </div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-component">
+                    <h4>Realtime Monitor</h4>
+                    <p>リアルタイム監視</p>
+                </div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-component">
+                    <h4>Analytics</h4>
+                    <p>データ分析・可視化</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- パフォーマンスメトリクス -->
+        <div class="performance-metrics">
+            <h2>📊 パフォーマンスメトリクス</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value">100ms</div>
+                    <div class="metric-label">バイタル監視レスポンス</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">50ms</div>
+                    <div class="metric-label">異常検知処理時間</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">5秒</div>
+                    <div class="metric-label">AI診断支援</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">99.9%</div>
+                    <div class="metric-label">システム可用性</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">HIPAA</div>
+                    <div class="metric-label">セキュリティ準拠</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">リアルタイム</div>
+                    <div class="metric-label">ストリーミング</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTAセクション -->
+        <div class="cta-section">
+            <h2>🚀 テクニカルアーキテクトレベルの実装</h2>
+            <p>AI統合ヘルスケアプラットフォームを通じて、エンタープライズレベルの技術構築能力を実証</p>
+            <div class="cta-buttons">
+                <a href="#patient-service" class="cta-btn">
+                    <i class="fas fa-code"></i>
+                    ソースコードを見る
+                </a>
+                <a href="#architecture" class="cta-btn">
+                    <i class="fas fa-sitemap"></i>
+                    アーキテクチャ詳細
+                </a>
+                <a href="#demo" class="cta-btn">
+                    <i class="fas fa-play"></i>
+                    デモを実行
+                </a>
+            </div>
+        </div>
+
+        <!-- フッター -->
+        <div class="footer">
+            <p>© 2024 OGAWA SEIJI - テクニカルアーキテクトレベル実装例</p>
+            <p>AI統合ヘルスケアプラットフォーム - マイクロサービス・AI・リアルタイム監視</p>
+        </div>
+    </div>
+
+    <script>
+        // リアルタイムデータ更新のデモ
+        function updateMetrics() {
+            const metrics = document.querySelectorAll('.metric-value');
+            metrics.forEach(metric => {
+                if (metric.textContent.includes('ms')) {
+                    const currentValue = parseInt(metric.textContent);
+                    const newValue = currentValue + Math.floor(Math.random() * 10) - 5;
+                    metric.textContent = Math.max(50, newValue) + 'ms';
+                }
+            });
+        }
+
+        // 3秒ごとにメトリクス更新
+        setInterval(updateMetrics, 3000);
+
+        // カードホバーエフェクト
+        document.querySelectorAll('.dashboard-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // スムーススクロール
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+
+    <!-- ライセンス・権利情報 -->
+    <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 15px; padding: 25px; margin: 30px auto; max-width: 1200px; border: 3px solid #f59e0b; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);">
+        <h2 style="color: #92400e; margin-bottom: 20px; text-align: center; font-size: 1.5rem;">ライセンス・権利情報</h2>
+        
+        <div style="background: white; padding: 20px; border-radius: 10px; color: #1e3a8a; line-height: 2;">
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">著作権:</strong> &copy; 2025 小川清志（おがわ せいじ）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">開発期間:</strong> 2025年6月～2025年10月（個人事業主として）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">開発目的:</strong> 技術研究・ポートフォリオ作成・転職活動用
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">用途:</strong> 個人研究目的（非商用）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">ライセンス:</strong> MIT License
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">公開範囲:</strong> 個人ポートフォリオサイト、GitHub（技術実証目的）
+            </div>
+            
+            <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #f59e0b;">
+                <strong style="color: #92400e;">重要事項:</strong>
+                <p style="color: #78350f; margin-top: 10px;">
+                    本システムは、個人事業主として独自に研究開発したものであり、
+                    特定の企業・組織の業務とは一切関係ありません。<br>
+                    全ての知的財産権は開発者個人（小川清志）に帰属します。<br>
+                    本システムの技術内容・アイデアは、入社前の個人研究として確立されたものです。
+                </p>
+            </div>
+            
+            <div style="background: #dbeafe; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #3b82f6;">
+                <strong style="color: #1e40af;">タイムスタンプ:</strong>
+                <p style="color: #1e3a8a; margin-top: 10px;">
+                    最終更新日: 2025年10月26日<br>
+                    GitHub最終コミット: 2025年10月26日<br>
+                    確定日付: 入社前（個人開発期間中）
+                </p>
+            </div>
+            
+            <div style="background: #d1fae5; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #10b981;">
+                <strong style="color: #047857;">連絡先:</strong>
+                <p style="color: #065f46; margin-top: 10px;">
+                    開発者: 小川清志（おがわ せいじ）<br>
+                    Email: kaho052514@gmail.com<br>
+                    電話: 080-4271-5479
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>

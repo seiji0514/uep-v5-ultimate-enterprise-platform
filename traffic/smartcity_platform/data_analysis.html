@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>データ分析 - SmartCity Platform</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body { 
+      font-family: 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif; 
+      background: #0a0a0a;
+      color: #ffffff;
+      margin: 0; 
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+    
+    /* データ分析専用背景 */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(138, 43, 226, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 69, 0, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(0, 191, 255, 0.1) 0%, transparent 50%),
+        linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+      animation: backgroundShift 30s ease-in-out infinite;
+      z-index: -2;
+    }
+    
+    /* 動的グリッド背景 */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: gridMove 20s linear infinite;
+      z-index: -1;
+    }
+    
+    @keyframes backgroundShift {
+      0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+      25% { transform: translate(-20px, -20px) scale(1.1) rotate(1deg); }
+      50% { transform: translate(20px, -10px) scale(1.05) rotate(-1deg); }
+      75% { transform: translate(-10px, 20px) scale(1.08) rotate(0.5deg); }
+    }
+    
+    @keyframes gridMove {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(50px, 50px); }
+    }
+    
+    /* サイドバー */
+    .sidebar {
+      width: 320px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 30px 0;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+    
+    .sidebar-header {
+      padding: 0 30px 30px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 30px;
+    }
+    
+    .sidebar-logo {
+      font-size: 24px;
+      font-weight: 700;
+      color: #ffffff;
+      text-decoration: none;
+      display: block;
+      margin-bottom: 15px;
+      background: linear-gradient(135deg, #8a2be2, #ff4500);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: logoGlow 3s ease-in-out infinite alternate;
+    }
+    
+    @keyframes logoGlow {
+      from { filter: drop-shadow(0 0 10px rgba(138, 43, 226, 0.5)); }
+      to { filter: drop-shadow(0 0 20px rgba(138, 43, 226, 0.8)); }
+    }
+    
+    .nav-menu {
+      padding: 0 30px;
+    }
+    
+    .nav-item {
+      margin-bottom: 12px;
+    }
+    
+    .nav-link {
+      display: flex;
+      align-items: center;
+      padding: 16px 20px;
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      font-size: 16px;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+    
+    .nav-link::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      transition: left 0.6s ease;
+    }
+    
+    .nav-link:hover::before {
+      left: 100%;
+    }
+    
+    .nav-link:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateX(8px);
+      color: #ffffff;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+    
+    .nav-link.active {
+      background: linear-gradient(135deg, rgba(138, 43, 226, 0.3), rgba(255, 69, 0, 0.3));
+      color: #ffffff;
+      font-weight: 600;
+      box-shadow: 0 8px 25px rgba(138, 43, 226, 0.3);
+    }
+    
+    /* メインコンテンツ */
+    .main-content {
+      flex: 1;
+      margin-left: 320px;
+      padding: 30px;
+      background: transparent;
+    }
+    
+    /* アラートシステム */
+    .alert-container {
+      position: fixed;
+      top: 30px;
+      right: 30px;
+      z-index: 1002;
+      max-width: 350px;
+    }
+    
+    .alert {
+      background: rgba(138, 43, 226, 0.9);
+      backdrop-filter: blur(20px);
+      color: white;
+      padding: 20px 25px;
+      border-radius: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 8px 32px rgba(138, 43, 226, 0.3);
+      animation: slideInRight 0.6s ease-out, alertPulse 3s infinite;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    @keyframes slideInRight {
+      from { transform: translateX(100%) scale(0.8); opacity: 0; }
+      to { transform: translateX(0) scale(1); opacity: 1; }
+    }
+    
+    @keyframes alertPulse {
+      0%, 100% { box-shadow: 0 8px 32px rgba(138, 43, 226, 0.3); }
+      50% { box-shadow: 0 8px 40px rgba(138, 43, 226, 0.5); }
+    }
+    
+    /* ヒーローセクション */
+    .hero-section {
+      background: linear-gradient(135deg, rgba(138, 43, 226, 0.2), rgba(255, 69, 0, 0.2));
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: white;
+      padding: 60px 50px;
+      border-radius: 25px;
+      text-align: center;
+      margin-bottom: 50px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero-section::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(255,255,255,0.05), transparent);
+      animation: shimmer 4s infinite;
+    }
+    
+    @keyframes shimmer {
+      0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+      100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+    }
+    
+    .hero-section h1 {
+      font-size: 3.5em;
+      margin-bottom: 25px;
+      font-weight: 300;
+      position: relative;
+      z-index: 1;
+      background: linear-gradient(135deg, #ffffff, #e0e0e0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .hero-section p {
+      font-size: 1.4em;
+      opacity: 0.9;
+      margin-bottom: 40px;
+      position: relative;
+      z-index: 1;
+      line-height: 1.6;
+    }
+    
+    /* データ分析計器 */
+    .gauges-section {
+      margin-bottom: 50px;
+    }
+    
+    .section-title {
+      font-size: 2.2em;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 40px;
+      background: linear-gradient(135deg, #8a2be2, #ff4500);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .gauges-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+    
+    .gauge-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 35px;
+      border-radius: 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s ease;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+    
+    .gauge-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #8a2be2, #ff4500);
+    }
+    
+    .gauge-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      background: rgba(255, 255, 255, 0.08);
+    }
+    
+    .gauge-title {
+      font-size: 1.3em;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 20px;
+    }
+    
+    .gauge-value {
+      font-size: 3.5em;
+      font-weight: 700;
+      color: #8a2be2;
+      margin-bottom: 15px;
+      animation: numberUpdate 0.8s ease-out;
+    }
+    
+    @keyframes numberUpdate {
+      0% { transform: scale(1.2); color: #ff6b6b; }
+      100% { transform: scale(1); color: #8a2be2; }
+    }
+    
+    .gauge-unit {
+      font-size: 1.1em;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 20px;
+    }
+    
+    .gauge-bar {
+      width: 100%;
+      height: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 15px;
+      position: relative;
+    }
+    
+    .gauge-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #8a2be2, #ff4500);
+      border-radius: 6px;
+      transition: width 0.8s ease;
+      position: relative;
+    }
+    
+    .gauge-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      animation: shimmer 2s infinite;
+    }
+    
+    .gauge-status {
+      font-size: 1em;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 25px;
+      display: inline-block;
+      backdrop-filter: blur(10px);
+    }
+    
+    .status-normal { 
+      background: rgba(52, 168, 83, 0.2); 
+      color: #34a853; 
+      border: 1px solid rgba(52, 168, 83, 0.3);
+    }
+    .status-warning { 
+      background: rgba(251, 188, 4, 0.2); 
+      color: #fbbc04; 
+      border: 1px solid rgba(251, 188, 4, 0.3);
+    }
+    .status-critical { 
+      background: rgba(255, 107, 107, 0.2); 
+      color: #ff6b6b; 
+      border: 1px solid rgba(255, 107, 107, 0.3);
+    }
+    
+    /* 分析カード */
+    .analysis-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+      margin-bottom: 50px;
+    }
+    
+    .analysis-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 40px;
+      border-radius: 20px;
+      text-align: center;
+      transition: all 0.4s ease;
+      cursor: pointer;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .analysis-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      transition: left 0.6s ease;
+    }
+    
+    .analysis-card:hover::before {
+      left: 100%;
+    }
+    
+    .analysis-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      background: rgba(255, 255, 255, 0.08);
+    }
+    
+    .analysis-icon {
+      font-size: 3em;
+      margin-bottom: 25px;
+      animation: iconFloat 4s ease-in-out infinite;
+    }
+    
+    @keyframes iconFloat {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-10px) rotate(5deg); }
+    }
+    
+    .analysis-card h3 {
+      color: #8a2be2;
+      margin-bottom: 20px;
+      font-size: 1.6em;
+      font-weight: 600;
+    }
+    
+    .analysis-card p {
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.7;
+      font-size: 1.1em;
+      margin-bottom: 20px;
+    }
+    
+    .analysis-status {
+      font-size: 1em;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 25px;
+      display: inline-block;
+      backdrop-filter: blur(10px);
+    }
+    
+    /* モバイルメニューボタン */
+    .mobile-menu-btn {
+      display: none;
+      position: fixed;
+      top: 30px;
+      left: 30px;
+      z-index: 1001;
+      background: rgba(138, 43, 226, 0.9);
+      backdrop-filter: blur(20px);
+      color: white;
+      border: none;
+      padding: 15px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 20px;
+      box-shadow: 0 8px 32px rgba(138, 43, 226, 0.3);
+    }
+    
+    /* レスポンシブ */
+    @media (max-width: 1200px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.4s ease;
+      }
+      
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      
+      .main-content {
+        margin-left: 0;
+      }
+      
+      .mobile-menu-btn {
+        display: block;
+      }
+      
+      .gauges-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .analysis-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .hero-section {
+        padding: 40px 30px;
+      }
+      
+      .hero-section h1 {
+        font-size: 2.5em;
+      }
+      
+      .gauge-card {
+        padding: 25px;
+      }
+      
+      .analysis-card {
+        padding: 30px;
+      }
+      
+      .main-content {
+        padding: 20px;
+      }
+      
+      .section-title {
+        font-size: 1.8em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- アラート通知 -->
+  <div class="alert-container" id="alertContainer"></div>
+  
+  <!-- モバイルメニューボタン -->
+  <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+  
+  <!-- サイドバー -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="smartcity_platform.html" class="sidebar-logo">🏙️ SmartCity Platform v2.0</a>
+    </div>
+    <nav class="nav-menu">
+      <div class="nav-item">
+        <a href="smartcity_platform.html" class="nav-link">🏠 ダッシュボード</a>
+      </div>
+      <div class="nav-item">
+        <a href="traffic_control.html" class="nav-link">🚦 交通管制</a>
+      </div>
+      <div class="nav-item">
+        <a href="infrastructure.html" class="nav-link">🏗️ インフラ管理</a>
+      </div>
+      <div class="nav-item">
+        <a href="environment.html" class="nav-link">🌱 環境モニタリング</a>
+      </div>
+      <div class="nav-item">
+        <a href="citizen_services.html" class="nav-link">👥 市民サービス</a>
+      </div>
+      <div class="nav-item">
+        <a href="data_analysis.html" class="nav-link active">📊 データ分析</a>
+      </div>
+      <div class="nav-item">
+        <a href="settings.html" class="nav-link">⚙️ システム設定</a>
+      </div>
+      <div class="nav-item">
+        <a href="air_traffic_control.html" class="nav-link">✈️ 航空管制</a>
+      </div>
+    </nav>
+  </div>
+
+  <div class="main-content">
+    <!-- ヒーローセクション -->
+    <div class="hero-section">
+      <h1>📊 ビッグデータ分析センター</h1>
+      <p>AI駆動の予測分析システム<br>リアルタイムデータ統合で都市計画を支援</p>
+    </div>
+
+    <!-- データ分析計器 -->
+    <div class="gauges-section">
+      <h2 class="section-title">📈 リアルタイム分析監視</h2>
+      <div class="gauges-grid">
+        <div class="gauge-card">
+          <div class="gauge-title">🧠 AI予測精度</div>
+          <div class="gauge-value" id="ai-accuracy">96.8%</div>
+          <div class="gauge-unit">予測精度</div>
+          <div class="gauge-bar">
+            <div class="gauge-fill" id="ai-fill" style="width: 96.8%"></div>
+          </div>
+          <div class="gauge-status status-normal">優秀</div>
+        </div>
+        
+        <div class="gauge-card">
+          <div class="gauge-title">📊 データ処理量</div>
+          <div class="gauge-value" id="data-processed">2.4TB</div>
+          <div class="gauge-unit">日次処理量</div>
+          <div class="gauge-bar">
+            <div class="gauge-fill" id="data-fill" style="width: 85%"></div>
+          </div>
+          <div class="gauge-status status-normal">良好</div>
+        </div>
+        
+        <div class="gauge-card">
+          <div class="gauge-title">⚡ 分析速度</div>
+          <div class="gauge-value" id="analysis-speed">0.3</div>
+          <div class="gauge-unit">秒/クエリ</div>
+          <div class="gauge-bar">
+            <div class="gauge-fill" id="speed-fill" style="width: 92%"></div>
+          </div>
+          <div class="gauge-status status-normal">高速</div>
+        </div>
+        
+        <div class="gauge-card">
+          <div class="gauge-title">🔍 データソース</div>
+          <div class="gauge-value" id="data-sources">847</div>
+          <div class="gauge-unit">統合ソース</div>
+          <div class="gauge-bar">
+            <div class="gauge-fill" id="sources-fill" style="width: 88%"></div>
+          </div>
+          <div class="gauge-status status-normal">優秀</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 分析カード -->
+    <div class="analysis-grid">
+      <div class="analysis-card">
+        <div class="analysis-icon">🏙️</div>
+        <h3>都市計画分析</h3>
+        <p>人口密度、交通パターン、土地利用データを統合し、最適な都市開発計画をAIが提案。持続可能な都市づくりを支援。</p>
+        <div class="analysis-status status-normal">稼働中</div>
+      </div>
+      
+      <div class="analysis-card">
+        <div class="analysis-icon">🚦</div>
+        <h3>交通流動予測</h3>
+        <p>リアルタイム交通データと過去のパターンを分析し、渋滞予測と最適ルート提案をAIが自動生成。</p>
+        <div class="analysis-status status-normal">稼働中</div>
+      </div>
+      
+      <div class="analysis-card">
+        <div class="analysis-icon">🌱</div>
+        <h3>環境影響評価</h3>
+        <p>大気質、騒音、エネルギー消費データを統合し、環境への影響を予測分析。持続可能な政策立案を支援。</p>
+        <div class="analysis-status status-normal">稼働中</div>
+      </div>
+      
+      <div class="analysis-card">
+        <div class="analysis-icon">👥</div>
+        <h3>市民行動分析</h3>
+        <p>匿名化された市民の行動パターンを分析し、サービス改善と政策立案に活用。プライバシーを保護しながら効率的な都市運営を実現。</p>
+        <div class="analysis-status status-normal">稼働中</div>
+      </div>
+      
+      <div class="analysis-card">
+        <div class="analysis-icon">🏗️</div>
+        <h3>インフラ健全性</h3>
+        <p>橋梁、道路、建物のセンサーデータを統合分析し、メンテナンス時期と予算をAIが最適化。予防保全で安全性を向上。</p>
+        <div class="analysis-status status-normal">稼働中</div>
+      </div>
+      
+      <div class="analysis-card">
+        <div class="analysis-icon">💰</div>
+        <h3>経済効果分析</h3>
+        <p>投資効果、雇用創出、税収への影響をAIが予測分析。政策の経済的インパクトを定量的に評価。</p>
+        <div class="analysis-status status-normal">稼働中</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('open');
+    }
+    
+    // モバイルでサイドバー外をクリックした時に閉じる
+    document.addEventListener('click', function(event) {
+      const sidebar = document.getElementById('sidebar');
+      const mobileBtn = document.querySelector('.mobile-menu-btn');
+      
+      if (window.innerWidth <= 1200) {
+        if (!sidebar.contains(event.target) && !mobileBtn.contains(event.target)) {
+          sidebar.classList.remove('open');
+        }
+      }
+    });
+    
+    // データ分析専用アラートシステム
+    function showAlert(message, type = 'info') {
+      const alertContainer = document.getElementById('alertContainer');
+      const alert = document.createElement('div');
+      alert.className = 'alert';
+      alert.textContent = message;
+      
+      alertContainer.appendChild(alert);
+      
+      // 6秒後に自動削除
+      setTimeout(() => {
+        alert.style.animation = 'slideInRight 0.6s ease-out reverse';
+        setTimeout(() => alert.remove(), 600);
+      }, 6000);
+    }
+    
+    // データ分析専用ランダムアラート生成
+    function generateDataAlert() {
+      const alerts = [
+        '📊 新しいデータソースが統合されました',
+        '🧠 AI予測モデルが更新されました',
+        '⚡ 分析処理速度が向上しました',
+        '🔍 新しいパターンが発見されました',
+        '📈 予測精度が向上しました',
+        '🌐 外部データベースとの接続が強化されました',
+        '💡 新しい分析インサイトが生成されました',
+        '🔄 リアルタイムデータ処理が最適化されました'
+      ];
+      
+      const randomAlert = alerts[Math.floor(Math.random() * alerts.length)];
+      showAlert(randomAlert);
+    }
+    
+    // データ分析専用リアルタイム計器更新
+    function updateDataGauges() {
+      // AI予測精度のランダム更新
+      const aiAccuracy = (95.5 + Math.random() * 3).toFixed(1); // 95.5-98.5%
+      document.getElementById('ai-accuracy').textContent = aiAccuracy + '%';
+      document.getElementById('ai-fill').style.width = aiAccuracy + '%';
+      
+      // データ処理量のランダム更新
+      const dataProcessed = (2.0 + Math.random() * 1.0).toFixed(1); // 2.0-3.0TB
+      document.getElementById('data-processed').textContent = dataProcessed + 'TB';
+      document.getElementById('data-fill').style.width = (dataProcessed / 3.5 * 100) + '%';
+      
+      // 分析速度のランダム更新
+      const analysisSpeed = (0.2 + Math.random() * 0.3).toFixed(1); // 0.2-0.5秒
+      document.getElementById('analysis-speed').textContent = analysisSpeed;
+      document.getElementById('speed-fill').style.width = (0.5 - analysisSpeed) / 0.5 * 100 + '%';
+      
+      // データソース数のランダム更新
+      const dataSources = Math.floor(Math.random() * 50) + 800; // 800-850
+      document.getElementById('data-sources').textContent = dataSources;
+      document.getElementById('sources-fill').style.width = (dataSources / 1000 * 100) + '%';
+      
+      // ステータス更新
+      updateDataStatus('ai-accuracy', aiAccuracy);
+      updateDataStatus('data-processed', dataProcessed / 3.5 * 100);
+      updateDataStatus('analysis-speed', (0.5 - analysisSpeed) / 0.5 * 100);
+      updateDataStatus('data-sources', dataSources / 1000 * 100);
+    }
+    
+    function updateDataStatus(elementId, value) {
+      const element = document.getElementById(elementId);
+      const statusElement = element.parentElement.nextElementSibling.nextElementSibling.nextElementSibling;
+      
+      if (value > 80) {
+        statusElement.className = 'gauge-status status-normal';
+        statusElement.textContent = elementId === 'ai-accuracy' ? '優秀' : 
+                                  elementId === 'data-processed' ? '良好' : 
+                                  elementId === 'analysis-speed' ? '高速' : '優秀';
+      } else if (value > 60) {
+        statusElement.className = 'gauge-status status-warning';
+        statusElement.textContent = '注意';
+      } else {
+        statusElement.className = 'gauge-status status-critical';
+        statusElement.textContent = '警告';
+      }
+    }
+    
+    // 3秒ごとに計器を更新
+    setInterval(updateDataGauges, 3000);
+    
+    // 15-45秒ごとにランダムアラートを表示
+    setInterval(generateDataAlert, Math.random() * 30000 + 15000);
+    
+    // 初期更新
+    updateDataGauges();
+    
+    // 初期アラート
+    setTimeout(() => {
+      showAlert('📊 ビッグデータ分析センターが正常に稼働しています');
+    }, 2000);
+    
+    setTimeout(() => {
+      showAlert('🧠 AI予測モデルがリアルタイム分析を開始しました');
+    }, 5000);
+  </script>
+</body>
+</html> 

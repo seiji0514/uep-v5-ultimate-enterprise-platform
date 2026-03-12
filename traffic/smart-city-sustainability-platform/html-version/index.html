@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>スマートシティ×サステナビリティ統合プラットフォーム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .nav {
+            background-color: #34495e;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .nav button:hover {
+            background-color: #2980b9;
+        }
+
+        .nav button.active {
+            background-color: #27ae60;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        .section {
+            display: none;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+
+        .card {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+
+        .card h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin: 15px 0;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .btn {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            background-color: #229954;
+        }
+
+        .btn-danger {
+            background-color: #e74c3c;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table th,
+        table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #2c3e50;
+            color: white;
+        }
+
+        table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-active {
+            background-color: #27ae60;
+            color: white;
+        }
+
+        .status-inactive {
+            background-color: #95a5a6;
+            color: white;
+        }
+
+        .alert {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            border-left: 4px solid;
+        }
+
+        .alert-info {
+            background-color: #d1ecf1;
+            border-color: #3498db;
+            color: #0c5460;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            border-color: #27ae60;
+            color: #155724;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>スマートシティ×サステナビリティ統合プラットフォーム</h1>
+        <p>簡易版 - HTMLのみで動作</p>
+    </div>
+
+    <div class="nav">
+        <button onclick="showSection('dashboard')" class="active">ダッシュボード</button>
+        <button onclick="showSection('sensors')">IoTセンサー</button>
+        <button onclick="showSection('environment')">環境データ</button>
+        <button onclick="showSection('traffic')">交通データ</button>
+        <button onclick="showSection('energy')">エネルギーデータ</button>
+        <button onclick="showSection('esg')">ESGレポート</button>
+    </div>
+
+    <div class="container">
+        <!-- ダッシュボード -->
+        <div id="dashboard" class="section active">
+            <h2>統括責任者向けダッシュボード</h2>
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <h3>環境データポイント</h3>
+                    <div class="value" id="env-count">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>交通データポイント</h3>
+                    <div class="value" id="traffic-count">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>エネルギーデータポイント</h3>
+                    <div class="value" id="energy-count">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>アクティブセンサー</h3>
+                    <div class="value" id="sensor-count">0</div>
+                </div>
+            </div>
+            <div class="card">
+                <h3>システム概要</h3>
+                <p>このシステムは、スマートシティとサステナビリティ管理を統合したプラットフォームです。</p>
+                <p>HTMLのみで動作し、ブラウザのローカルストレージにデータを保存します。</p>
+            </div>
+        </div>
+
+        <!-- IoTセンサー -->
+        <div id="sensors" class="section">
+            <h2>IoTセンサー管理</h2>
+            <div class="card">
+                <h3>センサー登録</h3>
+                <form id="sensor-form" onsubmit="addSensor(event)">
+                    <div class="form-group">
+                        <label>センサーID</label>
+                        <input type="text" id="sensor-id" required>
+                    </div>
+                    <div class="form-group">
+                        <label>センサータイプ</label>
+                        <select id="sensor-type" required>
+                            <option value="environment">環境</option>
+                            <option value="traffic">交通</option>
+                            <option value="energy">エネルギー</option>
+                            <option value="security">セキュリティ</option>
+                            <option value="infrastructure">インフラ</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>場所名</label>
+                        <input type="text" id="sensor-location">
+                    </div>
+                    <button type="submit" class="btn">センサーを登録</button>
+                </form>
+            </div>
+            <table id="sensors-table">
+                <thead>
+                    <tr>
+                        <th>センサーID</th>
+                        <th>タイプ</th>
+                        <th>場所</th>
+                        <th>ステータス</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="sensors-tbody">
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 環境データ -->
+        <div id="environment" class="section">
+            <h2>環境データ</h2>
+            <div class="card">
+                <h3>データ登録</h3>
+                <form id="env-form" onsubmit="addEnvironmentData(event)">
+                    <div class="form-group">
+                        <label>センサーID</label>
+                        <input type="text" id="env-sensor-id" required>
+                    </div>
+                    <div class="form-group">
+                        <label>データタイプ</label>
+                        <select id="env-data-type" required>
+                            <option value="air_quality">大気質</option>
+                            <option value="water_quality">水質</option>
+                            <option value="soil_quality">土壌</option>
+                            <option value="biodiversity">生物多様性</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>値</label>
+                        <input type="number" id="env-value" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>単位</label>
+                        <input type="text" id="env-unit" required>
+                    </div>
+                    <button type="submit" class="btn">データを登録</button>
+                </form>
+            </div>
+            <table id="env-table">
+                <thead>
+                    <tr>
+                        <th>日時</th>
+                        <th>センサーID</th>
+                        <th>データタイプ</th>
+                        <th>値</th>
+                        <th>単位</th>
+                    </tr>
+                </thead>
+                <tbody id="env-tbody">
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 交通データ -->
+        <div id="traffic" class="section">
+            <h2>交通データ</h2>
+            <div class="card">
+                <h3>データ登録</h3>
+                <form id="traffic-form" onsubmit="addTrafficData(event)">
+                    <div class="form-group">
+                        <label>センサーID</label>
+                        <input type="text" id="traffic-sensor-id" required>
+                    </div>
+                    <div class="form-group">
+                        <label>車両数</label>
+                        <input type="number" id="traffic-vehicle-count" required>
+                    </div>
+                    <div class="form-group">
+                        <label>平均速度 (km/h)</label>
+                        <input type="number" id="traffic-speed" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label>占有率 (%)</label>
+                        <input type="number" id="traffic-occupancy" step="0.1" required>
+                    </div>
+                    <button type="submit" class="btn">データを登録</button>
+                </form>
+            </div>
+            <table id="traffic-table">
+                <thead>
+                    <tr>
+                        <th>日時</th>
+                        <th>センサーID</th>
+                        <th>車両数</th>
+                        <th>平均速度</th>
+                        <th>占有率</th>
+                    </tr>
+                </thead>
+                <tbody id="traffic-tbody">
+                </tbody>
+            </table>
+        </div>
+
+        <!-- エネルギーデータ -->
+        <div id="energy" class="section">
+            <h2>エネルギーデータ</h2>
+            <div class="card">
+                <h3>データ登録</h3>
+                <form id="energy-form" onsubmit="addEnergyData(event)">
+                    <div class="form-group">
+                        <label>センサーID</label>
+                        <input type="text" id="energy-sensor-id" required>
+                    </div>
+                    <div class="form-group">
+                        <label>エネルギータイプ</label>
+                        <select id="energy-type" required>
+                            <option value="electricity">電力</option>
+                            <option value="gas">ガス</option>
+                            <option value="renewable">再生可能エネルギー</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>消費量 (kWh)</label>
+                        <input type="number" id="energy-consumption" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>発電量 (kWh)</label>
+                        <input type="number" id="energy-generation" step="0.01">
+                    </div>
+                    <button type="submit" class="btn">データを登録</button>
+                </form>
+            </div>
+            <table id="energy-table">
+                <thead>
+                    <tr>
+                        <th>日時</th>
+                        <th>センサーID</th>
+                        <th>タイプ</th>
+                        <th>消費量</th>
+                        <th>発電量</th>
+                    </tr>
+                </thead>
+                <tbody id="energy-tbody">
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ESGレポート -->
+        <div id="esg" class="section">
+            <h2>ESGレポート</h2>
+            <div class="card">
+                <h3>レポート生成</h3>
+                <button onclick="generateESGReport()" class="btn">ESGレポートを生成</button>
+            </div>
+            <div id="esg-report" class="card" style="display: none;">
+                <h3>ESGレポート</h3>
+                <div id="esg-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // データストレージ（ローカルストレージ）
+        const storage = {
+            get: (key) => {
+                const data = localStorage.getItem(key);
+                return data ? JSON.parse(data) : [];
+            },
+            set: (key, value) => {
+                localStorage.setItem(key, JSON.stringify(value));
+            },
+            add: (key, item) => {
+                const data = storage.get(key);
+                data.push({...item, id: Date.now(), timestamp: new Date().toISOString()});
+                storage.set(key, data);
+                return data;
+            },
+            remove: (key, id) => {
+                const data = storage.get(key);
+                const filtered = data.filter(item => item.id !== id);
+                storage.set(key, filtered);
+                return filtered;
+            }
+        };
+
+        // セクション表示切り替え
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.querySelectorAll('.nav button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+            
+            // データを再読み込み
+            if (sectionId === 'sensors') loadSensors();
+            if (sectionId === 'environment') loadEnvironmentData();
+            if (sectionId === 'traffic') loadTrafficData();
+            if (sectionId === 'energy') loadEnergyData();
+            if (sectionId === 'dashboard') updateDashboard();
+        }
+
+        // センサー管理
+        function addSensor(event) {
+            event.preventDefault();
+            const sensor = {
+                sensor_id: document.getElementById('sensor-id').value,
+                sensor_type: document.getElementById('sensor-type').value,
+                location_name: document.getElementById('sensor-location').value,
+                status: 'active'
+            };
+            storage.add('sensors', sensor);
+            document.getElementById('sensor-form').reset();
+            loadSensors();
+            updateDashboard();
+            alert('センサーを登録しました');
+        }
+
+        function loadSensors() {
+            const sensors = storage.get('sensors');
+            const tbody = document.getElementById('sensors-tbody');
+            tbody.innerHTML = sensors.map(sensor => `
+                <tr>
+                    <td>${sensor.sensor_id}</td>
+                    <td>${sensor.sensor_type}</td>
+                    <td>${sensor.location_name || '-'}</td>
+                    <td><span class="status-badge status-${sensor.status}">${sensor.status}</span></td>
+                    <td><button class="btn btn-danger" onclick="deleteSensor(${sensor.id})">削除</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function deleteSensor(id) {
+            if (confirm('このセンサーを削除しますか？')) {
+                storage.remove('sensors', id);
+                loadSensors();
+                updateDashboard();
+            }
+        }
+
+        // 環境データ
+        function addEnvironmentData(event) {
+            event.preventDefault();
+            const data = {
+                sensor_id: document.getElementById('env-sensor-id').value,
+                data_type: document.getElementById('env-data-type').value,
+                value: parseFloat(document.getElementById('env-value').value),
+                unit: document.getElementById('env-unit').value
+            };
+            storage.add('environment_data', data);
+            document.getElementById('env-form').reset();
+            loadEnvironmentData();
+            updateDashboard();
+            alert('環境データを登録しました');
+        }
+
+        function loadEnvironmentData() {
+            const data = storage.get('environment_data');
+            const tbody = document.getElementById('env-tbody');
+            tbody.innerHTML = data.slice(-20).reverse().map(item => `
+                <tr>
+                    <td>${new Date(item.timestamp).toLocaleString('ja-JP')}</td>
+                    <td>${item.sensor_id}</td>
+                    <td>${item.data_type}</td>
+                    <td>${item.value}</td>
+                    <td>${item.unit}</td>
+                </tr>
+            `).join('');
+        }
+
+        // 交通データ
+        function addTrafficData(event) {
+            event.preventDefault();
+            const data = {
+                sensor_id: document.getElementById('traffic-sensor-id').value,
+                vehicle_count: parseInt(document.getElementById('traffic-vehicle-count').value),
+                average_speed: parseFloat(document.getElementById('traffic-speed').value),
+                occupancy: parseFloat(document.getElementById('traffic-occupancy').value)
+            };
+            storage.add('traffic_data', data);
+            document.getElementById('traffic-form').reset();
+            loadTrafficData();
+            updateDashboard();
+            alert('交通データを登録しました');
+        }
+
+        function loadTrafficData() {
+            const data = storage.get('traffic_data');
+            const tbody = document.getElementById('traffic-tbody');
+            tbody.innerHTML = data.slice(-20).reverse().map(item => `
+                <tr>
+                    <td>${new Date(item.timestamp).toLocaleString('ja-JP')}</td>
+                    <td>${item.sensor_id}</td>
+                    <td>${item.vehicle_count}</td>
+                    <td>${item.average_speed} km/h</td>
+                    <td>${item.occupancy}%</td>
+                </tr>
+            `).join('');
+        }
+
+        // エネルギーデータ
+        function addEnergyData(event) {
+            event.preventDefault();
+            const data = {
+                sensor_id: document.getElementById('energy-sensor-id').value,
+                energy_type: document.getElementById('energy-type').value,
+                consumption: parseFloat(document.getElementById('energy-consumption').value),
+                generation: parseFloat(document.getElementById('energy-generation').value) || 0
+            };
+            storage.add('energy_data', data);
+            document.getElementById('energy-form').reset();
+            loadEnergyData();
+            updateDashboard();
+            alert('エネルギーデータを登録しました');
+        }
+
+        function loadEnergyData() {
+            const data = storage.get('energy_data');
+            const tbody = document.getElementById('energy-tbody');
+            tbody.innerHTML = data.slice(-20).reverse().map(item => `
+                <tr>
+                    <td>${new Date(item.timestamp).toLocaleString('ja-JP')}</td>
+                    <td>${item.sensor_id}</td>
+                    <td>${item.energy_type}</td>
+                    <td>${item.consumption} kWh</td>
+                    <td>${item.generation} kWh</td>
+                </tr>
+            `).join('');
+        }
+
+        // ダッシュボード更新
+        function updateDashboard() {
+            const envData = storage.get('environment_data');
+            const trafficData = storage.get('traffic_data');
+            const energyData = storage.get('energy_data');
+            const sensors = storage.get('sensors');
+            
+            document.getElementById('env-count').textContent = envData.length;
+            document.getElementById('traffic-count').textContent = trafficData.length;
+            document.getElementById('energy-count').textContent = energyData.length;
+            document.getElementById('sensor-count').textContent = sensors.filter(s => s.status === 'active').length;
+        }
+
+        // ESGレポート生成
+        function generateESGReport() {
+            const envData = storage.get('environment_data');
+            const energyData = storage.get('energy_data');
+            
+            const totalConsumption = energyData.reduce((sum, item) => sum + (item.consumption || 0), 0);
+            const totalGeneration = energyData.reduce((sum, item) => sum + (item.generation || 0), 0);
+            const selfSufficiency = totalConsumption > 0 ? (totalGeneration / totalConsumption * 100).toFixed(2) : 0;
+            
+            const report = `
+                <div class="alert alert-info">
+                    <h4>ESGレポート（${new Date().toLocaleDateString('ja-JP')}）</h4>
+                    <p><strong>環境データポイント:</strong> ${envData.length}件</p>
+                    <p><strong>エネルギーデータポイント:</strong> ${energyData.length}件</p>
+                    <p><strong>総消費量:</strong> ${totalConsumption.toFixed(2)} kWh</p>
+                    <p><strong>総発電量:</strong> ${totalGeneration.toFixed(2)} kWh</p>
+                    <p><strong>エネルギー自給率:</strong> ${selfSufficiency}%</p>
+                </div>
+            `;
+            
+            document.getElementById('esg-content').innerHTML = report;
+            document.getElementById('esg-report').style.display = 'block';
+        }
+
+        // 初期化
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSensors();
+            loadEnvironmentData();
+            loadTrafficData();
+            loadEnergyData();
+            updateDashboard();
+        });
+    </script>
+</body>
+</html>
+

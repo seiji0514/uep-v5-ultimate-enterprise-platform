@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>医療緊急AI - 災害対応・危機管理システム</title>
+    <meta name="description" content="医療緊急・緊急医療・医療支援・医療AIシステム。効果的な医療緊急と緊急医療を実現。">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #D32F2F 0%, #B71C1C 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .back-button {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .status-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .status-indicator {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .card h2 {
+            color: #D32F2F;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .chart-container {
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .feature-icon {
+            font-size: 0.8rem;
+            margin-bottom: 15px;
+            text-align: center;
+            color: #D32F2F;
+            font-weight: bold;
+            background: rgba(211, 47, 47, 0.1);
+            padding: 4px 8px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .feature-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .feature-metrics {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .feature-metric {
+            background: linear-gradient(135deg, #D32F2F, #B71C1C);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .feature-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #D32F2F, #B71C1C);
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-align: center;
+            width: 100%;
+        }
+
+        .feature-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(211, 47, 47, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="disaster-response-crisis-management-system.html" class="back-button">← 災害対応・危機管理システムに戻る</a>
+        
+        <div class="header">
+            <h1>医療緊急AI</h1>
+            <p>医療緊急プラットフォーム</p>
+            <div class="status-indicators">
+                <div class="status-indicator">🏥 医療中</div>
+                <div class="status-indicator">⚡ 支援中</div>
+                <div class="status-indicator">📊 分析中</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="card">
+                <h2>医療緊急効果性</h2>
+                <div class="chart-container">
+                    <canvas id="medicalEmergencyEffectivenessChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>緊急医療状況</h2>
+                <div class="chart-container">
+                    <canvas id="emergencyMedicalStatusChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">[医療]</div>
+                <div class="feature-title">医療緊急AI</div>
+                <div class="feature-description">
+                    医療緊急・緊急医療・医療支援・医療最適化・医療システム管理。効果的な医療緊急を実現。
+                </div>
+                <div class="feature-metrics">
+                    <div class="feature-metric">96.8% 医療効果</div>
+                    <div class="feature-metric">医療緊急AI</div>
+                </div>
+                <a href="#" class="feature-link">詳細を見る</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">[緊急]</div>
+                <div class="feature-title">緊急医療AI</div>
+                <div class="feature-description">
+                    緊急医療・医療対応・医療支援・医療最適化・医療システム管理。効果的な緊急医療を実現。
+                </div>
+                <div class="feature-metrics">
+                    <div class="feature-metric">94.7% 緊急効果</div>
+                    <div class="feature-metric">緊急医療AI</div>
+                </div>
+                <a href="#" class="feature-link">詳細を見る</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">[支援]</div>
+                <div class="feature-title">医療支援AI</div>
+                <div class="feature-description">
+                    医療支援・支援最適化・支援管理・支援システム管理。効果的な医療支援を実現。
+                </div>
+                <div class="feature-metrics">
+                    <div class="feature-metric">92.3% 支援効果</div>
+                    <div class="feature-metric">医療支援AI</div>
+                </div>
+                <a href="#" class="feature-link">詳細を見る</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">[診断]</div>
+                <div class="feature-title">緊急診断AI</div>
+                <div class="feature-description">
+                    緊急診断・診断精度・診断最適化・診断管理・診断システム管理。効果的な緊急診断を実現。
+                </div>
+                <div class="feature-metrics">
+                    <div class="feature-metric">95.2% 診断精度</div>
+                    <div class="feature-metric">緊急診断AI</div>
+                </div>
+                <a href="#" class="feature-link">詳細を見る</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">[治療]</div>
+                <div class="feature-title">緊急治療AI</div>
+                <div class="feature-description">
+                    緊急治療・治療最適化・治療支援・治療管理・治療システム管理。効果的な緊急治療を実現。
+                </div>
+                <div class="feature-metrics">
+                    <div class="feature-metric">93.5% 治療効果</div>
+                    <div class="feature-metric">緊急治療AI</div>
+                </div>
+                <a href="#" class="feature-link">詳細を見る</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">[搬送]</div>
+                <div class="feature-title">医療搬送AI</div>
+                <div class="feature-description">
+                    医療搬送・搬送最適化・搬送支援・搬送管理・搬送システム管理。効果的な医療搬送を実現。
+                </div>
+                <div class="feature-metrics">
+                    <div class="feature-metric">97.1% 搬送効果</div>
+                    <div class="feature-metric">医療搬送AI</div>
+                </div>
+                <a href="#" class="feature-link">詳細を見る</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 医療緊急効果性チャート
+        const medicalEmergencyEffectivenessCtx = document.getElementById('medicalEmergencyEffectivenessChart').getContext('2d');
+        new Chart(medicalEmergencyEffectivenessCtx, {
+            type: 'bar',
+            data: {
+                labels: ['医療緊急', '緊急医療', '医療支援', '緊急診断', '緊急治療', '医療搬送'],
+                datasets: [{
+                    label: '医療効果スコア',
+                    data: [96, 94, 92, 95, 93, 97],
+                    backgroundColor: '#D32F2F'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '医療緊急AI医療効果指標'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: '医療効果スコア'
+                        }
+                    }
+                }
+            }
+        });
+
+        // 緊急医療状況チャート
+        const emergencyMedicalStatusCtx = document.getElementById('emergencyMedicalStatusChart').getContext('2d');
+        new Chart(emergencyMedicalStatusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['外傷', '内科', '外科', '小児科', 'その他'],
+                datasets: [{
+                    data: [35, 25, 20, 15, 5],
+                    backgroundColor: [
+                        '#D32F2F',
+                        '#B71C1C',
+                        '#F44336',
+                        '#E57373',
+                        '#FFCDD2'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '緊急医療分野別分布 (%)'
+                    }
+                }
+            }
+        });
+    </script>
+
+    <!-- ライセンス・権利情報 -->
+    <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 15px; padding: 25px; margin: 30px auto; max-width: 1200px; border: 3px solid #f59e0b; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);">
+        <h2 style="color: #92400e; margin-bottom: 20px; text-align: center; font-size: 1.5rem;">ライセンス・権利情報</h2>
+        
+        <div style="background: white; padding: 20px; border-radius: 10px; color: #1e3a8a; line-height: 2;">
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">著作権:</strong> &copy; 2025 小川清志（おがわ せいじ）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">開発期間:</strong> 2025年6月～2025年10月（個人事業主として）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">開発目的:</strong> 技術研究・ポートフォリオ作成・転職活動用
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">用途:</strong> 個人研究目的（非商用）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">ライセンス:</strong> MIT License
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">公開範囲:</strong> 個人ポートフォリオサイト、GitHub（技術実証目的）
+            </div>
+            
+            <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #f59e0b;">
+                <strong style="color: #92400e;">重要事項:</strong>
+                <p style="color: #78350f; margin-top: 10px;">
+                    本システムは、個人事業主として独自に研究開発したものであり、
+                    特定の企業・組織の業務とは一切関係ありません。<br>
+                    全ての知的財産権は開発者個人（小川清志）に帰属します。<br>
+                    本システムの技術内容・アイデアは、入社前の個人研究として確立されたものです。
+                </p>
+            </div>
+            
+            <div style="background: #dbeafe; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #3b82f6;">
+                <strong style="color: #1e40af;">タイムスタンプ:</strong>
+                <p style="color: #1e3a8a; margin-top: 10px;">
+                    最終更新日: 2025年10月26日<br>
+                    GitHub最終コミット: 2025年10月26日<br>
+                    確定日付: 入社前（個人開発期間中）
+                </p>
+            </div>
+            
+            <div style="background: #d1fae5; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #10b981;">
+                <strong style="color: #047857;">連絡先:</strong>
+                <p style="color: #065f46; margin-top: 10px;">
+                    開発者: 小川清志（おがわ せいじ）<br>
+                    Email: kaho052514@gmail.com<br>
+                    電話: 080-4271-5479
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>

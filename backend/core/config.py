@@ -18,11 +18,12 @@ class Settings(BaseSettings):
     APP_NAME: str = "UEP v5.0 - Ultimate Enterprise Platform"
     APP_VERSION: str = "5.0.0"
     DEBUG: bool = Field(default=False, env="DEBUG")
-    ENVIRONMENT: str = Field(default="development", env="ENVIRONMENT")
+    ENVIRONMENT: str = Field(default="production", env="ENVIRONMENT")
 
     # サーバー設定
+    # 8000はWindows予約範囲(7938-8037)に含まれる場合があるため、デフォルトを8080に
     HOST: str = Field(default="0.0.0.0", env="HOST")
-    PORT: int = Field(default=8000, env="PORT")
+    PORT: int = Field(default=8080, env="PORT")
 
     # データベース設定（ローカル開発はSQLite、本番はPostgreSQL推奨）
     DATABASE_URL: str = Field(default="sqlite:///./uep_db.sqlite", env="DATABASE_URL")
@@ -45,7 +46,7 @@ class Settings(BaseSettings):
 
     # CORS設定（カンマ区切り文字列 or JSON配列をサポート。Unionで生文字列を許可）
     CORS_ORIGINS: Union[str, List[str]] = Field(
-        default=["http://localhost:3000", "http://localhost:8000"],
+        default=["http://localhost:3000", "http://localhost:8080"],
         env="CORS_ORIGINS",
         description="カンマ区切り: https://a.com,https://b.com または JSON: [\"https://a.com\"]",
     )
@@ -154,6 +155,24 @@ class Settings(BaseSettings):
         env_file = ".env"
         env_file_encoding = "utf-8"
         case_sensitive = True
+
+    @property
+    def is_production(self) -> bool:
+        """本番環境かどうか"""
+        return self.ENVIRONMENT.lower() == "production"
+
+    def validate_production(self) -> None:
+        """本番環境時の必須設定チェック"""
+        if not self.is_production:
+            return
+        if not self.SECRET_KEY or self.SECRET_KEY == "change-this-secret-key-in-production":
+            raise ValueError(
+                "本番環境では SECRET_KEY を必ず設定してください。"
+                "例: openssl rand -hex 32 で生成"
+            )
+        if self.DEBUG:
+            import warnings
+            warnings.warn("本番環境で DEBUG=True は推奨されません。ENVIRONMENT=production の場合は DEBUG を False にしてください。")
 
 
 # グローバル設定インスタンス

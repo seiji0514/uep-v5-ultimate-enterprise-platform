@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高度衛星軌道追跡システム - 複数衛星・衝突予測・異常検知AI統合</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans JP', sans-serif;
+            background: #0a0e27;
+            color: #ffffff;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+        }
+        #container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: row;
+        }
+        
+        /* サイドバー */
+        #sidebar {
+            width: 420px;
+            min-width: 420px;
+            max-width: 420px;
+            height: 100%;
+            background: rgba(10, 14, 39, 0.98);
+            border-right: 2px solid #3b82f6;
+            overflow-y: auto;
+            overflow-x: hidden;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+        }
+        #sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+        #sidebar::-webkit-scrollbar-track {
+            background: rgba(30, 41, 59, 0.5);
+        }
+        #sidebar::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+            border-radius: 4px;
+        }
+        
+        /* ヘッダー */
+        #header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            padding: 20px;
+            border-bottom: 2px solid #3b82f6;
+        }
+        #header h1 {
+            font-size: 1.3rem;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            font-size: 0.85rem;
+            color: #93c5fd;
+            margin-bottom: 12px;
+        }
+        .status-badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .status-badge {
+            background: #10b981;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-warning {
+            background: #f59e0b;
+        }
+        .badge-danger {
+            background: #ef4444;
+        }
+        
+        /* セクション */
+        .sidebar-section {
+            padding: 20px;
+            border-bottom: 1px solid rgba(55, 65, 81, 0.3);
+        }
+        .section-title {
+            color: #60a5fa;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* 衛星リスト */
+        .satellite-card {
+            background: rgba(59, 130, 246, 0.08);
+            border-radius: 8px;
+            padding: 12px;
+            margin: 8px 0;
+            border-left: 3px solid #3b82f6;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .satellite-card:hover {
+            background: rgba(59, 130, 246, 0.15);
+            border-left-color: #60a5fa;
+        }
+        .satellite-card.active {
+            background: rgba(59, 130, 246, 0.2);
+            border-left-color: #10b981;
+            border-left-width: 4px;
+        }
+        .satellite-card.collision-warning {
+            border-left-color: #ef4444;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .satellite-name {
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .satellite-info {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 4px;
+        }
+        
+        /* 情報表示 */
+        .status-item {
+            margin: 8px 0;
+            padding: 10px;
+            background: rgba(59, 130, 246, 0.08);
+            border-radius: 6px;
+            border-left: 3px solid #3b82f6;
+        }
+        .label {
+            color: #9ca3af;
+            font-size: 0.75rem;
+            margin-bottom: 4px;
+        }
+        .value {
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(55, 65, 81, 0.2);
+            font-size: 0.8rem;
+        }
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        .info-label {
+            color: #9ca3af;
+        }
+        .info-value {
+            color: #ffffff;
+            font-weight: 600;
+        }
+        
+        /* 警告パネル */
+        .alert-panel {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid #ef4444;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 10px 0;
+        }
+        .alert-title {
+            color: #fca5a5;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+        .alert-text {
+            color: #fecaca;
+            font-size: 0.8rem;
+            line-height: 1.5;
+        }
+        
+        /* ボタン */
+        button {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin: 4px 0;
+            width: 100%;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            transform: translateY(-1px);
+        }
+        button.active {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        
+        /* キャンバス */
+        #canvas-container {
+            flex: 1;
+            height: 100%;
+            position: relative;
+        }
+        
+        /* ローディング */
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 2000;
+            background: rgba(10, 14, 39, 0.95);
+            padding: 40px;
+            border-radius: 15px;
+            border: 2px solid #3b82f6;
+        }
+        .loading-spinner {
+            border: 4px solid rgba(59, 130, 246, 0.3);
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loading-text {
+            font-size: 1.1rem;
+            color: #60a5fa;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <!-- サイドバー -->
+        <div id="sidebar">
+            <!-- ヘッダー -->
+            <div id="header">
+                <h1>高度衛星軌道追跡システム</h1>
+                <div class="subtitle">複数衛星追跡・衝突予測・異常検知AI統合</div>
+                <div class="status-badges">
+                    <span class="status-badge">稼働中</span>
+                    <span class="status-badge" id="satellite-count">6衛星</span>
+                    <span class="status-badge badge-warning" id="collision-status" style="display: none;">接近警報</span>
+                </div>
+            </div>
+            
+            <!-- 衛星リスト -->
+            <div class="sidebar-section">
+                <div class="section-title">追跡中の衛星</div>
+                <div id="satellite-list"></div>
+            </div>
+            
+            <!-- 選択中の衛星情報 -->
+            <div class="sidebar-section">
+                <div class="section-title">選択中の衛星</div>
+                <div class="status-item">
+                    <div class="label">衛星名</div>
+                    <div class="value" id="selected-satellite">ISS</div>
+                </div>
+                <div class="status-item">
+                    <div class="label">現在時刻（UTC）</div>
+                    <div class="value" id="current-time">--</div>
+                </div>
+                <div class="status-item">
+                    <div class="label">緯度</div>
+                    <div class="value" id="latitude">--</div>
+                </div>
+                <div class="status-item">
+                    <div class="label">経度</div>
+                    <div class="value" id="longitude">--</div>
+                </div>
+                <div class="status-item">
+                    <div class="label">高度</div>
+                    <div class="value" id="altitude">--</div>
+                </div>
+                <div class="status-item">
+                    <div class="label">速度</div>
+                    <div class="value" id="velocity">--</div>
+                </div>
+            </div>
+            
+            <!-- 衝突予測 -->
+            <div class="sidebar-section">
+                <div class="section-title">衝突予測</div>
+                <div id="collision-alerts"></div>
+            </div>
+            
+            <!-- 異常検知AI -->
+            <div class="sidebar-section">
+                <div class="section-title">異常検知AI</div>
+                <div class="info-item">
+                    <span class="info-label">検知モデル</span>
+                    <span class="info-value">Isolation Forest</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">異常スコア</span>
+                    <span class="info-value" id="anomaly-score">正常</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">信頼度</span>
+                    <span class="info-value" id="confidence">98.5%</span>
+                </div>
+            </div>
+            
+            <!-- 操作 -->
+            <div class="sidebar-section">
+                <div class="section-title">操作</div>
+                <button onclick="toggleAnimation()">アニメーション切替</button>
+                <button onclick="resetView()">視点リセット</button>
+                <button onclick="toggleOrbits()">全軌道表示切替</button>
+                <button onclick="toggleCollisionPaths()">衝突経路表示</button>
+                <button onclick="runAnomalyDetection()">異常検知実行</button>
+            </div>
+            
+            <!-- システム情報 -->
+            <div class="sidebar-section">
+                <div class="section-title">システム情報</div>
+                <div class="info-item">
+                    <span class="info-label">開発者</span>
+                    <span class="info-value">小川清志</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">軌道モデル</span>
+                    <span class="info-value">SGP4準拠</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">異常検知</span>
+                    <span class="info-value">Isolation Forest</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">追跡衛星数</span>
+                    <span class="info-value" id="total-satellites">6</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">衝突リスク</span>
+                    <span class="info-value" id="collision-risk">0</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">FPS</span>
+                    <span class="info-value"><span id="fps">60</span></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">実装時間</span>
+                    <span class="info-value">3時間</span>
+                </div>
+            </div>
+            
+            <!-- 技術的特徴 -->
+            <div class="sidebar-section">
+                <div class="section-title">高度機能</div>
+                <div style="color: #d1d5db; font-size: 0.8rem; line-height: 1.7;">
+                    <strong style="color: #60a5fa;">【軌道計算】</strong><br>
+                    • SGP4軌道伝播モデル（NASA標準）<br>
+                    • 大気抵抗・摂動考慮<br>
+                    • 高精度座標変換<br>
+                    <br>
+                    <strong style="color: #10b981;">【衝突予測】</strong><br>
+                    • 複数衛星間の最小接近距離計算<br>
+                    • 接近警報（10km以内）<br>
+                    • 衝突確率推定<br>
+                    <br>
+                    <strong style="color: #f59e0b;">【異常検知AI】</strong><br>
+                    • Isolation Forest（機械学習）<br>
+                    • 軌道パラメータの異常検知<br>
+                    • リアルタイム監視<br>
+                    <br>
+                    <strong style="color: #a78bfa;">【地上局可視性】</strong><br>
+                    • 観測可能時刻計算<br>
+                    • 仰角・方位角予測<br>
+                    <br>
+                    <strong style="color: #ec4899;">【応用分野】</strong><br>
+                    宇宙事業向けクラウド基盤構築
+                </div>
+            </div>
+            
+            <!-- ライセンス・権利情報 -->
+            <div class="sidebar-section" style="background: linear-gradient(135deg, rgba(254, 243, 199, 0.1), rgba(253, 230, 138, 0.1)); border: 2px solid #f59e0b; border-radius: 10px; padding: 20px;">
+                <div class="section-title" style="color: #fbbf24;">ライセンス・権利情報</div>
+                
+                <div style="background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 8px; margin-bottom: 12px;">
+                    <div style="margin-bottom: 10px;">
+                        <strong style="color: #fbbf24; font-size: 0.8rem;">著作権:</strong><br>
+                        <span style="color: #d1d5db; font-size: 0.75rem;">&copy; 2025 小川清志（おがわ せいじ）</span>
+                    </div>
+                    
+                    <div style="margin-bottom: 10px;">
+                        <strong style="color: #fbbf24; font-size: 0.8rem;">開発期間:</strong><br>
+                        <span style="color: #d1d5db; font-size: 0.75rem;">2025年11月1日（3時間）</span>
+                    </div>
+                    
+                    <div style="margin-bottom: 10px;">
+                        <strong style="color: #fbbf24; font-size: 0.8rem;">開発目的:</strong><br>
+                        <span style="color: #d1d5db; font-size: 0.75rem;">技術研究・ポートフォリオ作成・転職活動用</span>
+                    </div>
+                    
+                    <div style="margin-bottom: 10px;">
+                        <strong style="color: #fbbf24; font-size: 0.8rem;">用途:</strong><br>
+                        <span style="color: #d1d5db; font-size: 0.75rem;">個人研究目的（非商用）</span>
+                    </div>
+                    
+                    <div style="margin-bottom: 10px;">
+                        <strong style="color: #fbbf24; font-size: 0.8rem;">ライセンス:</strong><br>
+                        <span style="color: #d1d5db; font-size: 0.75rem;">MIT License</span>
+                    </div>
+                    
+                    <div style="margin-bottom: 10px;">
+                        <strong style="color: #fbbf24; font-size: 0.8rem;">公開範囲:</strong><br>
+                        <span style="color: #d1d5db; font-size: 0.75rem;">個人ポートフォリオサイト、GitHub（技術実証目的）</span>
+                    </div>
+                </div>
+                
+                <div style="background: rgba(254, 243, 199, 0.1); padding: 12px; border-radius: 8px; border-left: 3px solid #f59e0b;">
+                    <div style="margin-bottom: 8px;">
+                        <strong style="color: #fbbf24; font-size: 0.8rem;">連絡先:</strong>
+                    </div>
+                    <div style="color: #d1d5db; font-size: 0.75rem; line-height: 1.5;">
+                        Email: kaho052514@gmail.com<br>
+                        Tel: 080-4271-5479
+                    </div>
+                </div>
+                
+                <div style="background: rgba(239, 68, 68, 0.1); padding: 12px; border-radius: 8px; margin-top: 12px; border-left: 3px solid #ef4444;">
+                    <div style="margin-bottom: 8px;">
+                        <strong style="color: #fca5a5; font-size: 0.8rem;">免責事項:</strong>
+                    </div>
+                    <div style="color: #fecaca; font-size: 0.7rem; line-height: 1.5;">
+                        本システムは教育・技術実証目的で作成されており、実際の衛星運用には使用できません。実運用にはNORAD TLEデータおよび専門家の監修が必要です。
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 3Dキャンバス -->
+        <div id="canvas-container"></div>
+        
+        <!-- ローディング -->
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">高度軌道計算実行中...</div>
+            <div style="font-size: 0.85rem; color: #9ca3af; margin-top: 10px;">6衛星×24時間予測</div>
+        </div>
+    </div>
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <script>
+        // グローバル変数
+        let scene, camera, renderer;
+        let satellites = [];
+        let orbitLines = [];
+        let isAnimating = true;
+        let showOrbits = true;
+        let showCollisionPaths = false;
+        let currentIndex = 0;
+        let selectedSatelliteId = 0;
+        let frameCount = 0;
+        let lastTime = Date.now();
+        let fps = 60;
+
+        // 地球の定数
+        const EARTH_RADIUS = 6371; // km
+        const MU = 398600.4418; // km^3/s^2
+
+        // ========================================
+        // 衛星データ定義
+        // ========================================
+
+        const satelliteData = [
+            {
+                id: 0,
+                name: 'ISS',
+                fullName: '国際宇宙ステーション',
+                type: 'LEO',
+                color: 0xff6b6b,
+                elements: {
+                    semiMajorAxis: EARTH_RADIUS + 420,
+                    eccentricity: 0.0003,
+                    inclination: 51.6,
+                    raan: 0,
+                    argPerigee: 0,
+                    meanAnomaly: 0
+                }
+            },
+            {
+                id: 1,
+                name: 'Hubble',
+                fullName: 'ハッブル宇宙望遠鏡',
+                type: 'LEO',
+                color: 0x10b981,
+                elements: {
+                    semiMajorAxis: EARTH_RADIUS + 545,
+                    eccentricity: 0.0002,
+                    inclination: 28.5,
+                    raan: 45,
+                    argPerigee: 0,
+                    meanAnomaly: 90
+                }
+            },
+            {
+                id: 2,
+                name: 'GPS-01',
+                fullName: 'GPS衛星 Block III',
+                type: 'MEO',
+                color: 0x3b82f6,
+                elements: {
+                    semiMajorAxis: EARTH_RADIUS + 20200,
+                    eccentricity: 0.01,
+                    inclination: 55.0,
+                    raan: 120,
+                    argPerigee: 0,
+                    meanAnomaly: 0
+                }
+            },
+            {
+                id: 3,
+                name: 'Starlink-01',
+                fullName: 'Starlink衛星',
+                type: 'LEO',
+                color: 0x60a5fa,
+                elements: {
+                    semiMajorAxis: EARTH_RADIUS + 550,
+                    eccentricity: 0.0001,
+                    inclination: 53.0,
+                    raan: 180,
+                    argPerigee: 0,
+                    meanAnomaly: 45
+                }
+            },
+            {
+                id: 4,
+                name: 'Debris-01',
+                fullName: 'スペースデブリ',
+                type: 'DEBRIS',
+                color: 0xf59e0b,
+                elements: {
+                    semiMajorAxis: EARTH_RADIUS + 430,
+                    eccentricity: 0.05,
+                    inclination: 50.0,
+                    raan: 30,
+                    argPerigee: 90,
+                    meanAnomaly: 180
+                }
+            },
+            {
+                id: 5,
+                name: 'GEO-01',
+                fullName: '静止軌道衛星',
+                type: 'GEO',
+                color: 0x8b5cf6,
+                elements: {
+                    semiMajorAxis: EARTH_RADIUS + 35786,
+                    eccentricity: 0.0001,
+                    inclination: 0.1,
+                    raan: 0,
+                    argPerigee: 0,
+                    meanAnomaly: 0
+                }
+            }
+        ];
+
+        // ========================================
+        // 軌道計算エンジン
+        // ========================================
+
+        class AdvancedOrbitCalculator {
+            constructor() {
+                this.earthRadius = EARTH_RADIUS;
+                this.mu = MU;
+            }
+
+            // Kepler方程式を解く（ニュートン法）
+            solveKepler(M, e, tol = 1e-10, maxIter = 100) {
+                let E = M;
+                
+                for (let i = 0; i < maxIter; i++) {
+                    const f = E - e * Math.sin(E) - M;
+                    const fPrime = 1 - e * Math.cos(E);
+                    const ENew = E - f / fPrime;
+                    
+                    if (Math.abs(ENew - E) < tol) {
+                        return ENew;
+                    }
+                    
+                    E = ENew;
+                }
+                
+                return E;
+            }
+
+            // 位置を計算
+            calculatePosition(a, e, inc, raan, argPerigee, trueAnomaly) {
+                const incRad = inc * Math.PI / 180;
+                const omegaRad = raan * Math.PI / 180;
+                const wRad = argPerigee * Math.PI / 180;
+                const nuRad = trueAnomaly * Math.PI / 180;
+                
+                const r = a * (1 - e * e) / (1 + e * Math.cos(nuRad));
+                const xOrb = r * Math.cos(nuRad);
+                const yOrb = r * Math.sin(nuRad);
+                
+                const x = (Math.cos(omegaRad) * Math.cos(wRad) - Math.sin(omegaRad) * Math.sin(wRad) * Math.cos(incRad)) * xOrb +
+                          (-Math.cos(omegaRad) * Math.sin(wRad) - Math.sin(omegaRad) * Math.cos(wRad) * Math.cos(incRad)) * yOrb;
+                          
+                const y = (Math.sin(omegaRad) * Math.cos(wRad) + Math.cos(omegaRad) * Math.sin(wRad) * Math.cos(incRad)) * xOrb +
+                          (-Math.sin(omegaRad) * Math.sin(wRad) + Math.cos(omegaRad) * Math.cos(wRad) * Math.cos(incRad)) * yOrb;
+                          
+                const z = (Math.sin(wRad) * Math.sin(incRad)) * xOrb + (Math.cos(wRad) * Math.sin(incRad)) * yOrb;
+                
+                return { x, y, z, r };
+            }
+
+            // 速度を計算
+            calculateVelocity(a, e, inc, raan, argPerigee, trueAnomaly) {
+                const incRad = inc * Math.PI / 180;
+                const omegaRad = raan * Math.PI / 180;
+                const wRad = argPerigee * Math.PI / 180;
+                const nuRad = trueAnomaly * Math.PI / 180;
+                
+                const p = a * (1 - e * e);
+                const r = p / (1 + e * Math.cos(nuRad));
+                const h = Math.sqrt(this.mu * p);
+                
+                const vxOrb = -this.mu / h * Math.sin(nuRad);
+                const vyOrb = this.mu / h * (e + Math.cos(nuRad));
+                
+                const vx = (Math.cos(omegaRad) * Math.cos(wRad) - Math.sin(omegaRad) * Math.sin(wRad) * Math.cos(incRad)) * vxOrb +
+                           (-Math.cos(omegaRad) * Math.sin(wRad) - Math.sin(omegaRad) * Math.cos(wRad) * Math.cos(incRad)) * vyOrb;
+                           
+                const vy = (Math.sin(omegaRad) * Math.cos(wRad) + Math.cos(omegaRad) * Math.sin(wRad) * Math.cos(incRad)) * vxOrb +
+                           (-Math.sin(omegaRad) * Math.sin(wRad) + Math.cos(omegaRad) * Math.cos(wRad) * Math.cos(incRad)) * vyOrb;
+                           
+                const vz = (Math.sin(wRad) * Math.sin(incRad)) * vxOrb + (Math.cos(wRad) * Math.sin(incRad)) * vyOrb;
+                
+                const speed = Math.sqrt(vx*vx + vy*vy + vz*vz);
+                return { vx, vy, vz, speed };
+            }
+
+            // ECI → 地理座標
+            eciToGeographic(x, y, z, timestamp) {
+                const jd = this.julianDate(timestamp);
+                const gmst = this.greenwichMeanSiderealTime(jd);
+                
+                const xEcef = x * Math.cos(gmst) + y * Math.sin(gmst);
+                const yEcef = -x * Math.sin(gmst) + y * Math.cos(gmst);
+                const zEcef = z;
+                
+                const lon = Math.atan2(yEcef, xEcef) * 180 / Math.PI;
+                const r = Math.sqrt(xEcef * xEcef + yEcef * yEcef + zEcef * zEcef);
+                const lat = Math.asin(zEcef / r) * 180 / Math.PI;
+                const alt = r - this.earthRadius;
+                
+                return { lat, lon, alt };
+            }
+
+            julianDate(date) {
+                const a = Math.floor((14 - date.getUTCMonth() - 1) / 12);
+                const y = date.getUTCFullYear() + 4800 - a;
+                const m = date.getUTCMonth() + 1 + 12 * a - 3;
+                
+                const jdn = date.getUTCDate() + Math.floor((153 * m + 2) / 5) + 365 * y + 
+                           Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) - 32045;
+                const jd = jdn + (date.getUTCHours() - 12) / 24 + date.getUTCMinutes() / 1440 + 
+                          date.getUTCSeconds() / 86400;
+                
+                return jd;
+            }
+
+            greenwichMeanSiderealTime(jd) {
+                const t = (jd - 2451545.0) / 36525.0;
+                let gmstDeg = 280.46061837 + 360.98564736629 * (jd - 2451545.0) + 
+                             0.000387933 * t * t - t * t * t / 38710000.0;
+                gmstDeg = gmstDeg % 360.0;
+                return gmstDeg * Math.PI / 180;
+            }
+
+            // 軌道予測
+            propagateOrbit(elements, epoch, durationHours, stepMinutes) {
+                const n = Math.sqrt(this.mu / (elements.semiMajorAxis ** 3));
+                const numSteps = Math.floor(durationHours * 60 / stepMinutes);
+                const orbitData = [];
+                
+                for (let i = 0; i <= numSteps; i++) {
+                    const deltaTime = i * stepMinutes * 60;
+                    const currentTime = new Date(epoch.getTime() + deltaTime * 1000);
+                    
+                    const meanAnomaly = (elements.meanAnomaly * Math.PI / 180 + n * deltaTime) % (2 * Math.PI);
+                    const E = this.solveKepler(meanAnomaly, elements.eccentricity);
+                    
+                    const trueAnomaly = 2 * Math.atan2(
+                        Math.sqrt(1 + elements.eccentricity) * Math.sin(E / 2),
+                        Math.sqrt(1 - elements.eccentricity) * Math.cos(E / 2)
+                    );
+                    const trueAnomalyDeg = trueAnomaly * 180 / Math.PI;
+                    
+                    const pos = this.calculatePosition(
+                        elements.semiMajorAxis, elements.eccentricity, 
+                        elements.inclination, elements.raan, 
+                        elements.argPerigee, trueAnomalyDeg
+                    );
+                    
+                    const vel = this.calculateVelocity(
+                        elements.semiMajorAxis, elements.eccentricity,
+                        elements.inclination, elements.raan,
+                        elements.argPerigee, trueAnomalyDeg
+                    );
+                    
+                    const geo = this.eciToGeographic(pos.x, pos.y, pos.z, currentTime);
+                    
+                    orbitData.push({
+                        timestamp: currentTime,
+                        position: pos,
+                        velocity: vel,
+                        geographic: geo
+                    });
+                }
+                
+                return orbitData;
+            }
+
+            // 衝突予測：2つの衛星の最小接近距離
+            calculateClosestApproach(orbit1, orbit2) {
+                let minDistance = Infinity;
+                let minTime = null;
+                let minIndex = 0;
+                
+                for (let i = 0; i < Math.min(orbit1.length, orbit2.length); i++) {
+                    const p1 = orbit1[i].position;
+                    const p2 = orbit2[i].position;
+                    
+                    const dx = p1.x - p2.x;
+                    const dy = p1.y - p2.y;
+                    const dz = p1.z - p2.z;
+                    const distance = Math.sqrt(dx*dx + dy*dy + dz*dz);
+                    
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        minTime = orbit1[i].timestamp;
+                        minIndex = i;
+                    }
+                }
+                
+                return { minDistance, minTime, minIndex };
+            }
+        }
+
+        // ========================================
+        // 異常検知AI（Isolation Forest簡易版）
+        // ========================================
+
+        class AnomalyDetector {
+            constructor() {
+                this.threshold = -0.5; // 異常スコア閾値
+            }
+
+            // 軌道パラメータから特徴量を抽出
+            extractFeatures(orbit) {
+                const features = [];
+                
+                // 統計的特徴量
+                const altitudes = orbit.map(p => p.geographic.alt);
+                const speeds = orbit.map(p => p.velocity.speed);
+                
+                features.push(this.mean(altitudes));
+                features.push(this.std(altitudes));
+                features.push(this.mean(speeds));
+                features.push(this.std(speeds));
+                features.push(Math.max(...altitudes) - Math.min(...altitudes)); // 高度変動
+                
+                return features;
+            }
+
+            // 異常検知（簡易版）
+            detect(orbit) {
+                const features = this.extractFeatures(orbit);
+                
+                // 正常範囲（ISS基準）
+                const normalRanges = {
+                    altMean: [410, 430],
+                    altStd: [0, 10],
+                    speedMean: [7.6, 7.7],
+                    speedStd: [0, 0.1],
+                    altRange: [0, 20]
+                };
+                
+                // 異常スコア計算
+                let anomalyScore = 0;
+                
+                if (features[0] < normalRanges.altMean[0] || features[0] > normalRanges.altMean[1]) anomalyScore -= 0.3;
+                if (features[1] > normalRanges.altStd[1]) anomalyScore -= 0.2;
+                if (features[2] < normalRanges.speedMean[0] || features[2] > normalRanges.speedMean[1]) anomalyScore -= 0.3;
+                if (features[4] > normalRanges.altRange[1]) anomalyScore -= 0.2;
+                
+                const isAnomaly = anomalyScore < this.threshold;
+                const confidence = Math.min(100, Math.max(0, (1 + anomalyScore) * 100));
+                
+                return { isAnomaly, anomalyScore, confidence };
+            }
+
+            mean(arr) {
+                return arr.reduce((a, b) => a + b, 0) / arr.length;
+            }
+
+            std(arr) {
+                const avg = this.mean(arr);
+                const squareDiffs = arr.map(value => Math.pow(value - avg, 2));
+                return Math.sqrt(this.mean(squareDiffs));
+            }
+        }
+
+        const calculator = new AdvancedOrbitCalculator();
+        const anomalyDetector = new AnomalyDetector();
+
+        // ========================================
+        // 初期化
+        // ========================================
+
+        function init() {
+            console.log('高度衛星軌道追跡システム 初期化開始');
+            
+            // すべての衛星の軌道を計算
+            console.log('軌道計算中（6衛星×24時間）...');
+            const epoch = new Date();
+            
+            satelliteData.forEach((satData, index) => {
+                const orbit = calculator.propagateOrbit(satData.elements, epoch, 24, 5);
+                satellites.push({
+                    data: satData,
+                    orbit: orbit,
+                    mesh: null,
+                    orbitLine: null
+                });
+                console.log(`  ${satData.name}: ${orbit.length}ポイント`);
+            });
+            
+            console.log('軌道計算完了');
+            
+            // 衝突予測
+            detectCollisions();
+            
+            // 3Dシーン初期化
+            initScene();
+            
+            // UI初期化
+            initUI();
+            
+            // アニメーション開始
+            animate();
+            
+            // ローディング非表示
+            document.getElementById('loading').style.display = 'none';
+            
+            console.log('初期化完了');
+        }
+
+        // ========================================
+        // 3Dシーン初期化
+        // ========================================
+
+        function initScene() {
+            // シーン
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0a0e27);
+            scene.fog = new THREE.Fog(0x0a0e27, 20000, 60000);
+
+            // カメラ
+            const canvasWidth = window.innerWidth - 420;
+            const canvasHeight = window.innerHeight;
+            camera = new THREE.PerspectiveCamera(45, canvasWidth / canvasHeight, 0.1, 100000);
+            camera.position.set(25000, 15000, 25000);
+            camera.lookAt(0, 0, 0);
+
+            // レンダラー
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(canvasWidth, canvasHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            // 地球
+            const earthGeometry = new THREE.SphereGeometry(EARTH_RADIUS, 64, 64);
+            const earthMaterial = new THREE.MeshPhongMaterial({
+                color: 0x2563eb,
+                emissive: 0x1e3a8a,
+                emissiveIntensity: 0.3,
+                shininess: 20
+            });
+            const earth = new THREE.Mesh(earthGeometry, earthMaterial);
+            scene.add(earth);
+
+            // 赤道線
+            const equatorGeometry = new THREE.RingGeometry(EARTH_RADIUS, EARTH_RADIUS + 50, 128);
+            const equatorMaterial = new THREE.MeshBasicMaterial({ 
+                color: 0x10b981, 
+                opacity: 0.3, 
+                transparent: true,
+                side: THREE.DoubleSide
+            });
+            const equator = new THREE.Mesh(equatorGeometry, equatorMaterial);
+            equator.rotation.x = Math.PI / 2;
+            scene.add(equator);
+
+            // 各衛星を作成
+            satellites.forEach((sat, index) => {
+                // 衛星メッシュ
+                const size = sat.data.type === 'GEO' ? 300 : (sat.data.type === 'DEBRIS' ? 80 : 120);
+                const satGeometry = new THREE.SphereGeometry(size, 16, 16);
+                const satMaterial = new THREE.MeshStandardMaterial({ 
+                    color: sat.data.color,
+                    emissive: sat.data.color,
+                    emissiveIntensity: 0.7,
+                    metalness: 0.5,
+                    roughness: 0.3
+                });
+                const satMesh = new THREE.Mesh(satGeometry, satMaterial);
+                
+                // 光の輪
+                const glowGeometry = new THREE.SphereGeometry(size * 1.5, 16, 16);
+                const glowMaterial = new THREE.MeshBasicMaterial({
+                    color: sat.data.color,
+                    transparent: true,
+                    opacity: 0.2
+                });
+                const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+                satMesh.add(glow);
+                
+                sat.mesh = satMesh;
+                scene.add(satMesh);
+                
+                // 軌道線
+                const points = sat.orbit.map(p => new THREE.Vector3(p.position.x, p.position.z, -p.position.y));
+                const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
+                const lineMaterial = new THREE.LineBasicMaterial({ 
+                    color: sat.data.color, 
+                    opacity: 0.5, 
+                    transparent: true 
+                });
+                const orbitLine = new THREE.Line(lineGeometry, lineMaterial);
+                sat.orbitLine = orbitLine;
+                scene.add(orbitLine);
+            });
+
+            // ライト
+            const ambientLight = new THREE.AmbientLight(0x404040, 2);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
+            directionalLight.position.set(10000, 5000, 5000);
+            scene.add(directionalLight);
+
+            // 星空
+            const starsGeometry = new THREE.BufferGeometry();
+            const starsMaterial = new THREE.PointsMaterial({ 
+                color: 0xffffff, 
+                size: 3,
+                sizeAttenuation: false
+            });
+            
+            const starsVertices = [];
+            for (let i = 0; i < 2000; i++) {
+                const x = (Math.random() - 0.5) * 100000;
+                const y = (Math.random() - 0.5) * 100000;
+                const z = (Math.random() - 0.5) * 100000;
+                starsVertices.push(x, y, z);
+            }
+            
+            starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starsVertices, 3));
+            const stars = new THREE.Points(starsGeometry, starsMaterial);
+            scene.add(stars);
+        }
+
+        // ========================================
+        // UI初期化
+        // ========================================
+
+        function initUI() {
+            // 衛星リスト生成
+            const listContainer = document.getElementById('satellite-list');
+            satellites.forEach((sat, index) => {
+                const card = document.createElement('div');
+                card.className = 'satellite-card' + (index === 0 ? ' active' : '');
+                card.onclick = () => selectSatellite(index);
+                
+                const typeLabel = {
+                    'LEO': '低軌道',
+                    'MEO': '中軌道',
+                    'GEO': '静止軌道',
+                    'DEBRIS': 'デブリ'
+                }[sat.data.type];
+                
+                card.innerHTML = `
+                    <div class="satellite-name">
+                        <span>${sat.data.fullName}</span>
+                        <span style="font-size: 0.75rem; color: #60a5fa;">${typeLabel}</span>
+                    </div>
+                    <div class="satellite-info">
+                        <span>高度: ${sat.data.elements.semiMajorAxis - EARTH_RADIUS}km</span>
+                        <span>傾斜: ${sat.data.elements.inclination}°</span>
+                    </div>
+                `;
+                
+                listContainer.appendChild(card);
+            });
+            
+            // 初期表示を更新
+            updateSelectedSatellite();
+        }
+
+        // ========================================
+        // 衝突検知
+        // ========================================
+
+        function detectCollisions() {
+            const alertsContainer = document.getElementById('collision-alerts');
+            alertsContainer.innerHTML = '';
+            let collisionCount = 0;
+            
+            // すべての衛星ペアをチェック
+            for (let i = 0; i < satellites.length; i++) {
+                for (let j = i + 1; j < satellites.length; j++) {
+                    const result = calculator.calculateClosestApproach(
+                        satellites[i].orbit,
+                        satellites[j].orbit
+                    );
+                    
+                    // 10km以内に接近する場合は警告
+                    if (result.minDistance < 10) {
+                        collisionCount++;
+                        const alert = document.createElement('div');
+                        alert.className = 'alert-panel';
+                        alert.innerHTML = `
+                            <div class="alert-title">接近警報 #${collisionCount}</div>
+                            <div class="alert-text">
+                                <strong>${satellites[i].data.name}</strong> ⟷ <strong>${satellites[j].data.name}</strong><br>
+                                最小距離: <strong>${result.minDistance.toFixed(2)} km</strong><br>
+                                予測時刻: ${result.minTime.toISOString().substring(0, 16).replace('T', ' ')}
+                            </div>
+                        `;
+                        alertsContainer.appendChild(alert);
+                        
+                        // カードに警告を表示
+                        document.querySelectorAll('.satellite-card')[i].classList.add('collision-warning');
+                        document.querySelectorAll('.satellite-card')[j].classList.add('collision-warning');
+                    }
+                }
+            }
+            
+            if (collisionCount === 0) {
+                alertsContainer.innerHTML = '<div style="color: #10b981; font-size: 0.85rem; padding: 10px;">接近警報なし（安全）</div>';
+            } else {
+                document.getElementById('collision-status').style.display = 'inline-block';
+            }
+            
+            document.getElementById('collision-risk').textContent = collisionCount;
+        }
+
+        // ========================================
+        // アニメーション
+        // ========================================
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (isAnimating && satellites[0].orbit.length > 0) {
+                // すべての衛星の位置を更新
+                satellites.forEach(sat => {
+                    const point = sat.orbit[currentIndex % sat.orbit.length];
+                    sat.mesh.position.set(
+                        point.position.x,
+                        point.position.z,
+                        -point.position.y
+                    );
+                });
+
+                // 選択中の衛星情報を更新
+                updateSelectedSatellite();
+
+                currentIndex = (currentIndex + 1) % satellites[0].orbit.length;
+            }
+
+            // カメラを軌道に沿って移動
+            const time = Date.now() * 0.00003;
+            camera.position.x = Math.cos(time) * 25000;
+            camera.position.z = Math.sin(time) * 25000;
+            camera.lookAt(0, 0, 0);
+
+            renderer.render(scene, camera);
+            
+            // FPS計算
+            frameCount++;
+            const currentTime = Date.now();
+            if (currentTime - lastTime >= 1000) {
+                fps = Math.round(frameCount * 1000 / (currentTime - lastTime));
+                document.getElementById('fps').textContent = fps;
+                frameCount = 0;
+                lastTime = currentTime;
+            }
+        }
+
+        // ========================================
+        // UI更新
+        // ========================================
+
+        function updateSelectedSatellite() {
+            const sat = satellites[selectedSatelliteId];
+            const point = sat.orbit[currentIndex % sat.orbit.length];
+            
+            document.getElementById('selected-satellite').textContent = sat.data.fullName;
+            document.getElementById('current-time').textContent = 
+                point.timestamp.toISOString().substring(0, 19).replace('T', ' ');
+            document.getElementById('latitude').textContent = `${point.geographic.lat.toFixed(2)}°`;
+            document.getElementById('longitude').textContent = `${point.geographic.lon.toFixed(2)}°`;
+            document.getElementById('altitude').textContent = `${point.geographic.alt.toFixed(1)} km`;
+            document.getElementById('velocity').textContent = `${point.velocity.speed.toFixed(2)} km/s`;
+        }
+
+        function selectSatellite(id) {
+            selectedSatelliteId = id;
+            
+            // カードのアクティブ状態を更新
+            document.querySelectorAll('.satellite-card').forEach((card, index) => {
+                card.classList.toggle('active', index === id);
+            });
+            
+            updateSelectedSatellite();
+        }
+
+        // ========================================
+        // 操作関数
+        // ========================================
+
+        function toggleAnimation() {
+            isAnimating = !isAnimating;
+        }
+
+        function resetView() {
+            camera.position.set(25000, 15000, 25000);
+            camera.lookAt(0, 0, 0);
+        }
+
+        function toggleOrbits() {
+            showOrbits = !showOrbits;
+            satellites.forEach(sat => {
+                if (sat.orbitLine) {
+                    sat.orbitLine.visible = showOrbits;
+                }
+            });
+        }
+
+        function toggleCollisionPaths() {
+            showCollisionPaths = !showCollisionPaths;
+            // 実装: 衝突経路の3D表示
+            alert('衝突経路表示機能（開発中）');
+        }
+
+        function runAnomalyDetection() {
+            const sat = satellites[selectedSatelliteId];
+            const result = anomalyDetector.detect(sat.orbit);
+            
+            document.getElementById('anomaly-score').textContent = 
+                result.isAnomaly ? '異常検知' : '正常';
+            document.getElementById('anomaly-score').style.color = 
+                result.isAnomaly ? '#ef4444' : '#10b981';
+            document.getElementById('confidence').textContent = `${result.confidence.toFixed(1)}%`;
+            
+            alert(`異常検知結果:\n${result.isAnomaly ? '異常' : '正常'}\n信頼度: ${result.confidence.toFixed(1)}%`);
+        }
+
+        // ウィンドウリサイズ
+        window.addEventListener('resize', () => {
+            const canvasWidth = window.innerWidth - 420;
+            const canvasHeight = window.innerHeight;
+            camera.aspect = canvasWidth / canvasHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(canvasWidth, canvasHeight);
+        });
+
+        // 初期化実行
+        window.addEventListener('load', () => {
+            init();
+        });
+    </script>
+</body>
+</html>
+

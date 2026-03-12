@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>衛星軌道追跡システム - 3D可視化（スタンドアロン版）</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans JP', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #ffffff;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+        }
+        #container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: row;
+            position: relative;
+        }
+        #canvas-container {
+            flex: 1;
+            width: calc(100% - 380px);
+            height: 100%;
+            position: relative;
+        }
+        
+        /* サイドバー */
+        #sidebar {
+            width: 380px;
+            min-width: 380px;
+            max-width: 380px;
+            height: 100%;
+            background: rgba(10, 14, 39, 0.98);
+            border-right: 2px solid #3b82f6;
+            overflow-y: auto;
+            overflow-x: hidden;
+            z-index: 1000;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        #sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+        #sidebar::-webkit-scrollbar-track {
+            background: rgba(30, 41, 59, 0.5);
+        }
+        #sidebar::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+            border-radius: 4px;
+        }
+        
+        /* ヘッダー（サイドバー内） */
+        #header {
+            background: rgba(59, 130, 246, 0.1);
+            padding: 20px;
+            border-bottom: 2px solid #3b82f6;
+        }
+        #header h1 {
+            font-size: 1.3rem;
+            color: #60a5fa;
+            margin-bottom: 10px;
+        }
+        .status-badge {
+            background: #10b981;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        /* 情報パネル */
+        #info-panel {
+            padding: 20px;
+        }
+        .sidebar-section {
+            padding: 20px;
+            border-bottom: 1px solid rgba(55, 65, 81, 0.5);
+        }
+        .sidebar-section:last-child {
+            border-bottom: none;
+        }
+        .section-title {
+            color: #60a5fa;
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .status-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(59, 130, 246, 0.08);
+            border-radius: 6px;
+            border-left: 3px solid #3b82f6;
+        }
+        .label {
+            color: #9ca3af;
+            font-size: 0.8rem;
+            margin-bottom: 4px;
+        }
+        .value {
+            color: #ffffff;
+            font-size: 1.05rem;
+            font-weight: 600;
+        }
+        button {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin: 5px 0;
+            width: 100%;
+            transition: all 0.3s;
+            box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+        }
+        button:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(59, 130, 246, 0.5);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(55, 65, 81, 0.3);
+        }
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        .info-label {
+            color: #9ca3af;
+            font-size: 0.8rem;
+        }
+        .info-value {
+            color: #ffffff;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        /* ローディング */
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 2000;
+        }
+        .loading-spinner {
+            border: 4px solid rgba(59, 130, 246, 0.3);
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loading-text {
+            font-size: 1.2rem;
+            color: #60a5fa;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <!-- サイドバー -->
+        <div id="sidebar">
+            <!-- ヘッダー -->
+            <div id="header">
+                <h1>🛰️ 衛星軌道追跡システム</h1>
+                <span class="status-badge">✓ 稼働中</span>
+            </div>
+            
+            <!-- ISS現在位置 -->
+            <div class="sidebar-section">
+                <div class="section-title">🌍 ISS 現在位置</div>
+                <div class="status-item">
+                    <div class="label">現在時刻（UTC）</div>
+                    <div class="value" id="current-time">--</div>
+                </div>
+                <div class="status-item">
+                    <div class="label">緯度</div>
+                    <div class="value" id="latitude">--</div>
+                </div>
+                <div class="status-item">
+                    <div class="label">経度</div>
+                    <div class="value" id="longitude">--</div>
+                </div>
+                <div class="status-item">
+                    <div class="label">高度</div>
+                    <div class="value" id="altitude">--</div>
+                </div>
+            </div>
+            
+            <!-- 軌道情報 -->
+            <div class="sidebar-section">
+                <div class="section-title">📊 軌道情報</div>
+                <div class="info-item">
+                    <span class="info-label">軌道周期</span>
+                    <span class="info-value">92.9分</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">軌道傾斜角</span>
+                    <span class="info-value">51.6°</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">速度</span>
+                    <span class="info-value">7.66 km/s</span>
+                </div>
+            </div>
+            
+            <!-- 操作 -->
+            <div class="sidebar-section">
+                <div class="section-title">🎮 操作</div>
+                <button onclick="toggleAnimation()">⏯️ アニメーション切替</button>
+                <button onclick="resetView()">🔄 視点リセット</button>
+                <button onclick="toggleOrbit()">👁️ 軌道表示切替</button>
+                <button onclick="changeSpeed(0.5)">🐢 速度: 0.5x</button>
+                <button onclick="changeSpeed(1)">▶️ 速度: 1x</button>
+                <button onclick="changeSpeed(2)">⏩ 速度: 2x</button>
+            </div>
+            
+            <!-- システム情報 -->
+            <div class="sidebar-section">
+                <div class="section-title">📈 システム情報</div>
+                <div class="info-item">
+                    <span class="info-label">開発者</span>
+                    <span class="info-value">小川清志</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">計算方法</span>
+                    <span class="info-value">Kepler軌道要素</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">3D描画</span>
+                    <span class="info-value">Three.js + WebGL</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">座標系</span>
+                    <span class="info-value">ECI</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">予測期間</span>
+                    <span class="info-value">24時間 (289点)</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">FPS</span>
+                    <span class="info-value"><span id="fps">60</span></span>
+                </div>
+            </div>
+            
+            <!-- 説明 -->
+            <div class="sidebar-section">
+                <div class="section-title">💡 技術的特徴</div>
+                <div style="color: #d1d5db; font-size: 0.8rem; line-height: 1.6;">
+                    <strong style="color: #60a5fa;">Kepler軌道要素</strong>による高精度計算<br>
+                    • Kepler方程式の数値解法（ニュートン法）<br>
+                    • ECI座標系 → 地理座標変換<br>
+                    • Three.js + WebGL（GPU加速）<br>
+                    • リアルタイムアニメーション（60 FPS）<br>
+                    <br>
+                    <strong style="color: #10b981;">実装時間:</strong> 3時間<br>
+                    <strong style="color: #a78bfa;">Fusicでの応用:</strong><br>
+                    宇宙ビジネス向けクラウド環境構築
+                </div>
+            </div>
+        </div>
+        
+        <!-- 3Dキャンバス -->
+        <div id="canvas-container"></div>
+        
+        <!-- ローディング -->
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">軌道計算中...</div>
+        </div>
+    </div>
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <script>
+        // グローバル変数
+        let scene, camera, renderer, earth, satellite, orbitLine;
+        let isAnimating = true;
+        let showOrbit = true;
+        let orbitData = [];
+        let currentIndex = 0;
+        let animationSpeed = 1;
+        let lastTime = Date.now();
+        let frameCount = 0;
+        let fps = 60;
+
+        // 地球の定数
+        const EARTH_RADIUS = 6371; // km
+        const MU = 398600.4418; // km^3/s^2
+
+        // ========================================
+        // 軌道計算エンジン（JavaScript版）
+        // ========================================
+
+        class OrbitCalculator {
+            constructor() {
+                this.earthRadius = EARTH_RADIUS;
+                this.mu = MU;
+            }
+
+            // Kepler方程式を解く（ニュートン法）
+            solveKepler(M, e, tol = 1e-8, maxIter = 100) {
+                let E = M; // 初期値
+                
+                for (let i = 0; i < maxIter; i++) {
+                    const f = E - e * Math.sin(E) - M;
+                    const fPrime = 1 - e * Math.cos(E);
+                    const ENew = E - f / fPrime;
+                    
+                    if (Math.abs(ENew - E) < tol) {
+                        return ENew;
+                    }
+                    
+                    E = ENew;
+                }
+                
+                return E;
+            }
+
+            // 位置を計算（ECI座標系）
+            calculatePosition(a, e, inc, raan, argPerigee, trueAnomaly) {
+                // ラジアンに変換
+                const incRad = inc * Math.PI / 180;
+                const omegaRad = raan * Math.PI / 180;
+                const wRad = argPerigee * Math.PI / 180;
+                const nuRad = trueAnomaly * Math.PI / 180;
+                
+                // 軌道面座標系での位置
+                const r = a * (1 - e * e) / (1 + e * Math.cos(nuRad));
+                const xOrb = r * Math.cos(nuRad);
+                const yOrb = r * Math.sin(nuRad);
+                
+                // ECI座標系への変換
+                const x = (Math.cos(omegaRad) * Math.cos(wRad) - Math.sin(omegaRad) * Math.sin(wRad) * Math.cos(incRad)) * xOrb +
+                          (-Math.cos(omegaRad) * Math.sin(wRad) - Math.sin(omegaRad) * Math.cos(wRad) * Math.cos(incRad)) * yOrb;
+                          
+                const y = (Math.sin(omegaRad) * Math.cos(wRad) + Math.cos(omegaRad) * Math.sin(wRad) * Math.cos(incRad)) * xOrb +
+                          (-Math.sin(omegaRad) * Math.sin(wRad) + Math.cos(omegaRad) * Math.cos(wRad) * Math.cos(incRad)) * yOrb;
+                          
+                const z = (Math.sin(wRad) * Math.sin(incRad)) * xOrb + (Math.cos(wRad) * Math.sin(incRad)) * yOrb;
+                
+                return { x, y, z };
+            }
+
+            // ECI → 地理座標変換
+            eciToGeographic(x, y, z, timestamp) {
+                const jd = this.julianDate(timestamp);
+                const gmst = this.greenwichMeanSiderealTime(jd);
+                
+                // ECEF座標への変換
+                const xEcef = x * Math.cos(gmst) + y * Math.sin(gmst);
+                const yEcef = -x * Math.sin(gmst) + y * Math.cos(gmst);
+                const zEcef = z;
+                
+                // 地理座標
+                const lon = Math.atan2(yEcef, xEcef) * 180 / Math.PI;
+                const r = Math.sqrt(xEcef * xEcef + yEcef * yEcef + zEcef * zEcef);
+                const lat = Math.asin(zEcef / r) * 180 / Math.PI;
+                const alt = r - this.earthRadius;
+                
+                return { lat, lon, alt };
+            }
+
+            // ユリウス日を計算
+            julianDate(date) {
+                const a = Math.floor((14 - date.getUTCMonth() - 1) / 12);
+                const y = date.getUTCFullYear() + 4800 - a;
+                const m = date.getUTCMonth() + 1 + 12 * a - 3;
+                
+                const jdn = date.getUTCDate() + Math.floor((153 * m + 2) / 5) + 365 * y + 
+                           Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) - 32045;
+                const jd = jdn + (date.getUTCHours() - 12) / 24 + date.getUTCMinutes() / 1440 + 
+                          date.getUTCSeconds() / 86400;
+                
+                return jd;
+            }
+
+            // グリニッジ平均恒星時（GMST）を計算
+            greenwichMeanSiderealTime(jd) {
+                const t = (jd - 2451545.0) / 36525.0;
+                let gmstDeg = 280.46061837 + 360.98564736629 * (jd - 2451545.0) + 
+                             0.000387933 * t * t - t * t * t / 38710000.0;
+                gmstDeg = gmstDeg % 360.0;
+                return gmstDeg * Math.PI / 180;
+            }
+
+            // 軌道を予測
+            propagateOrbit(a, e, inc, raan, argPerigee, meanAnomaly0, epoch, durationHours, stepMinutes) {
+                const n = Math.sqrt(this.mu / (a * a * a)); // 平均運動（rad/s）
+                const numSteps = Math.floor(durationHours * 60 / stepMinutes);
+                const orbitData = [];
+                
+                for (let i = 0; i <= numSteps; i++) {
+                    const deltaTime = i * stepMinutes * 60; // seconds
+                    const currentTime = new Date(epoch.getTime() + deltaTime * 1000);
+                    
+                    // 平均近点角の更新
+                    const meanAnomaly = (meanAnomaly0 * Math.PI / 180 + n * deltaTime) % (2 * Math.PI);
+                    
+                    // 離心近点角を解く
+                    const E = this.solveKepler(meanAnomaly, e);
+                    
+                    // 真近点角を計算
+                    const trueAnomaly = 2 * Math.atan2(
+                        Math.sqrt(1 + e) * Math.sin(E / 2),
+                        Math.sqrt(1 - e) * Math.cos(E / 2)
+                    );
+                    const trueAnomalyDeg = trueAnomaly * 180 / Math.PI;
+                    
+                    // 位置を計算
+                    const pos = this.calculatePosition(a, e, inc, raan, argPerigee, trueAnomalyDeg);
+                    
+                    // 地理座標に変換
+                    const geo = this.eciToGeographic(pos.x, pos.y, pos.z, currentTime);
+                    
+                    orbitData.push({
+                        timestamp: currentTime,
+                        position_eci: pos,
+                        geographic: geo
+                    });
+                }
+                
+                return orbitData;
+            }
+        }
+
+        // ========================================
+        // ISS軌道計算
+        // ========================================
+
+        function calculateISSOrbit() {
+            const calculator = new OrbitCalculator();
+            
+            // ISS軌道要素（近似値）
+            const semiMajorAxis = EARTH_RADIUS + 420; // km
+            const eccentricity = 0.0003;
+            const inclination = 51.6; // degrees
+            const raan = 0.0;
+            const argPerigee = 0.0;
+            const meanAnomaly = 0.0;
+            
+            const epoch = new Date();
+            
+            // 24時間軌道予測
+            return calculator.propagateOrbit(
+                semiMajorAxis,
+                eccentricity,
+                inclination,
+                raan,
+                argPerigee,
+                meanAnomaly,
+                epoch,
+                24.0, // hours
+                5.0   // minutes
+            );
+        }
+
+        // ========================================
+        // 3D可視化
+        // ========================================
+
+        function init() {
+            console.log('🚀 衛星軌道追跡システム 初期化開始');
+            
+            // 軌道データ計算
+            console.log('⏳ 軌道計算中...');
+            orbitData = calculateISSOrbit();
+            console.log(`✅ 軌道計算完了: ${orbitData.length}ポイント`);
+            
+            // シーン作成
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0a0e27);
+            scene.fog = new THREE.Fog(0x0a0e27, 10000, 50000);
+
+            // カメラ
+            const canvasWidth = window.innerWidth - 380; // サイドバー幅を引く
+            const canvasHeight = window.innerHeight;
+            camera = new THREE.PerspectiveCamera(
+                45,
+                canvasWidth / canvasHeight,
+                0.1,
+                50000
+            );
+            camera.position.set(15000, 10000, 15000);
+            camera.lookAt(0, 0, 0);
+
+            // レンダラー
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(canvasWidth, canvasHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            // 地球を作成
+            const earthGeometry = new THREE.SphereGeometry(EARTH_RADIUS, 64, 64);
+            const earthMaterial = new THREE.MeshPhongMaterial({
+                color: 0x2563eb,
+                emissive: 0x1e3a8a,
+                emissiveIntensity: 0.3,
+                shininess: 20,
+                flatShading: false
+            });
+            earth = new THREE.Mesh(earthGeometry, earthMaterial);
+            scene.add(earth);
+
+            // 地球の赤道線
+            const equatorGeometry = new THREE.CircleGeometry(EARTH_RADIUS + 10, 128);
+            const equatorMaterial = new THREE.LineBasicMaterial({ 
+                color: 0x10b981, 
+                opacity: 0.3, 
+                transparent: true,
+                linewidth: 2
+            });
+            const equatorEdges = new THREE.EdgesGeometry(equatorGeometry);
+            const equatorLine = new THREE.LineSegments(equatorEdges, equatorMaterial);
+            equatorLine.rotation.x = Math.PI / 2;
+            scene.add(equatorLine);
+
+            // 衛星（ISS）を作成
+            const satelliteGeometry = new THREE.SphereGeometry(100, 16, 16);
+            const satelliteMaterial = new THREE.MeshStandardMaterial({ 
+                color: 0xff6b6b,
+                emissive: 0xff0000,
+                emissiveIntensity: 0.8,
+                metalness: 0.5,
+                roughness: 0.3
+            });
+            satellite = new THREE.Mesh(satelliteGeometry, satelliteMaterial);
+            
+            // 衛星の光の輪
+            const glowGeometry = new THREE.SphereGeometry(150, 16, 16);
+            const glowMaterial = new THREE.MeshBasicMaterial({
+                color: 0xff6b6b,
+                transparent: true,
+                opacity: 0.3
+            });
+            const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+            satellite.add(glow);
+            
+            scene.add(satellite);
+
+            // 軌道線を描画
+            drawOrbitLine();
+
+            // ライト
+            const ambientLight = new THREE.AmbientLight(0x404040, 2);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
+            directionalLight.position.set(10000, 5000, 5000);
+            scene.add(directionalLight);
+
+            // 星空
+            const starsGeometry = new THREE.BufferGeometry();
+            const starsMaterial = new THREE.PointsMaterial({ 
+                color: 0xffffff, 
+                size: 2,
+                sizeAttenuation: false
+            });
+            
+            const starsVertices = [];
+            for (let i = 0; i < 1000; i++) {
+                const x = (Math.random() - 0.5) * 50000;
+                const y = (Math.random() - 0.5) * 50000;
+                const z = (Math.random() - 0.5) * 50000;
+                starsVertices.push(x, y, z);
+            }
+            
+            starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starsVertices, 3));
+            const stars = new THREE.Points(starsGeometry, starsMaterial);
+            scene.add(stars);
+
+            // アニメーション開始
+            animate();
+
+            // UI表示
+            document.getElementById('loading').style.display = 'none';
+            
+            console.log('✅ 初期化完了');
+        }
+
+        // 軌道線を描画
+        function drawOrbitLine() {
+            if (orbitLine) {
+                scene.remove(orbitLine);
+            }
+
+            const points = orbitData.map(point => {
+                return new THREE.Vector3(
+                    point.position_eci.x,
+                    point.position_eci.z,
+                    -point.position_eci.y
+                );
+            });
+
+            const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
+            const lineMaterial = new THREE.LineBasicMaterial({ 
+                color: 0x60a5fa, 
+                opacity: 0.6, 
+                transparent: true,
+                linewidth: 2
+            });
+            orbitLine = new THREE.Line(lineGeometry, lineMaterial);
+            scene.add(orbitLine);
+        }
+
+        // アニメーション
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (isAnimating && orbitData.length > 0) {
+                const point = orbitData[currentIndex];
+                
+                // 衛星位置を更新
+                satellite.position.set(
+                    point.position_eci.x,
+                    point.position_eci.z,
+                    -point.position_eci.y
+                );
+
+                // 情報パネルを更新
+                updateInfoPanel(point);
+
+                // 次のポイントへ（速度調整）
+                currentIndex = Math.floor(currentIndex + animationSpeed) % orbitData.length;
+            }
+
+            // 地球をゆっくり回転
+            earth.rotation.y += 0.0005;
+
+            // カメラを軌道に沿って移動
+            const time = Date.now() * 0.00005;
+            camera.position.x = Math.cos(time) * 15000;
+            camera.position.z = Math.sin(time) * 15000;
+            camera.lookAt(0, 0, 0);
+
+            renderer.render(scene, camera);
+            
+            // FPS計算
+            frameCount++;
+            const currentTime = Date.now();
+            if (currentTime - lastTime >= 1000) {
+                fps = Math.round(frameCount * 1000 / (currentTime - lastTime));
+                document.getElementById('fps').textContent = fps;
+                frameCount = 0;
+                lastTime = currentTime;
+            }
+        }
+
+        // 情報パネル更新
+        function updateInfoPanel(point) {
+            const time = point.timestamp;
+            document.getElementById('current-time').textContent = 
+                time.toISOString().substring(0, 19).replace('T', ' ');
+            document.getElementById('latitude').textContent = 
+                `${point.geographic.lat.toFixed(2)}°`;
+            document.getElementById('longitude').textContent = 
+                `${point.geographic.lon.toFixed(2)}°`;
+            document.getElementById('altitude').textContent = 
+                `${point.geographic.alt.toFixed(1)} km`;
+        }
+
+        // 操作関数
+        function toggleAnimation() {
+            isAnimating = !isAnimating;
+        }
+
+        function resetView() {
+            camera.position.set(15000, 10000, 15000);
+            camera.lookAt(0, 0, 0);
+        }
+
+        function toggleOrbit() {
+            showOrbit = !showOrbit;
+            if (orbitLine) {
+                orbitLine.visible = showOrbit;
+            }
+        }
+
+        function changeSpeed(speed) {
+            animationSpeed = speed;
+        }
+
+        // ウィンドウリサイズ対応
+        window.addEventListener('resize', () => {
+            const canvasWidth = window.innerWidth - 380; // サイドバー幅を引く
+            const canvasHeight = window.innerHeight;
+            camera.aspect = canvasWidth / canvasHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(canvasWidth, canvasHeight);
+        });
+
+        // 初期化実行
+        window.addEventListener('load', () => {
+            init();
+        });
+    </script>
+</body>
+</html>
+

@@ -21,6 +21,7 @@ warnings.filterwarnings(
 logging.getLogger("kafka").setLevel(logging.ERROR)  # Kafkaの警告を抑制
 logging.getLogger("opentelemetry").setLevel(logging.ERROR)  # OpenTelemetryの警告を抑制
 
+import asyncio
 import os
 import time
 import uuid
@@ -38,6 +39,10 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 # コアモジュールのインポート
 from core.config import settings
+
+# 本番環境: 起動時に必須設定を検証
+if settings.is_production:
+    settings.validate_production()
 from core.database import get_db, init_db
 from core.error_handler import (
     general_exception_handler,
@@ -85,6 +90,7 @@ except ImportError as e:
 
 from ai_dev.routes import router as ai_dev_router
 from cloud_infra.routes import router as cloud_infra_router
+from infra_builder.routes import router as infra_builder_router
 from generative_ai.routes import router as generative_ai_router
 from idop.routes import router as idop_router
 
@@ -100,7 +106,6 @@ from monitoring.tracing import tracing_handler
 # セキュリティモジュールのインポート
 from security.routes import router as security_router
 from security.zero_trust import zero_trust_policy
-from security_center.routes import router as security_center_router
 
 # インクルーシブ雇用AIプラットフォーム（障害者雇用マッチング + アクセシビリティ + UX評価）
 try:
@@ -126,11 +131,37 @@ from global_enterprise.routes import router as global_enterprise_router
 # Level 4: インダストリーリーダーモジュール
 from industry_leader.routes import router as industry_leader_router
 
+# AIガバナンス・ワークフロー（実行可能実装）
+from governance.routes import router as governance_router
+
+# MCP / A2A プロトコル（実行可能実装）
+from mcp_a2a.routes import router as mcp_a2a_router
+
 # Level 2: プラットフォームモジュール
 from platform_level.routes import router as platform_router
 
 # 統合ビジネスプラットフォーム（業務効率化・人材・顧客対応の3システム統合）
 from unified_business_platform.routes import router as unified_business_router
+
+# ビジネス領域（製造・IoT、金融・FinTech、エネルギー、医療、宇宙、交通）
+from manufacturing.routes import router as manufacturing_router
+from fintech.routes import router as fintech_router
+from energy.routes import router as energy_router
+from medical.routes import router as medical_router
+from space.routes import router as space_router
+from traffic.routes import router as traffic_router
+from personal_accounting.routes import router as personal_accounting_router
+
+# ERP（統合基幹業務システム）・レガシー移行
+from erp.routes import router as erp_router
+from legacy_migration.routes import router as legacy_migration_router
+
+# 追加業種（公共・小売・教育・法務・サプライチェーン）
+from public_sector.routes import router as public_sector_router
+from retail.routes import router as retail_router
+from education.routes import router as education_router
+from legal.routes import router as legal_router
+from supply_chain.routes import router as supply_chain_router
 
 # GraphQL（strawberry-graphql が必要。graphql_api は graphql パッケージとの名前衝突回避）
 try:
@@ -176,12 +207,19 @@ except Exception as e:
 async def lifespan(app: FastAPI):
     """アプリケーションのライフサイクル管理"""
     # 起動時の処理
-    # データベーステーブルの作成（開発環境のみ）
-    if settings.DEBUG:
+    # データベーステーブルの作成（本番・開発ともに実行）
+    try:
+        init_db()
+    except Exception as e:
+        print(f"Warning: Database initialization failed: {e}")
+
+    # 一元化サンプルデータの投入（デモ用・DEBUG かつ 非本番 のときのみ）
+    if settings.DEBUG and not settings.is_production:
         try:
-            init_db()
+            from core.seed_demo import init_unified_demo_data
+            init_unified_demo_data()
         except Exception as e:
-            print(f"Warning: Database initialization failed: {e}")
+            print(f"Warning: Demo seed data initialization failed: {e}")
 
     # 登録ルートの確認（Chaos/GraphQL のデバッグ用）
     def _get_paths(routes, prefix=""):
@@ -213,19 +251,39 @@ async def lifespan(app: FastAPI):
     """
     )
 
+    # アウトボックスポーラー（イベントストリーミング利用時）
+    _outbox_task = None
+    if EVENT_STREAMING_AVAILABLE and event_streaming_router:
+        try:
+            from event_streaming.outbox_poller import poll_and_publish_outbox
+            from event_streaming.kafka_client import KafkaClient
+            _outbox_task = asyncio.create_task(
+                poll_and_publish_outbox(KafkaClient(), interval_sec=10.0)
+            )
+        except Exception as e:
+            import logging
+            logging.getLogger(__name__).warning(f"Outbox poller not started: {e}")
+
     yield
 
     # 終了時の処理
+    if _outbox_task and not _outbox_task.done():
+        _outbox_task.cancel()
     print("Shutting down UEP v5.0...")
 
 
+# 本番環境では API ドキュメントを無効化（セキュリティ）
+_docs_url = None if settings.is_production else "/docs"
+_redoc_url = None if settings.is_production else "/redoc"
+_openapi_url = None if settings.is_production else "/openapi.json"
+
 app = FastAPI(
     title=settings.APP_NAME,
-    description="次世代エンタープライズ統合プラットフォーム v5.0 - エンタープライズレベル実装",
+    description="次世代エンタープライズ統合プラットフォーム v5.0 - 本番運用対応",
     version=settings.APP_VERSION,
-    docs_url="/docs",
-    redoc_url="/redoc",
-    openapi_url="/openapi.json",  # 開発環境では常に有効
+    docs_url=_docs_url,
+    redoc_url=_redoc_url,
+    openapi_url=_openapi_url,
     lifespan=lifespan,
 )
 
@@ -236,6 +294,9 @@ _chaos_instance_id = f"{time.time():.0f}-{_rand.randint(1000,9999)}"
 
 
 async def _chaos_ok_handler():
+    if settings.is_production:
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=403, content={"detail": "Chaos Engineering is disabled in production"})
     return {
         "status": "ok",
         "instance_id": _chaos_instance_id,
@@ -244,6 +305,9 @@ async def _chaos_ok_handler():
 
 
 async def _chaos_status_handler():
+    if settings.is_production:
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=403, content={"detail": "Chaos Engineering is disabled in production"})
     return {
         "enabled": True,
         "endpoints": {
@@ -306,8 +370,9 @@ app.include_router(security_router)
 # Phase 2: コアシステム層のルーターを追加
 app.include_router(mlops_router)
 app.include_router(generative_ai_router)
-app.include_router(security_center_router)
+# security_defense_platform は個別システムのため UEP 起動時には含めない
 app.include_router(cloud_infra_router)
+app.include_router(infra_builder_router)
 app.include_router(idop_router)
 app.include_router(ai_dev_router)
 if INCLUSIVE_WORK_AVAILABLE and inclusive_work_router:
@@ -315,15 +380,31 @@ if INCLUSIVE_WORK_AVAILABLE and inclusive_work_router:
 app.include_router(platform_router)
 app.include_router(ecosystem_router)
 app.include_router(industry_leader_router)
+app.include_router(governance_router)
+app.include_router(mcp_a2a_router)
 app.include_router(global_enterprise_router)
 app.include_router(unified_business_router)
-# chaos_router は include するが、確実に動作するよう /api/v1/chaos/status は上記で直接定義
-try:
-    app.include_router(chaos_router)
-except Exception as e:
-    import logging
-
-    logging.getLogger(__name__).warning(f"Chaos router not included: {e}")
+app.include_router(manufacturing_router)
+app.include_router(fintech_router)
+app.include_router(energy_router)
+app.include_router(medical_router)
+app.include_router(space_router)
+app.include_router(traffic_router)
+app.include_router(personal_accounting_router)
+app.include_router(erp_router)
+app.include_router(legacy_migration_router)
+app.include_router(public_sector_router)
+app.include_router(retail_router)
+app.include_router(education_router)
+app.include_router(legal_router)
+app.include_router(supply_chain_router)
+# Chaos Engineering: 本番環境では無効化（セキュリティ）
+if not settings.is_production:
+    try:
+        app.include_router(chaos_router)
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).warning(f"Chaos router not included: {e}")
 if GRAPHQL_AVAILABLE and graphql_router:
     app.include_router(graphql_router, prefix="/graphql")
 else:
@@ -631,24 +712,31 @@ async def list_users(current_user: Dict[str, Any] = Depends(get_current_active_u
     }
 
 
+def _can_bind_port(host: str, port: int) -> bool:
+    """ポートにバインド可能か事前チェック（Windows予約ポート回避）"""
+    import socket
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.bind((host, port))
+            return True
+    except OSError:
+        return False
+
+
 if __name__ == "__main__":
     # reload=True だと子プロセスでルートが正しく読み込まれない場合があるため、app オブジェクトを直接渡す
-    # reload が必要な場合は reload=True に戻し、起動後にファイル変更で自動再起動される
-    if settings.DEBUG:
-        uvicorn.run(
-            app,  # オブジェクトを直接渡す（reload 時は "main:app" が必要だが、ルート未登録の不具合回避のため app を使用）
-            host=settings.HOST,
-            port=settings.PORT,
-            log_level=settings.LOG_LEVEL.lower(),
-            reload=False,  # True にすると /chaos-ok 等が 404 になる不具合あり
-            access_log=True,
-        )
-    else:
-        uvicorn.run(
-            app,
-            host=settings.HOST,
-            port=settings.PORT,
-            log_level=settings.LOG_LEVEL.lower(),
-            reload=False,
-            access_log=True,
-        )
+    port = int(os.environ.get("PORT", settings.PORT))
+    # Windows: ポート8000が予約範囲(7938-8037)に含まれる場合、事前に8080へ切り替え
+    if port == 8000 and not _can_bind_port("0.0.0.0", 8000):
+        port = 8080
+        os.environ["PORT"] = str(port)
+        print(f"\n*** ポート8000が使用不可のため、ポート{port}で起動します ***")
+        print(f"*** フロントエンドの .env で REACT_APP_API_URL=http://localhost:{port} に変更してください ***\n")
+    uvicorn.run(
+        app,
+        host=settings.HOST,
+        port=port,
+        log_level=settings.LOG_LEVEL.lower(),
+        reload=False,  # True にすると /chaos-ok 等が 404 になる不具合あり
+        access_log=True,
+    )

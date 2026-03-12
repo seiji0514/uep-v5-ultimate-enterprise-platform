@@ -56,3 +56,28 @@ class QueryCreate(BaseModel):
 
     query_type: str
     query_params: Dict[str, Any]
+
+
+class SagaStepCreate(BaseModel):
+    """Sagaステップ作成モデル"""
+
+    step_id: Optional[str] = None
+    action: str
+    compensate_action: str
+    payload: Dict[str, Any] = {}
+
+
+class SagaCreate(BaseModel):
+    """Saga作成モデル"""
+
+    saga_type: str
+    steps: List[SagaStepCreate]
+
+
+class OutboxCreate(BaseModel):
+    """アウトボックス作成モデル"""
+
+    aggregate_type: str
+    aggregate_id: str
+    event_type: str
+    payload: Dict[str, Any] = {}

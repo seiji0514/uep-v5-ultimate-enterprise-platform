@@ -23,6 +23,7 @@ wheels/
 .installed.cfg
 *.egg
 venv/
+venv_wsl/
 env/
 ENV/
 
@@ -49,6 +50,9 @@ logs/
 *.db
 *.sqlite
 *.sqlite3
+
+# 本番ユーザー永続化（認証情報を含むため）
+backend/data/production_users.json
 
 # OS
 .DS_Store

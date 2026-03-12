@@ -30,7 +30,7 @@ if not exist "frontend" (
     echo.
     echo フロントエンドを作成しますか？ (Y/N)
     set /p create_frontend=
-    if /i "!create_frontend!" EQU "Y" (
+    if /i "!create_frontend!"=="Y" (
         echo フロントエンドを作成中...
         if not exist "frontend" mkdir frontend
         cd /d "%~dp0frontend"
@@ -77,7 +77,7 @@ if errorlevel 1 (
     echo [エラー] Node.jsがインストールされていません
     echo ==========================================
     echo Node.jsをインストールしてください
-    echo URL: https://nodejs.org/
+    echo ダウンロード: https^://nodejs.org/
     echo.
     echo インストール後、このスクリプトを再実行してください
     echo.
@@ -143,12 +143,23 @@ if not exist "node_modules" (
     echo 依存パッケージは既にインストールされています
 )
 
+REM .envが無ければ.exampleから作成（REACT_APP_EOH_URL等を含む）
+if not exist ".env" (
+    if exist ".env.example" (
+        echo .env を作成中（.env.example からコピー）...
+        copy ".env.example" ".env"
+    )
+)
+
+REM UEP→EOHリンク用（.envに無い場合のフォールバック）
+if not defined REACT_APP_EOH_URL set REACT_APP_EOH_URL=http://localhost:3020
+
 REM フロントエンドの起動
 echo.
 echo ==========================================
 echo フロントエンドを起動中...
 echo ==========================================
-echo URL: http://localhost:3000
+echo ブラウザで http^://localhost:3000 を開いてください
 echo.
 echo 停止するには: Ctrl+C を押してください
 echo ==========================================

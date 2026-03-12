@@ -1,13 +1,15 @@
 """
-統合セキュリティコマンドセンターAPIエンドポイント
+統合セキュリティ・防衛プラットフォーム API
+セキュリティコマンドセンター + サイバー対策（IDS/IPS, EDR, SIEM, 脅威インテリジェンス, コンプライアンス）
+補強スキル: eBPF（Falco Webhook連携）
 """
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Request, status
 
 from auth.jwt_auth import get_current_active_user
-from auth.rbac import require_role
+from auth.rbac import require_permission
 
 from .incident_response import (
     Incident,
@@ -19,11 +21,16 @@ from .models import IncidentCreate, IncidentUpdate, RiskCreate, SecurityEventCre
 from .monitoring import SecurityEvent, ThreatLevel, security_monitor
 from .risk_analysis import Risk, RiskLevel, risk_analyzer
 
-router = APIRouter(prefix="/api/v1/security-center", tags=["セキュリティコマンドセンター"])
+router = APIRouter(prefix="/api/v1/security-defense-platform", tags=["統合セキュリティ・防衛プラットフォーム"])
+
+# サイバー対策（IDS/IPS, EDR, SIEM, 脅威インテリジェンス, コンプライアンス）を統合
+from cyber_defense.routes import router as cyber_defense_router
+
+router.include_router(cyber_defense_router, prefix="/cyber")
 
 
 @router.get("/events", response_model=List[SecurityEvent])
-@require_role("admin")
+@require_permission("read")
 async def list_security_events(
     event_type: Optional[str] = None,
     threat_level: Optional[str] = None,
@@ -41,7 +48,7 @@ async def list_security_events(
 @router.post(
     "/events", response_model=SecurityEvent, status_code=status.HTTP_201_CREATED
 )
-@require_role("admin")
+@require_permission("read")
 async def create_security_event(
     event_data: SecurityEventCreate,
     current_user: Dict[str, Any] = Depends(get_current_active_user),
@@ -60,7 +67,7 @@ async def create_security_event(
 
 
 @router.get("/alerts")
-@require_role("admin")
+@require_permission("read")
 async def list_alerts(
     acknowledged: Optional[bool] = None,
     current_user: Dict[str, Any] = Depends(get_current_active_user),
@@ -71,7 +78,7 @@ async def list_alerts(
 
 
 @router.post("/alerts/{alert_id}/acknowledge")
-@require_role("admin")
+@require_permission("read")
 async def acknowledge_alert(
     alert_id: str, current_user: Dict[str, Any] = Depends(get_current_active_user)
 ):
@@ -86,7 +93,7 @@ async def acknowledge_alert(
 
 
 @router.get("/incidents", response_model=List[Incident])
-@require_role("admin")
+@require_permission("read")
 async def list_incidents(
     severity: Optional[str] = None,
     status: Optional[str] = None,
@@ -102,7 +109,7 @@ async def list_incidents(
 
 
 @router.post("/incidents", response_model=Incident, status_code=status.HTTP_201_CREATED)
-@require_role("admin")
+@require_permission("read")
 async def create_incident(
     incident_data: IncidentCreate,
     current_user: Dict[str, Any] = Depends(get_current_active_user),
@@ -120,7 +127,7 @@ async def create_incident(
 
 
 @router.put("/incidents/{incident_id}", response_model=Incident)
-@require_role("admin")
+@require_permission("read")
 async def update_incident(
     incident_id: str,
     incident_data: IncidentUpdate,
@@ -144,7 +151,7 @@ async def update_incident(
 
 
 @router.get("/risks", response_model=List[Risk])
-@require_role("admin")
+@require_permission("read")
 async def list_risks(
     category: Optional[str] = None,
     risk_level: Optional[str] = None,
@@ -157,7 +164,7 @@ async def list_risks(
 
 
 @router.post("/risks", response_model=Risk, status_code=status.HTTP_201_CREATED)
-@require_role("admin")
+@require_permission("read")
 async def register_risk(
     risk_data: RiskCreate,
     current_user: Dict[str, Any] = Depends(get_current_active_user),
@@ -175,10 +182,36 @@ async def register_risk(
 
 
 @router.get("/security-posture")
-@require_role("admin")
+@require_permission("read")
 async def get_security_posture(
     current_user: Dict[str, Any] = Depends(get_current_active_user)
 ):
     """セキュリティ態勢を取得"""
     posture = risk_analyzer.analyze_security_posture()
     return posture
+
+
+# Falco Webhook（認証不要・内部ネットワーク用）
+@router.post("/falco/alerts", status_code=status.HTTP_202_ACCEPTED)
+async def falco_webhook(
+    request: Request,
+    x_falco_signature: Optional[str] = Header(None),
+):
+    """Falco eBPF アラート受信（Webhook連携）"""
+    body = await request.json()
+    # Falco 出力形式: { "output": "...", "priority": "...", "rule": "...", ... }
+    output = body.get("output", "")
+    priority = body.get("priority", "WARNING")
+    rule = body.get("rule", "unknown")
+    # セキュリティモニターに登録
+    threat_map = {"Critical": "critical", "Error": "high", "Warning": "medium"}
+    threat_level = threat_map.get(priority, "medium")
+    security_monitor.log_event(
+        event_type=f"falco:{rule}",
+        threat_level=ThreatLevel(threat_level),
+        source="falco",
+        target="uep-runtime",
+        description=output,
+        metadata={"raw": body},
+    )
+    return {"received": True, "rule": rule}

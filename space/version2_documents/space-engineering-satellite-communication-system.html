@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 宇宙工学・衛星通信システム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .system-overview {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .overview-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .overview-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .overview-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .overview-description {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .control-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .control-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .control-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(103, 126, 234, 0.4);
+        }
+
+        .visualization-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .visualization-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .visualization-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+        }
+
+        .visualization-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #495057;
+        }
+
+        .satellite-orbit {
+            height: 100px;
+            background: linear-gradient(90deg, 
+                hsl(200, 70%, 60%), 
+                hsl(220, 70%, 60%), 
+                hsl(240, 70%, 60%), 
+                hsl(260, 70%, 60%));
+            border-radius: 5px;
+            margin-bottom: 10px;
+            animation: orbitRotate 4s linear infinite;
+        }
+
+        .space-resource {
+            height: 80px;
+            background: linear-gradient(90deg, 
+                hsl(40, 70%, 60%), 
+                hsl(60, 70%, 60%), 
+                hsl(80, 70%, 60%), 
+                hsl(100, 70%, 60%));
+            border-radius: 5px;
+            margin-bottom: 10px;
+            animation: resourceMining 3s ease-in-out infinite;
+        }
+
+        .earth-observation {
+            height: 90px;
+            background: linear-gradient(90deg, 
+                hsl(120, 70%, 60%), 
+                hsl(140, 70%, 60%), 
+                hsl(160, 70%, 60%), 
+                hsl(180, 70%, 60%));
+            border-radius: 5px;
+            margin-bottom: 10px;
+            animation: earthObserve 2s ease-in-out infinite;
+        }
+
+        .low-orbit-comm {
+            height: 70px;
+            background: linear-gradient(90deg, 
+                hsl(280, 70%, 60%), 
+                hsl(300, 70%, 60%), 
+                hsl(320, 70%, 60%), 
+                hsl(340, 70%, 60%));
+            border-radius: 5px;
+            margin-bottom: 10px;
+            animation: lowOrbitComm 1.5s ease-in-out infinite;
+        }
+
+        @keyframes orbitRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes resourceMining {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        @keyframes earthObserve {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes lowOrbitComm {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(10px); }
+        }
+
+        .metrics-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .tech-specs-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .specs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .spec-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .spec-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .spec-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+
+        .spec-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .spec-title {
+            color: #495057;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .spec-description {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .spec-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.8rem;
+        }
+
+        .spec-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(103, 126, 234, 0.4);
+        }
+
+        .log-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .log-container {
+            background: #1a1a1a;
+            border-radius: 10px;
+            padding: 20px;
+            height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .log-entry {
+            margin-bottom: 8px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border-left: 4px solid;
+        }
+
+        .log-entry.orbit-control {
+            background: rgba(103, 126, 234, 0.1);
+            border-left-color: #667eea;
+            color: #667eea;
+        }
+
+        .log-entry.space-resource {
+            background: rgba(255, 193, 7, 0.1);
+            border-left-color: #ffc107;
+            color: #ffc107;
+        }
+
+        .log-entry.earth-obs {
+            background: rgba(40, 167, 69, 0.1);
+            border-left-color: #28a745;
+            color: #28a745;
+        }
+
+        .log-entry.low-orbit {
+            background: rgba(220, 53, 69, 0.1);
+            border-left-color: #dc3545;
+            color: #dc3545;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .back-button:hover {
+            background: linear-gradient(135deg, #ee5a24 0%, #ff6b6b 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.6);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 20px 15px;
+            }
+            
+            .overview-grid,
+            .control-grid,
+            .visualization-grid,
+            .metrics-grid,
+            .specs-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .spec-card {
+                padding: 15px;
+            }
+            
+            .spec-icon {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="project-portfolio-site.html" class="back-button">← 戻る</a>
+
+    <div class="header">
+        <h1>🚀 宇宙工学・衛星通信システム</h1>
+        <p>衛星軌道制御・宇宙資源管理・地球観測・低軌道通信の統合プラットフォーム</p>
+    </div>
+
+    <div class="container">
+        <!-- システム概要 -->
+        <div class="system-overview">
+            <h2>🛰️ システム概要</h2>
+            <div class="overview-grid">
+                <div class="overview-card">
+                    <div class="overview-icon">🛰️</div>
+                    <div class="overview-title">衛星軌道制御システム</div>
+                    <div class="overview-description">精密軌道制御・衛星群管理・軌道最適化</div>
+                </div>
+                <div class="overview-card">
+                    <div class="overview-icon">⛏️</div>
+                    <div class="overview-title">宇宙資源管理システム</div>
+                    <div class="overview-description">小惑星採掘・宇宙資源活用・資源探査</div>
+                </div>
+                <div class="overview-card">
+                    <div class="overview-icon">🌍</div>
+                    <div class="overview-title">地球観測統合システム</div>
+                    <div class="overview-description">多衛星地球観測・データ統合・環境監視</div>
+                </div>
+                <div class="overview-card">
+                    <div class="overview-icon">📡</div>
+                    <div class="overview-title">低軌道通信システム</div>
+                    <div class="overview-description">衛星インターネット・グローバル通信・低遅延通信</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 制御パネル -->
+        <div class="control-panel">
+            <h2>🎛️ システム制御</h2>
+            <div class="control-grid">
+                <button class="control-btn" onclick="startOrbitControl()">軌道制御開始</button>
+                <button class="control-btn" onclick="startSpaceResourceMining()">宇宙資源採掘開始</button>
+                <button class="control-btn" onclick="startEarthObservation()">地球観測開始</button>
+                <button class="control-btn" onclick="startLowOrbitCommunication()">低軌道通信開始</button>
+                <button class="control-btn" onclick="optimizeAllSpaceSystems()">全システム最適化</button>
+                <button class="control-btn" onclick="analyzeAllSpaceSystems()">全システム分析</button>
+                <button class="control-btn" onclick="generateSpaceReport()">宇宙工学レポート生成</button>
+                <button class="control-btn" onclick="showSpaceTechSpecs()">技術仕様書表示</button>
+            </div>
+        </div>
+
+        <!-- 可視化セクション -->
+        <div class="visualization-section">
+            <h2>🛰️ リアルタイム可視化</h2>
+            <div class="visualization-grid">
+                <div class="visualization-card">
+                    <div class="visualization-title">衛星軌道制御</div>
+                    <div class="satellite-orbit"></div>
+                    <p>リアルタイム衛星軌道制御可視化</p>
+                </div>
+                <div class="visualization-card">
+                    <div class="visualization-title">宇宙資源採掘</div>
+                    <div class="space-resource"></div>
+                    <p>小惑星採掘プロセス可視化</p>
+                </div>
+                <div class="visualization-card">
+                    <div class="visualization-title">地球観測</div>
+                    <div class="earth-observation"></div>
+                    <p>多衛星地球観測可視化</p>
+                </div>
+                <div class="visualization-card">
+                    <div class="visualization-title">低軌道通信</div>
+                    <div class="low-orbit-comm"></div>
+                    <p>衛星インターネット通信可視化</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- メトリクスセクション -->
+        <div class="metrics-section">
+            <h2>📊 システムメトリクス</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <span class="metric-value" id="orbitControlAccuracy">99.9%</span>
+                    <span class="metric-label">軌道制御精度</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-value" id="resourceMiningEfficiency">85.7%</span>
+                    <span class="metric-label">資源採掘効率</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-value" id="earthObsCoverage">99.8%</span>
+                    <span class="metric-label">地球観測カバレッジ</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-value" id="lowOrbitLatency">15ms</span>
+                    <span class="metric-label">低軌道通信レイテンシー</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 技術仕様書・設計思想セクション -->
+        <div class="tech-specs-section">
+            <h2>📋 技術仕様書・設計思想</h2>
+            <div class="specs-grid">
+                <div class="spec-card">
+                    <div class="spec-icon">🛰️</div>
+                    <h3 class="spec-title">衛星軌道制御技術</h3>
+                    <p class="spec-description">精密軌道制御・衛星群管理・軌道最適化システム</p>
+                    <button class="spec-btn" onclick="showOrbitControlSpecs()">詳細仕様</button>
+                </div>
+                <div class="spec-card">
+                    <div class="spec-icon">⛏️</div>
+                    <h3 class="spec-title">宇宙資源管理技術</h3>
+                    <p class="spec-description">小惑星採掘・宇宙資源活用・資源探査システム</p>
+                    <button class="spec-btn" onclick="showSpaceResourceSpecs()">詳細仕様</button>
+                </div>
+                <div class="spec-card">
+                    <div class="spec-icon">🌍</div>
+                    <h3 class="spec-title">地球観測技術</h3>
+                    <p class="spec-description">多衛星地球観測・データ統合・環境監視システム</p>
+                    <button class="spec-btn" onclick="showEarthObservationSpecs()">詳細仕様</button>
+                </div>
+                <div class="spec-card">
+                    <div class="spec-icon">📡</div>
+                    <h3 class="spec-title">低軌道通信技術</h3>
+                    <p class="spec-description">衛星インターネット・グローバル通信・低遅延通信システム</p>
+                    <button class="spec-btn" onclick="showLowOrbitCommSpecs()">詳細仕様</button>
+                </div>
+                <div class="spec-card">
+                    <div class="spec-icon">🔒</div>
+                    <h3 class="spec-title">宇宙セキュリティ</h3>
+                    <p class="spec-description">衛星セキュリティ・宇宙デブリ対策・軌道安全システム</p>
+                    <button class="spec-btn" onclick="showSpaceSecuritySpecs()">詳細仕様</button>
+                </div>
+                <div class="spec-card">
+                    <div class="spec-icon">📊</div>
+                    <h3 class="spec-title">宇宙データ設計</h3>
+                    <p class="spec-description">衛星データベース・軌道情報管理・宇宙インフォマティクス</p>
+                    <button class="spec-btn" onclick="showSpaceDataSpecs()">詳細仕様</button>
+                </div>
+                <div class="spec-card">
+                    <div class="spec-icon">🎯</div>
+                    <h3 class="spec-title">設計思想</h3>
+                    <p class="spec-description">持続可能な宇宙開発・人類の宇宙進出・地球環境保護</p>
+                    <button class="spec-btn" onclick="showSpaceDesignPhilosophy()">詳細仕様</button>
+                </div>
+                <div class="spec-card">
+                    <div class="spec-icon">🛠️</div>
+                    <h3 class="spec-title">技術スタック</h3>
+                    <p class="spec-description">衛星技術・宇宙通信・軌道力学・宇宙資源工学</p>
+                    <button class="spec-btn" onclick="showSpaceTechStackSpecs()">詳細仕様</button>
+                </div>
+                <div class="spec-card">
+                    <div class="spec-icon">✅</div>
+                    <h3 class="spec-title">品質保証</h3>
+                    <p class="spec-description">衛星軌道精度テスト・通信品質検証・観測精度校正・資源採掘効率検査</p>
+                    <button class="spec-btn" onclick="showSpaceQualityAssuranceSpecs()">詳細仕様</button>
+                </div>
+                <div class="spec-card">
+                    <div class="spec-icon">⚙️</div>
+                    <h3 class="spec-title">運用・保守</h3>
+                    <p class="spec-description">24/7衛星監視・自動軌道制御・リアルタイムデータ解析・予測的メンテナンス</p>
+                    <button class="spec-btn" onclick="showSpaceOperationsSpecs()">詳細仕様</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ログパネル -->
+        <div class="log-panel">
+            <h2>📝 システムログ</h2>
+            <div class="log-container" id="logContainer">
+                <div class="log-entry orbit-control">[ORBIT-CONTROL] 宇宙工学・衛星通信システム初期化完了</div>
+                <div class="log-entry space-resource">[SPACE-RESOURCE] 宇宙資源管理システム準備完了</div>
+                <div class="log-entry earth-obs">[EARTH-OBS] 地球観測統合システム稼働開始</div>
+                <div class="log-entry low-orbit">[LOW-ORBIT] 低軌道通信システム待機中</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ログ管理
+        function addSpaceLog(message, type = 'info') {
+            const logContainer = document.getElementById('logContainer');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        // リアルタイム宇宙データ処理
+        let orbitControlData = [];
+        let spaceResourceData = [];
+        let earthObservationData = [];
+        let lowOrbitCommData = [];
+
+        // リアルタイムデータ生成
+        function generateOrbitControlData() {
+            const satellites = [];
+            for (let i = 0; i < 50; i++) {
+                satellites.push({
+                    id: i + 1,
+                    altitude: 200 + Math.random() * 800,
+                    inclination: Math.random() * 90,
+                    eccentricity: Math.random() * 0.1,
+                    controlAccuracy: 99.5 + Math.random() * 0.5,
+                    timestamp: Date.now()
+                });
+            }
+            return satellites;
+        }
+
+        function generateSpaceResourceData() {
+            const resources = [];
+            for (let i = 0; i < 20; i++) {
+                resources.push({
+                    id: i + 1,
+                    resourceType: ['platinum', 'gold', 'water', 'helium3'][Math.floor(Math.random() * 4)],
+                    miningEfficiency: 80 + Math.random() * 20,
+                    extractionRate: Math.random() * 100 + 50,
+                    purity: 90 + Math.random() * 10,
+                    timestamp: Date.now()
+                });
+            }
+            return resources;
+        }
+
+        function generateEarthObservationData() {
+            const observations = [];
+            for (let i = 0; i < 100; i++) {
+                observations.push({
+                    id: i + 1,
+                    coverage: 95 + Math.random() * 5,
+                    resolution: 0.1 + Math.random() * 0.9,
+                    dataRate: Math.random() * 1000 + 500,
+                    observationType: ['optical', 'radar', 'infrared', 'multispectral'][Math.floor(Math.random() * 4)],
+                    timestamp: Date.now()
+                });
+            }
+            return observations;
+        }
+
+        function generateLowOrbitCommData() {
+            const communications = [];
+            for (let i = 0; i < 1000; i++) {
+                communications.push({
+                    id: i + 1,
+                    latency: 10 + Math.random() * 20,
+                    bandwidth: Math.random() * 100 + 50,
+                    signalStrength: 85 + Math.random() * 15,
+                    connectionType: ['internet', 'voice', 'data', 'video'][Math.floor(Math.random() * 4)],
+                    timestamp: Date.now()
+                });
+            }
+            return communications;
+        }
+
+        // リアルタイムデータ更新
+        function updateRealTimeSpaceData() {
+            orbitControlData = generateOrbitControlData();
+            spaceResourceData = generateSpaceResourceData();
+            earthObservationData = generateEarthObservationData();
+            lowOrbitCommData = generateLowOrbitCommData();
+            
+            updateSpaceVisualizations();
+            updateSpaceMetrics();
+        }
+
+        // 可視化更新
+        function updateSpaceVisualizations() {
+            // 衛星軌道可視化更新
+            const satelliteOrbit = document.querySelector('.satellite-orbit');
+            if (satelliteOrbit && orbitControlData.length > 0) {
+                const avgAccuracy = orbitControlData.reduce((sum, data) => sum + data.controlAccuracy, 0) / orbitControlData.length;
+                const accuracy = avgAccuracy / 100;
+                satelliteOrbit.style.background = `linear-gradient(90deg, 
+                    hsl(${200 + accuracy * 60}, 70%, 60%), 
+                    hsl(${220 + accuracy * 60}, 70%, 60%), 
+                    hsl(${240 + accuracy * 60}, 70%, 60%), 
+                    hsl(${260 + accuracy * 60}, 70%, 60%))`;
+            }
+
+            // 宇宙資源可視化更新
+            const spaceResource = document.querySelector('.space-resource');
+            if (spaceResource && spaceResourceData.length > 0) {
+                const avgEfficiency = spaceResourceData.reduce((sum, data) => sum + data.miningEfficiency, 0) / spaceResourceData.length;
+                const efficiency = avgEfficiency / 100;
+                spaceResource.style.background = `linear-gradient(90deg, 
+                    hsl(${40 + efficiency * 60}, 70%, 60%), 
+                    hsl(${60 + efficiency * 60}, 70%, 60%), 
+                    hsl(${80 + efficiency * 60}, 70%, 60%), 
+                    hsl(${100 + efficiency * 60}, 70%, 60%))`;
+            }
+
+            // 地球観測可視化更新
+            const earthObservation = document.querySelector('.earth-observation');
+            if (earthObservation && earthObservationData.length > 0) {
+                const avgCoverage = earthObservationData.reduce((sum, data) => sum + data.coverage, 0) / earthObservationData.length;
+                const coverage = avgCoverage / 100;
+                earthObservation.style.background = `linear-gradient(90deg, 
+                    hsl(${120 + coverage * 60}, 70%, 60%), 
+                    hsl(${140 + coverage * 60}, 70%, 60%), 
+                    hsl(${160 + coverage * 60}, 70%, 60%), 
+                    hsl(${180 + coverage * 60}, 70%, 60%))`;
+            }
+
+            // 低軌道通信可視化更新
+            const lowOrbitComm = document.querySelector('.low-orbit-comm');
+            if (lowOrbitComm && lowOrbitCommData.length > 0) {
+                const avgLatency = lowOrbitCommData.reduce((sum, data) => sum + data.latency, 0) / lowOrbitCommData.length;
+                const latency = 1 - (avgLatency / 30); // 低レイテンシーほど良い
+                lowOrbitComm.style.background = `linear-gradient(90deg, 
+                    hsl(${280 + latency * 60}, 70%, 60%), 
+                    hsl(${300 + latency * 60}, 70%, 60%), 
+                    hsl(${320 + latency * 60}, 70%, 60%), 
+                    hsl(${340 + latency * 60}, 70%, 60%))`;
+            }
+        }
+
+        // メトリクス更新
+        function updateSpaceMetrics() {
+            const orbitControlAccuracy = document.getElementById('orbitControlAccuracy');
+            const resourceMiningEfficiency = document.getElementById('resourceMiningEfficiency');
+            const earthObsCoverage = document.getElementById('earthObsCoverage');
+            const lowOrbitLatency = document.getElementById('lowOrbitLatency');
+
+            if (orbitControlData.length > 0) {
+                const avgAccuracy = orbitControlData.reduce((sum, data) => sum + data.controlAccuracy, 0) / orbitControlData.length;
+                orbitControlAccuracy.textContent = avgAccuracy.toFixed(1) + '%';
+            }
+
+            if (spaceResourceData.length > 0) {
+                const avgEfficiency = spaceResourceData.reduce((sum, data) => sum + data.miningEfficiency, 0) / spaceResourceData.length;
+                resourceMiningEfficiency.textContent = avgEfficiency.toFixed(1) + '%';
+            }
+
+            if (earthObservationData.length > 0) {
+                const avgCoverage = earthObservationData.reduce((sum, data) => sum + data.coverage, 0) / earthObservationData.length;
+                earthObsCoverage.textContent = avgCoverage.toFixed(1) + '%';
+            }
+
+            if (lowOrbitCommData.length > 0) {
+                const avgLatency = lowOrbitCommData.reduce((sum, data) => sum + data.latency, 0) / lowOrbitCommData.length;
+                lowOrbitLatency.textContent = avgLatency.toFixed(0) + 'ms';
+            }
+        }
+
+        // 衛星軌道制御システム機能
+        function startOrbitControl() {
+            addSpaceLog('[ORBIT-CONTROL] 衛星軌道制御開始', 'orbit-control');
+            
+            const controlInterval = setInterval(() => {
+                updateRealTimeSpaceData();
+                const data = orbitControlData[Math.floor(Math.random() * orbitControlData.length)];
+                addSpaceLog(`[ORBIT-CONTROL] 軌道制御中 - 衛星ID: ${data.id}, 高度: ${data.altitude.toFixed(0)}km, 制御精度: ${data.controlAccuracy.toFixed(1)}%`, 'orbit-control');
+            }, 2000);
+
+            setTimeout(() => {
+                addSpaceLog('[ORBIT-CONTROL] 軌道制御完了 - 制御精度: 99.9%', 'orbit-control');
+                clearInterval(controlInterval);
+            }, 10000);
+        }
+
+        // 宇宙資源管理システム機能
+        function startSpaceResourceMining() {
+            addSpaceLog('[SPACE-RESOURCE] 宇宙資源採掘開始', 'space-resource');
+            
+            const miningInterval = setInterval(() => {
+                updateRealTimeSpaceData();
+                const data = spaceResourceData[Math.floor(Math.random() * spaceResourceData.length)];
+                addSpaceLog(`[SPACE-RESOURCE] 採掘中 - 資源: ${data.resourceType}, 効率: ${data.miningEfficiency.toFixed(1)}%, 抽出率: ${data.extractionRate.toFixed(1)}kg/h`, 'space-resource');
+            }, 3000);
+
+            setTimeout(() => {
+                addSpaceLog('[SPACE-RESOURCE] 採掘完了 - 総合効率: 85.7%', 'space-resource');
+                clearInterval(miningInterval);
+            }, 12000);
+        }
+
+        // 地球観測統合システム機能
+        function startEarthObservation() {
+            addSpaceLog('[EARTH-OBS] 地球観測開始', 'earth-obs');
+            
+            const observationInterval = setInterval(() => {
+                updateRealTimeSpaceData();
+                const data = earthObservationData[Math.floor(Math.random() * earthObservationData.length)];
+                addSpaceLog(`[EARTH-OBS] 観測中 - カバレッジ: ${data.coverage.toFixed(1)}%, 解像度: ${data.resolution.toFixed(1)}m, データレート: ${data.dataRate.toFixed(0)}Mbps`, 'earth-obs');
+            }, 1500);
+
+            setTimeout(() => {
+                addSpaceLog('[EARTH-OBS] 観測完了 - 観測カバレッジ: 99.8%', 'earth-obs');
+                clearInterval(observationInterval);
+            }, 15000);
+        }
+
+        // 低軌道通信システム機能
+        function startLowOrbitCommunication() {
+            addSpaceLog('[LOW-ORBIT] 低軌道通信開始', 'low-orbit');
+            
+            const commInterval = setInterval(() => {
+                updateRealTimeSpaceData();
+                const data = lowOrbitCommData[Math.floor(Math.random() * lowOrbitCommData.length)];
+                addSpaceLog(`[LOW-ORBIT] 通信中 - レイテンシー: ${data.latency.toFixed(0)}ms, 帯域幅: ${data.bandwidth.toFixed(0)}Mbps, 信号強度: ${data.signalStrength.toFixed(1)}%`, 'low-orbit');
+            }, 1000);
+
+            setTimeout(() => {
+                addSpaceLog('[LOW-ORBIT] 通信完了 - 平均レイテンシー: 15ms', 'low-orbit');
+                clearInterval(commInterval);
+            }, 20000);
+        }
+
+        // 統合システム制御
+        function optimizeAllSpaceSystems() {
+            addSpaceLog('[SPACE] 全宇宙システム最適化実行', 'orbit-control');
+            
+            setTimeout(() => {
+                addSpaceLog('[ORBIT-CONTROL] 軌道制御最適化完了', 'orbit-control');
+                setTimeout(() => {
+                    addSpaceLog('[SPACE-RESOURCE] 資源採掘最適化完了', 'space-resource');
+                    setTimeout(() => {
+                        addSpaceLog('[EARTH-OBS] 地球観測最適化完了', 'earth-obs');
+                        setTimeout(() => {
+                            addSpaceLog('[LOW-ORBIT] 低軌道通信最適化完了', 'low-orbit');
+                            addSpaceLog('[SPACE] 全システム最適化完了 - 総合性能向上: 28.5%', 'orbit-control');
+                        }, 2000);
+                    }, 2000);
+                }, 2000);
+            }, 2000);
+        }
+
+        function analyzeAllSpaceSystems() {
+            addSpaceLog('[SPACE] 全宇宙システム分析実行', 'orbit-control');
+            
+            const analysisInterval = setInterval(() => {
+                updateRealTimeSpaceData();
+                const systemHealth = 95 + Math.random() * 5;
+                const performance = 90 + Math.random() * 10;
+                addSpaceLog(`[SPACE] システム分析中 - 健全性: ${systemHealth.toFixed(1)}%, 性能: ${performance.toFixed(1)}%`, 'orbit-control');
+            }, 3000);
+
+            setTimeout(() => {
+                addSpaceLog('[SPACE] システム分析完了 - 全システム正常稼働', 'orbit-control');
+                clearInterval(analysisInterval);
+            }, 15000);
+        }
+
+        function generateSpaceReport() {
+            addSpaceLog('[SPACE] 宇宙工学レポート生成中...', 'orbit-control');
+            
+            const reportInterval = setInterval(() => {
+                const progress = Math.random() * 20 + 20;
+                addSpaceLog(`[SPACE] レポート生成進行中 - ${progress.toFixed(0)}%完了`, 'orbit-control');
+            }, 1000);
+
+            setTimeout(() => {
+                addSpaceLog('[SPACE] 宇宙工学レポート生成完了 - ダウンロード可能', 'orbit-control');
+                clearInterval(reportInterval);
+            }, 5000);
+        }
+
+        // 技術仕様書表示機能
+        function showSpaceTechSpecs() {
+            addSpaceLog('[SPACE] 技術仕様書表示', 'orbit-control');
+            
+            // 技術仕様書セクションにスクロール
+            const techSpecsSection = document.querySelector('.tech-specs-section');
+            if (techSpecsSection) {
+                techSpecsSection.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }
+            
+            // 技術仕様書カードにアニメーション効果を追加
+            const specCards = document.querySelectorAll('.spec-card');
+            specCards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.transform = 'scale(1.05)';
+                    card.style.boxShadow = '0 15px 35px rgba(103, 126, 234, 0.4)';
+                    
+                    setTimeout(() => {
+                        card.style.transform = 'scale(1)';
+                        card.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)';
+                    }, 300);
+                }, index * 100);
+            });
+        }
+
+        // 技術仕様書詳細機能（簡略版）
+        function showOrbitControlSpecs() {
+            addSpaceLog('[SPACE] 衛星軌道制御技術仕様表示', 'orbit-control');
+            // 詳細モーダル表示（既に実装済み）
+        }
+
+        function showSpaceResourceSpecs() {
+            addSpaceLog('[SPACE] 宇宙資源管理技術仕様表示', 'space-resource');
+            // 詳細モーダル表示（既に実装済み）
+        }
+
+        function showEarthObservationSpecs() {
+            addSpaceLog('[SPACE] 地球観測技術仕様表示', 'earth-obs');
+            // 詳細モーダル表示（既に実装済み）
+        }
+
+        function showLowOrbitCommSpecs() {
+            addSpaceLog('[SPACE] 低軌道通信技術仕様表示', 'low-orbit');
+            // 詳細モーダル表示（既に実装済み）
+        }
+
+        function showSpaceSecuritySpecs() {
+            addSpaceLog('[SPACE] 宇宙セキュリティ仕様表示', 'orbit-control');
+            // 詳細モーダル表示（既に実装済み）
+        }
+
+        function showSpaceDataSpecs() {
+            addSpaceLog('[SPACE] 宇宙データ設計仕様表示', 'earth-obs');
+            // 詳細モーダル表示（既に実装済み）
+        }
+
+        function showSpaceDesignPhilosophy() {
+            addSpaceLog('[SPACE] 設計思想仕様表示', 'space-resource');
+            // 詳細モーダル表示（既に実装済み）
+        }
+
+        function showSpaceTechStackSpecs() {
+            addSpaceLog('[SPACE] 技術スタック仕様表示', 'low-orbit');
+            // 詳細モーダル表示（既に実装済み）
+        }
+
+        function showSpaceQualityAssuranceSpecs() {
+            addSpaceLog('[SPACE] 品質保証仕様表示', 'earth-obs');
+            // 詳細モーダル表示（既に実装済み）
+        }
+
+        function showSpaceOperationsSpecs() {
+            addSpaceLog('[SPACE] 宇宙工学運用・保守仕様表示', 'orbit-control');
+            // 詳細モーダル表示（既に実装済み）
+        }
+
+        // 技術仕様書・設計思想詳細モーダル機能
+        function showOrbitControlSpecs() {
+            const modal = document.createElement('div');
+            modal.className = 'detail-modal';
+            modal.style.display = 'block';
+            modal.innerHTML = `
+                <div class="detail-modal-content">
+                    <div class="detail-modal-header">
+                        <h3 class="detail-modal-title">🛰️ 衛星軌道制御技術詳細仕様</h3>
+                        <span class="detail-close" onclick="this.parentElement.parentElement.parentElement.remove()">&times;</span>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-section">
+                            <h4>精密軌道制御システム</h4>
+                            <p>高精度衛星軌道制御のための包括的システム。リアルタイム軌道追跡と精密制御を実現。</p>
+                            <ul class="detail-list">
+                                <li>軌道制御精度: 99.9%</li>
+                                <li>リアルタイム追跡: 50基同時制御</li>
+                                <li>軌道修正精度: ±1m</li>
+                                <li>制御応答時間: 1秒以下</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <h4>衛星群管理システム</h4>
+                            <p>大規模衛星群の統合管理と協調制御システム。</p>
+                            <ul class="detail-list">
+                                <li>衛星群規模: 1000基以上</li>
+                                <li>協調制御: 自動化</li>
+                                <li>衝突回避: AI予測</li>
+                                <li>軌道最適化: リアルタイム</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <h4>軌道力学計算</h4>
+                            <p>高精度軌道力学計算と予測システム。</p>
+                            <ul class="detail-list">
+                                <li>計算精度: 99.99%</li>
+                                <li>予測期間: 10年</li>
+                                <li>摂動考慮: 完全モデル</li>
+                                <li>リアルタイム更新</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function showSpaceResourceSpecs() {
+            const modal = document.createElement('div');
+            modal.className = 'detail-modal';
+            modal.style.display = 'block';
+            modal.innerHTML = `
+                <div class="detail-modal-content">
+                    <div class="detail-modal-header">
+                        <h3 class="detail-modal-title">⛏️ 宇宙資源管理技術詳細仕様</h3>
+                        <span class="detail-close" onclick="this.parentElement.parentElement.parentElement.remove()">&times;</span>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-section">
+                            <h4>小惑星採掘システム</h4>
+                            <p>小惑星からの効率的資源採掘システム。自動化採掘と資源処理を実現。</p>
+                            <ul class="detail-list">
+                                <li>採掘効率: 85.7%</li>
+                                <li>対象資源: プラチナ、金、水、ヘリウム3</li>
+                                <li>採掘速度: 100kg/時間</li>
+                                <li>自動化レベル: 95%</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <h4>宇宙資源活用システム</h4>
+                            <p>採掘された資源の効率的活用と精製システム。</p>
+                            <ul class="detail-list">
+                                <li>精製効率: 99.5%</li>
+                                <li>資源回収率: 90%以上</li>
+                                <li>品質管理: 自動化</li>
+                                <li>ストレージ容量: 1000トン</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <h4>資源探査システム</h4>
+                            <p>自動化資源探査と評価システム。</p>
+                            <ul class="detail-list">
+                                <li>探査精度: 99.8%</li>
+                                <li>探査範囲: 太陽系内</li>
+                                <li>評価速度: リアルタイム</li>
+                                <li>AI分析: 深層学習活用</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function showEarthObservationSpecs() {
+            const modal = document.createElement('div');
+            modal.className = 'detail-modal';
+            modal.style.display = 'block';
+            modal.innerHTML = `
+                <div class="detail-modal-content">
+                    <div class="detail-modal-header">
+                        <h3 class="detail-modal-title">🌍 地球観測技術詳細仕様</h3>
+                        <span class="detail-close" onclick="this.parentElement.parentElement.parentElement.remove()">&times;</span>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-section">
+                            <h4>多衛星地球観測システム</h4>
+                            <p>100基の観測衛星による包括的地球観測システム。</p>
+                            <ul class="detail-list">
+                                <li>観測カバレッジ: 99.8%</li>
+                                <li>衛星数: 100基</li>
+                                <li>解像度: 0.1-1.0m</li>
+                                <li>観測頻度: 24時間/日</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <h4>データ統合システム</h4>
+                            <p>多様な観測データの統合処理と解析システム。</p>
+                            <ul class="detail-list">
+                                <li>データ処理速度: 1TB/秒</li>
+                                <li>統合精度: 99.9%</li>
+                                <li>リアルタイム解析: AI活用</li>
+                                <li>データ保存: 10PB</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <h4>環境監視システム</h4>
+                            <p>地球環境の包括的監視と予測システム。</p>
+                            <ul class="detail-list">
+                                <li>監視項目: 50種類以上</li>
+                                <li>予測精度: 95%以上</li>
+                                <li>アラート機能: 自動化</li>
+                                <li>レポート生成: リアルタイム</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function showLowOrbitCommSpecs() {
+            const modal = document.createElement('div');
+            modal.className = 'detail-modal';
+            modal.style.display = 'block';
+            modal.innerHTML = `
+                <div class="detail-modal-content">
+                    <div class="detail-modal-header">
+                        <h3 class="detail-modal-title">📡 低軌道通信技術詳細仕様</h3>
+                        <span class="detail-close" onclick="this.parentElement.parentElement.parentElement.remove()">&times;</span>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-section">
+                            <h4>衛星インターネットシステム</h4>
+                            <p>1000基の通信衛星によるグローバルインターネットシステム。</p>
+                            <ul class="detail-list">
+                                <li>通信衛星数: 1000基</li>
+                                <li>平均レイテンシー: 15ms</li>
+                                <li>帯域幅: 50-150Mbps</li>
+                                <li>カバレッジ: 地球全域</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <h4>グローバル通信システム</h4>
+                            <p>世界中への低遅延・高帯域幅通信システム。</p>
+                            <ul class="detail-list">
+                                <li>通信品質: 99.9%</li>
+                                <li>接続安定性: 99.8%</li>
+                                <li>データ転送速度: 1Gbps</li>
+                                <li>同時接続数: 100万以上</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <h4>低遅延通信技術</h4>
+                            <p>超低遅延通信を実現する革新的技術。</p>
+                            <ul class="detail-list">
+                                <li>最小レイテンシー: 10ms</li>
+                                <li>信号処理: 光速通信</li>
+                                <li>ルーティング: 最適化</li>
+                                <li>QoS保証: 自動化</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function showSpaceSecuritySpecs() {
+            const modal = document.createElement('div');
+            modal.className = 'detail-modal';
+            modal.style.display = 'block';
+            modal.innerHTML = `
+                <div class="detail-modal-content">
+                    <div class="detail-modal-header">
+                        <h3 class="detail-modal-title">🔒 宇宙セキュリティ詳細仕様</h3>
+                        <span class="detail-close" onclick="this.parentElement.parentElement.parentElement.remove()">&times;</span>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-section">
+                            <h4>衛星セキュリティシステム</h4>
+                            <p>衛星システムの包括的セキュリティ保護システム。</p>
+                            <ul class="detail-list">
+                                <li>暗号化強度: AES-256</li>
+                                <li>認証システム: 多段階認証</li>
+                                <li>侵入検知: AI活用</li>
+                                <li>セキュリティ監視: 24/7</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <h4>宇宙デブリ対策</h4>
+                            <p>宇宙デブリの監視と回避システム。</p>
+                            <ul class="detail-list">
+                                <li>デブリ追跡: 10cm以上</li>
+                                <li>衝突予測: AI分析</li>
+                                <li>回避成功率: 99.9%</li>
+                                <li>監視範囲: 地球周辺全域</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <h4>軌道安全システム</h4>
+                            <p>軌道安全を確保する包括的システム。</p>
+                            <ul class="detail-list">
+                                <li>安全距離: 自動計算</li>
+                                <li>緊急回避: 自動実行</li>
+                                <li>軌道監視: リアルタイム</li>
+                                <li>安全評価: 継続的</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function showSpaceDataSpecs() {
+            const modal = document.createElement('div');
+            modal.className = 'detail-modal';
+            modal.style.display = 'block';
+            modal.innerHTML = `
+                <div class="detail-modal-content">
+                    <div class="detail-modal-header">
+                        <h3 class="detail-modal-title">📊 宇宙データ設計詳細仕様</h3>
+                        <span class="detail-close" onclick="this.parentElement.parentElement.parentElement.remove()">&times;</span>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-section">
+                            <h4>衛星データベース</h4>
+                            <p>大規模衛星データの効率的管理システム。</p>
+                            <ul class="detail-list">
+                                <li>データ容量: 100PB</li>
+                                <li>検索速度: 1秒以下</li>
+                                <li>データ整合性: 99.99%</li>
+                                <li>バックアップ: 自動化</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <h4>軌道情報管理</h4>
+                            <p>軌道情報の精密管理と解析システム。</p>
+                            <ul class="detail-list">
+                                <li>軌道精度: 99.9%</li>
+                                <li>予測精度: 10年先</li>
+                                <li>更新頻度: リアルタイム</li>
+                                <li>データ形式: 標準化</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <h4>宇宙インフォマティクス</h4>
+                            <p>宇宙データの統合解析と知識発見システム。</p>
+                            <ul class="detail-list">
+                                <li>解析アルゴリズム: 100種類以上</li>
+                                <li>機械学習: 深層学習活用</li>
+                                <li>可視化: 3D表示</li>
+                                <li>予測精度: 95%以上</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function showSpaceDesignPhilosophy() {
+            const modal = document.createElement('div');
+            modal.className = 'detail-modal';
+            modal.style.display = 'block';
+            modal.innerHTML = `
+                <div class="detail-modal-content">
+                    <div class="detail-modal-header">
+                        <h3 class="detail-modal-title">🎯 宇宙工学設計思想詳細仕様</h3>
+                        <span class="detail-close" onclick="this.parentElement.parentElement.parentElement.remove()">&times;</span>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-section">
+                            <h4>持続可能な宇宙開発</h4>
+                            <p>環境に配慮した持続可能な宇宙開発の実現。</p>
+                            <ul class="detail-list">
+                                <li>環境影響最小化</li>
+                                <li>資源循環利用</li>
+                                <li>長期的視点</li>
+                                <li>社会的価値創造</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <h4>人類の宇宙進出</h4>
+                            <p>人類の宇宙進出を支援する技術開発。</p>
+                            <ul class="detail-list">
+                                <li>安全性最優先</li>
+                                <li>技術革新</li>
+                                <li>国際協力</li>
+                                <li>継続的発展</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <h4>地球環境保護</h4>
+                            <p>宇宙技術を活用した地球環境保護。</p>
+                            <ul class="detail-list">
+                                <li>環境監視強化</li>
+                                <li>気候変動対策</li>
+                                <li>災害予測</li>
+                                <li>生態系保護</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function showSpaceTechStackSpecs() {
+            const modal = document.createElement('div');
+            modal.className = 'detail-modal';
+            modal.style.display = 'block';
+            modal.innerHTML = `
+                <div class="detail-modal-content">
+                    <div class="detail-modal-header">
+                        <h3 class="detail-modal-title">🛠️ 宇宙工学技術スタック詳細仕様</h3>
+                        <span class="detail-close" onclick="this.parentElement.parentElement.parentElement.remove()">&times;</span>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-section">
+                            <h4>衛星技術</h4>
+                            <p>最先端の衛星技術とシステム。</p>
+                            <ul class="detail-list">
+                                <li>小型衛星技術</li>
+                                <li>推進システム</li>
+                                <li>電源システム</li>
+                                <li>通信システム</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <h4>宇宙通信技術</h4>
+                            <p>高効率宇宙通信技術。</p>
+                            <ul class="detail-list">
+                                <li>光通信技術</li>
+                                <li>量子通信</li>
+                                <li>レーザー通信</li>
+                                <li>衛星間通信</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <h4>軌道力学</h4>
+                            <p>精密軌道力学計算技術。</p>
+                            <ul class="detail-list">
+                                <li>軌道計算</li>
+                                <li>軌道予測</li>
+                                <li>軌道制御</li>
+                                <li>軌道最適化</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <h4>宇宙資源工学</h4>
+                            <p>宇宙資源の効率的活用技術。</p>
+                            <ul class="detail-list">
+                                <li>採掘技術</li>
+                                <li>精製技術</li>
+                                <li>輸送技術</li>
+                                <li>利用技術</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function showSpaceQualityAssuranceSpecs() {
+            const modal = document.createElement('div');
+            modal.className = 'detail-modal';
+            modal.style.display = 'block';
+            modal.innerHTML = `
+                <div class="detail-modal-content">
+                    <div class="detail-modal-header">
+                        <h3 class="detail-modal-title">✅ 宇宙工学品質保証詳細仕様</h3>
+                        <span class="detail-close" onclick="this.parentElement.parentElement.parentElement.remove()">&times;</span>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-section">
+                            <h4>衛星軌道精度テスト</h4>
+                            <p>衛星軌道制御の精度と安全性を検証する包括的テスト。</p>
+                            <ul class="detail-list">
+                                <li>軌道精度: 99.9%</li>
+                                <li>制御精度測定</li>
+                                <li>安全性評価</li>
+                                <li>信頼性テスト</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <h4>通信品質検証</h4>
+                            <p>宇宙通信システムの品質と性能を検証するテスト。</p>
+                            <ul class="detail-list">
+                                <li>通信品質: 99.9%</li>
+                                <li>レイテンシー測定</li>
+                                <li>帯域幅検証</li>
+                                <li>安定性評価</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <h4>観測精度校正</h4>
+                            <p>地球観測システムの精度を校正するシステム。</p>
+                            <ul class="detail-list">
+                                <li>観測精度: 99.8%</li>
+                                <li>解像度校正</li>
+                                <li>カバレッジ検証</li>
+                                <li>データ品質確認</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <h4>資源採掘効率検査</h4>
+                            <p>宇宙資源採掘システムの効率と安全性を検査するシステム。</p>
+                            <ul class="detail-list">
+                                <li>採掘効率: 85.7%</li>
+                                <li>安全性確認</li>
+                                <li>品質評価</li>
+                                <li>環境影響評価</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function showSpaceOperationsSpecs() {
+            const modal = document.createElement('div');
+            modal.className = 'detail-modal';
+            modal.style.display = 'block';
+            modal.innerHTML = `
+                <div class="detail-modal-content">
+                    <div class="detail-modal-header">
+                        <h3 class="detail-modal-title">⚙️ 宇宙工学運用・保守詳細仕様</h3>
+                        <span class="detail-close" onclick="this.parentElement.parentElement.parentElement.remove()">&times;</span>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-section">
+                            <h4>24/7衛星監視</h4>
+                            <p>衛星システムの継続的監視と異常検出。</p>
+                            <ul class="detail-list">
+                                <li>リアルタイム監視: 24/7</li>
+                                <li>異常検出: AI活用</li>
+                                <li>自動アラート: 即座通知</li>
+                                <li>遠隔監視: グローバル対応</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <h4>自動軌道制御</h4>
+                            <p>衛星軌道の自動制御と最適化。</p>
+                            <ul class="detail-list">
+                                <li>自動軌道修正</li>
+                                <li>リアルタイム制御</li>
+                                <li>最適化アルゴリズム</li>
+                                <li>予測的制御</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <h4>リアルタイムデータ解析</h4>
+                            <p>宇宙データのリアルタイム解析と可視化。</p>
+                            <ul class="detail-list">
+                                <li>データ解析: リアルタイム</li>
+                                <li>可視化: 3D表示</li>
+                                <li>予測分析: AI活用</li>
+                                <li>レポート自動生成</li>
+                            </ul>
+                        </div>
+                        <div class="detail-section">
+                            <h4>予測的メンテナンス</h4>
+                            <p>宇宙システムの予測的メンテナンスと予防保全。</p>
+                            <ul class="detail-list">
+                                <li>故障予測: AI分析</li>
+                                <li>予防保全: 自動化</li>
+                                <li>部品管理: 自動発注</li>
+                                <li>メンテナンス記録: 完全履歴</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // モーダル用CSS追加
+        const modalCSS = `
+            .detail-modal {
+                display: none;
+                position: fixed;
+                z-index: 1000;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0,0,0,0.5);
+            }
+
+            .detail-modal-content {
+                background-color: white;
+                margin: 3% auto;
+                padding: 30px;
+                border-radius: 15px;
+                width: 85%;
+                max-width: 900px;
+                max-height: 85vh;
+                overflow-y: auto;
+                box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            }
+
+            .detail-modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 25px;
+                padding-bottom: 15px;
+                border-bottom: 3px solid #e9ecef;
+            }
+
+            .detail-modal-title {
+                font-size: 1.8rem;
+                font-weight: bold;
+                color: #495057;
+            }
+
+            .detail-close {
+                color: #aaa;
+                font-size: 32px;
+                font-weight: bold;
+                cursor: pointer;
+                transition: color 0.3s ease;
+            }
+
+            .detail-close:hover {
+                color: #000;
+            }
+
+            .detail-content {
+                color: #333;
+                line-height: 1.8;
+            }
+
+            .detail-section {
+                margin-bottom: 25px;
+                padding: 20px;
+                background: #f8f9fa;
+                border-radius: 10px;
+                border-left: 4px solid #667eea;
+            }
+
+            .detail-section h4 {
+                color: #495057;
+                font-size: 1.3rem;
+                margin-bottom: 15px;
+                font-weight: bold;
+            }
+
+            .detail-section p {
+                margin-bottom: 10px;
+                color: #666;
+            }
+
+            .detail-list {
+                list-style: none;
+                padding: 0;
+            }
+
+            .detail-list li {
+                padding: 8px 0;
+                color: #555;
+                border-bottom: 1px solid #e9ecef;
+            }
+
+            .detail-list li:before {
+                content: '✓';
+                color: #4CAF50;
+                font-weight: bold;
+                margin-right: 10px;
+            }
+        `;
+
+        // CSSを追加
+        const style = document.createElement('style');
+        style.textContent = modalCSS;
+        document.head.appendChild(style);
+
+        // 初期化時にリアルタイムデータ生成開始
+        document.addEventListener('DOMContentLoaded', function() {
+            addSpaceLog('[SPACE] 宇宙工学・衛星通信システム初期化完了', 'orbit-control');
+            
+            // 初期データ生成
+            updateRealTimeSpaceData();
+            
+            // 定期的なデータ更新（5秒間隔）
+            setInterval(() => {
+                updateRealTimeSpaceData();
+            }, 5000);
+        });
+    </script>
+</body>
+</html> 

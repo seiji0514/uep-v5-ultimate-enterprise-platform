@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>医療インフラAI - 社会インフラAIシステム</title>
+    <meta name="description" content="医療インフラ・医療管理・医療最適化・医療サービスAIシステム。効率的で質の高い医療インフラを実現。">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #607D8B 0%, #455A64 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .back-button {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .status-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .status-indicator {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .card h2 {
+            color: #607D8B;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .chart-container {
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .feature-icon {
+            font-size: 0.8rem;
+            margin-bottom: 15px;
+            text-align: center;
+            color: #607D8B;
+            font-weight: bold;
+            background: rgba(96, 125, 139, 0.1);
+            padding: 4px 8px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .feature-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .feature-metrics {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .feature-metric {
+            background: linear-gradient(135deg, #607D8B, #455A64);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .feature-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #607D8B, #455A64);
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-align: center;
+            width: 100%;
+        }
+
+        .feature-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(96, 125, 139, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="social-infrastructure-ai-system.html" class="back-button">← 社会インフラAIシステムに戻る</a>
+        
+        <div class="header">
+            <h1>医療インフラAI</h1>
+            <p>医療管理プラットフォーム</p>
+            <div class="status-indicators">
+                <div class="status-indicator">🏥 医療サービス中</div>
+                <div class="status-indicator">⚡ 最適化中</div>
+                <div class="status-indicator">📊 監視中</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="card">
+                <h2>医療サービス品質</h2>
+                <div class="chart-container">
+                    <canvas id="healthcareQualityChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>患者満足度</h2>
+                <div class="chart-container">
+                    <canvas id="patientSatisfactionChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">[診療]</div>
+                <div class="feature-title">診療最適化</div>
+                <div class="feature-description">
+                    診療スケジュール最適化・診療効率化・患者フロー管理・診療品質向上・診療システム管理。効率的で質の高い診療を実現。
+                </div>
+                <div class="feature-metrics">
+                    <div class="feature-metric">96.8% 効率性</div>
+                    <div class="feature-metric">診療最適化</div>
+                </div>
+                <a href="#" class="feature-link">詳細を見る</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">[薬局]</div>
+                <div class="feature-title">薬局管理</div>
+                <div class="feature-description">
+                    薬局業務最適化・薬剤管理・処方箋処理・在庫管理・薬局サービス向上システム。効率的な薬局運営を実現。
+                </div>
+                <div class="feature-metrics">
+                    <div class="feature-metric">94.7% 管理効率</div>
+                    <div class="feature-metric">薬局管理</div>
+                </div>
+                <a href="#" class="feature-link">詳細を見る</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">[救急]</div>
+                <div class="feature-title">救急医療</div>
+                <div class="feature-description">
+                    救急車配車最適化・救急医療最適化・緊急対応・救急医療品質向上・救急システム管理。迅速で質の高い救急医療を実現。
+                </div>
+                <div class="feature-metrics">
+                    <div class="feature-metric">92.3% 対応速度</div>
+                    <div class="feature-metric">救急医療</div>
+                </div>
+                <a href="#" class="feature-link">詳細を見る</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">[検査]</div>
+                <div class="feature-title">検査管理</div>
+                <div class="feature-description">
+                    検査スケジュール最適化・検査効率化・検査品質管理・検査結果管理・検査システム最適化。効率的で正確な検査を実現。
+                </div>
+                <div class="feature-metrics">
+                    <div class="feature-metric">95.2% 検査精度</div>
+                    <div class="feature-metric">検査管理</div>
+                </div>
+                <a href="#" class="feature-link">詳細を見る</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">[在宅]</div>
+                <div class="feature-title">在宅医療</div>
+                <div class="feature-description">
+                    在宅医療最適化・訪問看護管理・在宅医療品質向上・在宅医療支援・在宅医療システム管理。質の高い在宅医療を実現。
+                </div>
+                <div class="feature-metrics">
+                    <div class="feature-metric">93.5% サービス品質</div>
+                    <div class="feature-metric">在宅医療</div>
+                </div>
+                <a href="#" class="feature-link">詳細を見る</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">[予防]</div>
+                <div class="feature-title">予防医療</div>
+                <div class="feature-description">
+                    予防医療促進・健康管理・疾病予防・健康診断最適化・予防医療システム管理。効果的な予防医療を実現。
+                </div>
+                <div class="feature-metrics">
+                    <div class="feature-metric">97.1% 予防効果</div>
+                    <div class="feature-metric">予防医療</div>
+                </div>
+                <a href="#" class="feature-link">詳細を見る</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 医療サービス品質チャート
+        const healthcareQualityCtx = document.getElementById('healthcareQualityChart').getContext('2d');
+        new Chart(healthcareQualityCtx, {
+            type: 'bar',
+            data: {
+                labels: ['診療', '薬局', '救急', '検査', '在宅', '予防'],
+                datasets: [{
+                    label: '品質スコア',
+                    data: [96, 94, 92, 95, 93, 97],
+                    backgroundColor: '#607D8B'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '医療サービス品質指標'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: '品質スコア'
+                        }
+                    }
+                }
+            }
+        });
+
+        // 患者満足度チャート
+        const patientSatisfactionCtx = document.getElementById('patientSatisfactionChart').getContext('2d');
+        new Chart(patientSatisfactionCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['非常に満足', '満足', '普通', '不満', '非常に不満'],
+                datasets: [{
+                    data: [48, 32, 16, 3, 1],
+                    backgroundColor: [
+                        '#607D8B',
+                        '#455A64',
+                        '#90A4AE',
+                        '#CFD8DC',
+                        '#ECEFF1'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '患者満足度分布 (%)'
+                    }
+                }
+            }
+        });
+    </script>
+
+    <!-- ライセンス・権利情報 -->
+    <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 15px; padding: 25px; margin: 30px auto; max-width: 1200px; border: 3px solid #f59e0b; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);">
+        <h2 style="color: #92400e; margin-bottom: 20px; text-align: center; font-size: 1.5rem;">ライセンス・権利情報</h2>
+        
+        <div style="background: white; padding: 20px; border-radius: 10px; color: #1e3a8a; line-height: 2;">
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">著作権:</strong> &copy; 2025 小川清志（おがわ せいじ）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">開発期間:</strong> 2025年6月～2025年10月（個人事業主として）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">開発目的:</strong> 技術研究・ポートフォリオ作成・転職活動用
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">用途:</strong> 個人研究目的（非商用）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">ライセンス:</strong> MIT License
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">公開範囲:</strong> 個人ポートフォリオサイト、GitHub（技術実証目的）
+            </div>
+            
+            <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #f59e0b;">
+                <strong style="color: #92400e;">重要事項:</strong>
+                <p style="color: #78350f; margin-top: 10px;">
+                    本システムは、個人事業主として独自に研究開発したものであり、
+                    特定の企業・組織の業務とは一切関係ありません。<br>
+                    全ての知的財産権は開発者個人（小川清志）に帰属します。<br>
+                    本システムの技術内容・アイデアは、入社前の個人研究として確立されたものです。
+                </p>
+            </div>
+            
+            <div style="background: #dbeafe; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #3b82f6;">
+                <strong style="color: #1e40af;">タイムスタンプ:</strong>
+                <p style="color: #1e3a8a; margin-top: 10px;">
+                    最終更新日: 2025年10月26日<br>
+                    GitHub最終コミット: 2025年10月26日<br>
+                    確定日付: 入社前（個人開発期間中）
+                </p>
+            </div>
+            
+            <div style="background: #d1fae5; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #10b981;">
+                <strong style="color: #047857;">連絡先:</strong>
+                <p style="color: #065f46; margin-top: 10px;">
+                    開発者: 小川清志（おがわ せいじ）<br>
+                    Email: kaho052514@gmail.com<br>
+                    電話: 080-4271-5479
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>

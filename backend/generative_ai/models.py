@@ -21,6 +21,9 @@ class RAGRequest(BaseModel):
     query: str
     collection: Optional[str] = None
     context: Optional[str] = None
+    use_hybrid: bool = True
+    use_rerank: bool = True
+    top_k: int = 5
 
 
 class ReasoningRequest(BaseModel):
@@ -33,4 +36,15 @@ class ReasoningRequest(BaseModel):
 
     def get_problem(self) -> str:
         """問題文を取得（problem または question）"""
+        return (self.problem or self.question or "").strip()
+
+
+class ReasoningRoutingRequest(BaseModel):
+    """推論AIルーティングリクエスト（o1系）"""
+
+    problem: Optional[str] = None
+    question: Optional[str] = None
+    auto_route: bool = True  # True: 自動ルーティング, False: 手動指定
+
+    def get_problem(self) -> str:
         return (self.problem or self.question or "").strip()

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>衛星軌道追跡システム - 3D可視化ダッシュボード</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0e27;
+            color: #ffffff;
+            overflow: hidden;
+        }
+        #container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+        #canvas-container {
+            width: 100%;
+            height: 100%;
+        }
+        #info-panel {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(10, 14, 39, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #3b82f6;
+            min-width: 300px;
+            max-width: 400px;
+            z-index: 100;
+        }
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #60a5fa;
+        }
+        .status-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 5px;
+        }
+        .label {
+            color: #9ca3af;
+            font-size: 0.9rem;
+        }
+        .value {
+            color: #ffffff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+        #controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(10, 14, 39, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #3b82f6;
+            z-index: 100;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin: 5px 0;
+            width: 100%;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5rem;
+            color: #60a5fa;
+        }
+        #stats {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(10, 14, 39, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #10b981;
+            font-size: 0.9rem;
+        }
+        .orbit-info {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #374151;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="canvas-container"></div>
+        <div class="loading" id="loading">軌道計算中...</div>
+        
+        <div id="info-panel" style="display: none;">
+            <h1>🛰️ ISS 軌道追跡</h1>
+            <div class="status-item">
+                <div class="label">現在時刻（UTC）</div>
+                <div class="value" id="current-time">--</div>
+            </div>
+            <div class="status-item">
+                <div class="label">緯度</div>
+                <div class="value" id="latitude">--</div>
+            </div>
+            <div class="status-item">
+                <div class="label">経度</div>
+                <div class="value" id="longitude">--</div>
+            </div>
+            <div class="status-item">
+                <div class="label">高度</div>
+                <div class="value" id="altitude">--</div>
+            </div>
+            <div class="orbit-info">
+                <div class="label">軌道周期</div>
+                <div class="value">92.9分</div>
+            </div>
+            <div class="status-item">
+                <div class="label">軌道傾斜角</div>
+                <div class="value">51.6°</div>
+            </div>
+        </div>
+        
+        <div id="controls" style="display: none;">
+            <h2 style="color: #60a5fa; margin-bottom: 15px; font-size: 1.2rem;">操作</h2>
+            <button onclick="toggleAnimation()">⏯️ アニメーション切替</button>
+            <button onclick="resetView()">🔄 視点リセット</button>
+            <button onclick="refreshOrbit()">🔃 軌道更新</button>
+            <button onclick="toggleOrbit()">👁️ 軌道表示切替</button>
+        </div>
+        
+        <div id="stats" style="display: none;">
+            <div><strong style="color: #10b981;">システム情報</strong></div>
+            <div style="margin-top: 10px;">開発者: 小川清志</div>
+            <div>軌道計算: Kepler軌道要素</div>
+            <div>3D描画: Three.js + WebGL</div>
+            <div>API: FastAPI REST API</div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        let scene, camera, renderer, earth, satellite, orbitLine;
+        let isAnimating = true;
+        let showOrbit = true;
+        let orbitData = [];
+        let currentIndex = 0;
+
+        // 初期化
+        async function init() {
+            // シーン作成
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0a0e27);
+
+            // カメラ
+            camera = new THREE.PerspectiveCamera(
+                45,
+                window.innerWidth / window.innerHeight,
+                0.1,
+                50000
+            );
+            camera.position.set(15000, 10000, 15000);
+            camera.lookAt(0, 0, 0);
+
+            // レンダラー
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            // 地球を作成
+            const earthGeometry = new THREE.SphereGeometry(6371, 64, 64);
+            const earthMaterial = new THREE.MeshPhongMaterial({
+                color: 0x2563eb,
+                emissive: 0x1e3a8a,
+                emissiveIntensity: 0.3,
+                shininess: 20
+            });
+            earth = new THREE.Mesh(earthGeometry, earthMaterial);
+            scene.add(earth);
+
+            // 地球の赤道線
+            const equatorGeometry = new THREE.CircleGeometry(6371, 64);
+            const equatorMaterial = new THREE.LineBasicMaterial({ 
+                color: 0x10b981, 
+                opacity: 0.3, 
+                transparent: true 
+            });
+            const equatorEdges = new THREE.EdgesGeometry(equatorGeometry);
+            const equatorLine = new THREE.LineSegments(equatorEdges, equatorMaterial);
+            equatorLine.rotation.x = Math.PI / 2;
+            scene.add(equatorLine);
+
+            // 衛星（ISS）を作成
+            const satelliteGeometry = new THREE.SphereGeometry(100, 16, 16);
+            const satelliteMaterial = new THREE.MeshBasicMaterial({ 
+                color: 0xff6b6b,
+                emissive: 0xff0000,
+                emissiveIntensity: 0.5
+            });
+            satellite = new THREE.Mesh(satelliteGeometry, satelliteMaterial);
+            scene.add(satellite);
+
+            // ライト
+            const ambientLight = new THREE.AmbientLight(0x404040, 2);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(10000, 5000, 5000);
+            scene.add(directionalLight);
+
+            // 軌道データを取得
+            await fetchOrbitData();
+
+            // アニメーション開始
+            animate();
+
+            // UI表示
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('info-panel').style.display = 'block';
+            document.getElementById('controls').style.display = 'block';
+            document.getElementById('stats').style.display = 'block';
+        }
+
+        // 軌道データ取得
+        async function fetchOrbitData() {
+            try {
+                const response = await fetch('http://localhost:8000/iss/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ duration_hours: 24, step_minutes: 5 })
+                });
+                
+                const data = await response.json();
+                orbitData = data.orbit_data;
+                
+                // 軌道線を描画
+                drawOrbitLine();
+                
+                console.log(`✅ 軌道データ取得完了: ${orbitData.length}ポイント`);
+            } catch (error) {
+                console.error('軌道データ取得エラー:', error);
+                alert('APIサーバーに接続できません。api_server.pyを起動してください。');
+            }
+        }
+
+        // 軌道線を描画
+        function drawOrbitLine() {
+            if (orbitLine) {
+                scene.remove(orbitLine);
+            }
+
+            const points = orbitData.map(point => {
+                return new THREE.Vector3(
+                    point.position_eci.x,
+                    point.position_eci.z,
+                    -point.position_eci.y
+                );
+            });
+
+            const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
+            const lineMaterial = new THREE.LineBasicMaterial({ 
+                color: 0x60a5fa, 
+                opacity: 0.6, 
+                transparent: true 
+            });
+            orbitLine = new THREE.Line(lineGeometry, lineMaterial);
+            scene.add(orbitLine);
+        }
+
+        // アニメーション
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (isAnimating && orbitData.length > 0) {
+                const point = orbitData[currentIndex];
+                
+                // 衛星位置を更新
+                satellite.position.set(
+                    point.position_eci.x,
+                    point.position_eci.z,
+                    -point.position_eci.y
+                );
+
+                // 情報パネルを更新
+                updateInfoPanel(point);
+
+                // 次のポイントへ
+                currentIndex = (currentIndex + 1) % orbitData.length;
+            }
+
+            // 地球をゆっくり回転
+            earth.rotation.y += 0.001;
+
+            // カメラを軌道に沿って移動
+            const time = Date.now() * 0.0001;
+            camera.position.x = Math.cos(time) * 15000;
+            camera.position.z = Math.sin(time) * 15000;
+            camera.lookAt(0, 0, 0);
+
+            renderer.render(scene, camera);
+        }
+
+        // 情報パネル更新
+        function updateInfoPanel(point) {
+            const time = new Date(point.timestamp);
+            document.getElementById('current-time').textContent = 
+                time.toISOString().substring(0, 19).replace('T', ' ');
+            document.getElementById('latitude').textContent = 
+                `${point.geographic.lat.toFixed(2)}°`;
+            document.getElementById('longitude').textContent = 
+                `${point.geographic.lon.toFixed(2)}°`;
+            document.getElementById('altitude').textContent = 
+                `${point.geographic.alt.toFixed(1)} km`;
+        }
+
+        // 操作関数
+        function toggleAnimation() {
+            isAnimating = !isAnimating;
+        }
+
+        function resetView() {
+            camera.position.set(15000, 10000, 15000);
+            camera.lookAt(0, 0, 0);
+        }
+
+        async function refreshOrbit() {
+            document.getElementById('loading').style.display = 'block';
+            await fetchOrbitData();
+            document.getElementById('loading').style.display = 'none';
+            alert('軌道データを更新しました');
+        }
+
+        function toggleOrbit() {
+            showOrbit = !showOrbit;
+            if (orbitLine) {
+                orbitLine.visible = showOrbit;
+            }
+        }
+
+        // ウィンドウリサイズ対応
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // 初期化実行
+        init();
+    </script>
+</body>
+</html>
+

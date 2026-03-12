@@ -1,0 +1,34 @@
+# Prometheus設定ファイル
+# 衛星軌道追跡システム監視用
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'satellite-tracker'
+    environment: 'production'
+
+# アラートマネージャー設定（将来の拡張用）
+# alerting:
+#   alertmanagers:
+#     - static_configs:
+#         - targets: ['alertmanager:9093']
+
+# ルール設定（将来の拡張用）
+# rule_files:
+#   - 'alerts.yml'
+
+# スクレイプ設定
+scrape_configs:
+  # Prometheus自身の監視
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+  
+  # 衛星軌道追跡API
+  - job_name: 'satellite-tracker-api'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['api:8000']
+    scrape_interval: 10s
+

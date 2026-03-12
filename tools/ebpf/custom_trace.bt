@@ -1,0 +1,23 @@
+#!/usr/bin/env bpftrace
+# UEP v5.0 カスタム eBPF トレース
+# 補強スキル: eBPF, bpftrace
+
+# システムコール: openat のトレース（カスタム版）
+tracepoint:syscalls:sys_enter_openat
+{
+    printf("%-10d %-6d %-16s %s\n",
+        elapsed / 1000000,
+        pid,
+        comm,
+        str(args->filename));
+}
+
+tracepoint:syscalls:sys_enter_openat
+/str(args->filename) == "/etc/passwd" || str(args->filename) == "/etc/shadow"/
+{
+    printf("%-10d %-6d %-16s [SECURITY] %s\n",
+        elapsed / 1000000,
+        pid,
+        comm,
+        str(args->filename));
+}

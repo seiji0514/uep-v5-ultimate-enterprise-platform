@@ -24,6 +24,7 @@ class RBAC:
             "manage_users",
             "manage_roles",
             "manage_ecosystem",
+            "manage_infrastructure",
         },
         "developer": {"read", "write", "manage_mlops", "manage_ai", "manage_ecosystem"},
         "operator": {

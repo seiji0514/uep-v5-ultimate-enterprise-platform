@@ -1,0 +1,26 @@
+# Cilium 設定（UEP v5.0）
+# eBPF ベースの CNI / ネットワークポリシー
+# 補強スキル: eBPF, Cilium 連携
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cilium-config
+  namespace: kube-system
+data:
+  # eBPF ホストルーティング
+  tunnel: "disabled"
+  enable-ipv4: "true"
+  enable-ipv6: "false"
+  # Hubble 可観測性（オプション）
+  enable-hubble: "true"
+  hubble-listen-address: ":4244"
+  hubble-metrics-server: ":9091"
+  enable-hubble-metrics: "tcp,flow,port-distribution,icmp,dns"
+  # ネットワークポリシー
+  enable-policy: "default"
+  enable-l7-proxy: "true"
+  # パフォーマンス
+  bpf-map-dynamic-size-ratio: "0.0025"
+  # Falco との連携（eBPF イベント共有）
+  # Falco は Cilium の eBPF マップを参照可能に設定可能

@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>完全統合AI音声応答プラットフォーム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .domain-selector {
+            margin-bottom: 30px;
+        }
+
+        .domain-selector label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .domain-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .domain-btn {
+            padding: 12px 20px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .domain-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .domain-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .status.connected {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.disconnected {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .conversation {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .message.user {
+            background: #e3f2fd;
+            text-align: right;
+        }
+
+        .message.ai {
+            background: #f1f8e9;
+        }
+
+        .message .domain {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .message .text {
+            font-size: 14px;
+            color: #333;
+        }
+
+        .error {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 完全統合AI音声応答プラットフォーム</h1>
+        <p class="subtitle">複数分野に対応した音声AIシステム</p>
+
+        <div class="domain-selector">
+            <label>分野を選択:</label>
+            <div class="domain-buttons" id="domainButtons">
+                <!-- 動的に生成 -->
+            </div>
+        </div>
+
+        <div class="status disconnected" id="status">
+            接続待機中...
+        </div>
+
+        <div class="controls">
+            <button class="btn-primary" id="startBtn" onclick="startConversation()">
+                会話を開始
+            </button>
+            <button class="btn-danger" id="stopBtn" onclick="stopConversation()" disabled>
+                会話を停止
+            </button>
+        </div>
+
+        <div class="conversation" id="conversation">
+            <div class="message ai">
+                <div class="text">会話を開始するには「会話を開始」ボタンをクリックしてください。</div>
+            </div>
+        </div>
+
+        <div class="error" id="error"></div>
+    </div>
+
+    <script>
+        let ws = null;
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let currentDomain = null;
+        let isRecording = false;
+
+        const port = window.location.port || 8001;
+        const wsUrl = `ws://${window.location.hostname}:${port}/ws/unified-voice`;
+
+        // 利用可能な分野を取得
+        async function loadDomains() {
+            try {
+                const response = await fetch(`http://${window.location.hostname}:${port}/api/domains`);
+                const data = await response.json();
+                
+                const domainButtons = document.getElementById('domainButtons');
+                domainButtons.innerHTML = '';
+                
+                data.domains.forEach(domain => {
+                    const btn = document.createElement('button');
+                    btn.className = 'domain-btn';
+                    btn.textContent = domain.name;
+                    btn.onclick = () => selectDomain(domain.id);
+                    domainButtons.appendChild(btn);
+                });
+            } catch (error) {
+                console.error('分野の読み込みエラー:', error);
+            }
+        }
+
+        function selectDomain(domainId) {
+            currentDomain = domainId;
+            
+            // ボタンの状態を更新
+            document.querySelectorAll('.domain-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            event.target.classList.add('active');
+            
+            // WebSocket経由で分野を設定
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({
+                    type: "set_domain",
+                    domain: domainId
+                }));
+            }
+            
+            addMessage('ai', `分野を「${domainId}」に設定しました。`, domainId);
+        }
+
+        function connectWebSocket() {
+            ws = new WebSocket(wsUrl);
+
+            ws.onopen = () => {
+                updateStatus(true);
+                addMessage('ai', '接続が確立されました。', null);
+                
+                // 利用可能な分野を取得
+                ws.send(JSON.stringify({
+                    type: "get_available_domains"
+                }));
+            };
+
+            ws.onmessage = (event) => {
+                if (event.data instanceof Blob) {
+                    // 音声データ
+                    const audio = new Audio(URL.createObjectURL(event.data));
+                    audio.play();
+                } else {
+                    // テキストメッセージ
+                    const message = JSON.parse(event.data);
+                    handleMessage(message);
+                }
+            };
+
+            ws.onerror = (error) => {
+                console.error('WebSocketエラー:', error);
+                updateStatus(false);
+                showError('接続エラーが発生しました。');
+            };
+
+            ws.onclose = () => {
+                updateStatus(false);
+                addMessage('ai', '接続が切断されました。', null);
+            };
+        }
+
+        function handleMessage(message) {
+            if (message.type === 'response_text') {
+                addMessage('ai', message.text, message.domain);
+            } else if (message.type === 'domain_set') {
+                addMessage('ai', message.message, message.domain);
+            } else if (message.type === 'error') {
+                showError(message.message);
+            }
+        }
+
+        async function startConversation() {
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                connectWebSocket();
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        audioChunks.push(event.data);
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        ws.send(audioBlob);
+                        audioChunks = [];
+                    }
+                };
+
+                mediaRecorder.onstop = () => {
+                    stream.getTracks().forEach(track => track.stop());
+                };
+
+                // 1秒ごとにデータを送信
+                mediaRecorder.start(1000);
+                isRecording = true;
+
+                document.getElementById('startBtn').disabled = true;
+                document.getElementById('stopBtn').disabled = false;
+                addMessage('ai', '録音を開始しました。話してください。', currentDomain);
+            } catch (error) {
+                console.error('マイクアクセスエラー:', error);
+                showError('マイクへのアクセスが拒否されました。');
+            }
+        }
+
+        function stopConversation() {
+            if (mediaRecorder && isRecording) {
+                mediaRecorder.stop();
+                isRecording = false;
+                document.getElementById('startBtn').disabled = false;
+                document.getElementById('stopBtn').disabled = true;
+                addMessage('ai', '録音を停止しました。', currentDomain);
+            }
+        }
+
+        function addMessage(sender, text, domain) {
+            const conversation = document.getElementById('conversation');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            let html = `<div class="text">${text}</div>`;
+            if (domain) {
+                html = `<div class="domain">分野: ${domain}</div>` + html;
+            }
+            
+            messageDiv.innerHTML = html;
+            conversation.appendChild(messageDiv);
+            conversation.scrollTop = conversation.scrollHeight;
+        }
+
+        function updateStatus(connected) {
+            const status = document.getElementById('status');
+            if (connected) {
+                status.className = 'status connected';
+                status.textContent = '✓ 接続済み';
+            } else {
+                status.className = 'status disconnected';
+                status.textContent = '✗ 未接続';
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            setTimeout(() => {
+                errorDiv.textContent = '';
+            }, 5000);
+        }
+
+        // 初期化
+        window.onload = () => {
+            loadDomains();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>個人用 PC 容量確保</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Segoe UI', 'Yu Gothic', sans-serif; margin: 0; padding: 20px; background: #0b0c0e; color: #d8d9da; }
+    h1 { font-size: 1.5rem; margin-bottom: 8px; }
+    .sub { color: #888; font-size: 0.9rem; margin-bottom: 20px; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .card { background: #1e1e1e; border: 1px solid #2d2d2d; border-radius: 8px; padding: 16px; }
+    .card .label { color: #888; font-size: 0.85rem; }
+    .card .value { font-size: 1.25rem; font-weight: 600; }
+    .card .value.free { color: #4caf50; }
+    .section { margin-bottom: 24px; }
+    .section h2 { font-size: 1.1rem; margin-bottom: 12px; color: #F46800; }
+    .btn { padding: 10px 20px; background: #F46800; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 0.95rem; }
+    .btn:hover { background: #e55d00; }
+    .btn:disabled { background: #555; cursor: not-allowed; }
+    .btn-secondary { background: #444; }
+    .btn-secondary:hover { background: #555; }
+    .btn-danger { background: #c62828; }
+    .btn-danger:hover { background: #b71c1c; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px; text-align: left; border-bottom: 1px solid #333; }
+    th { color: #888; font-weight: 500; }
+    .path { font-size: 0.85rem; color: #aaa; max-width: 400px; overflow: hidden; text-overflow: ellipsis; }
+    .size { font-weight: 600; color: #4caf50; }
+    .badge { font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; font-weight: 500; }
+    .badge-safe { background: #2e7d32; color: #fff; }
+    .badge-caution { background: #c62828; color: #fff; }
+    .loading { color: #888; }
+    .error { color: #f44336; margin-bottom: 16px; }
+    .success { color: #4caf50; margin-bottom: 16px; }
+    .docker-output { background: #1a1a1a; padding: 12px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; white-space: pre-wrap; max-height: 200px; overflow-y: auto; }
+    .actions { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>個人用 PC 容量確保</h1>
+  <p class="sub">Docker クリーンアップと Cドライブの容量確保（UEP・産業統合・EOH とは無関係）</p>
+
+  <div id="error" class="error"></div>
+  <div id="success" class="success"></div>
+
+  <div class="cards" id="disk-cards">
+    <div class="card"><div class="label">Cドライブ 空き</div><div class="value free" id="disk-free">--</div></div>
+    <div class="card"><div class="label">合計</div><div class="value" id="disk-total">--</div></div>
+  </div>
+
+  <div class="section">
+    <h2>Docker</h2>
+    <div id="docker-status" class="sub">確認中...</div>
+    <div id="docker-output" class="docker-output" style="display:none"></div>
+    <div class="actions" style="margin-top:12px">
+      <button class="btn" id="btn-docker-prune" onclick="runDockerPrune()" disabled>Docker クリーンアップ実行</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Cドライブ・一時フォルダ スキャン</h2>
+    <div class="actions">
+      <button class="btn" id="btn-scan" onclick="scan()">スキャン開始</button>
+      <button class="btn btn-danger" id="btn-clean" onclick="runClean()" disabled>選択項目を削除</button>
+    </div>
+    <div id="scan-result" style="margin-top:16px">
+      <p class="sub">スキャンボタンを押して削除候補を検出します。</p>
+    </div>
+  </div>
+
+  <script>
+    const API = 'http://localhost:5002';
+    let scanItems = [];
+
+    function showError(msg) {
+      document.getElementById('error').textContent = msg;
+      document.getElementById('error').style.display = 'block';
+      document.getElementById('success').style.display = 'none';
+    }
+    function showSuccess(msg) {
+      document.getElementById('success').textContent = msg;
+      document.getElementById('success').style.display = 'block';
+      document.getElementById('error').style.display = 'none';
+    }
+    function clearMsg() {
+      document.getElementById('error').style.display = 'none';
+      document.getElementById('success').style.display = 'none';
+    }
+
+    async function fetchApi(path, opts = {}) {
+      try {
+        const r = await fetch(API + path, opts);
+        const data = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(data.detail || r.statusText);
+        return data;
+      } catch (e) {
+        showError('API 接続エラー: ' + e.message + ' (バックエンドは起動していますか？)');
+        throw e;
+      }
+    }
+
+    async function loadDiskInfo() {
+      try {
+        const d = await fetchApi('/api/disk-info');
+        document.getElementById('disk-free').textContent = d.free;
+        document.getElementById('disk-total').textContent = d.total;
+      } catch (_) {}
+    }
+
+    async function loadDocker() {
+      try {
+        const d = await fetchApi('/api/docker');
+        const el = document.getElementById('docker-status');
+        const out = document.getElementById('docker-output');
+        const btn = document.getElementById('btn-docker-prune');
+        if (d.available) {
+          el.textContent = d.message;
+          btn.disabled = false;
+          if (d.df) {
+            out.style.display = 'block';
+            out.textContent = d.df;
+          }
+        } else {
+          el.textContent = d.message;
+          out.style.display = 'none';
+        }
+      } catch (_) {}
+    }
+
+    async function runDockerPrune() {
+      if (!confirm('Docker の未使用リソース（コンテナ・イメージ・ボリューム・ビルドキャッシュ）を削除します。よろしいですか？')) return;
+      clearMsg();
+      document.getElementById('btn-docker-prune').disabled = true;
+      try {
+        const d = await fetchApi('/api/docker-prune', { method: 'POST' });
+        showSuccess(d.message);
+        await loadDocker();
+        await loadDiskInfo();
+      } catch (e) {
+        showError(e.message);
+      }
+      document.getElementById('btn-docker-prune').disabled = false;
+    }
+
+    async function scan() {
+      clearMsg();
+      document.getElementById('btn-scan').disabled = true;
+      document.getElementById('scan-result').innerHTML = '<p class="loading">スキャン中...（数分かかる場合があります）</p>';
+      try {
+        const d = await fetchApi('/api/scan?c_drive=true&temp=true');
+        scanItems = d.items;
+        let html = `<p class="sub">検出: ${d.count} 件、合計 ${d.total}</p>`;
+        if (d.items.length > 0) {
+          html += '<table><thead><tr><th><input type="checkbox" id="check-all" onchange="toggleAll(this)"></th><th>判定</th><th>サイズ</th><th>種類</th><th>パス</th></tr></thead><tbody>';
+          html += '<tr><td colspan="5" style="color:#888;font-size:0.85rem">削除可=再生成可能 / 注意=データ消える可能性あり</td></tr>';
+          d.items.forEach((it, i) => {
+            const pathEsc = escapeAttr(it.path);
+            const badge = it.safe
+              ? '<span class="badge badge-safe">削除可</span>'
+              : '<span class="badge badge-caution">注意</span>';
+            html += `<tr><td><input type="checkbox" class="item-check" data-index="${i}"></td><td>${badge}</td><td class="size">${formatSize(it.size_mb)}</td><td>${escapeHtml(it.desc)}</td><td class="path" title="${pathEsc}">${escapeHtml(it.path)}</td></tr>`;
+          });
+          html += '</tbody></table>';
+          document.getElementById('btn-clean').disabled = false;
+        } else {
+          html += '<p class="sub">削除候補は検出されませんでした。</p>';
+        }
+        document.getElementById('scan-result').innerHTML = html;
+      } catch (e) {
+        document.getElementById('scan-result').innerHTML = '<p class="error">' + escapeHtml(e.message) + '</p>';
+      }
+      document.getElementById('btn-scan').disabled = false;
+    }
+
+    function escapeHtml(s) {
+      const d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+    function escapeAttr(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function formatSize(mb) {
+      if (mb >= 1024) return (mb / 1024).toFixed(1) + ' GB';
+      return mb.toFixed(1) + ' MB';
+    }
+
+    function toggleAll(el) {
+      document.querySelectorAll('.item-check').forEach(cb => cb.checked = el.checked);
+    }
+
+    async function runClean() {
+      const checked = Array.from(document.querySelectorAll('.item-check:checked')).map(cb => scanItems[parseInt(cb.dataset.index, 10)]);
+      if (checked.length === 0) {
+        showError('削除する項目を選択してください');
+        return;
+      }
+      const hasCaution = checked.some(it => !it.safe);
+      let msg = `選択した ${checked.length} 件を削除します。よろしいですか？\n\n※ node_modules, venv 等は npm install / pip install で再生成が必要です。`;
+      if (hasCaution) msg += '\n\n⚠ 注意マークの項目（postgres_data 等）はデータが消える可能性があります。';
+      if (!confirm(msg)) return;
+      const paths = checked.map(it => it.path);
+      clearMsg();
+      document.getElementById('btn-clean').disabled = true;
+      try {
+        const d = await fetchApi('/api/clean', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ paths })
+        });
+        const failed = d.results.filter(r => !r.success);
+        if (failed.length === 0) {
+          showSuccess('削除が完了しました');
+        } else {
+          showError('一部失敗: ' + failed.map(r => r.message).join(', '));
+        }
+        await loadDiskInfo();
+        await scan();
+      } catch (e) {
+        showError(e.message);
+      }
+      document.getElementById('btn-clean').disabled = false;
+    }
+
+    (async () => {
+      await loadDiskInfo();
+      await loadDocker();
+    })();
+  </script>
+</body>
+</html>

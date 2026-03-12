@@ -1,0 +1,184 @@
+version: '3.8'
+
+services:
+  # PostgreSQL（メタデータ、トランザクションデータ）
+  postgres:
+    image: postgres:15-alpine
+    container_name: smart_city_postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-smart_city_sustainability}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - smart_city_network
+
+  # InfluxDB（時系列データ）
+  influxdb:
+    image: influxdb:2.7-alpine
+    container_name: smart_city_influxdb
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: admin
+      DOCKER_INFLUXDB_INIT_PASSWORD: adminpassword
+      DOCKER_INFLUXDB_INIT_ORG: smart_city_org
+      DOCKER_INFLUXDB_INIT_BUCKET: smart_city_data
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: your_influxdb_token
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+    healthcheck:
+      test: ["CMD", "influx", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - smart_city_network
+
+  # Kafka（メッセージキュー）
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: smart_city_zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - smart_city_network
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: smart_city_kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "kafka:9092"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - smart_city_network
+
+  # バックエンド（FastAPI）
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: smart_city_backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      influxdb:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-smart_city_sustainability}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      INFLUXDB_URL: http://influxdb:8086
+      INFLUXDB_TOKEN: ${INFLUXDB_TOKEN:-your_influxdb_token}
+      INFLUXDB_ORG: ${INFLUXDB_ORG:-smart_city_org}
+      INFLUXDB_BUCKET: ${INFLUXDB_BUCKET:-smart_city_data}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SECRET_KEY: ${SECRET_KEY:-your_secret_key_here}
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 30
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    volumes:
+      - ./backend:/app
+      - ./logs:/app/logs
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - smart_city_network
+
+  # フロントエンド（React）
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: smart_city_frontend
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+    environment:
+      REACT_APP_API_URL: http://backend:8000
+      REACT_APP_GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY:-your_google_maps_api_key}
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: npm start
+    networks:
+      - smart_city_network
+
+  # Prometheus（メトリクス収集）
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: smart_city_prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    networks:
+      - smart_city_network
+
+  # Grafana（可視化）
+  grafana:
+    image: grafana/grafana:latest
+    container_name: smart_city_grafana
+    depends_on:
+      - prometheus
+    ports:
+      - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_INSTALL_PLUGINS: grafana-clock-panel,grafana-simple-json-datasource
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+    networks:
+      - smart_city_network
+
+volumes:
+  postgres_data:
+  influxdb_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  smart_city_network:
+    driver: bridge
+

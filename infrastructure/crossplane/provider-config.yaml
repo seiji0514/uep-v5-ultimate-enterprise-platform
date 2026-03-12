@@ -1,0 +1,25 @@
+# Crossplane Provider 設定（UEP v5.0）
+# 補強スキル: クラウドリソースの Kubernetes 管理
+apiVersion: aws.upbound.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: default
+spec:
+  credentials:
+    source: Secret
+    secretRef:
+      namespace: crossplane-system
+      name: aws-secret
+      key: credentials
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: aws-secret
+  namespace: crossplane-system
+type: Opaque
+stringData:
+  credentials: |
+    [default]
+    aws_access_key_id = YOUR_ACCESS_KEY
+    aws_secret_access_key = YOUR_SECRET_KEY

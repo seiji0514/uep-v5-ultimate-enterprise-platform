@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>バイオテクノロジー・医療AIシステム - 生命科学・医療技術プラットフォーム</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #E91E63 0%, #F06292 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #E91E63, #F06292);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .status-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .status-item {
+            background: linear-gradient(135deg, #E91E63, #F06292);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.3);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #333;
+            border-bottom: 3px solid #E91E63;
+            padding-bottom: 10px;
+        }
+
+        .biotech-features {
+            grid-column: 1 / -1;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #fff8fc, #ffe8f1);
+            border: 2px solid #E91E63;
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #E91E63, #F06292);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(233, 30, 99, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .feature-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .feature-description {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .feature-metrics {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .feature-metric {
+            background: linear-gradient(135deg, #E91E63, #F06292);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .feature-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #E91E63, #F06292);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-align: center;
+        }
+
+        .feature-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(233, 30, 99, 0.3);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, #E91E63, #F06292);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.3);
+            z-index: 1000;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(233, 30, 99, 0.4);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #E91E63, #F06292);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(233, 30, 99, 0.3);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .technical-fellow-description {
+            text-align: center;
+            margin: 30px 0;
+            padding: 30px;
+            background: linear-gradient(135deg, #27AE60, #229954);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(39, 174, 96, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .technical-fellow-description::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            pointer-events: none;
+        }
+
+        .technical-fellow-description h3 {
+            color: white;
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 0;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="../../technical-fellow-peak-level-ai-systems-dashboard-v4.0.html" class="back-button">← ダッシュボードに戻る</a>
+    
+    <div class="container">
+        <div class="header">
+            <h1>バイオテクノロジー・医療AIシステム</h1>
+            <p>生命科学・医療技術プラットフォーム</p>
+            <div class="status-indicators">
+                <div class="status-item">システム稼働中</div>
+                <div class="status-item">99.8% 稼働率</div>
+                <div class="status-item">医療支援中</div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">98.5%</div>
+                <div class="stat-label">診断精度</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">1000万+</div>
+                <div class="stat-label">患者データ</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">95.7%</div>
+                <div class="stat-label">治療成功率</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">∞</div>
+                <div class="stat-label">生命の可能性</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="card">
+                <h2>医療診断分析</h2>
+                <div class="chart-container">
+                    <canvas id="medicalDiagnosisChart"></canvas>
+                </div>
+                <p>AI診断の精度向上と疾患予測の分析</p>
+            </div>
+
+            <div class="card">
+                <h2>バイオ研究進捗</h2>
+                <div class="chart-container">
+                    <canvas id="biotechResearchChart"></canvas>
+                </div>
+                <p>バイオテクノロジー研究の進捗と成果</p>
+            </div>
+        </div>
+
+        <div class="biotech-features">
+            <h2>バイオテクノロジー・医療AI機能</h2>
+            
+            <!-- テクニカルフェロー級システム説明セクション -->
+            <div class="technical-fellow-description">
+                <h3>テクニカルフェロー級の生命科学AI技術による医療革命システム</h3>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <div class="feature-title">遺伝子解析AI</div>
+                    <div class="feature-description">
+                        遺伝子解析・ゲノム解読・遺伝子治療AIシステム。個別化医療と遺伝子診断を支援。
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">99.7% 精度</div>
+                        <div class="feature-metric">遺伝子解析</div>
+                    </div>
+                    <a href="genetic-analysis-ai.html" class="feature-link">詳細を見る</a>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <div class="feature-title">創薬AI</div>
+                    <div class="feature-description">
+                        新薬発見・薬物設計・薬効予測AIシステム。創薬プロセスの効率化と成功率向上を実現。
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">94.8% 精度</div>
+                        <div class="feature-metric">分子設計</div>
+                    </div>
+                    <a href="drug-discovery-ai.html" class="feature-link">詳細を見る</a>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <div class="feature-title">医療画像AI</div>
+                    <div class="feature-description">
+                        医療画像診断・画像解析・病変検出AIシステム。高精度な医療画像診断を支援。
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">98.5% 精度</div>
+                        <div class="feature-metric">高速解析</div>
+                    </div>
+                    <a href="medical-imaging-ai.html" class="feature-link">詳細を見る</a>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <div class="feature-title">臨床意思決定支援AI</div>
+                    <div class="feature-description">
+                        臨床意思決定支援・診断支援・治療推奨AIシステム。医師の診断精度向上と医療ミス防止を実現。
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">95.8% 精度</div>
+                        <div class="feature-metric">診断支援</div>
+                    </div>
+                    <a href="clinical-decision-support-ai.html" class="feature-link">詳細を見る</a>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <div class="feature-title">個別化医療AI</div>
+                    <div class="feature-description">
+                        個別化医療・精密医療・オーダーメイド治療AIシステム。患者個人に最適化された医療を提供。
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">99.2% 精度</div>
+                        <div class="feature-metric">遺伝子解析</div>
+                    </div>
+                    <a href="personalized-medicine-ai.html" class="feature-link">詳細を見る</a>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <div class="feature-title">バイオマーカー発見AI</div>
+                    <div class="feature-description">
+                        バイオマーカー発見・検証・臨床応用AIシステム。疾患診断・治療効果評価のための新規バイオマーカーを発見。
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">94.8% 精度</div>
+                        <div class="feature-metric">発見効率</div>
+                    </div>
+                    <a href="biomarker-discovery-ai.html" class="feature-link">詳細を見る</a>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <div class="feature-title">細胞治療AI</div>
+                    <div class="feature-description">
+                        細胞治療・再生医療・幹細胞治療AIシステム。細胞ベースの治療法の開発と最適化を支援。
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">94.7% 分化効率</div>
+                        <div class="feature-metric">高純度</div>
+                    </div>
+                    <a href="cell-therapy-ai.html" class="feature-link">詳細を見る</a>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <div class="feature-title">タンパク質工学AI</div>
+                    <div class="feature-description">
+                        タンパク質設計・構造予測・機能改変AIシステム。医療・産業用途のタンパク質を効率的に設計・開発。
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">98.7% 精度</div>
+                        <div class="feature-metric">構造予測</div>
+                    </div>
+                    <a href="protein-engineering-ai.html" class="feature-link">詳細を見る</a>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <div class="feature-title">合成生物学AI</div>
+                    <div class="feature-description">
+                        合成生物学・人工生命・バイオシステム設計AIシステム。人工的な生物システムの設計・構築・最適化を支援。
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">93.7% 設計成功率</div>
+                        <div class="feature-metric">回路設計</div>
+                    </div>
+                    <a href="synthetic-biology-ai.html" class="feature-link">詳細を見る</a>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon"></div>
+                    <div class="feature-title">医療ロボットAI</div>
+                    <div class="feature-description">
+                        医療ロボット・手術支援・リハビリ支援AIシステム。高精度な医療ロボット制御と患者ケアを実現。
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">99.2% 精度</div>
+                        <div class="feature-metric">手術支援</div>
+                    </div>
+                    <a href="medical-robotics-ai.html" class="feature-link">詳細を見る</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 医療診断分析チャート
+        const medicalDiagnosisCtx = document.getElementById('medicalDiagnosisChart').getContext('2d');
+        new Chart(medicalDiagnosisCtx, {
+            type: 'line',
+            data: {
+                labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+                datasets: [{
+                    label: '診断精度（%）',
+                    data: [95, 96, 97, 98, 98, 99, 98, 99, 99, 98, 99, 99],
+                    borderColor: '#E91E63',
+                    backgroundColor: 'rgba(233, 30, 99, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }, {
+                    label: '早期発見率（%）',
+                    data: [85, 87, 89, 91, 92, 94, 93, 95, 96, 95, 96, 97],
+                    borderColor: '#F06292',
+                    backgroundColor: 'rgba(240, 98, 146, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '医療AI診断性能'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+
+        // バイオ研究進捗チャート
+        const biotechResearchCtx = document.getElementById('biotechResearchChart').getContext('2d');
+        new Chart(biotechResearchCtx, {
+            type: 'bar',
+            data: {
+                labels: ['ゲノム解析', '創薬', '画像診断', '手術支援', '遠隔医療', '個別化医療', 'データ分析', '薬剤相互作用', '疾病予測', '再生医療'],
+                datasets: [{
+                    label: '研究進捗度（%）',
+                    data: [95, 88, 92, 85, 90, 87, 93, 82, 89, 78],
+                    backgroundColor: [
+                        '#E91E63',
+                        '#F06292',
+                        '#E91E63',
+                        '#F06292',
+                        '#E91E63',
+                        '#F06292',
+                        '#E91E63',
+                        '#F06292',
+                        '#E91E63',
+                        '#F06292'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'バイオテクノロジー研究進捗'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+
+        // リアルタイム更新
+        setInterval(() => {
+            // チャートデータの更新
+            const diagnosisChart = Chart.getChart('medicalDiagnosisChart');
+            const researchChart = Chart.getChart('biotechResearchChart');
+            
+            if (diagnosisChart) {
+                // 診断精度データの更新
+                diagnosisChart.data.datasets[0].data = diagnosisChart.data.datasets[0].data.map(value => 
+                    Math.min(100, value + (Math.random() - 0.5) * 0.5)
+                );
+                diagnosisChart.data.datasets[1].data = diagnosisChart.data.datasets[1].data.map(value => 
+                    Math.min(100, value + (Math.random() - 0.5) * 0.5)
+                );
+                diagnosisChart.update();
+            }
+            
+            if (researchChart) {
+                // 研究進捗データの更新
+                researchChart.data.datasets[0].data = researchChart.data.datasets[0].data.map(value => 
+                    Math.min(100, value + (Math.random() - 0.5) * 2)
+                );
+                researchChart.update();
+            }
+        }, 5000);
+    </script>
+
+    <!-- ライセンス・権利情報 -->
+    <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 15px; padding: 25px; margin: 30px auto; max-width: 1200px; border: 3px solid #f59e0b; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);">
+        <h2 style="color: #92400e; margin-bottom: 20px; text-align: center; font-size: 1.5rem;">ライセンス・権利情報</h2>
+        
+        <div style="background: white; padding: 20px; border-radius: 10px; color: #1e3a8a; line-height: 2;">
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">著作権:</strong> &copy; 2025 小川清志（おがわ せいじ）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">開発期間:</strong> 2025年6月～2025年10月（個人事業主として）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">開発目的:</strong> 技術研究・ポートフォリオ作成・転職活動用
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">用途:</strong> 個人研究目的（非商用）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">ライセンス:</strong> MIT License
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">公開範囲:</strong> 個人ポートフォリオサイト、GitHub（技術実証目的）
+            </div>
+            
+            <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #f59e0b;">
+                <strong style="color: #92400e;">重要事項:</strong>
+                <p style="color: #78350f; margin-top: 10px;">
+                    本システムは、個人事業主として独自に研究開発したものであり、
+                    特定の企業・組織の業務とは一切関係ありません。<br>
+                    全ての知的財産権は開発者個人（小川清志）に帰属します。<br>
+                    本システムの技術内容・アイデアは、入社前の個人研究として確立されたものです。
+                </p>
+            </div>
+            
+            <div style="background: #dbeafe; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #3b82f6;">
+                <strong style="color: #1e40af;">タイムスタンプ:</strong>
+                <p style="color: #1e3a8a; margin-top: 10px;">
+                    最終更新日: 2025年10月26日<br>
+                    GitHub最終コミット: 2025年10月26日<br>
+                    確定日付: 入社前（個人開発期間中）
+                </p>
+            </div>
+            
+            <div style="background: #d1fae5; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #10b981;">
+                <strong style="color: #047857;">連絡先:</strong>
+                <p style="color: #065f46; margin-top: 10px;">
+                    開発者: 小川清志（おがわ せいじ）<br>
+                    Email: kaho052514@gmail.com<br>
+                    電話: 080-4271-5479
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>

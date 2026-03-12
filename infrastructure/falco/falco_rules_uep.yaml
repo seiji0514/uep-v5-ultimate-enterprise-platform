@@ -1,0 +1,29 @@
+# UEP v5.0 カスタム Falco ルール
+# eBPF ベースのランタイムセキュリティ検知
+
+- rule: UEP Backend 異常なプロセス起動
+  desc: UEP バックエンドコンテナ内での異常なプロセス起動を検知
+  condition: >
+    container and container.image contains "uep" and
+    (spawned_process and proc.name in (sh, bash, curl, wget, nc, ncat))
+  output: "UEP異常検知: コンテナ内でシェル/ネットワークツール起動 (user=%user.name proc=%proc.cmdline container=%container.name)"
+  priority: WARNING
+  tags: [uep, container, runtime]
+
+- rule: UEP 特権コンテナでのファイル変更
+  desc: 特権コンテナ内での重要なファイル変更
+  condition: >
+    container and container.privileged and
+    (open_write and fd.name startswith /etc or fd.name startswith /usr)
+  output: "UEP異常検知: 特権コンテナでシステムファイル変更 (file=%fd.name proc=%proc.cmdline)"
+  priority: CRITICAL
+  tags: [uep, container, filesystem]
+
+- rule: UEP ネットワーク接続の異常
+  desc: バックエンドから想定外ポートへの接続
+  condition: >
+    container and container.image contains "uep" and
+    outbound and not (fd.sport in (8000, 5432, 6379, 9092, 4317))
+  output: "UEP異常検知: 想定外ポートへのアウトバウンド接続 (lport=%fd.lport rport=%fd.rport proc=%proc.cmdline)"
+  priority: WARNING
+  tags: [uep, network]

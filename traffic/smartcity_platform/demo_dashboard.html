@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartCity Traffic & Urban Management Platform - デモダッシュボード</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    body { margin:0; font-family:'Segoe UI','Meiryo',sans-serif; background:#f4f6fa; }
+    .container { display:flex; min-height:100vh; }
+    .sidebar {
+      width:220px; background:#222d3b; color:#fff; display:flex; flex-direction:column; padding:0; }
+    .sidebar h2 { font-size:1.2em; text-align:center; margin:1.2em 0 0.5em 0; letter-spacing:2px; }
+    .sidebar ul { list-style:none; padding:0; margin:0; }
+    .sidebar li { padding:1.1em 1.5em; cursor:pointer; border-left:5px solid transparent; transition:background 0.2s; }
+    .sidebar li.active, .sidebar li:hover { background:#1a2230; border-left:5px solid #ff9800; }
+    .sidebar li i { margin-right:0.7em; }
+    .main { flex:1; padding:2em 2.5em; }
+    .dashboard-cards { display:flex; gap:1.5em; margin-bottom:2em; }
+    .card { background:#fff; border-radius:14px; box-shadow:0 2px 12px #dbe6f3; padding:1.2em 2em; min-width:160px; text-align:center; font-size:1.1em; }
+    .card span { display:block; font-size:1.5em; font-weight:bold; margin-top:0.3em; }
+    .dashboard-map-graph { display:flex; gap:2em; align-items:flex-start; }
+    .city-map { position:relative; width:380px; height:260px; background:#e0e7ef; border-radius:12px; overflow:hidden; box-shadow:0 2px 8px #dbe6f3; }
+    .city-map img { width:100%; height:100%; object-fit:cover; }
+    .traffic-icon, .emergency-icon { position:absolute; font-size:2em; transition:top 1s,left 1s; }
+    .traffic-icon { color:#ff9800; }
+    .emergency-icon { color:#e53935; animation:blink 1s infinite alternate; }
+    @keyframes blink { 0%{opacity:1;} 100%{opacity:0.5;} }
+    .alert-area { margin:2em 0 1em 0; }
+    .alert { background:#fff3cd; color:#856404; border-left:6px solid #ff9800; padding:1em 1.5em; border-radius:8px; margin-bottom:0.7em; font-size:1.1em; box-shadow:0 2px 8px #ffe5b4; }
+    .alert.alert-emergency { background:#ffeaea; color:#b71c1c; border-left-color:#e53935; }
+    .dashboard-actions { display:flex; gap:2em; align-items:flex-start; margin-top:2em; }
+    .btn-emergency { background:#e53935; color:#fff; border:none; border-radius:8px; padding:1em 2em; font-size:1.1em; font-weight:bold; cursor:pointer; box-shadow:0 2px 8px #ffcdd2; transition:background 0.2s; }
+    .btn-emergency:hover { background:#b71c1c; }
+    .ai-panel { background:#fff; border-radius:10px; box-shadow:0 2px 8px #dbe6f3; padding:1em 1.5em; min-width:200px; }
+    .ai-panel h4 { margin:0 0 0.5em 0; font-size:1.1em; color:#ff9800; }
+    .ai-panel span { font-weight:bold; color:#e53935; }
+    @media (max-width:900px) { .dashboard-map-graph { flex-direction:column; } .city-map { width:100%; height:200px; } }
+    @media (max-width:700px) { .container { flex-direction:column; } .sidebar { width:100%; flex-direction:row; } .sidebar ul { display:flex; } .sidebar li { flex:1; text-align:center; } .main { padding:1em; } }
+  </style>
+</head>
+<body>
+<div class="container">
+  <nav class="sidebar">
+    <h2>SmartCity Menu</h2>
+    <ul>
+      <li class="active"><i class="fas fa-traffic-light"></i>交通管制</li>
+      <li><i class="fas fa-industry"></i>インフラ管理</li>
+      <li><i class="fas fa-leaf"></i>環境モニタリング</li>
+      <li><i class="fas fa-users"></i>市民サービス</li>
+      <li><i class="fas fa-brain"></i>AI分析</li>
+      <li><i class="fas fa-plane-departure"></i>航空管制</li>
+    </ul>
+  </nav>
+  <main class="main">
+    <div class="dashboard-cards">
+      <div class="card">交通量<br><span id="traffic-count">1,230台</span></div>
+      <div class="card">大気質<br><span id="air-quality">PM2.5: 35μg/m³</span></div>
+      <div class="card">電力消費<br><span id="power-usage">12.3MW</span></div>
+    </div>
+    <div class="dashboard-map-graph">
+      <div class="city-map">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6e/Tokyo_Metro_map.png" alt="都市地図" />
+        <div class="traffic-icon" id="car1" style="top:40%;left:60%;">🚗</div>
+        <div class="emergency-icon" id="emergency1" style="top:55%;left:30%;">🚑</div>
+      </div>
+      <canvas id="trafficChart" width="350" height="220"></canvas>
+    </div>
+    <div class="alert-area">
+      <div class="alert alert-emergency" id="alert-emergency">🚨 緊急車両が市内を通過中（AI信号制御中）</div>
+      <div class="alert alert-air" id="alert-air">🌫️ 大気質アラート：PM2.5上昇</div>
+    </div>
+    <div class="dashboard-actions">
+      <button class="btn-emergency" onclick="triggerEmergency()">緊急車両優先</button>
+      <div class="ai-panel">
+        <h4>AI予測</h4>
+        <p>30分後の渋滞予測：<span id="ai-prediction">混雑（赤）</span></p>
+      </div>
+    </div>
+    <div style="margin-top:2em; color:#888; font-size:0.95em;">
+      <strong>デモシナリオ:</strong> <span id="demo-story">現在、緊急車両が市内を通過中。AIが信号を自動制御しています。</span>
+    </div>
+  </main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// ダミーグラフ初期化
+const ctx = document.getElementById('trafficChart').getContext('2d');
+const trafficChart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: ['10:00','10:10','10:20','10:30','10:40','10:50'],
+    datasets: [{
+      label: '交通量',
+      data: [1200, 1300, 1250, 1400, 1230, 1350],
+      borderColor: 'orange',
+      fill: false
+    }]
+  },
+  options: { responsive: true, plugins:{legend:{display:false}} }
+});
+
+// ダミー数値のリアルタイム風更新
+setInterval(() => {
+  // 交通量
+  let count = 1200 + Math.floor(Math.random()*200);
+  document.getElementById('traffic-count').textContent = count + '台';
+  // 大気質
+  let pm = 30 + Math.floor(Math.random()*15);
+  document.getElementById('air-quality').textContent = 'PM2.5: ' + pm + 'μg/m³';
+  // 電力消費
+  let power = (12 + Math.random()*2).toFixed(1);
+  document.getElementById('power-usage').textContent = power + 'MW';
+  // グラフ
+  trafficChart.data.datasets[0].data.push(count);
+  trafficChart.data.labels.push(new Date().toLocaleTimeString().slice(0,5));
+  if(trafficChart.data.datasets[0].data.length>8){
+    trafficChart.data.datasets[0].data.shift();
+    trafficChart.data.labels.shift();
+  }
+  trafficChart.update();
+}, 4000);
+
+// 緊急車両アイコンのアニメーション
+let car = document.getElementById('car1');
+let emergency = document.getElementById('emergency1');
+let carPos = 60, emergencyPos = 30;
+setInterval(()=>{
+  carPos = carPos > 10 ? carPos-5 : 60;
+  emergencyPos = emergencyPos < 70 ? emergencyPos+5 : 30;
+  car.style.left = carPos + '%';
+  emergency.style.left = emergencyPos + '%';
+}, 2000);
+
+// ストーリー仕立てのデモシナリオ
+const stories = [
+  '現在、緊急車両が市内を通過中。AIが信号を自動制御しています。',
+  '大気質が悪化。環境アラートが発生しました。',
+  'インフラ障害が発生し、復旧作業中です。',
+  'AIが交通量を予測し、渋滞回避ルートを提案しています。',
+  '市民サービス：ごみ収集ルートの最適化を実施中。',
+  '航空管制：離着陸スケジュールをAIが最適化中。'
+];
+let storyIdx = 0;
+setInterval(()=>{
+  storyIdx = (storyIdx+1)%stories.length;
+  document.getElementById('demo-story').textContent = stories[storyIdx];
+}, 9000);
+
+// 緊急車両優先ボタンのデモ動作
+function triggerEmergency(){
+  document.getElementById('alert-emergency').textContent = '🚨 緊急車両優先モード：AIが全信号を制御中！';
+  document.getElementById('demo-story').textContent = '緊急車両優先モードが発動。AIが全信号を自動制御しています。';
+  setTimeout(()=>{
+    document.getElementById('alert-emergency').textContent = '🚨 緊急車両が市内を通過中（AI信号制御中）';
+  }, 7000);
+}
+</script>
+</body>
+</html> 

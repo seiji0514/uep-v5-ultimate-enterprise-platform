@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>衛星・宇宙通信システム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .space-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(0, 150, 255, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(0, 255, 255, 0.2) 0%, transparent 50%);
+            z-index: -1;
+            animation: spaceFlow 20s ease-in-out infinite;
+        }
+
+        @keyframes spaceFlow {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(180deg); }
+        }
+
+        .header {
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9) 0%, rgba(22, 33, 62, 0.9) 100%);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(0, 150, 255, 0.3);
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 0 3px 6px rgba(0,0,0,0.8);
+            color: #ffffff;
+            font-weight: 900;
+            letter-spacing: 2px;
+            line-height: 1.2;
+        }
+
+        .header p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 900px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .space-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .space-module {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 150, 255, 0.2);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .space-module::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #0096ff, #00ffff, #ffffff);
+            animation: spacePulse 3s ease-in-out infinite;
+        }
+
+        @keyframes spacePulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        .space-module:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 150, 255, 0.3);
+            border-color: rgba(0, 150, 255, 0.5);
+        }
+
+        .module-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            display: block;
+            text-shadow: 0 0 20px rgba(0, 150, 255, 0.8);
+        }
+
+        .module-title {
+            color: #ffffff;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .module-description {
+            color: #ffffff;
+            line-height: 1.7;
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+        }
+
+        .module-features {
+            list-style: none;
+            margin-bottom: 25px;
+        }
+
+        .module-features li {
+            padding: 8px 0;
+            color: #ffffff;
+            font-size: 1rem;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .module-features li::before {
+            content: '🛰️';
+            position: absolute;
+            left: 0;
+            top: 8px;
+            font-size: 0.9rem;
+        }
+
+        .space-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #0096ff 0%, #00ffff 100%);
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 2px solid rgba(0, 150, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .space-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .space-button:hover::before {
+            left: 100%;
+        }
+
+        .space-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 150, 255, 0.4);
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, #8e2de2 0%, #4a00e0 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 6px 20px rgba(142, 45, 226, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .back-button:hover {
+            background: linear-gradient(135deg, #4a00e0 0%, #8e2de2 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(142, 45, 226, 0.6);
+        }
+
+        .space-dashboard {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 150, 255, 0.2);
+        }
+
+        .dashboard-title {
+            color: #ffffff;
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+
+        .space-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .stat-card {
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(0, 150, 255, 0.1) 0%, rgba(0, 255, 255, 0.1) 100%);
+            color: white;
+            border-radius: 15px;
+            border: 1px solid rgba(0, 150, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 150, 255, 0.3);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ffffff;
+            display: block;
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .space-visualization {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border: 1px solid rgba(0, 150, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .visualization-title {
+            color: #ffffff;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .space-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 300px;
+            background: linear-gradient(45deg, rgba(0, 150, 255, 0.1), rgba(0, 255, 255, 0.1));
+            border-radius: 10px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .space-element {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #0096ff, #00ffff);
+            border-radius: 50%;
+            margin: 0 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            animation: spaceFloat 4s ease-in-out infinite;
+            box-shadow: 0 0 30px rgba(0, 150, 255, 0.6);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .space-element:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 50px rgba(0, 150, 255, 0.8);
+        }
+
+        @keyframes spaceFloat {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-20px) scale(1.1); }
+        }
+
+        .satellite-monitoring {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            border: 1px solid rgba(0, 150, 255, 0.2);
+        }
+
+        .monitoring-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .monitoring-card {
+            background: linear-gradient(135deg, rgba(0, 150, 255, 0.1) 0%, rgba(0, 255, 255, 0.1) 100%);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(0, 150, 255, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .monitoring-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 150, 255, 0.3);
+        }
+
+        .monitoring-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ffffff;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .monitoring-label {
+            font-size: 0.9rem;
+            color: #ffffff;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .container {
+                padding: 20px 15px;
+            }
+            
+            .space-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .space-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .space-status {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #0096ff;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4CAF50;
+            margin-right: 10px;
+            animation: statusPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes statusPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* モーダルスタイル */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.95) 0%, rgba(22, 33, 62, 0.95) 100%);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 2px solid rgba(0, 150, 255, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-header h3 {
+            color: #ffffff;
+            font-size: 2rem;
+            margin: 0;
+        }
+
+        .modal-close {
+            color: #ffffff;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            color: #ffffff;
+            line-height: 1.8;
+        }
+
+        /* 通知スタイル */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #0096ff 0%, #00ffff 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(0, 150, 255, 0.4);
+            z-index: 10001;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .notification-success {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+        }
+
+        .notification-info {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+        }
+
+        .notification-warning {
+            background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+        }
+
+        .notification-error {
+            background: linear-gradient(135deg, #F44336 0%, #D32F2F 100%);
+        }
+
+        /* 詳細メトリクススタイル */
+        .detailed-metrics {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(0, 150, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .detailed-metrics h3 {
+            color: #ffffff;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        .metric-item:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .metric-value {
+            color: #00ffff;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="space-background"></div>
+
+    <a href="project-portfolio-site.html" class="back-button">← プロジェクト一覧に戻る</a>
+
+    <div class="header">
+        <h1>🛰️ 衛星・宇宙通信システム</h1>
+        <p>低軌道衛星通信と宇宙データセンターを統合した次世代宇宙通信システム<br>
+        地球観測統合と宇宙資源管理による革新的な宇宙インフラ</p>
+    </div>
+
+    <div class="container">
+        <!-- 衛星・宇宙通信統合ダッシュボード -->
+        <div class="space-dashboard">
+            <h2 class="dashboard-title">🛰️ 衛星・宇宙通信統合ダッシュボード</h2>
+            <div class="space-stats">
+                <div class="stat-card">
+                    <span class="stat-number">1000+</span>
+                    <span class="stat-label">衛星数</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">99.9%</span>
+                    <span class="stat-label">通信成功率</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">0.1ms</span>
+                    <span class="stat-label">通信遅延</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">24/7</span>
+                    <span class="stat-label">グローバル通信</span>
+                </div>
+            </div>
+            
+            <div class="space-status">
+                <span class="status-indicator"></span>
+                <strong>システムステータス:</strong> 衛星・宇宙通信システムが正常に稼働中 - 低軌道衛星通信と地球観測をリアルタイムで処理中
+            </div>
+        </div>
+
+        <!-- 衛星・宇宙通信可視化 -->
+        <div class="space-visualization">
+            <h3 class="visualization-title">🛰️ リアルタイム衛星・宇宙通信可視化</h3>
+            <div class="space-display">
+                <div class="space-element">🛰️</div>
+                <div class="space-element">🌐</div>
+                <div class="space-element">📡</div>
+                <div class="space-element">🌍</div>
+                <div class="space-element">💎</div>
+                <div class="space-element">⚡</div>
+            </div>
+        </div>
+
+        <!-- 衛星・宇宙通信統合モジュール -->
+        <div class="space-grid">
+            <!-- 低軌道衛星通信 -->
+            <div class="space-module fade-in">
+                <span class="module-icon">🛰️</span>
+                <h3 class="module-title">低軌道衛星通信</h3>
+                <p class="module-description">低軌道衛星による高速・低遅延通信システム。グローバルな通信インフラを実現。</p>
+                <ul class="module-features">
+                    <li>低軌道衛星群</li>
+                    <li>高速通信</li>
+                    <li>低遅延通信</li>
+                    <li>グローバルカバレッジ</li>
+                    <li>衛星間通信</li>
+                    <li>地上局連携</li>
+                </ul>
+                <a href="low-earth-orbit-communication.html" class="space-button">詳細を見る</a>
+            </div>
+
+            <!-- 宇宙データセンター -->
+            <div class="space-module fade-in">
+                <span class="module-icon">🌐</span>
+                <h3 class="module-title">宇宙データセンター</h3>
+                <p class="module-description">宇宙空間でのデータ処理とストレージシステム。宇宙環境に最適化された高性能コンピューティング。</p>
+                <ul class="module-features">
+                    <li>宇宙データ処理</li>
+                    <li>宇宙ストレージ</li>
+                    <li>高性能コンピューティング</li>
+                    <li>宇宙環境最適化</li>
+                    <li>データセンター管理</li>
+                    <li>宇宙冷却システム</li>
+                </ul>
+                <a href="space-data-center.html" class="space-button">詳細を見る</a>
+            </div>
+
+            <!-- 地球観測統合 -->
+            <div class="space-module fade-in">
+                <span class="module-icon">📡</span>
+                <h3 class="module-title">地球観測統合</h3>
+                <p class="module-description">衛星による地球観測データの統合システム。環境監視、気象予測、災害監視を統合。</p>
+                <ul class="module-features">
+                    <li>地球観測衛星</li>
+                    <li>環境監視</li>
+                    <li>気象予測</li>
+                    <li>災害監視</li>
+                    <li>データ統合</li>
+                    <li>リアルタイム監視</li>
+                </ul>
+                <a href="earth-observation-integration.html" class="space-button">詳細を見る</a>
+            </div>
+
+            <!-- 宇宙資源管理 -->
+            <div class="space-module fade-in">
+                <span class="module-icon">💎</span>
+                <h3 class="module-title">宇宙資源管理</h3>
+                <p class="module-description">宇宙資源の探査、採掘、管理システム。小惑星資源と月面資源の統合管理。</p>
+                <ul class="module-features">
+                    <li>宇宙資源探査</li>
+                    <li>小惑星採掘</li>
+                    <li>月面資源管理</li>
+                    <li>資源輸送</li>
+                    <li>資源精製</li>
+                    <li>持続可能開発</li>
+                </ul>
+                <a href="space-resource-management.html" class="space-button">詳細を見る</a>
+            </div>
+
+            <!-- 衛星ナビゲーション -->
+            <div class="space-module fade-in">
+                <span class="module-icon">🧭</span>
+                <h3 class="module-title">衛星ナビゲーション</h3>
+                <p class="module-description">高精度衛星ナビゲーションシステム。GPS、GLONASS、Galileoの統合運用。</p>
+                <ul class="module-features">
+                    <li>高精度測位</li>
+                    <li>衛星ナビゲーション</li>
+                    <li>GPS統合</li>
+                    <li>GLONASS連携</li>
+                    <li>Galileo対応</li>
+                    <li>測位精度向上</li>
+                </ul>
+                <a href="satellite-navigation.html" class="space-button">詳細を見る</a>
+            </div>
+
+            <!-- 宇宙通信ネットワーク -->
+            <div class="space-module fade-in">
+                <span class="module-icon">⚡</span>
+                <h3 class="module-title">宇宙通信ネットワーク</h3>
+                <p class="module-description">宇宙空間での高速通信ネットワーク。量子通信と光通信の統合システム。</p>
+                <ul class="module-features">
+                    <li>宇宙通信ネットワーク</li>
+                    <li>量子通信</li>
+                    <li>光通信</li>
+                    <li>高速通信</li>
+                    <li>セキュア通信</li>
+                    <li>ネットワーク最適化</li>
+                </ul>
+                <a href="space-communication-network.html" class="space-button">詳細を見る</a>
+            </div>
+        </div>
+
+        <!-- 衛星通信監視ダッシュボード -->
+        <div class="satellite-monitoring">
+            <h3 class="visualization-title">📊 衛星通信監視ダッシュボード</h3>
+            <div class="monitoring-grid">
+                <div class="monitoring-card">
+                    <span class="monitoring-value">99.9%</span>
+                    <span class="monitoring-label">通信成功率</span>
+                </div>
+                <div class="monitoring-card">
+                    <span class="monitoring-value">0.1ms</span>
+                    <span class="monitoring-label">通信遅延</span>
+                </div>
+                <div class="monitoring-card">
+                    <span class="monitoring-value">1000+</span>
+                    <span class="monitoring-label">アクティブ衛星</span>
+                </div>
+                <div class="monitoring-card">
+                    <span class="monitoring-value">24/7</span>
+                    <span class="monitoring-label">グローバル通信</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 技術仕様セクション -->
+        <div class="space-dashboard">
+            <h2 class="dashboard-title">📋 技術仕様・ドキュメント</h2>
+            <div class="space-grid">
+                <div class="space-module">
+                    <span class="module-icon">📖</span>
+                    <h3 class="module-title">衛星・宇宙通信技術仕様書</h3>
+                    <p class="module-description">衛星・宇宙通信システムの包括的な技術仕様と設計思想</p>
+                    <ul class="module-features">
+                        <li>システムアーキテクチャ設計</li>
+                        <li>衛星通信技術仕様</li>
+                        <li>宇宙環境対応</li>
+                        <li>セキュリティ要件定義</li>
+                    </ul>
+                    <a href="satellite-space-communication-specification.html" class="space-button">詳細を見る</a>
+                </div>
+
+                <div class="space-module">
+                    <span class="module-icon">🔧</span>
+                    <h3 class="module-title">衛星・宇宙通信開発ガイド</h3>
+                    <p class="module-description">衛星・宇宙通信システム開発のための実践的ガイド</p>
+                    <ul class="module-features">
+                        <li>開発環境セットアップ</li>
+                        <li>衛星通信実装</li>
+                        <li>宇宙環境対応</li>
+                        <li>ベストプラクティス</li>
+                    </ul>
+                    <a href="satellite-space-communication-development-guide.html" class="space-button">詳細を見る</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // フェードインアニメーション
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // すべての宇宙モジュールを監視
+        document.querySelectorAll('.space-module').forEach(module => {
+            module.style.opacity = '0';
+            module.style.transform = 'translateY(30px)';
+            module.style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out';
+            observer.observe(module);
+        });
+
+        // リアルタイム衛星データ更新
+        function updateSatelliteData() {
+            const monitoringCards = document.querySelectorAll('.monitoring-card');
+            
+            monitoringCards.forEach(card => {
+                const valueElement = card.querySelector('.monitoring-value');
+                const labelElement = card.querySelector('.monitoring-label');
+                
+                if (valueElement && labelElement) {
+                    const label = labelElement.textContent;
+                    
+                    // ラベルに応じてリアルタイムデータを生成
+                    if (label === '通信成功率') {
+                    const successRate = (99.5 + Math.random() * 0.4).toFixed(1);
+                    valueElement.textContent = successRate + '%';
+                    valueElement.style.color = successRate >= 99.5 ? '#00ff00' : '#ffaa00';
+                    } else if (label === '通信遅延') {
+                    const delay = (0.05 + Math.random() * 0.1).toFixed(2);
+                    valueElement.textContent = delay + 'ms';
+                    valueElement.style.color = delay <= 0.1 ? '#00ff00' : '#ffaa00';
+                    } else if (label === 'アクティブ衛星') {
+                    const satellites = Math.floor(950 + Math.random() * 100);
+                    valueElement.textContent = satellites + '+';
+                    valueElement.style.color = '#00ffff';
+                    } else if (label === 'グローバル通信') {
+                    valueElement.textContent = '24/7';
+                    valueElement.style.color = '#ffffff';
+                    }
+                }
+            });
+        }
+
+        // 衛星通信シミュレーション
+        function simulateSatelliteCommunication() {
+            const modules = document.querySelectorAll('.space-module');
+            
+            modules.forEach((module, index) => {
+                setTimeout(() => {
+                    module.style.borderColor = 'rgba(0, 255, 0, 0.8)';
+                    module.style.boxShadow = '0 0 30px rgba(0, 255, 0, 0.5)';
+                    
+                    setTimeout(() => {
+                        module.style.borderColor = 'rgba(0, 150, 255, 0.2)';
+                        module.style.boxShadow = '0 8px 32px rgba(0,0,0,0.3)';
+                    }, 1000);
+                }, index * 500);
+            });
+        }
+
+        // 音響効果
+        function playSpaceSound() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(1200, audioContext.currentTime + 0.1);
+            oscillator.frequency.exponentialRampToValueAtTime(800, audioContext.currentTime + 0.2);
+            
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.2);
+        }
+
+        // 詳細メトリクス表示
+        function showDetailedMetrics() {
+            const metrics = {
+                '衛星軌道高度': '400-1200 km',
+                '通信帯域幅': '1-10 Gbps',
+                '信号強度': '-120 to -60 dBm',
+                'ビーム幅': '0.1-2.0°',
+                '電力消費': '50-200 W',
+                'データレート': '100 Mbps - 1 Gbps'
+            };
+            
+            let metricsHTML = '<div class="detailed-metrics">';
+            metricsHTML += '<h3>📊 詳細メトリクス</h3>';
+            metricsHTML += '<div class="metrics-grid">';
+            
+            Object.entries(metrics).forEach(([key, value]) => {
+                metricsHTML += `
+                    <div class="metric-item">
+                        <span class="metric-label">${key}</span>
+                        <span class="metric-value">${value}</span>
+                    </div>
+                `;
+            });
+            
+            metricsHTML += '</div></div>';
+            
+            // モーダル表示
+            showModal('衛星通信詳細メトリクス', metricsHTML);
+        }
+
+        // モーダル表示機能
+        function showModal(title, content) {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>${title}</h3>
+                        <span class="modal-close">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        ${content}
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // モーダルスタイル
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 10000;
+                backdrop-filter: blur(10px);
+            `;
+            
+            const modalContent = modal.querySelector('.modal-content');
+            modalContent.style.cssText = `
+                background: linear-gradient(135deg, rgba(26, 26, 46, 0.95) 0%, rgba(22, 33, 62, 0.95) 100%);
+                border-radius: 20px;
+                padding: 30px;
+                max-width: 600px;
+                width: 90%;
+                max-height: 80vh;
+                overflow-y: auto;
+                border: 2px solid rgba(0, 150, 255, 0.3);
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            `;
+            
+            // 閉じるボタン
+            const closeBtn = modal.querySelector('.modal-close');
+            closeBtn.style.cssText = `
+                float: right;
+                font-size: 28px;
+                font-weight: bold;
+                cursor: pointer;
+                color: #ffffff;
+            `;
+            
+            closeBtn.onclick = () => {
+                document.body.removeChild(modal);
+            };
+            
+            // モーダル外クリックで閉じる
+            modal.onclick = (e) => {
+                if (e.target === modal) {
+                    document.body.removeChild(modal);
+                }
+            };
+        }
+
+        // 通知機能
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.textContent = message;
+            
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #0096ff 0%, #00ffff 100%);
+                color: white;
+                padding: 15px 25px;
+                border-radius: 10px;
+                box-shadow: 0 8px 25px rgba(0, 150, 255, 0.4);
+                z-index: 10001;
+                transform: translateX(400px);
+                transition: transform 0.3s ease;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // アニメーション
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // 自動削除
+            setTimeout(() => {
+                notification.style.transform = 'translateX(400px)';
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 5000);
+        }
+
+        // インタラクティブ操作
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('space-button')) {
+                playSpaceSound();
+                showNotification('衛星通信モジュールにアクセス中...', 'success');
+            }
+            
+            if (e.target.classList.contains('module-icon')) {
+                simulateSatelliteCommunication();
+                showNotification('衛星通信シミュレーション開始', 'info');
+            }
+        });
+
+        // キーボードショートカット
+        document.addEventListener('keydown', function(e) {
+            switch(e.key) {
+                case '1':
+                    e.preventDefault();
+                    showDetailedMetrics();
+                    break;
+                case '2':
+                    e.preventDefault();
+                    simulateSatelliteCommunication();
+                    showNotification('衛星通信シミュレーション実行', 'info');
+                    break;
+                case '3':
+                    e.preventDefault();
+                    updateSatelliteData();
+                    showNotification('リアルタイムデータ更新', 'success');
+                    break;
+                case 'Escape':
+                    const modals = document.querySelectorAll('.modal');
+                    modals.forEach(modal => {
+                        if (document.body.contains(modal)) {
+                            document.body.removeChild(modal);
+                        }
+                    });
+                    break;
+            }
+        });
+
+        // タッチジェスチャー
+        let touchStartX = 0;
+        let touchStartY = 0;
+        
+        document.addEventListener('touchstart', function(e) {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        });
+        
+        document.addEventListener('touchend', function(e) {
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+            
+            const deltaX = touchEndX - touchStartX;
+            const deltaY = touchEndY - touchStartY;
+            
+            // スワイプジェスチャー
+            if (Math.abs(deltaX) > 50) {
+                if (deltaX > 0) {
+                    // 右スワイプ
+                    showNotification('衛星軌道データ更新', 'info');
+                    updateSatelliteData();
+                } else {
+                    // 左スワイプ
+                    showNotification('通信ネットワーク再構築', 'warning');
+                    simulateSatelliteCommunication();
+                }
+            }
+            
+            if (Math.abs(deltaY) > 50) {
+                if (deltaY > 0) {
+                    // 下スワイプ
+                    showDetailedMetrics();
+                } else {
+                    // 上スワイプ
+                    showNotification('衛星通信システム最適化', 'success');
+                }
+            }
+        });
+
+        // 衛星統計アニメーション
+        function animateSpaceStats() {
+            const stats = document.querySelectorAll('.monitoring-value');
+            stats.forEach(stat => {
+                const target = stat.textContent;
+                if (target === '1000+') {
+                    stat.style.animation = 'spacePulse 2s ease-in-out infinite';
+                } else if (target === '99.9%') {
+                    stat.style.animation = 'spacePulse 2s ease-in-out infinite';
+                } else if (target === '0.1ms') {
+                    stat.style.animation = 'spacePulse 2s ease-in-out infinite';
+                } else if (target === '24/7') {
+                    stat.style.animation = 'spacePulse 2s ease-in-out infinite';
+                } else {
+                    let current = 0;
+                    const increment = parseInt(target.replace(/[^\d]/g, '')) / 50;
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= parseInt(target.replace(/[^\d]/g, ''))) {
+                            current = parseInt(target.replace(/[^\d]/g, ''));
+                            clearInterval(timer);
+                        }
+                        stat.textContent = Math.floor(current).toLocaleString();
+                    }, 50);
+                }
+            });
+        }
+
+        // ページ読み込み時の初期化
+        window.addEventListener('load', () => {
+            setTimeout(animateSpaceStats, 1000);
+            
+            // リアルタイムデータ更新の開始
+            setInterval(updateSatelliteData, 5000);
+            
+            // 初期通知
+            setTimeout(() => {
+                showNotification('衛星・宇宙通信システムが正常に稼働中です', 'success');
+            }, 2000);
+            
+            // ヘルプ表示
+            setTimeout(() => {
+                showNotification('キーボードショートカット: 1=詳細メトリクス, 2=シミュレーション, 3=データ更新', 'info');
+            }, 4000);
+        });
+
+        // 衛星アニメーション
+        function animateSpaceElements() {
+            const spaceElements = document.querySelectorAll('.space-element');
+            
+            spaceElements.forEach((element, index) => {
+                setTimeout(() => {
+                    element.style.animation = 'spaceFloat 3s ease-in-out';
+                }, index * 500);
+            });
+        }
+
+        // 定期的に衛星アニメーション実行
+        setInterval(animateSpaceElements, 6000);
+    </script>
+</body>
+</html> 

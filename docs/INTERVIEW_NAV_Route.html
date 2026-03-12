@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>面談用ナビ - Route株式会社【ネットワークエンジニア】</title>
+    <style>
+      body {
+        font-family: "Yu Gothic", "Meiryo", sans-serif;
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 1rem;
+        line-height: 1.5;
+        font-size: 0.95rem;
+      }
+      h1 {
+        font-size: 1.3rem;
+        border-bottom: 2px solid #333;
+        padding-bottom: 0.4rem;
+      }
+      h2 {
+        font-size: 1.15rem;
+        margin-top: 1.5rem;
+        color: #333;
+        border-bottom: 1px solid #ccc;
+      }
+      h3 {
+        font-size: 1rem;
+        margin-top: 1rem;
+        color: #555;
+      }
+      h4 {
+        font-size: 0.95rem;
+        margin-top: 0.8rem;
+        color: #666;
+      }
+      nav {
+        background: #e8f4f8;
+        padding: 0.8rem;
+        border-radius: 4px;
+        margin-bottom: 1.5rem;
+        border-left: 4px solid #0066cc;
+      }
+      nav ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      nav li {
+        margin: 0.3rem 0;
+      }
+      nav a {
+        color: #0066cc;
+        text-decoration: none;
+      }
+      nav a:hover {
+        text-decoration: underline;
+      }
+      .q {
+        font-weight: bold;
+        color: #333;
+      }
+      .hl {
+        background: #fff9e6;
+        padding: 0 0.2rem;
+      }
+      .customize {
+        background: #e8f5e9;
+        padding: 0.8rem;
+        border-radius: 4px;
+        margin: 0.5rem 0;
+        border-left: 4px solid #4caf50;
+      }
+      .point {
+        background: #fff9e6;
+        padding: 0.8rem;
+        border-radius: 4px;
+        margin: 0.5rem 0;
+        border-left: 4px solid #f9a825;
+      }
+      .oral {
+        background: #fff9e6;
+        padding: 0.5rem 0.8rem;
+        margin: 0.5rem 0;
+        border-radius: 4px;
+        font-style: italic;
+      }
+      .term {
+        background: #f8f9fa;
+        padding: 0.6rem 0.8rem;
+        margin: 0.5rem 0;
+        border-radius: 4px;
+        border-left: 3px solid #0066cc;
+      }
+      .term-name {
+        font-weight: bold;
+        color: #0066cc;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0.5rem 0;
+        font-size: 0.9rem;
+      }
+      th,
+      td {
+        border: 1px solid #ccc;
+        padding: 0.5rem 0.7rem;
+        text-align: left;
+      }
+      th {
+        background: #f5f5f5;
+        font-weight: bold;
+      }
+      .check {
+        list-style: none;
+        padding-left: 0;
+      }
+      .check li {
+        margin: 0.3rem 0;
+        padding-left: 1.5rem;
+        position: relative;
+      }
+      .check li::before {
+        content: "☐ ";
+        position: absolute;
+        left: 0;
+      }
+      ul {
+        margin: 0.4rem 0;
+        padding-left: 1.5rem;
+      }
+      hr {
+        border: none;
+        border-top: 1px solid #ddd;
+        margin: 1rem 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>面談用ナビ - Route株式会社【ネットワークエンジニア】</h1>
+    <p><em>3月6日（金）13:30〜14:00（30分）Google Meet（グーグル・ミート）。自由な働き方｜事業成長を支えるネットワークエンジニア。基: 面談がある場合の準備_お見送り対策ベース + INTERVIEW_NAV_汎用</em></p>
+
+    <nav>
+      <p><strong>▼ クリックで該当箇所に移動</strong></p>
+      <ul>
+        <li><a href="#customize">0. Routeのポイント・面談情報</a></li>
+        <li><a href="#point">1. 面談直前 実行要点</a></li>
+        <li><a href="#timeline">2. タイムライン別 やること</a></li>
+        <li><a href="#aisatsu">3. 挨拶・締め</a></li>
+        <li><a href="#jikoshokai">4. 自己紹介・転職理由</a></li>
+        <li><a href="#choshoshosho">5. 長所・短所</a></li>
+        <li><a href="#question">6. 質問への回答</a></li>
+        <li><a href="#experience">7. 実務経験・チーム開発</a></li>
+        <li><a href="#demo">8. デモ手順（ネットワーク・インフラ強調）</a></li>
+        <li><a href="#quick">9. お見送り原因と対策</a></li>
+        <li><a href="#deepdive">10. 深掘り想定Q&A</a></li>
+        <li><a href="#related">11. 関連ドキュメント</a></li>
+      </ul>
+    </nav>
+
+    <hr />
+
+    <div id="customize">
+      <h2>0. Routeのポイント・面談情報</h2>
+      <div class="customize">
+        <table>
+          <tr>
+            <th style="width: 22%">項目</th>
+            <th>内容</th>
+          </tr>
+          <tr>
+            <td><strong>企業名</strong></td>
+            <td>Route株式会社</td>
+          </tr>
+          <tr>
+            <td><strong>希望職種</strong></td>
+            <td>ネットワークエンジニア</td>
+          </tr>
+          <tr>
+            <td><strong>面談日時</strong></td>
+            <td>3月6日（金）13:30〜14:00（30分）</td>
+          </tr>
+          <tr>
+            <td><strong>面談形式</strong></td>
+            <td>Google Meet（グーグル・ミート）</td>
+          </tr>
+          <tr>
+            <td><strong>Meetリンク</strong></td>
+            <td><a href="https://meet.google.com/xpe-hdxa-iwk" target="_blank" rel="noopener">https://meet.google.com/xpe-hdxa-iwk</a></td>
+          </tr>
+          <tr>
+            <td><strong>貴社の特色</strong></td>
+            <td>自由な働き方、事業成長を支えるネットワークエンジニア</td>
+          </tr>
+          <tr>
+            <td><strong>強調する点</strong></td>
+            <td>インフラ・ネットワーク基盤の設計・構築・運用、完全リモート、通院配慮</td>
+          </tr>
+        </table>
+        <p><strong>志望動機</strong>: docs/履歴書_志望動機_Route.md</p>
+      </div>
+    </div>
+
+    <hr />
+
+    <div id="point">
+      <h2>1. 面談直前 実行要点（30秒で確認）</h2>
+      <table>
+        <tr>
+          <th style="width: 22%">項目</th>
+          <th>やること</th>
+        </tr>
+        <tr>
+          <td><strong>説明</strong></td>
+          <td>結論ファースト、30秒〜1分で答える</td>
+        </tr>
+        <tr>
+          <td><strong>デモ</strong></td>
+          <td>30分面談のため5〜10分程度。クラウドインフラ・インフラ構築専用を強調</td>
+        </tr>
+        <tr>
+          <td><strong>実務経験</strong></td>
+          <td>「実力は実証済み」「チーム経験は部分的に習得済み」「改善意欲あり」</td>
+        </tr>
+        <tr>
+          <td><strong>志望動機</strong></td>
+          <td>「自由な働き方」「事業成長を支えるネットワークエンジニア」に惹かれた</td>
+        </tr>
+        <tr>
+          <td><strong>年齢・障害</strong></td>
+          <td>「支障なし」「リモートで同等以上」を簡潔に</td>
+        </tr>
+      </table>
+    </div>
+
+    <hr />
+
+    <div id="timeline">
+      <h2>2. タイムライン別 やること</h2>
+      <h3>2.1 面談前日（3月5日）</h3>
+      <p><strong>デモ準備</strong></p>
+      <ul class="check">
+        <li>バックエンド・フロントエンド起動確認</li>
+        <li>ログイン（kaho0525 / kaho052514）確認</li>
+        <li>トークン有効期限120分に設定</li>
+        <li>代替手段（スクショ・PDF（ピーディーエフ））用意</li>
+      </ul>
+      <p><strong>回答準備</strong></p>
+      <ul class="check">
+        <li>志望動機を声に出して練習</li>
+        <li>実務経験への回答（3ステップ）を練習</li>
+        <li>長所・短所を確認</li>
+      </ul>
+      <h3>2.2 面談当日（3月6日 13:20頃）</h3>
+      <ul class="check">
+        <li>デモ環境を起動</li>
+        <li>ログイン済みであることを確認</li>
+        <li>Google Meetリンクを開く</li>
+        <li>実行要点を30秒で確認</li>
+      </ul>
+      <h3>2.3 面談中</h3>
+      <ul class="check">
+        <li>1回答＝30秒〜1分</li>
+        <li>デモ＝5〜10分（相手の反応を見て調整）</li>
+        <li>結論ファースト</li>
+      </ul>
+      <h3>2.4 面談後</h3>
+      <ul class="check">
+        <li>お礼メール送信（24時間以内）</li>
+        <li>振り返りメモを記録</li>
+      </ul>
+    </div>
+
+    <hr />
+
+    <div id="aisatsu">
+      <h2>3. 挨拶・締め</h2>
+      <p><strong>冒頭の挨拶</strong></p>
+      <div class="oral">「本日はお時間をいただき、ありがとうございます。Route株式会社のネットワークエンジニア募集に応募いたしました、小川清志と申します。面談の機会をいただき、大変光栄に思います。よろしくお願いいたします。」</div>
+      <p><strong>締めの言葉</strong></p>
+      <div class="oral">「本日は、貴重なお時間をいただき、誠にありがとうございました。今後の選考の流れについて、お教えいただけますでしょうか？何か追加でご質問がございましたら、お気軽にお聞かせください。本日は、ありがとうございました。」</div>
+    </div>
+
+    <hr />
+
+    <div id="jikoshokai">
+      <h2>4. 自己紹介・転職理由</h2>
+      <p><strong>自己紹介（約40秒）</strong></p>
+      <div class="oral">
+        「小川清志、51歳です。完全在宅で総務・Web（ウェブ）アクセシビリティ検査を経験し、2025年6月からインフラ・ネットワーク基盤の設計・構築に集中してきました。Docker（ドッカー）、Kubernetes（クバネティス）、Terraform（テラフォーム）、API
+        Gateway（エーピーアイ・ゲートウェイ）（Kong（コング）、Envoy（エンボイ））、監視基盤（Prometheus（プロメテウス）、Grafana（グラファナ））を実装し、稼働率99.995%を達成しました。完全リモート3年9ヶ月の実績があります。貴社の『自由な働き方』『事業成長を支えるネットワークエンジニア』に惹かれ、インフラ・ネットワークの経験を活かして貢献したいと考えております。」
+      </div>
+      <p><strong>転職理由</strong> チーム開発・実務スキルを深めたい。ネットワークエンジニアとして、インフラ・ネットワーク基盤の設計・構築・運用に貢献したい。</p>
+      <p><strong>希望年収</strong> 貴社の規定に合わせて柔軟に。成長機会を最優先。通院配慮をいただければ幸いです。</p>
+    </div>
+
+    <hr />
+
+    <div id="choshoshosho">
+      <h2>5. 長所・短所</h2>
+      <p><strong>長所</strong> インフラ・ネットワーク基盤の設計・構築力。Docker（ドッカー）、Kubernetes（クバネティス）、Terraform（テラフォーム）、API Gateway（エーピーアイ・ゲートウェイ）、監視基盤の実装経験。稼働率99.995%達成。完全リモート3年9ヶ月。</p>
+      <p><strong>短所</strong> ①ビジネス理解 ②非エンジニアへの説明 ③チーム開発経験。いずれも貴社で身につけたい。</p>
+      <p><strong>AI（エーアイ）・Cursor（カーソル）</strong> 補助ツール。要件定義・設計・判断は自分で行い、人間が主導。</p>
+    </div>
+
+    <hr />
+
+    <div id="question">
+      <h2>6. 質問への回答</h2>
+      <p><span class="q">Q: なぜRouteか？</span> 「自由な働き方」「事業成長を支えるネットワークエンジニア」に惹かれました。インフラ・ネットワーク基盤の経験を活かしたいです。</p>
+      <p>
+        <span class="q">Q: インフラ・ネットワークの経験？</span> Docker（ドッカー）、Kubernetes（クバネティス）、Terraform（テラフォーム）、API
+        Gateway（エーピーアイ・ゲートウェイ）（Kong（コング）、Envoy（エンボイ））、監視基盤（Prometheus（プロメテウス）、Grafana（グラファナ））の設計・構築・運用。稼働率99.995%達成。デモでクラウドインフラ・インフラ構築専用・API Gateway（エーピーアイ・ゲートウェイ）をご確認いただけます。
+      </p>
+      <p><span class="q">Q: 身体障害者手帳、業務に支障は？</span> 技術的作業に支障なし。完全リモートであれば健常者と同等以上。通院の時間調整をいただければ幸いです。</p>
+      <p><span class="q">Q: チーム開発経験・個人開発ばかりで大丈夫？</span> 個人開発が中心ですが、派遣社員統括（30～40名）、台風対策通行止判断の統括（最大50名）の経験があり、チームでの役割遂行は可能です。フルリモートでSlack（スラック）・Teams（チームズ）・Meet（ミート）を日常使用。コードレビューは経験が浅いので、指摘を素直に受け止め学ぶ姿勢です。</p>
+      <p><span class="q">Q: 51歳で大丈夫か？</span> 影響なし。myiq（マイアイキュー）IQ127（認知機能評価レポート書面あり）、8ヶ月で100システム以上の実績で学習・実行力を証明。デモで動作をご確認いただけます。</p>
+      <p><span class="q">Q: キャリアプラン？</span> ネットワークエンジニアとして、インフラ・ネットワーク基盤の設計・構築・運用に貢献。クライアントの事業成長に貢献したいです。</p>
+    </div>
+
+    <hr />
+
+    <div id="experience">
+      <h2>7. 実務経験・チーム開発</h2>
+      <p><strong>実務経験:</strong> KDDI（ケーディーディーアイ）エボルバ（11ヶ月・ヘルプデスク・サーバー処理）、AI（エーアイ）技術研究開発（8ヶ月・インフラ構築・監視基盤）、JCI（ジェーシーアイ）（2年2ヶ月・Web（ウェブ）アクセシビリティ検査）。</p>
+      <p><strong>インフラ・ネットワーク:</strong> クラウドインフラ・インフラ構築専用（UEP（ユーイーピー）v5.0）、API Gateway（エーピーアイ・ゲートウェイ）（Kong（コング）、Envoy（エンボイ））、監視基盤（Prometheus（プロメテウス）、Grafana（グラファナ））、Docker（ドッカー）、Kubernetes（クバネティス）、Terraform（テラフォーム）。稼働率99.995%達成。</p>
+      <p><strong>チーム開発:</strong> 派遣統括・台風対策統括の経験あり。個人開発が中心だが、フルリモートでSlack（スラック）・Teams（チームズ）・Meet（ミート）を日常使用。コードレビューは経験が浅いが、指摘を素直に受け止め学ぶ姿勢。</p>
+    </div>
+
+    <hr />
+
+    <div id="demo">
+      <h2>8. デモ手順（ネットワーク・インフラ強調・30分面談用）</h2>
+      <p><strong>30分面談のため、デモは5〜10分程度に収める。</strong></p>
+
+      <h3>【5分程度】最小限デモ（推奨）</h3>
+      <ol>
+        <li><strong>ログイン・ダッシュボード（2分）</strong> <a href="http://localhost:3000">http://localhost:3000</a> でログイン → サイドバーから「クラウドインフラ」「インフラ構築専用」を説明</li>
+        <li><strong>クラウドインフラ（1.5分）</strong> リソース一覧・IaC（アイアーシー）テンプレート・デプロイメント管理の画面を表示</li>
+        <li><strong>インフラ構築専用（1.5分）</strong> 設計→構築→デプロイ→検証のワークフロー、Docker（ドッカー）・Kubernetes（クバネティス）・Terraform（テラフォーム）対応のプロジェクト例を表示</li>
+      </ol>
+
+      <h3>【10分程度】時間が余る場合の追加</h3>
+      <ol start="4">
+        <li><strong>Swagger（スワッガー）UI（2分）</strong> <a href="http://localhost:8000/docs">http://localhost:8000/docs</a> でcloud-infra、auth等のAPI（エーピーアイ）を一覧表示</li>
+        <li><strong>口頭補足（1分）</strong> API Gateway（エーピーアイ・ゲートウェイ）（Kong（コング）、Envoy（エンボイ））、監視基盤（Prometheus（プロメテウス）、Grafana（グラファナ））、稼働率99.995%</li>
+      </ol>
+
+      <h3>デモ時の口頭説明例</h3>
+      <div class="oral">「クラウドインフラは、リソースの一覧・IaC（アイアーシー）テンプレート・デプロイメントを管理する画面です。インフラ構築専用は、設計→構築→デプロイ→検証のワークフローで、Docker（ドッカー）、Kubernetes（クバネティス）、Terraform（テラフォーム）に対応しています。UEP（ユーイーピー）v5.0の一部として稼働率99.995%を達成しています。」</div>
+
+      <p><strong>起動</strong> start-backend.bat → cd frontend → npm start。クラウド: <a href="https://uep-v5-ultimate-enterprise-platform.vercel.app" target="_blank" rel="noopener">Vercel（ヴァーセル）</a>（事前にRender（レンダー）の/healthにアクセスして起こす）</p>
+    </div>
+
+    <hr />
+
+    <div id="quick">
+      <h2>9. お見送り原因と対策（クイック参照）</h2>
+      <table>
+        <tr>
+          <th>原因カテゴリ</th>
+          <th>対策の一言</th>
+        </tr>
+        <tr>
+          <td>実務経験の不足</td>
+          <td>稼働率99.995%、デモで実物を見せる</td>
+        </tr>
+        <tr>
+          <td>チーム開発経験</td>
+          <td>50名統括・3年9ヶ月リモート。「改善したいこと」として前向きに</td>
+        </tr>
+        <tr>
+          <td>志望動機が曖昧</td>
+          <td>「自由な働き方」「事業成長を支えるネットワークエンジニア」に惹かれた</td>
+        </tr>
+        <tr>
+          <td>説明が長い</td>
+          <td>結論→理由→補足。30秒〜1分</td>
+        </tr>
+        <tr>
+          <td>年齢・障害</td>
+          <td>支障なし。完全リモートで同等以上</td>
+        </tr>
+        <tr>
+          <td>希望年収</td>
+          <td>「貴社の規定に合わせて柔軟に」「成長機会を最優先」</td>
+        </tr>
+      </table>
+    </div>
+
+    <hr />
+
+    <div id="deepdive">
+      <h2>10. 深掘り想定Q&A</h2>
+      <p><em>深く聞かれた場合の回答例。結論→理由→補足で30秒〜1分。</em></p>
+
+      <h3>10.1 ネットワークエンジニアとしての経験</h3>
+      <p><span class="q">Q: 「ネットワーク」の具体的な経験は？L2/L3、ルーティング、ファイアウォールは？</span></p>
+      <p>
+        <strong>A:</strong> クラウド・アプリケーション層のネットワーク基盤を担当してきました。API
+        Gateway（エーピーアイ・ゲートウェイ）（Kong（コング）、Envoy（エンボイ））によるトラフィック制御・ルーティング、Prometheus（プロメテウス）/Grafana（グラファナ）によるネットワーク系メトリクスの監視、Docker（ドッカー）/Kubernetes（クバネティス）でのコンテナネットワーク設計です。L2（エルツー）/L3（エルスリー）スイッチや物理NW（エヌダブリュー）の設計経験は浅いですが、クラウドNW（エヌダブリュー）・API（エーピーアイ）層の設計・構築は実装済みです。貴社の業務内容に応じて、必要な知識は習得する意欲があります。
+      </p>
+
+      <p><span class="q">Q: インフラエンジニアとネットワークエンジニアの違いをどう捉えている？</span></p>
+      <p>
+        <strong>A:</strong> インフラはサーバ・ストレージ・ネットワークを含む基盤全体、ネットワークはその中核です。API
+        Gateway（エーピーアイ・ゲートウェイ）によるトラフィック制御、監視基盤でのNW（エヌダブリュー）メトリクス把握、IaC（アイアーシー）でのNW（エヌダブリュー）設定管理など、ネットワークに直結する経験を積んできました。貴社のネットワークエンジニア業務に活かしたいです。
+      </p>
+
+      <h3>10.2 実務経験の深掘り</h3>
+      <p><span class="q">Q: 「100システム」とは具体的に何を指す？</span></p>
+      <p>
+        <strong>A:</strong> 独立したシステムとして設計・実装したモジュール・API（エーピーアイ）・マイクロサービス・画面・インフラコンポーネントの合計です。クラウドインフラ、インフラ構築専用、API
+        Gateway（エーピーアイ・ゲートウェイ）、監視基盤、セキュリティセンター、生成AI（エーアイ）など、UEP（ユーイーピー）v5.0内の各機能が含まれます。デモで実際の構成をご確認いただけます。
+      </p>
+
+      <p><span class="q">Q: 稼働率99.995%はどう測定した？</span></p>
+      <p><strong>A:</strong> Prometheus（プロメテウス）/Grafana（グラファナ）の監視基盤で、API（エーピーアイ）の応答可否・レイテンシを継続計測しています。計測期間中の稼働時間÷総時間で算出。ダウンタイムは計画メンテナンスを除き、実質ゼロに近い水準を達成しています。</p>
+
+      <p><span class="q">Q: 個人開発と実務の違いは？実務で使われている？</span></p>
+      <p><strong>A:</strong> 個人開発ですが、KDDI（ケーディーディーアイ）エボルバでのサーバー処理、JCI（ジェーシーアイ）でのWeb（ウェブ）アクセシビリティ検査など実務経験があります。UEP（ユーイーピー）v5.0は実務レベルの品質基準（稼働率99.995%、推論レイテンシ10ms未満）を達成。デモで動作をご確認いただき、実装力の裏付けとしていただければ幸いです。</p>
+
+      <h3>10.3 チーム開発</h3>
+      <p><span class="q">Q: 派遣統括とエンジニアチームの違いは？コードレビューはしたことがある？</span></p>
+      <p><strong>A:</strong> 派遣統括では、30〜50名の調整・コミュニケーション・緊急判断を経験しました。エンジニアチームでのコードレビュー・ペアプロは経験が浅いです。一方、個人開発でもGit（ギット）でブランチ・PR（ピーアール）・マージの流れは実践しており、指摘を素直に受け止め学ぶ姿勢で、貴社でチーム開発の経験を積みたいと考えています。</p>
+
+      <h3>10.4 障害・通院</h3>
+      <p><span class="q">Q: 通院の頻度・所要時間は？具体的にどんな配慮が必要？</span></p>
+      <p><strong>A:</strong> 通院のための時間調整をいただければ幸いです。フレックスタイム制を活用し、業務への影響を最小限に抑えられます。事前に調整可能ですので、具体的な頻度・時間は入社後にお伝えし、ご相談させていただきます。</p>
+
+      <h3>10.5 AI・Cursorの使用</h3>
+      <p><span class="q">Q: 業務でAIをどの程度使っている？AIなしでも対応できる？</span></p>
+      <p><strong>A:</strong> Cursor（カーソル）、GitHub Copilot（ギットハブ・コパイロット）を補助ツールとして活用しています。要件定義・設計・判断は自分で行い、人間が主導です。AIはボイラープレート生成やリファクタリング提案などで効率化に使っています。AIなしでも、従来の開発手法で対応可能です。</p>
+
+      <h3>10.6 デモの技術的深掘り</h3>
+      <p><span class="q">Q: KongとEnvoyを選んだ理由は？</span></p>
+      <p><strong>A:</strong> Kong（コング）はプラグインが豊富でAPI（エーピーアイ）管理がしやすく、Envoy（エンボイ）は高性能なプロキシとして知られています。エンタープライズ向けのAPI Gatewayとして、両方の設計・構築経験を積みました。デモで実際のAPI（エーピーアイ）一覧・ルーティングをご確認いただけます。</p>
+
+      <h3>10.7 志望動機・他社</h3>
+      <p><span class="q">Q: なぜRouteなのか？他社はどうしている？</span></p>
+      <p><strong>A:</strong> 「自由な働き方」「事業成長を支えるネットワークエンジニア」という募集内容に惹かれました。完全リモート・通院配慮の環境で、インフラ・ネットワークの経験を活かせる点がRoute（ルート）を選んだ理由です。他社の選考状況については、複数社に応募中ですが、Routeには特に強い志望があります。</p>
+
+      <h3>10.8 年齢・キャリア</h3>
+      <p><span class="q">Q: 51歳で転職、何年くらい働く想定？最新技術へのキャッチアップは？</span></p>
+      <p><strong>A:</strong> 長期的に貢献したいと考えています。myiq（マイアイキュー）IQ127、8ヶ月で100システム以上の実績で、学習・実行力を証明済みです。最新技術へのキャッチアップは、Zenn（ゼン）・Qiita（キータ）での技術発信、継続的な独学で対応してきました。年齢による影響は感じていません。</p>
+    </div>
+
+    <hr />
+
+    <div id="related">
+      <h2>11. 関連ドキュメント</h2>
+      <table>
+        <tr>
+          <th>ドキュメント</th>
+          <th>用途</th>
+        </tr>
+        <tr>
+          <td>履歴書_志望動機_Route.md</td>
+          <td>志望動機</td>
+        </tr>
+        <tr>
+          <td>職務経歴書_株式会社Route_ネットワークエンジニア_小川清志.md</td>
+          <td>職務経歴書</td>
+        </tr>
+        <tr>
+          <td>障害説明書_株式会社Route_ネットワークエンジニア_小川清志.md</td>
+          <td>障害説明書</td>
+        </tr>
+        <tr>
+          <td>書類送付_Route株式会社_送信文.txt</td>
+          <td>送信文・面談日程</td>
+        </tr>
+        <tr>
+          <td>開発スタイル事前アンケート_回答案.md</td>
+          <td>事前アンケート回答案</td>
+        </tr>
+        <tr>
+          <td>面談用_デモ動画の流れ.md</td>
+          <td>デモの詳細流れ</td>
+        </tr>
+        <tr>
+          <td>デモ_ボタンエラー対処.md</td>
+          <td>デモのトラブル対処</td>
+        </tr>
+        <tr>
+          <td>EXPERIENCE_VS_SKILLS.md</td>
+          <td>実務経験への回答戦略</td>
+        </tr>
+      </table>
+    </div>
+
+    <hr />
+    <p><a href="#">↑ トップへ</a></p>
+    <p><em>以上</em></p>
+  </body>
+</html>

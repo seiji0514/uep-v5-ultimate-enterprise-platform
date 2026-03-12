@@ -1,0 +1,51 @@
+# NetworkPolicy - Backend API
+# 補強スキル: マイクロサービス間ネットワーク分離
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: uep-backend-policy
+  namespace: uep
+spec:
+  podSelector:
+    matchLabels:
+      app: uep-backend
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: ingress-nginx
+      ports:
+        - protocol: TCP
+          port: 8000
+    - from:
+        - podSelector:
+            matchLabels:
+              app: uep-frontend
+      ports:
+        - protocol: TCP
+          port: 8000
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: postgres
+      ports:
+        - protocol: TCP
+          port: 5432
+    - to:
+        - podSelector:
+            matchLabels:
+              app: kafka
+      ports:
+        - protocol: TCP
+          port: 9092
+    - to:
+        - namespaceSelector: {}
+      ports:
+        - protocol: TCP
+          port: 53
+        - protocol: UDP
+          port: 53

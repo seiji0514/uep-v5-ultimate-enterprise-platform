@@ -1,0 +1,1021 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="ProgId" content="Word.Document" />
+    <meta name="Generator" content="Microsoft Word" />
+    <title>UEP v5.0 および 個別プラットフォーム - 起動方法と使用方法</title>
+    <style>
+      body {
+        font-family: "游ゴシック", "Yu Gothic", "メイリオ", Meiryo, sans-serif;
+        font-size: 11pt;
+        line-height: 1.5;
+      }
+      h1 {
+        font-size: 18pt;
+        margin-top: 24pt;
+        margin-bottom: 12pt;
+        border-bottom: 2pt solid #333;
+      }
+      h2 {
+        font-size: 14pt;
+        margin-top: 18pt;
+        margin-bottom: 8pt;
+      }
+      h3 {
+        font-size: 12pt;
+        margin-top: 12pt;
+        margin-bottom: 6pt;
+      }
+      table {
+        border-collapse: collapse;
+        margin: 12pt 0;
+        width: 100%;
+      }
+      th,
+      td {
+        border: 1pt solid #333;
+        padding: 6pt 8pt;
+        text-align: left;
+      }
+      th {
+        background-color: #f0f0f0;
+        font-weight: bold;
+      }
+      pre,
+      code {
+        font-family: "Consolas", "Courier New", monospace;
+        font-size: 10pt;
+        background-color: #f5f5f5;
+        padding: 4pt 6pt;
+      }
+      pre {
+        white-space: pre-wrap;
+        margin: 8pt 0;
+        padding: 12pt;
+      }
+      ul,
+      ol {
+        margin: 8pt 0;
+        padding-left: 24pt;
+      }
+      li {
+        margin: 4pt 0;
+      }
+      .note {
+        color: #666;
+        font-size: 10pt;
+        margin-top: 4pt;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>UEP v5.0 および 個別プラットフォーム<br />起動方法と使用方法</h1>
+    <p><strong>作成日</strong>: 2026年3月11日</p>
+
+    <h2>目次</h2>
+    <ol>
+      <li>システム構成</li>
+      <li>UEP v5.0 起動方法</li>
+      <li>統合セキュリティ・防衛プラットフォーム 起動方法</li>
+      <li>製造・IoTプラットフォーム 起動方法</li>
+      <li>医療・ヘルスケアプラットフォーム 起動方法</li>
+      <li>金融・FinTechプラットフォーム 起動方法</li>
+      <li>産業統合プラットフォーム 起動方法・使用方法（製造・医療・金融・セキュリティを1つに）</li>
+      <li>企業横断オペレーション基盤 起動方法</li>
+      <li>個人会計（スタンドアロン版）起動方法</li>
+      <li>個人用 PC 容量確保 起動方法</li>
+      <li>UEP v5.0 使用方法</li>
+      <li>統合セキュリティ・防衛プラットフォーム 使用方法</li>
+      <li>トラブルシューティング</li>
+      <li>クイックリファレンス</li>
+      <li>バックアップ（外付けUSB 2台・Google Drive・外付けドライブ）</li>
+    </ol>
+
+    <hr />
+
+    <h2>1. システム構成</h2>
+    <table>
+      <tr>
+        <th>システム</th>
+        <th>ポート</th>
+        <th>役割</th>
+      </tr>
+      <tr>
+        <td>UEP v5.0 フロントエンド</td>
+        <td>3000</td>
+        <td>メインUI（ダッシュボード、各機能画面）</td>
+      </tr>
+      <tr>
+        <td>UEP v5.0 バックエンド</td>
+        <td>8080</td>
+        <td>API（MLOps、生成AI、監視、クラウドインフラ等）</td>
+      </tr>
+      <tr>
+        <td>統合セキュリティ・防衛プラットフォーム フロントエンド</td>
+        <td>3001</td>
+        <td>セキュリティ専用UI</td>
+      </tr>
+      <tr>
+        <td>統合セキュリティ・防衛プラットフォーム バックエンド</td>
+        <td>9001</td>
+        <td>セキュリティAPI（IDS/IPS, EDR, SIEM等）</td>
+      </tr>
+      <tr>
+        <td>製造・IoTプラットフォーム フロントエンド</td>
+        <td>3002</td>
+        <td>製造・IoT専用UI（予知保全、センサーデータ、異常検知）</td>
+      </tr>
+      <tr>
+        <td>製造・IoTプラットフォーム バックエンド</td>
+        <td>9002</td>
+        <td>製造API（OPC-UA連携）</td>
+      </tr>
+      <tr>
+        <td>医療・ヘルスケアプラットフォーム フロントエンド</td>
+        <td>3003</td>
+        <td>医療専用UI（AI診断、音声応答、異常検知）</td>
+      </tr>
+      <tr>
+        <td>医療・ヘルスケアプラットフォーム バックエンド</td>
+        <td>9003</td>
+        <td>医療API（FHIR連携）</td>
+      </tr>
+      <tr>
+        <td>金融・FinTechプラットフォーム フロントエンド</td>
+        <td>3004</td>
+        <td>金融専用UI（決済、リスクスコア、取引監視、ストレステスト）</td>
+      </tr>
+      <tr>
+        <td>金融・FinTechプラットフォーム バックエンド</td>
+        <td>9004</td>
+        <td>金融API（決済、リスク、ストレステスト）</td>
+      </tr>
+      <tr>
+        <td>産業統合プラットフォーム フロントエンド</td>
+        <td>3010</td>
+        <td>製造・医療・金融・セキュリティを1つに統合したUI</td>
+      </tr>
+      <tr>
+        <td>産業統合プラットフォーム バックエンド</td>
+        <td>9010</td>
+        <td>製造・医療・金融・セキュリティの4つAPIを1つに統合</td>
+      </tr>
+      <tr>
+        <td>企業横断オペレーション基盤 フロントエンド</td>
+        <td>3020</td>
+        <td>観測・タスク・リスクの一元管理UI</td>
+      </tr>
+      <tr>
+        <td>企業横断オペレーション基盤 バックエンド</td>
+        <td>9020</td>
+        <td>EOH API（観測・タスク・リスク・アラート）</td>
+      </tr>
+      <tr>
+        <td>個人会計（スタンドアロン版）フロントエンド</td>
+        <td>3001</td>
+        <td>経費・売上・領収書OCR・請求書出力（freee・マネーフォワード風）</td>
+      </tr>
+      <tr>
+        <td>個人会計（スタンドアロン版）バックエンド</td>
+        <td>5000</td>
+        <td>個人会計API（認証不要）</td>
+      </tr>
+      <tr>
+        <td>個人用 PC 容量確保 フロントエンド</td>
+        <td>3002</td>
+        <td>Docker クリーンアップ・Cドライブ容量確保UI（UEP・産業統合・EOH とは無関係）</td>
+      </tr>
+      <tr>
+        <td>個人用 PC 容量確保 バックエンド</td>
+        <td>5002</td>
+        <td>容量確保API（検出・削除）</td>
+      </tr>
+    </table>
+    <p class="note">※ ポート8000はWindows予約範囲（7938-8037）に含まれるため、UEPバックエンドは8080を使用します。</p>
+
+    <hr />
+
+    <h2>2. UEP v5.0 起動方法</h2>
+
+    <h3>前提条件</h3>
+    <ul>
+      <li>Python 3.11以上</li>
+      <li>Node.js 18以上（フロントエンド用）</li>
+      <li>npm</li>
+    </ul>
+
+    <h3>2.1 バックエンドの起動</h3>
+    <p><strong>コマンドプロンプト:</strong></p>
+    <pre>
+cd C:\uep-v5-ultimate-enterprise-platform
+.\start-backend.bat</pre
+    >
+
+    <p><strong>PowerShell:</strong></p>
+    <pre>
+cd C:\uep-v5-ultimate-enterprise-platform\backend
+python main.py</pre
+    >
+
+    <ul>
+      <li><strong>URL</strong>: http://localhost:8080</li>
+      <li><strong>API Docs</strong>: 本番モード時は無効（常に本番モードで起動）</li>
+      <li><strong>停止</strong>: Ctrl+C</li>
+    </ul>
+    <p class="note">※ start-backend.bat は常に本番モード（ENVIRONMENT=production）で起動します。デモユーザー（kaho0525 / developer / viewer）でログイン可能です。</p>
+
+    <h3>2.2 フロントエンドの起動</h3>
+    <p><strong>PowerShell（推奨）:</strong></p>
+    <pre>
+cd C:\uep-v5-ultimate-enterprise-platform
+.\start-frontend.ps1</pre
+    >
+
+    <p><strong>コマンドプロンプト:</strong></p>
+    <pre>
+cd C:\uep-v5-ultimate-enterprise-platform
+.\start-frontend.bat</pre
+    >
+
+    <p><strong>直接 npm で起動:</strong></p>
+    <pre>
+cd C:\uep-v5-ultimate-enterprise-platform\frontend
+npm install   # 初回のみ
+npm start</pre
+    >
+
+    <ul>
+      <li><strong>URL</strong>: http://localhost:3000</li>
+      <li><strong>停止</strong>: Ctrl+C</li>
+    </ul>
+
+    <h3>起動順序</h3>
+    <ol>
+      <li>バックエンド（8080）を先に起動</li>
+      <li>フロントエンド（3000）を起動</li>
+    </ol>
+
+    <hr />
+
+    <h2>3. 統合セキュリティ・防衛プラットフォーム 起動方法</h2>
+    <p>UEP v5.0とは<strong>別の個別システム</strong>です。UEP起動時には含まれません。</p>
+
+    <h3>前提条件</h3>
+    <ul>
+      <li>UEP の backend/venv が作成済みであること（初回は UEP の start-backend.bat を1回実行して venv を作成）</li>
+      <li>Node.js 18以上（フロントエンド用）</li>
+    </ul>
+
+    <h3>3.1 バックエンドの起動</h3>
+    <pre>
+cd C:\uep-v5-ultimate-enterprise-platform\security_defense_platform
+.\start-backend.bat</pre
+    >
+
+    <ul>
+      <li><strong>URL</strong>: http://localhost:9001</li>
+      <li><strong>API Docs</strong>: http://localhost:9001/docs</li>
+      <li><strong>停止</strong>: Ctrl+C</li>
+    </ul>
+    <p class="note">※ ポート9001が使用中の場合は、9002〜9010の空きポートで自動起動します。</p>
+
+    <h3>3.2 フロントエンドの起動</h3>
+    <p><strong>PowerShell:</strong></p>
+    <pre>
+cd C:\uep-v5-ultimate-enterprise-platform\security_defense_platform
+.\start-frontend.ps1</pre
+    >
+
+    <p><strong>コマンドプロンプト:</strong></p>
+    <pre>
+cd C:\uep-v5-ultimate-enterprise-platform\security_defense_platform
+.\start-frontend.bat</pre
+    >
+
+    <p><strong>直接 npm で起動:</strong></p>
+    <pre>
+cd C:\uep-v5-ultimate-enterprise-platform\security_defense_platform\frontend
+npm install   # 初回のみ
+npm start</pre
+    >
+
+    <ul>
+      <li><strong>URL</strong>: http://localhost:3001</li>
+      <li><strong>停止</strong>: Ctrl+C</li>
+    </ul>
+
+    <h3>起動順序</h3>
+    <ol>
+      <li>バックエンド（9001）を先に起動</li>
+      <li>フロントエンド（3001）を起動</li>
+    </ol>
+
+    <hr />
+
+    <h2>4. 製造・IoTプラットフォーム 起動方法</h2>
+    <p>UEP v5.0とは<strong>別の個別システム</strong>です。UEP起動時には含まれません。</p>
+
+    <h3>4.1 バックエンドの起動</h3>
+    <pre>
+cd C:\uep-v5-ultimate-enterprise-platform\manufacturing_platform
+.\start-backend.bat</pre
+    >
+
+    <ul>
+      <li><strong>URL</strong>: http://localhost:9002</li>
+      <li><strong>API Docs</strong>: http://localhost:9002/docs</li>
+      <li><strong>停止</strong>: Ctrl+C</li>
+    </ul>
+
+    <h3>4.2 フロントエンドの起動</h3>
+    <pre>
+cd C:\uep-v5-ultimate-enterprise-platform\manufacturing_platform
+.\start-frontend.bat</pre
+    >
+
+    <ul>
+      <li><strong>URL</strong>: http://localhost:3002</li>
+      <li><strong>停止</strong>: Ctrl+C</li>
+    </ul>
+
+    <hr />
+
+    <h2>5. 医療・ヘルスケアプラットフォーム 起動方法</h2>
+    <p>UEP v5.0とは<strong>別の個別システム</strong>です。UEP起動時には含まれません。</p>
+
+    <h3>5.1 バックエンドの起動</h3>
+    <pre>
+cd C:\uep-v5-ultimate-enterprise-platform\medical_platform
+.\start-backend.bat</pre
+    >
+
+    <ul>
+      <li><strong>URL</strong>: http://localhost:9003</li>
+      <li><strong>API Docs</strong>: http://localhost:9003/docs</li>
+      <li><strong>停止</strong>: Ctrl+C</li>
+    </ul>
+
+    <h3>5.2 フロントエンドの起動</h3>
+    <pre>
+cd C:\uep-v5-ultimate-enterprise-platform\medical_platform
+.\start-frontend.bat</pre
+    >
+
+    <ul>
+      <li><strong>URL</strong>: http://localhost:3003</li>
+      <li><strong>停止</strong>: Ctrl+C</li>
+    </ul>
+
+    <hr />
+
+    <h2>6. 金融・FinTechプラットフォーム 起動方法</h2>
+    <p>UEP v5.0とは<strong>別の個別システム</strong>です。UEP起動時には含まれません。</p>
+
+    <h3>6.1 バックエンドの起動</h3>
+    <pre>
+cd C:\uep-v5-ultimate-enterprise-platform\fintech_platform
+.\start-backend.bat</pre
+    >
+
+    <ul>
+      <li><strong>URL</strong>: http://localhost:9004</li>
+      <li><strong>API Docs</strong>: http://localhost:9004/docs</li>
+      <li><strong>停止</strong>: Ctrl+C</li>
+    </ul>
+
+    <h3>6.2 フロントエンドの起動</h3>
+    <pre>
+cd C:\uep-v5-ultimate-enterprise-platform\fintech_platform
+.\start-frontend.bat</pre
+    >
+
+    <ul>
+      <li><strong>URL</strong>: http://localhost:3004</li>
+      <li><strong>停止</strong>: Ctrl+C</li>
+    </ul>
+
+    <hr />
+
+    <h2>7. 産業統合プラットフォーム 起動方法・使用方法</h2>
+    <p>製造・IoT + 医療・ヘルスケア + 金融・FinTech + 統合セキュリティ・防衛 を<strong>1つに統合</strong>した個別システムです。シミュレーション方法の詳細は <code>docs/産業統合プラットフォーム_シミュレーション方法.md</code> を参照してください。</p>
+
+    <h3>7.1 バックエンドの起動</h3>
+    <pre>
+cd C:\uep-v5-ultimate-enterprise-platform\industry_unified_platform
+.\start-backend.bat</pre
+    >
+
+    <ul>
+      <li><strong>URL</strong>: http://localhost:9010</li>
+      <li><strong>API Docs</strong>: 本番モード時は無効（常に本番モードで起動）</li>
+      <li><strong>停止</strong>: Ctrl+C</li>
+    </ul>
+    <p class="note">※ 産業統合も常に本番モードで起動します。</p>
+
+    <h3>7.2 フロントエンドの起動</h3>
+    <pre>
+cd C:\uep-v5-ultimate-enterprise-platform\industry_unified_platform
+.\start-frontend.bat</pre
+    >
+
+    <ul>
+      <li><strong>URL</strong>: http://localhost:3010</li>
+      <li><strong>停止</strong>: Ctrl+C</li>
+    </ul>
+
+    <h3>7.3 ログイン</h3>
+    <ol>
+      <li>ブラウザで http://localhost:3010 を開く</li>
+      <li>ログインページで以下いずれかを入力</li>
+    </ol>
+    <table>
+      <tr>
+        <th>ユーザー名</th>
+        <th>パスワード</th>
+      </tr>
+      <tr>
+        <td>kaho0525</td>
+        <td>0525</td>
+      </tr>
+      <tr>
+        <td>developer</td>
+        <td>dev123</td>
+      </tr>
+    </table>
+    <p>3. 「ログイン」をクリック</p>
+
+    <h3>7.4 ドメイン（8つ）</h3>
+    <table>
+      <tr>
+        <th>タブ</th>
+        <th>内容</th>
+      </tr>
+      <tr>
+        <td>製造・IoT</td>
+        <td>予知保全、センサーデータ、異常検知</td>
+      </tr>
+      <tr>
+        <td>医療・ヘルスケア</td>
+        <td>AI診断、音声応答、異常検知</td>
+      </tr>
+      <tr>
+        <td>金融・FinTech</td>
+        <td>決済、リスクスコア、取引監視、ストレステスト</td>
+      </tr>
+      <tr>
+        <td>統合セキュリティ・防衛</td>
+        <td>イベント、インシデント、リスク（IDS/IPS, EDR, SIEM）</td>
+      </tr>
+      <tr>
+        <td>インフラ・運用系</td>
+        <td>IaC、オーケストレーション、監視アラート、FinOps最適化（SIer・クラウドベンダー向け）</td>
+      </tr>
+      <tr>
+        <td>DX・データ系</td>
+        <td>データレイク、MLモデル、生成AI、パイプライン</td>
+      </tr>
+      <tr>
+        <td>コンプライアンス・ガバナンス</td>
+        <td>規制対応、監査ログ、ポリシー、監査指摘</td>
+      </tr>
+      <tr>
+        <td>サプライチェーン</td>
+        <td>物流配送、在庫、調達発注、需要予測</td>
+      </tr>
+    </table>
+
+    <h3>7.5 シミュレーションモード</h3>
+    <table>
+      <tr>
+        <th>モード</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td>自動</td>
+        <td>5秒・10秒・30秒の間隔でデータを自動再取得。間隔はドロップダウンで選択</td>
+      </tr>
+      <tr>
+        <td>手動</td>
+        <td>「全データ更新」ボタンをクリックしたときのみ更新</td>
+      </tr>
+    </table>
+
+    <h3>7.6 要対応サマリ</h3>
+    <p>画面上部に全ドメインの要対応・要確認件数を一覧表示します。各チップをクリックすると、該当タブに遷移します。</p>
+    <ul>
+      <li><strong>製造</strong>: 要メンテナンス設備 + 高重大度の異常</li>
+      <li><strong>医療</strong>: 要確認のAI診断所見 + 高重大度の異常</li>
+      <li><strong>金融</strong>: 高リスクスコア + 要確認の取引監視</li>
+      <li><strong>セキュリティ</strong>: Critical/High のセキュリティイベント</li>
+      <li><strong>インフラ</strong>: 未対応の監視アラート + Pendingデプロイ</li>
+      <li><strong>DX</strong>: 失敗・待機中のパイプライン</li>
+      <li><strong>コンプライアンス</strong>: 未対応の監査指摘 + 要対応の規制</li>
+      <li><strong>サプライチェーン</strong>: 要発注の在庫</li>
+    </ul>
+    <p>最終更新時刻も表示されます。</p>
+
+    <h3>7.7 企業プロジェクト・業種別ドメイン対応</h3>
+    <p>企業の業種・規模により、重点となるドメインが異なります。</p>
+    <table>
+      <tr>
+        <th>業種</th>
+        <th>中心となるドメイン</th>
+      </tr>
+      <tr>
+        <td>製造業</td>
+        <td>製造・IoT、ERP が中心</td>
+      </tr>
+      <tr>
+        <td>金融機関</td>
+        <td>金融・FinTech、セキュリティが中心</td>
+      </tr>
+      <tr>
+        <td>病院・医療法人</td>
+        <td>医療・ヘルスケアが中心</td>
+      </tr>
+      <tr>
+        <td>SIer・クラウドベンダー</td>
+        <td>インフラ・運用系が中心</td>
+      </tr>
+    </table>
+
+    <h3>7.8 その他の系統（4系統・フルタブ実装済）</h3>
+    <p>以下の4系統もタブとして実装済みです。画面上部の「その他の系統」エリアをクリックするか、タブから直接選択できます。認証不要でサンプルデータが表示されます。</p>
+    <table>
+      <tr>
+        <th>系統</th>
+        <th>内容</th>
+      </tr>
+      <tr>
+        <td>インフラ・運用系（SIer・クラウドベンダー）</td>
+        <td>IaC、オーケストレーション、監視、FinOps最適化</td>
+      </tr>
+      <tr>
+        <td>DX・データ系</td>
+        <td>データレイク、AI/ML、生成AI、パイプライン</td>
+      </tr>
+      <tr>
+        <td>コンプライアンス・ガバナンス系</td>
+        <td>規制対応、監査ログ、ポリシー、監査指摘</td>
+      </tr>
+      <tr>
+        <td>サプライチェーン系</td>
+        <td>物流、在庫、調達、需要予測</td>
+      </tr>
+    </table>
+
+    <h3>7.8.5 企業横断オペレーション基盤 起動方法</h3>
+    <p>観測・タスク・リスクを一元管理する独立システム。UEPダッシュボードからリンク可能。</p>
+    <pre>
+cd C:\uep-v5-ultimate-enterprise-platform\enterprise_operations_hub
+.\start-backend.bat
+
+REM 別ターミナル
+cd C:\uep-v5-ultimate-enterprise-platform\enterprise_operations_hub\frontend
+npm install
+npm start</pre>
+    <ul>
+      <li><strong>バックエンド</strong>: http://localhost:9020</li>
+      <li><strong>フロントエンド</strong>: http://localhost:3020</li>
+      <li><strong>ログイン</strong>: kaho0525 / 0525</li>
+    </ul>
+    <p class="note">スキーマ変更時は eoh.db を自動再作成。UEP連携は start-frontend で REACT_APP_EOH_URL を自動設定。本番運用時は ENVIRONMENT=production と EOH_SECRET_KEY を設定（docs/PRODUCTION_DEPLOYMENT.md 参照）。</p>
+
+    <hr />
+
+    <h2>7.9 個人会計（スタンドアロン版）起動方法</h2>
+    <p>UEP v5.0 から独立した、個人用会計システム（freee・マネーフォワード風）。経費・売上・領収書OCR・請求書PDF出力・タスク管理・契約書管理など。</p>
+
+    <h3>7.9.1 本番モードの起動</h3>
+    <pre>
+cd C:\uep-v5-ultimate-enterprise-platform\standalone-personal-accounting
+.\start-standalone.bat</pre
+    >
+
+    <ul>
+      <li><strong>バックエンド</strong>: http://localhost:5000</li>
+      <li><strong>フロントエンド</strong>: http://localhost:3001</li>
+      <li><strong>API Docs</strong>: http://localhost:5000/docs</li>
+      <li><strong>認証</strong>: 不要</li>
+      <li><strong>停止</strong>: Ctrl+C</li>
+    </ul>
+
+    <h3>7.9.2 練習モードの起動</h3>
+    <p>架空データで操作を試す場合。本番データと完全に分離。</p>
+    <pre>
+cd C:\uep-v5-ultimate-enterprise-platform\standalone-personal-accounting
+.\start-standalone-practice.bat</pre
+    >
+
+    <ul>
+      <li><strong>バックエンド</strong>: http://localhost:5001</li>
+      <li><strong>フロントエンド</strong>: http://localhost:3010</li>
+    </ul>
+
+    <h3>7.9.3 手動起動</h3>
+    <pre>
+REM ターミナル1: バックエンド
+cd C:\uep-v5-ultimate-enterprise-platform\standalone-personal-accounting\backend
+pip install -r requirements.txt
+python main.py
+
+REM ターミナル2: フロントエンド
+cd C:\uep-v5-ultimate-enterprise-platform\standalone-personal-accounting\frontend
+python -m http.server 3001</pre
+    >
+
+    <p class="note">領収書OCR（日本語）利用時は Tesseract-OCR のインストールと jpn データの追加が必要です。詳細は <code>standalone-personal-accounting/README.md</code> を参照してください。</p>
+
+    <hr />
+
+    <h2>7.10 個人用 PC 容量確保 起動方法</h2>
+    <p>Docker クリーンアップと Cドライブの容量確保を行うスタンドアロンツール。<strong>UEP v5.0・産業統合プラットフォーム・EOH とは無関係</strong>です。</p>
+
+    <h3>7.10.1 スタンドアロン起動（推奨）</h3>
+    <pre>
+cd C:\uep-v5-ultimate-enterprise-platform\personal-pc-cleanup
+.\start-standalone.bat</pre
+    >
+
+    <ul>
+      <li><strong>バックエンド</strong>: http://localhost:5002</li>
+      <li><strong>フロントエンド</strong>: http://localhost:3002</li>
+      <li><strong>API Docs</strong>: http://localhost:5002/docs</li>
+      <li><strong>停止</strong>: Ctrl+C（各ウィンドウで）</li>
+    </ul>
+
+    <h3>7.10.2 機能</h3>
+    <table>
+      <tr>
+        <th>機能</th>
+        <th>内容</th>
+      </tr>
+      <tr>
+        <td>Docker クリーンアップ</td>
+        <td>未使用コンテナ・イメージ・ボリューム・ビルドキャッシュの削除</td>
+      </tr>
+      <tr>
+        <td>Cドライブ スキャン</td>
+        <td>node_modules, venv, __pycache__, ビルド成果物等の検出</td>
+      </tr>
+      <tr>
+        <td>一時フォルダ</td>
+        <td>%TEMP%, ブラウザキャッシュ等の検出</td>
+      </tr>
+    </table>
+
+    <h3>7.10.3 CLI 版（run.bat）</h3>
+    <pre>
+cd C:\uep-v5-ultimate-enterprise-platform\personal-pc-cleanup
+.\run.bat</pre
+    >
+    <p>メニューから選択: 1.検出のみ / 2.Docker クリーンアップ / 3.Cドライブ+一時フォルダ削除 / 4.全て実行</p>
+    <p class="note">詳細は <code>personal-pc-cleanup/README.md</code> および <code>docs/PC容量確保ガイド.md</code> を参照してください。</p>
+
+    <hr />
+
+    <h2>8. UEP v5.0 使用方法</h2>
+
+    <h3>ログイン</h3>
+    <ol>
+      <li>ブラウザで http://localhost:3000 を開く</li>
+      <li>ログインページで以下いずれかを入力</li>
+    </ol>
+    <table>
+      <tr>
+        <th>ユーザー名</th>
+        <th>パスワード</th>
+        <th>用途</th>
+      </tr>
+      <tr>
+        <td>kaho0525</td>
+        <td>0525</td>
+        <td>管理者</td>
+      </tr>
+      <tr>
+        <td>developer</td>
+        <td>dev123</td>
+        <td>開発者</td>
+      </tr>
+      <tr>
+        <td>viewer</td>
+        <td>view123</td>
+        <td>閲覧者</td>
+      </tr>
+    </table>
+    <p>3. 「ログイン」または「デモ」ボタンをクリック</p>
+
+    <h3>主な機能</h3>
+    <ul>
+      <li><strong>ダッシュボード</strong>: 統合状況の概要</li>
+      <li><strong>プロジェクト一覧</strong>: プロジェクト管理</li>
+      <li><strong>MLOps</strong>: 機械学習モデル管理・実験追跡</li>
+      <li><strong>生成AI</strong>: RAG、チャット、推論</li>
+      <li><strong>クラウドインフラ</strong>: IaC、オーケストレーション</li>
+      <li><strong>インフラ構築</strong>: 専用構築ツール</li>
+      <li><strong>IDOP</strong>: 統合開発・運用</li>
+      <li><strong>AI支援開発</strong>: コード補助、ドキュメント生成</li>
+      <li><strong>ERP</strong>: 統合基幹業務</li>
+      <li><strong>製造・IoT</strong>: OPC-UA連携</li>
+      <li><strong>FinTech</strong>: 金融・ストレステスト</li>
+      <li><strong>エネルギー</strong>: エネルギー管理</li>
+      <li><strong>医療</strong>: FHIR連携</li>
+      <li><strong>産業統合プラットフォーム</strong>: ダッシュボード・サイドバーからリンク（新規タブで開く）</li>
+      <li><strong>企業横断オペレーション基盤（EOH）</strong>: ダッシュボード・サイドバーからリンク（観測・タスク・リスク一元管理）</li>
+      <li><strong>その他</strong>: GraphQL、Chaos Engineering、個人会計 等</li>
+    </ul>
+
+    <h3>API ドキュメント</h3>
+    <p>本番モード時は無効。UEP ダッシュボードから産業統合プラットフォームへのリンクがあります。</p>
+
+    <hr />
+
+    <h2>9. 統合セキュリティ・防衛プラットフォーム 使用方法</h2>
+
+    <h3>ログイン</h3>
+    <ol>
+      <li>ブラウザで http://localhost:3001 を開く</li>
+      <li>ログインページで以下いずれかを入力</li>
+    </ol>
+    <table>
+      <tr>
+        <th>ユーザー名</th>
+        <th>パスワード</th>
+      </tr>
+      <tr>
+        <td>kaho0525</td>
+        <td>0525</td>
+      </tr>
+      <tr>
+        <td>developer</td>
+        <td>dev123</td>
+      </tr>
+    </table>
+    <p>3. 「ログイン」をクリック</p>
+
+    <h3>タブ機能</h3>
+    <table>
+      <tr>
+        <th>タブ</th>
+        <th>機能</th>
+        <th>説明</th>
+      </tr>
+      <tr>
+        <td>イベント</td>
+        <td>セキュリティイベント一覧</td>
+        <td>脅威レベルでフィルタ可能。送信元・送信先・発生日時を表示</td>
+      </tr>
+      <tr>
+        <td>インシデント</td>
+        <td>インシデント一覧</td>
+        <td>重大度・ステータスでフィルタ可能</td>
+      </tr>
+      <tr>
+        <td>リスク</td>
+        <td>リスク分析</td>
+        <td>カテゴリ、発生確率、影響度、対策を表示</td>
+      </tr>
+      <tr>
+        <td>サイバー概要</td>
+        <td>ダッシュボード</td>
+        <td>Suricata/Wazuh/セキュリティイベントのサマリ、連携ステータス</td>
+      </tr>
+      <tr>
+        <td>IDS/IPS</td>
+        <td>Suricataアラート</td>
+        <td>ネットワーク侵入検知・防止のアラート一覧</td>
+      </tr>
+      <tr>
+        <td>EDR</td>
+        <td>Wazuhアラート</td>
+        <td>エンドポイント検知・対応のアラート一覧</td>
+      </tr>
+      <tr>
+        <td>脅威インテリ</td>
+        <td>IOC照合</td>
+        <td>IP・ドメイン・ハッシュを照合。デモ: 192.168.1.100, 10.0.0.99, malware.example.com</td>
+      </tr>
+      <tr>
+        <td>コンプライアンス</td>
+        <td>レポート</td>
+        <td>期間内のイベント数、Critical/High件数、推奨事項</td>
+      </tr>
+      <tr>
+        <td>SIEM検索</td>
+        <td>ログ検索</td>
+        <td>キーワードでイベントを検索</td>
+      </tr>
+    </table>
+
+    <h3>操作のヒント</h3>
+    <ul>
+      <li><strong>更新ボタン</strong>: 各タブの「更新」でデータを再取得</li>
+      <li><strong>フィルタ</strong>: イベント・インシデントタブでドロップダウンから条件を選択</li>
+      <li><strong>脅威インテリ</strong>: 照合ボタンでIOCをチェック</li>
+      <li><strong>SIEM検索</strong>: キーワード入力後、検索ボタンまたはEnterで実行</li>
+    </ul>
+
+    <h3>API ドキュメント</h3>
+    <p>http://localhost:9001/docs （Swagger UI）</p>
+
+    <hr />
+
+    <h2>10. トラブルシューティング</h2>
+
+    <h3>ポートが使用できない（WinError 10013 / 10048）</h3>
+    <ul>
+      <li><strong>8000</strong>: Windows予約範囲のため使用不可。UEPバックエンドは8080を使用</li>
+      <li><strong>9001使用中</strong>: 統合セキュリティ・防衛プラットフォームは9002〜9010で自動的に空きポートを探して起動</li>
+    </ul>
+
+    <h3>フロントエンドが起動しない（PowerShellでバッチ実行時）</h3>
+    <ul>
+      <li>.\start-frontend.ps1 を使用（PowerShell用）</li>
+      <li>または cd frontend のうえで npm start を直接実行</li>
+    </ul>
+
+    <h3>認証エラー（Not authenticated）</h3>
+    <ul>
+      <li>ログイン画面でデモアカウントでログイン</li>
+      <li>バックエンドが起動しているか確認（8080 または 9001）</li>
+    </ul>
+
+    <h3>データが表示されない</h3>
+    <ul>
+      <li>バックエンドが起動しているか確認</li>
+      <li>ブラウザの開発者ツール（F12）でネットワークエラーを確認</li>
+      <li>CORSエラーの場合、バックエンドのCORS設定を確認</li>
+    </ul>
+
+    <hr />
+
+    <h2>11. クイックリファレンス</h2>
+
+    <h3>全システム起動（個別に起動）</h3>
+    <table>
+      <tr>
+        <th>システム</th>
+        <th>コマンド</th>
+        <th>ポート</th>
+      </tr>
+      <tr>
+        <td>UEP</td>
+        <td>cd C:\uep-v5-ultimate-enterprise-platform → .\start-backend.bat / .\start-frontend.ps1</td>
+        <td>8080 / 3000</td>
+      </tr>
+      <tr>
+        <td>統合セキュリティ・防衛</td>
+        <td>cd ...\security_defense_platform → .\start-backend.bat / .\start-frontend.ps1</td>
+        <td>9001 / 3001</td>
+      </tr>
+      <tr>
+        <td>製造・IoT</td>
+        <td>cd ...\manufacturing_platform → .\start-backend.bat / .\start-frontend.bat</td>
+        <td>9002 / 3002</td>
+      </tr>
+      <tr>
+        <td>医療・ヘルスケア</td>
+        <td>cd ...\medical_platform → .\start-backend.bat / .\start-frontend.bat</td>
+        <td>9003 / 3003</td>
+      </tr>
+      <tr>
+        <td>金融・FinTech</td>
+        <td>cd ...\fintech_platform → .\start-backend.bat / .\start-frontend.bat</td>
+        <td>9004 / 3004</td>
+      </tr>
+      <tr>
+        <td>産業統合（製造・医療・金融を1つに）</td>
+        <td>cd ...\industry_unified_platform → .\start-backend.bat / .\start-frontend.bat</td>
+        <td>9010 / 3010</td>
+      </tr>
+      <tr>
+        <td>企業横断オペレーション基盤</td>
+        <td>cd ...\enterprise_operations_hub → .\start-backend.bat / cd frontend → npm start</td>
+        <td>9020 / 3020</td>
+      </tr>
+      <tr>
+        <td>個人会計（スタンドアロン版）</td>
+        <td>cd ...\standalone-personal-accounting → .\start-standalone.bat</td>
+        <td>5000 / 3001</td>
+      </tr>
+      <tr>
+        <td>個人用 PC 容量確保</td>
+        <td>cd ...\personal-pc-cleanup → .\start-standalone.bat</td>
+        <td>5002 / 3002</td>
+      </tr>
+    </table>
+
+    <h3>アクセスURL一覧</h3>
+    <table>
+      <tr>
+        <th>システム</th>
+        <th>URL</th>
+      </tr>
+      <tr>
+        <td>UEP フロントエンド</td>
+        <td>http://localhost:3000</td>
+      </tr>
+      <tr>
+        <td>UEP API Docs</td>
+        <td>本番時は無効</td>
+      </tr>
+      <tr>
+        <td>統合セキュリティ・防衛 フロントエンド</td>
+        <td>http://localhost:3001</td>
+      </tr>
+      <tr>
+        <td>統合セキュリティ・防衛 API Docs</td>
+        <td>http://localhost:9001/docs</td>
+      </tr>
+      <tr>
+        <td>製造・IoT フロントエンド</td>
+        <td>http://localhost:3002</td>
+      </tr>
+      <tr>
+        <td>製造・IoT API Docs</td>
+        <td>http://localhost:9002/docs</td>
+      </tr>
+      <tr>
+        <td>医療・ヘルスケア フロントエンド</td>
+        <td>http://localhost:3003</td>
+      </tr>
+      <tr>
+        <td>医療・ヘルスケア API Docs</td>
+        <td>http://localhost:9003/docs</td>
+      </tr>
+      <tr>
+        <td>金融・FinTech フロントエンド</td>
+        <td>http://localhost:3004</td>
+      </tr>
+      <tr>
+        <td>金融・FinTech API Docs</td>
+        <td>http://localhost:9004/docs</td>
+      </tr>
+      <tr>
+        <td>産業統合 フロントエンド</td>
+        <td>http://localhost:3010</td>
+      </tr>
+      <tr>
+        <td>産業統合 API Docs</td>
+        <td>本番時は無効</td>
+      </tr>
+      <tr>
+        <td>企業横断オペレーション基盤 フロントエンド</td>
+        <td>http://localhost:3020</td>
+      </tr>
+      <tr>
+        <td>企業横断オペレーション基盤 API Docs</td>
+        <td>http://localhost:9020/docs</td>
+      </tr>
+      <tr>
+        <td>個人会計 フロントエンド</td>
+        <td>http://localhost:3001</td>
+      </tr>
+      <tr>
+        <td>個人会計 API Docs</td>
+        <td>http://localhost:5000/docs</td>
+      </tr>
+      <tr>
+        <td>個人用 PC 容量確保 フロントエンド</td>
+        <td>http://localhost:3002</td>
+      </tr>
+      <tr>
+        <td>個人用 PC 容量確保 API Docs</td>
+        <td>http://localhost:5002/docs</td>
+      </tr>
+    </table>
+
+    <hr />
+
+    <h2>12. バックアップ（外付けUSB 2台・Google Drive・外付けドライブ）</h2>
+    <p>UEP v5.0 + 個人会計 + docs を一括で各先へコピーします。</p>
+
+    <h3>一括バックアップ（推奨）</h3>
+    <pre>
+cd C:\uep-v5-ultimate-enterprise-platform
+scripts\一括バックアップ_全先.bat</pre
+    >
+
+    <h3>コピー先</h3>
+    <table>
+      <tr>
+        <th>先</th>
+        <th>デフォルトドライブ</th>
+      </tr>
+      <tr>
+        <td>外付けドライブ N</td>
+        <td>N:\uep-v5-backup</td>
+      </tr>
+      <tr>
+        <td>Google Drive O（マイドライブ）</td>
+        <td>O:\uep-v5-backup</td>
+      </tr>
+      <tr>
+        <td>その他外付けドライブ</td>
+        <td>E:\uep-v5-backup</td>
+      </tr>
+    </table>
+    <p class="note">ドライブレターは scripts\一括バックアップ_全先.bat の上部で変更できます。接続されていない先はスキップされます。バックアップ実行後、各先に「バックアップ内容一覧.txt」が自動作成されます。</p>
+    <p><strong>追加・更新のみ</strong>: USB N/O は <code>一括バックアップ_更新のみ_USB_N_O.bat</code>、外付けドライブ N と Google Drive は <code>一括バックアップ_更新のみ_N_GoogleDrive.bat</code>。詳細は <code>docs/バックアップ手順.md</code> を参照してください。</p>
+  </body>
+</html>

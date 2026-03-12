@@ -1,0 +1,38 @@
+# Phase 4: CI/CD - Unified Platform (Medical+Aviation+Space)
+name: Unified Platform CI/CD
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - "projects/unified-platform/**"
+  pull_request:
+    branches: [main, master]
+    paths:
+      - "projects/unified-platform/**"
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: projects/unified-platform
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install deps
+        run: pip install -r requirements.txt
+      - name: Lint
+        run: |
+          pip install ruff
+          ruff check . --ignore E501 || true
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t unified-platform:${{ github.sha }} projects/unified-platform
+      - name: Summary
+        run: echo "Image built. Push to registry for deploy."

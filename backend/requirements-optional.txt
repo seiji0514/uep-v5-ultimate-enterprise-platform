@@ -1,0 +1,13 @@
+# オプション依存パッケージ（拡張機能用）
+# 必要な機能に応じてインストール: pip install -r requirements-optional.txt
+
+# 医療 FHIR 連携（backend/medical/fhir_client.py）
+fhirclient>=4.1.0
+
+# 製造 OPC-UA 連携（backend/manufacturing/opcua_client.py）
+# 注: opcua は古いパッケージ。asyncua が推奨の場合あり
+opcua>=0.98.13
+
+# LangGraph エージェント（backend/generative_ai/langgraph_agent.py）
+langgraph>=0.0.20
+langchain>=0.1.0

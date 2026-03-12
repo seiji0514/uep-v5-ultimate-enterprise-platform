@@ -1,0 +1,1812 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ヘルスケアAI学習プラットフォーム | AI Learning Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* サイドバー */
+        .sidebar {
+            width: 280px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            padding: 2rem;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar h1 {
+            font-size: 1.2rem;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-progress {
+            text-align: center;
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #667eea15, #764ba215);
+            border-radius: 15px;
+        }
+
+        .progress-circle {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 1rem;
+        }
+
+        .progress-text {
+            font-size: 1.8em;
+            font-weight: bold;
+            fill: #667eea;
+        }
+
+        .progress-label {
+            display: block;
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 0.5rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-menu li {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-menu a {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: #666;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .nav-menu a:hover, .nav-menu a.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        /* メインコンテンツ */
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 2rem;
+        }
+
+        .header {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .header h2 {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .btn-dashboard {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-dashboard:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .content-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .content-section h3 {
+            color: #667eea;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .section-intro {
+            background: linear-gradient(135deg, #667eea15, #764ba215);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .section-intro h4 {
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .section-intro p {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-intro ul {
+            margin-left: 2rem;
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .section-intro ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .module-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .module-card h4 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .module-card p {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .module-status {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .status-completed {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .status-pending {
+            background: #ff9800;
+            color: white;
+        }
+
+        /* クイズセクション */
+        .quiz-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .quiz-intro {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .quiz-intro h3 {
+            color: #667eea;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .quiz-intro p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .quiz-question {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .quiz-question.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .question-number {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .question-options {
+            margin-bottom: 1.5rem;
+        }
+
+        .option {
+            background: #f5f7fa;
+            padding: 1rem 1.5rem;
+            margin-bottom: 0.8rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .option:hover {
+            background: #e8eaf6;
+            border-color: #667eea;
+        }
+
+        .option.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .option.correct {
+            background: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+
+        .option.incorrect {
+            background: #f44336;
+            color: white;
+            border-color: #f44336;
+        }
+
+        .explanation {
+            background: #e8f5e9;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .explanation.show {
+            display: block;
+        }
+
+        .explanation h4 {
+            color: #4CAF50;
+            margin-bottom: 0.5rem;
+        }
+
+        .quiz-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #666;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .quiz-result {
+            display: none;
+            text-align: center;
+        }
+
+        .quiz-result.show {
+            display: block;
+        }
+
+        .result-score {
+            font-size: 3rem;
+            color: #667eea;
+            font-weight: bold;
+            margin: 2rem 0;
+        }
+
+        .result-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .result-item {
+            background: linear-gradient(135deg, #667eea15, #764ba215);
+            padding: 1.5rem;
+            border-radius: 10px;
+        }
+
+        .result-item h4 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-item p {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* プロジェクトセクション */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .project-card {
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .project-card h4 {
+            color: #667eea;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+
+        .project-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .meta-item {
+            background: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .project-card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .project-card ul {
+            margin-left: 1.5rem;
+            color: #666;
+            line-height: 1.8;
+        }
+
+        /* モーダル */
+        .project-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 2000;
+            overflow-y: auto;
+        }
+
+        .project-modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px 15px 0 0;
+            position: relative;
+        }
+
+        .modal-header h3 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .modal-close:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .project-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-item {
+            background: #f5f7fa;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .info-item strong {
+            display: block;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .section {
+            margin-bottom: 2rem;
+        }
+
+        .section h4 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .section ul {
+            margin-left: 1.5rem;
+            color: #666;
+            line-height: 2;
+        }
+
+        .section ol {
+            margin-left: 1.5rem;
+            color: #666;
+            line-height: 2;
+        }
+
+        .script-box {
+            background: #f5f7fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            margin-top: 1rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            padding: 1.5rem 2rem;
+            background: #f5f7fa;
+            border-radius: 0 0 15px 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- サイドバー -->
+        <aside class="sidebar">
+            <h1>ヘルスケアAI</h1>
+            <p style="color: #666; font-size: 0.9rem; margin-bottom: 2rem;">v7.0対応 完全学習</p>
+
+            <div class="sidebar-progress">
+                <svg width="100" height="100" class="progress-circle">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="#e0e0e0" stroke-width="8"/>
+                    <circle id="sidebarProgress" cx="50" cy="50" r="45" fill="none" stroke="#667eea" 
+                            stroke-width="8" stroke-dasharray="283" stroke-dashoffset="283"
+                            transform="rotate(-90 50 50)" style="transition: stroke-dashoffset 0.5s"/>
+                    <text x="50" y="55" text-anchor="middle" class="progress-text">0%</text>
+                </svg>
+                <span class="progress-label">学習進捗率</span>
+                <p style="margin-top: 0.5rem; color: #666; font-size: 0.9rem;">0/10 モジュール完了</p>
+            </div>
+
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="#overview" class="active" onclick="switchTab('overview')">概要</a></li>
+                    <li><a href="#modules" onclick="switchTab('modules')">学習モジュール</a></li>
+                    <li><a href="#quiz" onclick="switchTab('quiz')">クイズ (30問)</a></li>
+                    <li><a href="#projects" onclick="switchTab('projects')">実践プロジェクト (6個)</a></li>
+                    <li><a href="#resources" onclick="switchTab('resources')">リソース</a></li>
+                </ul>
+            </nav>
+
+            <div style="margin-top: 2rem;">
+                <a href="ai-learning-platforms-unified-dashboard.html" class="btn-dashboard" style="width: 100%; justify-content: center; text-decoration: none;">
+                    <span>←</span>
+                    <span>ダッシュボードに戻る</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- メインコンテンツ -->
+        <main class="main-content">
+            <div class="header">
+                <div class="header-content">
+                    <h2>ヘルスケアAI学習プラットフォーム</h2>
+                    <p>医療画像診断、創薬、電子カルテ分析、個別化医療、医療AI倫理を体系的に学習</p>
+                </div>
+            </div>
+
+            <!-- 概要セクション -->
+            <section id="overview" class="content-section active">
+                <h3>プラットフォーム概要</h3>
+                <div class="section-intro">
+                    <h4>このプラットフォームについて</h4>
+                    <p>ヘルスケアAI学習プラットフォームは、医療画像診断、創薬、電子カルテ分析、個別化医療、遠隔医療、医療AI倫理などを包括的に学習するためのプラットフォームです。</p>
+                    <p><strong>学習内容:</strong></p>
+                    <ul>
+                        <li>医療画像診断AI（X線、CT、MRI、病理画像、超音波）</li>
+                        <li>創薬AI（ドラッグディスカバリー、分子設計、タンパク質構造予測）</li>
+                        <li>電子カルテ・医療データ分析（NLP、疾病予測、リスク評価）</li>
+                        <li>個別化医療（ゲノム解析、精密医療、治療最適化）</li>
+                        <li>遠隔医療・ウェアラブル（リモートモニタリング、予防医療）</li>
+                        <li>医療AI倫理・規制（HIPAA、GDPR、説明可能性、公平性）</li>
+                        <li>臨床意思決定支援（診断支援、治療推薦、予後予測）</li>
+                        <li>医療画像セグメンテーション（腫瘍検出、臓器分割）</li>
+                        <li>バイオインフォマティクス（シーケンスデータ、遺伝子発現）</li>
+                        <li>最新技術・研究動向（Foundation Models、Federated Learning）</li>
+                    </ul>
+                </div>
+
+                <div class="module-grid">
+                    <div class="module-card">
+                        <h4>学習モジュール数</h4>
+                        <p>10個の包括的モジュール</p>
+                        <span class="module-status status-pending">進行中</span>
+                    </div>
+                    <div class="module-card">
+                        <h4>クイズ問題</h4>
+                        <p>30問の実践的クイズ</p>
+                        <span class="module-status status-pending">準備完了</span>
+                    </div>
+                    <div class="module-card">
+                        <h4>実践プロジェクト</h4>
+                        <p>6個のハンズオンプロジェクト</p>
+                        <span class="module-status status-pending">準備完了</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 学習モジュールセクション -->
+            <section id="modules" class="content-section">
+                <h3>学習モジュール</h3>
+                <div class="section-intro">
+                    <p>各モジュールをクリックすると完了マークが付きます。推奨学習時間と関連するクイズ・プロジェクトを参考に学習を進めてください。</p>
+                </div>
+                <div class="module-grid">
+                    <div class="module-card" onclick="toggleModuleStatus(1)">
+                        <h4>モジュール 1: 医療画像診断AI</h4>
+                        <p>X線、CT、MRI、病理画像、超音波画像の解析とAI診断</p>
+                        <div class="module-meta" style="margin: 1rem 0; padding-top: 1rem; border-top: 1px solid #ddd;">
+                            <p style="color: #667eea; font-size: 0.9rem; margin-bottom: 0.5rem;">推奨学習時間: 6-7時間</p>
+                            <p style="color: #666; font-size: 0.85rem;">関連クイズ: Q1, Q2, Q3, Q4 | 関連プロジェクト: P1, P2</p>
+                        </div>
+                        <span class="module-status status-pending" id="status-1">未完了</span>
+                    </div>
+                    <div class="module-card" onclick="toggleModuleStatus(2)">
+                        <h4>モジュール 2: 創薬AI</h4>
+                        <p>ドラッグディスカバリー、分子設計、タンパク質構造予測、AlphaFold</p>
+                        <div class="module-meta" style="margin: 1rem 0; padding-top: 1rem; border-top: 1px solid #ddd;">
+                            <p style="color: #667eea; font-size: 0.9rem; margin-bottom: 0.5rem;">推奨学習時間: 6-7時間</p>
+                            <p style="color: #666; font-size: 0.85rem;">関連クイズ: Q5, Q6, Q7, Q8 | 関連プロジェクト: P1, P3</p>
+                        </div>
+                        <span class="module-status status-pending" id="status-2">未完了</span>
+                    </div>
+                    <div class="module-card" onclick="toggleModuleStatus(3)">
+                        <h4>モジュール 3: 電子カルテ・医療データ分析</h4>
+                        <p>医療NLP、疾病予測、リスク評価、Electronic Health Records</p>
+                        <div class="module-meta" style="margin: 1rem 0; padding-top: 1rem; border-top: 1px solid #ddd;">
+                            <p style="color: #667eea; font-size: 0.9rem; margin-bottom: 0.5rem;">推奨学習時間: 5-6時間</p>
+                            <p style="color: #666; font-size: 0.85rem;">関連クイズ: Q9, Q10, Q11, Q12 | 関連プロジェクト: P2, P4</p>
+                        </div>
+                        <span class="module-status status-pending" id="status-3">未完了</span>
+                    </div>
+                    <div class="module-card" onclick="toggleModuleStatus(4)">
+                        <h4>モジュール 4: 個別化医療</h4>
+                        <p>ゲノム解析、精密医療、治療最適化、バイオマーカー</p>
+                        <div class="module-meta" style="margin: 1rem 0; padding-top: 1rem; border-top: 1px solid #ddd;">
+                            <p style="color: #667eea; font-size: 0.9rem; margin-bottom: 0.5rem;">推奨学習時間: 5-6時間</p>
+                            <p style="color: #666; font-size: 0.85rem;">関連クイズ: Q13, Q14, Q15, Q16 | 関連プロジェクト: P3, P5</p>
+                        </div>
+                        <span class="module-status status-pending" id="status-4">未完了</span>
+                    </div>
+                    <div class="module-card" onclick="toggleModuleStatus(5)">
+                        <h4>モジュール 5: 遠隔医療・ウェアラブル</h4>
+                        <p>リモートモニタリング、予防医療、ウェアラブルデバイス、IoMT</p>
+                        <div class="module-meta" style="margin: 1rem 0; padding-top: 1rem; border-top: 1px solid #ddd;">
+                            <p style="color: #667eea; font-size: 0.9rem; margin-bottom: 0.5rem;">推奨学習時間: 4-5時間</p>
+                            <p style="color: #666; font-size: 0.85rem;">関連クイズ: Q17, Q18, Q19 | 関連プロジェクト: P4, P6</p>
+                        </div>
+                        <span class="module-status status-pending" id="status-5">未完了</span>
+                    </div>
+                    <div class="module-card" onclick="toggleModuleStatus(6)">
+                        <h4>モジュール 6: 医療AI倫理・規制</h4>
+                        <p>HIPAA、GDPR、説明可能性、公平性、バイアス対策、透明性</p>
+                        <div class="module-meta" style="margin: 1rem 0; padding-top: 1rem; border-top: 1px solid #ddd;">
+                            <p style="color: #667eea; font-size: 0.9rem; margin-bottom: 0.5rem;">推奨学習時間: 5-6時間</p>
+                            <p style="color: #666; font-size: 0.85rem;">関連クイズ: Q20, Q21, Q22 | 関連プロジェクト: P1, P5</p>
+                        </div>
+                        <span class="module-status status-pending" id="status-6">未完了</span>
+                    </div>
+                    <div class="module-card" onclick="toggleModuleStatus(7)">
+                        <h4>モジュール 7: 臨床意思決定支援</h4>
+                        <p>診断支援、治療推薦、予後予測、Clinical Decision Support Systems</p>
+                        <div class="module-meta" style="margin: 1rem 0; padding-top: 1rem; border-top: 1px solid #ddd;">
+                            <p style="color: #667eea; font-size: 0.9rem; margin-bottom: 0.5rem;">推奨学習時間: 5-6時間</p>
+                            <p style="color: #666; font-size: 0.85rem;">関連クイズ: Q23, Q24, Q25 | 関連プロジェクト: P2, P6</p>
+                        </div>
+                        <span class="module-status status-pending" id="status-7">未完了</span>
+                    </div>
+                    <div class="module-card" onclick="toggleModuleStatus(8)">
+                        <h4>モジュール 8: 医療画像セグメンテーション</h4>
+                        <p>腫瘍検出、臓器分割、U-Net、Mask R-CNN、3D医療画像処理</p>
+                        <div class="module-meta" style="margin: 1rem 0; padding-top: 1rem; border-top: 1px solid #ddd;">
+                            <p style="color: #667eea; font-size: 0.9rem; margin-bottom: 0.5rem;">推奨学習時間: 6-7時間</p>
+                            <p style="color: #666; font-size: 0.85rem;">関連クイズ: Q26, Q27 | 関連プロジェクト: P3, P4</p>
+                        </div>
+                        <span class="module-status status-pending" id="status-8">未完了</span>
+                    </div>
+                    <div class="module-card" onclick="toggleModuleStatus(9)">
+                        <h4>モジュール 9: バイオインフォマティクス</h4>
+                        <p>シーケンスデータ、遺伝子発現、ゲノムワイド関連解析、次世代シーケンス</p>
+                        <div class="module-meta" style="margin: 1rem 0; padding-top: 1rem; border-top: 1px solid #ddd;">
+                            <p style="color: #667eea; font-size: 0.9rem; margin-bottom: 0.5rem;">推奨学習時間: 5-6時間</p>
+                            <p style="color: #666; font-size: 0.85rem;">関連クイズ: Q28, Q29 | 関連プロジェクト: P5, P6</p>
+                        </div>
+                        <span class="module-status status-pending" id="status-9">未完了</span>
+                    </div>
+                    <div class="module-card" onclick="toggleModuleStatus(10)">
+                        <h4>モジュール 10: 最新技術・研究動向</h4>
+                        <p>Foundation Models、Federated Learning、デジタルツイン、メタバース医療</p>
+                        <div class="module-meta" style="margin: 1rem 0; padding-top: 1rem; border-top: 1px solid #ddd;">
+                            <p style="color: #667eea; font-size: 0.9rem; margin-bottom: 0.5rem;">推奨学習時間: 5-6時間</p>
+                            <p style="color: #666; font-size: 0.85rem;">関連クイズ: Q30 | 関連プロジェクト: P1, P2</p>
+                        </div>
+                        <span class="module-status status-pending" id="status-10">未完了</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- クイズセクション -->
+            <section id="quiz" class="content-section">
+                <h3>ヘルスケアAIクイズ (30問)</h3>
+                <div class="quiz-container">
+                    <div class="quiz-intro" id="quizIntro">
+                        <h3>ヘルスケアAIの理解度をチェック</h3>
+                        <p>30問のクイズで、医療画像診断、創薬AI、電子カルテ分析、医療AI倫理の理解度を確認しましょう</p>
+                        <button class="btn btn-primary" onclick="startQuiz()">クイズを開始</button>
+                    </div>
+
+                    <div id="quizQuestions" style="display: none;">
+                        <!-- クイズ問題がここに動的に表示されます -->
+                    </div>
+
+                    <div id="quizResult" class="quiz-result">
+                        <h3>クイズ完了！</h3>
+                        <div class="result-score" id="finalScore">0/30</div>
+                        <div class="result-stats">
+                            <div class="result-item">
+                                <h4>正解数</h4>
+                                <p id="correctCount">0</p>
+                            </div>
+                            <div class="result-item">
+                                <h4>不正解数</h4>
+                                <p id="incorrectCount">0</p>
+                            </div>
+                            <div class="result-item">
+                                <h4>正解率</h4>
+                                <p id="accuracyRate">0%</p>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="restartQuiz()">もう一度挑戦</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- リソースセクション -->
+            <section id="resources" class="content-section">
+                <h3>学習リソース</h3>
+                <div class="section-intro">
+                    <h4>推奨学習リソース</h4>
+                    <p>ヘルスケアAIの理解を深めるための推奨リソースです。</p>
+                </div>
+
+                <div class="module-grid">
+                    <div class="module-card">
+                        <h4>推奨書籍</h4>
+                        <ul style="text-align: left; margin-left: 1rem; color: #666;">
+                            <li>Deep Medicine</li>
+                            <li>Medical Image Analysis</li>
+                            <li>AI in Healthcare</li>
+                            <li>Bioinformatics and Machine Learning</li>
+                            <li>Drug Discovery with AI</li>
+                        </ul>
+                    </div>
+
+                    <div class="module-card">
+                        <h4>オンラインコース</h4>
+                        <ul style="text-align: left; margin-left: 1rem; color: #666;">
+                            <li>AI for Medical Diagnosis (Coursera)</li>
+                            <li>Medical Image Computing (Stanford)</li>
+                            <li>Healthcare Data Science (edX)</li>
+                            <li>Genomic Data Science (Johns Hopkins)</li>
+                        </ul>
+                    </div>
+
+                    <div class="module-card">
+                        <h4>参考サイト</h4>
+                        <ul style="text-align: left; margin-left: 1rem; color: #666;">
+                            <li>Medical Image Analysis Journal</li>
+                            <li>Nature Medicine</li>
+                            <li>NEJM AI</li>
+                            <li>Radiology: AI</li>
+                        </ul>
+                    </div>
+
+                    <div class="module-card">
+                        <h4>実践ツール</h4>
+                        <ul style="text-align: left; margin-left: 1rem; color: #666;">
+                            <li>PyTorch Medical, MONAI</li>
+                            <li>3D Slicer, ITK-SNAP</li>
+                            <li>BioPython, BioConductor</li>
+                            <li>RDKit, DeepChem</li>
+                        </ul>
+                    </div>
+
+                    <div class="module-card">
+                        <h4>面接対策</h4>
+                        <ul style="text-align: left; margin-left: 1rem; color: #666;">
+                            <li>医療AI面接問題</li>
+                            <li>医療画像診断システム設計</li>
+                            <li>医療データプライバシー対策</li>
+                            <li>FDA承認プロセス</li>
+                        </ul>
+                    </div>
+
+                    <div class="module-card">
+                        <h4>関連プラットフォーム</h4>
+                        <ul style="text-align: left; margin-left: 1rem; color: #666;">
+                            <li><a href="data-science-analytics-learning-platform.html" style="color: #667eea;">データサイエンス学習</a></li>
+                            <li><a href="multimodal-ai-learning-platform.html" style="color: #667eea;">マルチモーダルAI学習</a></li>
+                            <li><a href="explainable-ai-platform.html" style="color: #667eea;">説明可能AI学習</a></li>
+                            <li><a href="enterprise-ai-learning-platform.html" style="color: #667eea;">エンタープライズAI学習</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- プロジェクトセクション -->
+            <section id="projects" class="content-section">
+                <h3>実践プロジェクト (6個)</h3>
+                <div class="projects-grid">
+                    <div class="project-card" onclick="showProjectDetails(1)">
+                        <h4>P1: 肺炎検出AIシステム</h4>
+                        <div class="project-meta">
+                            <span class="meta-item">中級</span>
+                            <span class="meta-item">4週間</span>
+                        </div>
+                        <p>胸部X線画像から肺炎を検出するAIシステム</p>
+                        <ul>
+                            <li>画像前処理</li>
+                            <li>CNN実装</li>
+                            <li>診断精度評価</li>
+                        </ul>
+                        <button class="btn btn-primary">詳細を見る</button>
+                    </div>
+
+                    <div class="project-card" onclick="showProjectDetails(2)">
+                        <h4>P2: 脳腫瘍セグメンテーション</h4>
+                        <div class="project-meta">
+                            <span class="meta-item">上級</span>
+                            <span class="meta-item">5週間</span>
+                        </div>
+                        <p>MRI画像から脳腫瘍を自動検出・分割</p>
+                        <ul>
+                            <li>3D U-Net実装</li>
+                            <li>マルチモーダル統合</li>
+                            <li>Dice係数評価</li>
+                        </ul>
+                        <button class="btn btn-primary">詳細を見る</button>
+                    </div>
+
+                    <div class="project-card" onclick="showProjectDetails(3)">
+                        <h4>P3: 創薬分子生成AI</h4>
+                        <div class="project-meta">
+                            <span class="meta-item">上級</span>
+                            <span class="meta-item">6週間</span>
+                        </div>
+                        <p>生成AIを用いた新規薬剤候補分子の設計</p>
+                        <ul>
+                            <li>分子表現学習</li>
+                            <li>生成モデル実装</li>
+                            <li>薬物動態予測</li>
+                        </ul>
+                        <button class="btn btn-primary">詳細を見る</button>
+                    </div>
+
+                    <div class="project-card" onclick="showProjectDetails(4)">
+                        <h4>P4: 疾病予測システム</h4>
+                        <div class="project-meta">
+                            <span class="meta-item">中級</span>
+                            <span class="meta-item">4週間</span>
+                        </div>
+                        <p>電子カルテから疾病リスクを予測</p>
+                        <ul>
+                            <li>医療NLP</li>
+                            <li>リスクモデル構築</li>
+                            <li>説明可能性実装</li>
+                        </ul>
+                        <button class="btn btn-primary">詳細を見る</button>
+                    </div>
+
+                    <div class="project-card" onclick="showProjectDetails(5)">
+                        <h4>P5: ゲノム解析パイプライン</h4>
+                        <div class="project-meta">
+                            <span class="meta-item">上級</span>
+                            <span class="meta-item">5週間</span>
+                        </div>
+                        <p>ゲノムデータから疾患関連遺伝子を特定</p>
+                        <ul>
+                            <li>シーケンスデータ処理</li>
+                            <li>変異検出</li>
+                            <li>機能予測</li>
+                        </ul>
+                        <button class="btn btn-primary">詳細を見る</button>
+                    </div>
+
+                    <div class="project-card" onclick="showProjectDetails(6)">
+                        <h4>P6: 遠隔モニタリングシステム</h4>
+                        <div class="project-meta">
+                            <span class="meta-item">中級</span>
+                            <span class="meta-item">4週間</span>
+                        </div>
+                        <p>ウェアラブルデータからの健康状態監視</p>
+                        <ul>
+                            <li>リアルタイムデータ処理</li>
+                            <li>異常検知</li>
+                            <li>アラート機能</li>
+                        </ul>
+                        <button class="btn btn-primary">詳細を見る</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- プロジェクト詳細モーダル -->
+    <div id="projectModal" class="project-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">プロジェクト詳細</h3>
+                <button class="modal-close" onclick="closeProjectModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- プロジェクト詳細がここに表示されます -->
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeProjectModal()">閉じる</button>
+                <button class="btn btn-primary">プロジェクトを開始</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 進捗管理
+        let completedModules = JSON.parse(localStorage.getItem('healthcareAiModules')) || [];
+        let quizProgress = {
+            currentQuestion: 0,
+            correctAnswers: 0,
+            answers: []
+        };
+
+        // クイズデータ（サンプル）
+        const quizData = [
+            {
+                question: "医療画像診断AIにおけるクラスⅡ医療機器の承認要件で最も重要なのは？",
+                options: [
+                    "高速な処理速度",
+                    "臨床的有効性と安全性の証明",
+                    "低コスト",
+                    "シンプルなUI"
+                ],
+                correct: 1,
+                explanation: "FDA等の規制当局による医療機器承認では、臨床的有効性と安全性の証明が最も重要です。臨床試験データと統計的証拠が必要です。"
+            },
+            {
+                question: "AlphaFoldの主な革新は？",
+                options: [
+                    "新薬の発見",
+                    "タンパク質の3D構造予測の高精度化",
+                    "ゲノム配列解析",
+                    "医療画像診断"
+                ],
+                correct: 1,
+                explanation: "AlphaFoldは、アミノ酸配列からタンパク質の3D構造を高精度に予測することで革命をもたらしました。創薬や生物学研究に大きな影響を与えています。"
+            },
+            {
+                question: "HIPAAにおける保護対象医療情報（PHI）に含まれないものは？",
+                options: [
+                    "患者氏名",
+                    "診療記録",
+                    "匿名化された統計データ",
+                    "患者の住所"
+                ],
+                correct: 2,
+                explanation: "適切に匿名化された統計データはPHIに含まれません。個人を特定できる情報（氏名、住所、診療記録等）はすべて保護対象です。"
+            },
+            {
+                question: "医療画像セグメンテーションで広く使用されるU-Netの特徴は？",
+                options: [
+                    "Encoder-Decoder構造とSkip Connections",
+                    "Attention機構のみ",
+                    "RNN構造",
+                    "Transformer構造"
+                ],
+                correct: 0,
+                explanation: "U-NetはEncoder-Decoder構造とSkip Connectionsを特徴とし、医療画像セグメンテーションで高い性能を発揮します。"
+            },
+            {
+                question: "精密医療（Precision Medicine）の主要な要素は？",
+                options: [
+                    "すべての患者に同じ治療を提供",
+                    "個人のゲノム情報に基づいた治療最適化",
+                    "コストを最小化",
+                    "診断を標準化"
+                ],
+                correct: 1,
+                explanation: "精密医療は、個人のゲノム情報、環境、ライフスタイルに基づいて治療を最適化するアプローチです。"
+            },
+            {
+                question: "医療画像セグメンテーションの評価指標 Dice係数の範囲は？",
+                options: [
+                    "-1から1",
+                    "0から1",
+                    "0から100",
+                    "0から無限大"
+                ],
+                correct: 1,
+                explanation: "Dice係数は0から1の範囲で、1に近いほどセグメンテーション精度が高いことを示します。"
+            },
+            {
+                question: "医療AIにおける Class Imbalance（クラス不均衡）問題への対処法でないものは？",
+                options: [
+                    "オーバーサンプリング",
+                    "アンダーサンプリング",
+                    "データを削除",
+                    "Focal Loss"
+                ],
+                correct: 2,
+                explanation: "データの単純な削除は対処法ではありません。オーバーサンプリング、アンダーサンプリング、Focal Loss等が有効です。"
+            },
+            {
+                question: "次世代シーケンシング（NGS）データ解析の主な課題は？",
+                options: [
+                    "データが小さすぎる",
+                    "大規模データの処理と解釈",
+                    "データが単純すぎる",
+                    "コストが安すぎる"
+                ],
+                correct: 1,
+                explanation: "NGSデータは非常に大規模で、その処理と生物学的解釈が主な課題です。"
+            },
+            {
+                question: "医療AIにおける Interpretability（解釈可能性）が特に重要な理由は？",
+                options: [
+                    "速度向上",
+                    "臨床医の信頼獲得と規制要件",
+                    "コスト削減",
+                    "開発が簡単"
+                ],
+                correct: 1,
+                explanation: "医療AIでは、臨床医が判断根拠を理解し信頼できること、また規制当局の承認要件のため、解釈可能性が極めて重要です。"
+            },
+            {
+                question: "Grad-CAM（Gradient-weighted Class Activation Mapping）の用途は？",
+                options: [
+                    "データの削除",
+                    "CNNの注目領域を可視化",
+                    "テキスト生成",
+                    "音声認識"
+                ],
+                correct: 1,
+                explanation: "Grad-CAMは、CNNがどの画像領域に注目して判断したかを可視化し、医療画像診断AIの説明性を高めます。"
+            },
+            {
+                question: "電子カルテ（EHR）データの主な課題は？",
+                options: [
+                    "データが少なすぎる",
+                    "非構造化データ、欠損値、ノイズが多い",
+                    "データが単純すぎる",
+                    "データが新しすぎる"
+                ],
+                correct: 1,
+                explanation: "EHRデータは、非構造化データ（フリーテキスト等）、欠損値、ノイズが多く、前処理が困難です。"
+            },
+            {
+                question: "医療AIの FDA（米国食品医薬品局）承認で重要なのは？",
+                options: [
+                    "開発速度",
+                    "臨床的有効性と安全性の科学的証拠",
+                    "コスト",
+                    "デザイン"
+                ],
+                correct: 1,
+                explanation: "FDA承認では、臨床試験等による科学的証拠に基づいた有効性と安全性の証明が最も重要です。"
+            },
+            {
+                question: "病理画像AI診断における Whole Slide Image（WSI）の特徴は？",
+                options: [
+                    "低解像度",
+                    "ギガピクセル級の超高解像度",
+                    "白黒画像",
+                    "小さな画像"
+                ],
+                correct: 1,
+                explanation: "WSIはギガピクセル級の超高解像度画像で、特殊な処理技術（パッチベース等）が必要です。"
+            },
+            {
+                question: "医療AIにおける Transfer Learning の利点は？",
+                options: [
+                    "データが不要",
+                    "少ないデータでも高精度モデルを構築可能",
+                    "学習が不要",
+                    "精度が低下"
+                ],
+                correct: 1,
+                explanation: "医療データは入手困難なため、Transfer Learningで事前学習モデルを活用し、少ないデータでも高精度を実現できます。"
+            },
+            {
+                question: "ゲノムワイド関連解析（GWAS）の主な目的は？",
+                options: [
+                    "タンパク質構造予測",
+                    "疾患関連遺伝子変異の特定",
+                    "画像診断",
+                    "薬物設計"
+                ],
+                correct: 1,
+                explanation: "GWASは、疾患と関連する遺伝子変異（SNP等）を特定するための統計的手法です。"
+            },
+            {
+                question: "医療AIの Sensitivity（感度）と Specificity（特異度）の関係は？",
+                options: [
+                    "常に同じ値",
+                    "トレードオフの関係",
+                    "無関係",
+                    "両方とも100%"
+                ],
+                correct: 1,
+                explanation: "感度と特異度はトレードオフの関係にあり、閾値調整で一方を上げると他方が下がる傾向があります。"
+            },
+            {
+                question: "遠隔医療（Telemedicine）におけるAIの役割として適切でないのは？",
+                options: [
+                    "症状のトリアージ",
+                    "バイタルサイン監視",
+                    "医師の完全な置き換え",
+                    "診断支援"
+                ],
+                correct: 2,
+                explanation: "AIは診断支援ツールであり、医師を完全に置き換えるものではありません。最終判断は医師が行います。"
+            },
+            {
+                question: "医療AIにおけるバイアスの主な原因は？",
+                options: [
+                    "モデルが大きすぎる",
+                    "トレーニングデータの偏り（人種、性別等）",
+                    "モデルが小さすぎる",
+                    "学習時間が短い"
+                ],
+                correct: 1,
+                explanation: "トレーニングデータの偏り（特定の人種・性別・年齢層に偏る等）が、医療AIのバイアスの主な原因です。"
+            },
+            {
+                question: "創薬AIにおける Virtual Screening の目的は？",
+                options: [
+                    "画像診断",
+                    "大量の化合物から有望な薬剤候補を効率的に選別",
+                    "遺伝子解析",
+                    "電子カルテ分析"
+                ],
+                correct: 1,
+                explanation: "Virtual Screeningは、計算機上で大量の化合物をスクリーニングし、実験的検証の前に有望な候補を絞り込みます。"
+            },
+            {
+                question: "医療画像の Data Augmentation で適切でない手法は？",
+                options: [
+                    "回転",
+                    "フリップ",
+                    "病変の追加・削除",
+                    "明るさ調整"
+                ],
+                correct: 2,
+                explanation: "病変の追加・削除は医療的に不適切です。回転、フリップ、明るさ調整等の自然な変換のみを使用すべきです。"
+            },
+            {
+                question: "ウェアラブルデバイスからの健康データ分析における主な課題は？",
+                options: [
+                    "データが少なすぎる",
+                    "ノイズが多く個人差が大きい",
+                    "データが単純",
+                    "データが遅い"
+                ],
+                correct: 1,
+                explanation: "ウェアラブルデータは、センサーノイズが多く、個人差も大きいため、適切な前処理と個別化が必要です。"
+            },
+            {
+                question: "医療AIにおける Federated Learning の利点は？",
+                options: [
+                    "データを中央に集約",
+                    "患者プライバシーを保護しながら複数病院で協調学習",
+                    "学習が不要",
+                    "精度が低下"
+                ],
+                correct: 1,
+                explanation: "Federated Learningは、患者データを病院外に出さず、モデル更新のみを共有することで、プライバシーを保護しながら協調学習できます。"
+            },
+            {
+                question: "医療NLP における主な課題は？",
+                options: [
+                    "データが多すぎる",
+                    "専門用語、略語、曖昧性の処理",
+                    "データが簡単すぎる",
+                    "データが新しすぎる"
+                ],
+                correct: 1,
+                explanation: "医療テキストは専門用語、略語、文脈依存の曖昧性が多く、一般的なNLP手法では処理が困難です。"
+            },
+            {
+                question: "CT・MRI画像における Hounsfield Unit（HU値）とは？",
+                options: [
+                    "画像の明るさ",
+                    "組織のX線吸収度を表す単位",
+                    "画像のサイズ",
+                    "撮影時間"
+                ],
+                correct: 1,
+                explanation: "Hounsfield Unitは、CTスキャンにおける組織のX線吸収度を表す単位で、組織の種類を区別するのに使用されます。"
+            },
+            {
+                question: "医療AIシステムの Clinical Decision Support（CDS）の役割は？",
+                options: [
+                    "医師の判断を完全に置き換える",
+                    "医師の診断・治療決定を支援する",
+                    "患者を診察する",
+                    "病院を管理する"
+                ],
+                correct: 1,
+                explanation: "CDSは、医師の診断や治療決定を支援するツールであり、最終的な判断は医師が行います。"
+            },
+            {
+                question: "3D医療画像のセグメンテーションで一般的なアーキテクチャは？",
+                options: [
+                    "2D CNN",
+                    "3D U-Net",
+                    "RNN",
+                    "1D CNN"
+                ],
+                correct: 1,
+                explanation: "3D医療画像には3D U-Netが広く使用され、3次元的な文脈を考慮したセグメンテーションが可能です。"
+            },
+            {
+                question: "医療データの匿名化で削除すべき情報（HIPAA 18 Identifiers）に含まれないのは？",
+                options: [
+                    "氏名",
+                    "住所",
+                    "年齢（90歳以上を除く）",
+                    "診断病名"
+                ],
+                correct: 3,
+                explanation: "診断病名は匿名化で削除する必要はありません。氏名、住所、詳細な年齢（90歳以上）等の個人識別情報が対象です。"
+            },
+            {
+                question: "薬物-薬物相互作用（DDI）予測AIの重要性は？",
+                options: [
+                    "コスト削減のみ",
+                    "患者安全性向上と有害事象の予防",
+                    "速度向上のみ",
+                    "デザイン改善"
+                ],
+                correct: 1,
+                explanation: "DDI予測AIは、複数の薬物を同時服用した際の有害な相互作用を予測し、患者の安全性を高めます。"
+            }
+        ];
+
+        // プロジェクト詳細データ
+        const projectDetails = {
+            1: {
+                title: "肺炎検出AIシステム",
+                difficulty: "中級",
+                duration: "4週間",
+                objectives: [
+                    "胸部X線画像から肺炎を検出するAIシステムの構築",
+                    "CNNモデルの設計と実装",
+                    "診断精度の評価（感度、特異度、AUC）",
+                    "医療専門家との協力と検証"
+                ],
+                preparation: [
+                    "深層学習基礎知識",
+                    "PyTorchまたはTensorFlow",
+                    "Computer Vision基礎",
+                    "医療画像の基本理解"
+                ],
+                timeline: [
+                    "Week 1: データセット準備、前処理、EDA",
+                    "Week 2: CNNモデル設計・実装、トレーニング",
+                    "Week 3: モデル評価、精度向上、クロスバリデーション",
+                    "Week 4: 説明可能性実装、医療専門家レビュー、最終評価"
+                ],
+                keyPoints: [
+                    "クラス不均衡への対応",
+                    "医療画像特有の前処理",
+                    "説明可能性の実装（Grad-CAM等）",
+                    "規制要件の理解"
+                ],
+                demoScript: "肺炎検出AIシステムのデモを行います。胸部X線画像を入力し、肺炎検出結果と信頼度、注目領域を可視化します。",
+                expectedQuestions: [
+                    "診断精度（感度・特異度）はどの程度ですか？",
+                    "誤診のリスクはどう管理していますか？",
+                    "医療専門家との検証プロセスは？",
+                    "FDA承認の可能性は？"
+                ]
+            },
+            2: {
+                title: "脳腫瘍セグメンテーション",
+                difficulty: "上級",
+                duration: "5週間",
+                objectives: [
+                    "MRI画像から脳腫瘍を自動検出・分割",
+                    "3D U-Netの実装",
+                    "マルチモーダルMRI統合（T1、T2、FLAIR等）",
+                    "Dice係数による評価"
+                ],
+                preparation: [
+                    "3D画像処理",
+                    "医療画像セグメンテーション",
+                    "PyTorch 3D",
+                    "MRI画像の理解"
+                ],
+                timeline: [
+                    "Week 1: データセット準備（BraTS等）、3D前処理",
+                    "Week 2: 3D U-Net実装、マルチモーダル統合",
+                    "Week 3-4: モデルトレーニング、最適化",
+                    "Week 5: 評価、可視化、医療専門家レビュー"
+                ],
+                keyPoints: [
+                    "3D画像の効率的な処理",
+                    "マルチモーダルMRIの統合",
+                    "高いDice係数の達成",
+                    "臨床的有用性の検証"
+                ],
+                demoScript: "脳腫瘍セグメンテーションのデモを行います。MRI画像から腫瘍領域を自動検出し、3D可視化します。",
+                expectedQuestions: [
+                    "Dice係数はどの程度ですか？",
+                    "どのMRIモダリティを使用しましたか？",
+                    "計算時間は？",
+                    "臨床での実用性は？"
+                ]
+            },
+            3: {
+                title: "創薬分子生成AI",
+                difficulty: "上級",
+                duration: "6週間",
+                objectives: [
+                    "生成AIを用いた新規薬剤候補分子の設計",
+                    "分子表現学習（SMILES、Graph等）",
+                    "生成モデル実装（VAE、GAN、Diffusion）",
+                    "薬物動態予測と毒性評価"
+                ],
+                preparation: [
+                    "創薬化学基礎",
+                    "分子表現学習",
+                    "生成モデル",
+                    "RDKit、DeepChem"
+                ],
+                timeline: [
+                    "Week 1: 分子表現学習、データセット準備",
+                    "Week 2-3: 生成モデル実装、トレーニング",
+                    "Week 4: 薬物動態・毒性予測モデル統合",
+                    "Week 5: 生成分子の評価、フィルタリング",
+                    "Week 6: 化学者との検証、最終評価"
+                ],
+                keyPoints: [
+                    "化学的に妥当な分子の生成",
+                    "薬物類似性（Drug-likeness）の確保",
+                    "毒性の低減",
+                    "合成可能性の評価"
+                ],
+                demoScript: "創薬分子生成AIのデモを行います。標的タンパク質に対する新規分子候補の生成、評価、選別を説明します。",
+                expectedQuestions: [
+                    "生成分子の化学的妥当性は？",
+                    "薬物動態予測の精度は？",
+                    "合成可能性はどう評価しますか？",
+                    "実験的検証の計画は？"
+                ]
+            },
+            4: {
+                title: "疾病予測システム",
+                difficulty: "中級",
+                duration: "4週間",
+                objectives: [
+                    "電子カルテから疾病リスクを予測するシステム構築",
+                    "医療NLPによるテキスト処理",
+                    "リスクモデルの構築",
+                    "説明可能性の実装"
+                ],
+                preparation: [
+                    "医療NLP",
+                    "機械学習（分類、回帰）",
+                    "SHAP、LIME",
+                    "医療ドメイン知識"
+                ],
+                timeline: [
+                    "Week 1: データ準備、医療NLP処理、特徴抽出",
+                    "Week 2: リスクモデル構築、複数アルゴリズム比較",
+                    "Week 3: モデル最適化、説明可能性実装",
+                    "Week 4: 臨床検証、レポート作成"
+                ],
+                keyPoints: [
+                    "医療テキストの適切な処理",
+                    "予測精度と解釈可能性のバランス",
+                    "臨床的に有用なリスクスコア",
+                    "倫理的配慮"
+                ],
+                demoScript: "疾病予測システムのデモを行います。電子カルテから患者のリスクを予測し、その根拠を説明します。",
+                expectedQuestions: [
+                    "予測精度はどの程度ですか？",
+                    "どのような特徴量を使用しましたか？",
+                    "説明はどう生成しますか？",
+                    "臨床医の反応は？"
+                ]
+            },
+            5: {
+                title: "ゲノム解析パイプライン",
+                difficulty: "上級",
+                duration: "5週間",
+                objectives: [
+                    "ゲノムデータから疾患関連遺伝子を特定するパイプライン構築",
+                    "シーケンスデータ処理の実装",
+                    "変異検出アルゴリズムの実装",
+                    "機能予測と病的評価"
+                ],
+                preparation: [
+                    "バイオインフォマティクス基礎",
+                    "Python（BioPython）",
+                    "統計学・遺伝学",
+                    "NGSデータ処理"
+                ],
+                timeline: [
+                    "Week 1: シーケンスデータ処理、品質管理",
+                    "Week 2: アライメント、変異検出",
+                    "Week 3: アノテーション、機能予測",
+                    "Week 4: GWAS、統計解析",
+                    "Week 5: レポート生成、臨床解釈"
+                ],
+                keyPoints: [
+                    "高品質なデータ処理",
+                    "正確な変異検出",
+                    "統計的有意性の評価",
+                    "臨床的意義の解釈"
+                ],
+                demoScript: "ゲノム解析パイプラインのデモを行います。シーケンスデータ処理から変異検出、疾患関連遺伝子の特定までを説明します。",
+                expectedQuestions: [
+                    "どのような解析パイプラインですか？",
+                    "変異検出の精度は？",
+                    "統計的有意性はどう評価しますか？",
+                    "臨床的解釈は？"
+                ]
+            },
+            6: {
+                title: "遠隔モニタリングシステム",
+                difficulty: "中級",
+                duration: "4週間",
+                objectives: [
+                    "ウェアラブルデータからの健康状態監視システム構築",
+                    "リアルタイムデータ処理の実装",
+                    "異常検知アルゴリズムの実装",
+                    "アラート機能とダッシュボード"
+                ],
+                preparation: [
+                    "時系列データ分析",
+                    "異常検知手法",
+                    "IoT・ウェアラブル基礎",
+                    "リアルタイム処理"
+                ],
+                timeline: [
+                    "Week 1: データ収集システム構築、前処理実装",
+                    "Week 2: 異常検知アルゴリズム実装、個人適応",
+                    "Week 3: アラート機能、ダッシュボード構築",
+                    "Week 4: ユーザーテスト、最適化、デプロイ"
+                ],
+                keyPoints: [
+                    "個人差への適応",
+                    "誤検知率の最小化",
+                    "バッテリー効率",
+                    "プライバシー保護"
+                ],
+                demoScript: "遠隔モニタリングシステムのデモを行います。ウェアラブルデータから健康状態を監視し、異常を検出する様子を実演します。",
+                expectedQuestions: [
+                    "どのようなバイタルサインを監視しますか？",
+                    "異常検知の精度は？",
+                    "誤検知への対応は？",
+                    "プライバシーはどう保護しますか？"
+                ]
+            }
+        };
+
+        // ページロード時の初期化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateProgressDisplay();
+            loadModuleStatus();
+        });
+
+        // タブ切り替え
+        function switchTab(tabName) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-menu a').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // 進捗表示の更新
+        function updateProgressDisplay() {
+            const totalModules = 10;
+            const completed = completedModules.length;
+            const percentage = Math.round((completed / totalModules) * 100);
+            const circumference = 2 * Math.PI * 45;
+            const offset = circumference - (percentage / 100) * circumference;
+            document.getElementById('sidebarProgress').style.strokeDashoffset = offset;
+            document.querySelector('.progress-text').textContent = percentage + '%';
+            document.querySelector('.sidebar-progress p').textContent = `${completed}/${totalModules} モジュール完了`;
+        }
+
+        // モジュールステータスの読み込み
+        function loadModuleStatus() {
+            completedModules.forEach(moduleId => {
+                const statusElement = document.getElementById(`status-${moduleId}`);
+                if (statusElement) {
+                    statusElement.textContent = '完了';
+                    statusElement.classList.remove('status-pending');
+                    statusElement.classList.add('status-completed');
+                }
+            });
+        }
+
+        // モジュールステータスの切り替え
+        function toggleModuleStatus(moduleId) {
+            const statusElement = document.getElementById(`status-${moduleId}`);
+            const index = completedModules.indexOf(moduleId);
+            if (index > -1) {
+                completedModules.splice(index, 1);
+                statusElement.textContent = '未完了';
+                statusElement.classList.remove('status-completed');
+                statusElement.classList.add('status-pending');
+            } else {
+                completedModules.push(moduleId);
+                statusElement.textContent = '完了';
+                statusElement.classList.remove('status-pending');
+                statusElement.classList.add('status-completed');
+            }
+            localStorage.setItem('healthcareAiModules', JSON.stringify(completedModules));
+            updateProgressDisplay();
+        }
+
+        // クイズ開始
+        function startQuiz() {
+            document.getElementById('quizIntro').style.display = 'none';
+            document.getElementById('quizQuestions').style.display = 'block';
+            quizProgress.currentQuestion = 0;
+            quizProgress.correctAnswers = 0;
+            quizProgress.answers = [];
+            showQuestion(0);
+        }
+
+        // 問題表示
+        function showQuestion(index) {
+            const question = quizData[index];
+            const questionsContainer = document.getElementById('quizQuestions');
+            questionsContainer.innerHTML = `
+                <div class="quiz-question active">
+                    <div class="question-header">
+                        <div class="question-number">問題 ${index + 1} / ${quizData.length}</div>
+                        <div class="question-text">${question.question}</div>
+                    </div>
+                    <div class="question-options">
+                        ${question.options.map((option, i) => `
+                            <div class="option" onclick="selectOption(${i})">${option}</div>
+                        `).join('')}
+                    </div>
+                    <div class="explanation" id="explanation-${index}">
+                        <h4>解説</h4>
+                        <p>${question.explanation}</p>
+                    </div>
+                    <div class="quiz-navigation">
+                        ${index > 0 ? '<button class="btn btn-secondary" onclick="previousQuestion()">前の問題</button>' : '<div></div>'}
+                        <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>次へ</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // オプション選択
+        function selectOption(optionIndex) {
+            const currentQuestion = quizData[quizProgress.currentQuestion];
+            const options = document.querySelectorAll('.option');
+            options.forEach(opt => opt.classList.remove('selected', 'correct', 'incorrect'));
+            options[optionIndex].classList.add('selected');
+            if (optionIndex === currentQuestion.correct) {
+                options[optionIndex].classList.add('correct');
+                if (!quizProgress.answers[quizProgress.currentQuestion]) {
+                    quizProgress.correctAnswers++;
+                }
+            } else {
+                options[optionIndex].classList.add('incorrect');
+                options[currentQuestion.correct].classList.add('correct');
+            }
+            document.getElementById(`explanation-${quizProgress.currentQuestion}`).classList.add('show');
+            quizProgress.answers[quizProgress.currentQuestion] = optionIndex;
+            document.getElementById('nextBtn').disabled = false;
+        }
+
+        // 次の問題
+        function nextQuestion() {
+            quizProgress.currentQuestion++;
+            if (quizProgress.currentQuestion < quizData.length) {
+                showQuestion(quizProgress.currentQuestion);
+            } else {
+                showResult();
+            }
+        }
+
+        // 前の問題
+        function previousQuestion() {
+            if (quizProgress.currentQuestion > 0) {
+                quizProgress.currentQuestion--;
+                showQuestion(quizProgress.currentQuestion);
+            }
+        }
+
+        // 結果表示
+        function showResult() {
+            document.getElementById('quizQuestions').style.display = 'none';
+            const resultSection = document.getElementById('quizResult');
+            resultSection.classList.add('show');
+            const correctCount = quizProgress.correctAnswers;
+            const incorrectCount = quizData.length - correctCount;
+            const accuracy = Math.round((correctCount / quizData.length) * 100);
+            document.getElementById('finalScore').textContent = `${correctCount}/${quizData.length}`;
+            document.getElementById('correctCount').textContent = correctCount;
+            document.getElementById('incorrectCount').textContent = incorrectCount;
+            document.getElementById('accuracyRate').textContent = accuracy + '%';
+        }
+
+        // クイズ再開
+        function restartQuiz() {
+            document.getElementById('quizResult').classList.remove('show');
+            document.getElementById('quizIntro').style.display = 'block';
+        }
+
+        // プロジェクト詳細表示
+        function showProjectDetails(projectId) {
+            const project = projectDetails[projectId];
+            if (!project) return;
+            const modal = document.getElementById('projectModal');
+            const modalBody = document.getElementById('modalBody');
+            document.getElementById('modalTitle').textContent = project.title;
+            modalBody.innerHTML = `
+                <div class="project-info">
+                    <div class="info-item"><strong>難易度</strong><span>${project.difficulty}</span></div>
+                    <div class="info-item"><strong>期間</strong><span>${project.duration}</span></div>
+                    <div class="info-item"><strong>形式</strong><span>ハンズオン</span></div>
+                </div>
+                <div class="section"><h4>学習目標</h4><ul>${project.objectives.map(obj => `<li>${obj}</li>`).join('')}</ul></div>
+                <div class="section"><h4>必要な前提知識</h4><ul>${project.preparation.map(prep => `<li>${prep}</li>`).join('')}</ul></div>
+                <div class="section"><h4>実施スケジュール</h4><ol>${project.timeline.map(time => `<li>${time}</li>`).join('')}</ol></div>
+                <div class="section"><h4>重要ポイント</h4><ul>${project.keyPoints.map(point => `<li>${point}</li>`).join('')}</ul></div>
+                <div class="section"><h4>デモシナリオ</h4><div class="script-box"><p>${project.demoScript}</p></div></div>
+                <div class="section"><h4>想定質問</h4><ul>${project.expectedQuestions.map(q => `<li>${q}</li>`).join('')}</ul></div>
+            `;
+            modal.classList.add('show');
+        }
+
+        // モーダルを閉じる
+        function closeProjectModal() {
+            document.getElementById('projectModal').classList.remove('show');
+        }
+
+        // モーダル外クリックで閉じる
+        window.onclick = function(event) {
+            const modal = document.getElementById('projectModal');
+            if (event.target == modal) {
+                modal.classList.remove('show');
+            }
+        }
+    </script>
+
+    <!-- ライセンス・権利情報 -->
+    <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 15px; padding: 25px; margin: 30px auto; max-width: 1200px; border: 3px solid #f59e0b; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);">
+        <h2 style="color: #92400e; margin-bottom: 20px; text-align: center; font-size: 1.5rem;">ライセンス・権利情報</h2>
+        
+        <div style="background: white; padding: 20px; border-radius: 10px; color: #1e3a8a; line-height: 2;">
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">著作権:</strong> &copy; 2025 小川清志（おがわ せいじ）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">開発期間:</strong> 2025年6月～2025年10月（個人事業主として）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">開発目的:</strong> 技術研究・ポートフォリオ作成・転職活動用
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">用途:</strong> 個人研究目的（非商用）
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">ライセンス:</strong> MIT License
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #92400e;">公開範囲:</strong> 個人ポートフォリオサイト、GitHub（技術実証目的）
+            </div>
+            
+            <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #f59e0b;">
+                <strong style="color: #92400e;">重要事項:</strong>
+                <p style="color: #78350f; margin-top: 10px;">
+                    本システムは、個人事業主として独自に研究開発したものであり、
+                    特定の企業・組織の業務とは一切関係ありません。<br>
+                    全ての知的財産権は開発者個人（小川清志）に帰属します。<br>
+                    本システムの技術内容・アイデアは、入社前の個人研究として確立されたものです。
+                </p>
+            </div>
+            
+            <div style="background: #dbeafe; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #3b82f6;">
+                <strong style="color: #1e40af;">タイムスタンプ:</strong>
+                <p style="color: #1e3a8a; margin-top: 10px;">
+                    最終更新日: 2025年10月26日<br>
+                    GitHub最終コミット: 2025年10月26日<br>
+                    確定日付: 入社前（個人開発期間中）
+                </p>
+            </div>
+            
+            <div style="background: #d1fae5; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #10b981;">
+                <strong style="color: #047857;">連絡先:</strong>
+                <p style="color: #065f46; margin-top: 10px;">
+                    開発者: 小川清志（おがわ せいじ）<br>
+                    Email: kaho052514@gmail.com<br>
+                    電話: 080-4271-5479
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>

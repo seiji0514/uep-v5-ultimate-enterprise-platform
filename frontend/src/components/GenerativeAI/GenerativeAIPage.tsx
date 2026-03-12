@@ -20,8 +20,10 @@ import {
   Psychology,
   QuestionAnswer,
   Lightbulb,
+  Route,
 } from '@mui/icons-material';
 import { generativeAiApi } from '../../api/generativeAi';
+import { onDeviceInference } from '../../utils/onDeviceInference';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -40,9 +42,9 @@ function TabPanel(props: TabPanelProps) {
 
 export const GenerativeAIPage: React.FC = () => {
   const [tabValue, setTabValue] = useState(0);
-  const [prompt, setPrompt] = useState('');
-  const [query, setQuery] = useState('');
-  const [question, setQuestion] = useState('');
+  const [prompt, setPrompt] = useState('ユーザー認証 middleware の設計方針を3つ挙げてください');
+  const [query, setQuery] = useState('UEPプラットフォームのアーキテクチャ概要を教えてください');
+  const [question, setQuestion] = useState('マイクロサービスでスケーラビリティを確保するには？');
   const [result, setResult] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -53,7 +55,11 @@ export const GenerativeAIPage: React.FC = () => {
       setLoading(true);
       setError('');
       const response = await generativeAiApi.generate({ prompt });
-      setResult(response.text || JSON.stringify(response, null, 2));
+      let display = response.text || JSON.stringify(response, null, 2);
+      if (response.cached) {
+        display = `【キャッシュヒット】\n${display}`;
+      }
+      setResult(display);
     } catch (err: any) {
       console.error('Generative AI API Error:', err);
       if (err.response?.status === 422) {
@@ -67,7 +73,13 @@ export const GenerativeAIPage: React.FC = () => {
           setError(errorData?.error?.message || errorData?.detail || 'バリデーションエラーが発生しました');
         }
       } else {
-        setError(err.response?.data?.error?.message || err.response?.data?.detail || '生成に失敗しました');
+        if (!err.response || err.response?.status >= 500) {
+          const onDevice = onDeviceInference(prompt);
+          setResult(`[端末内AI フォールバック]\n${onDevice.text}`);
+          setError('');
+        } else {
+          setError(err.response?.data?.error?.message || err.response?.data?.detail || '生成に失敗しました');
+        }
       }
     } finally {
       setLoading(false);
@@ -81,6 +93,9 @@ export const GenerativeAIPage: React.FC = () => {
       setError('');
       const response = await generativeAiApi.rag({ query });
       let display = response.answer || '';
+      if (response.cached) {
+        display = `【キャッシュヒット】\n${display}`;
+      }
       if (response.metrics) {
         display += `\n\n【評価指標】\n検索: ${response.metrics.retrieved_count}件, ` +
           `類似度: ${response.metrics.avg_relevance_score?.toFixed(2) || '-'}, ` +
@@ -103,7 +118,13 @@ export const GenerativeAIPage: React.FC = () => {
           setError(errorData?.error?.message || errorData?.detail || 'バリデーションエラーが発生しました');
         }
       } else {
-        setError(err.response?.data?.error?.message || err.response?.data?.detail || 'RAGクエリに失敗しました');
+        if (!err.response || err.response?.status >= 500) {
+          const onDevice = onDeviceInference(query);
+          setResult(`[端末内AI フォールバック]\n${onDevice.text}`);
+          setError('');
+        } else {
+          setError(err.response?.data?.error?.message || err.response?.data?.detail || 'RAGクエリに失敗しました');
+        }
       }
     } finally {
       setLoading(false);
@@ -130,8 +151,40 @@ export const GenerativeAIPage: React.FC = () => {
           setError(errorData?.error?.message || errorData?.detail || 'バリデーションエラーが発生しました');
         }
       } else {
-        setError(err.response?.data?.error?.message || err.response?.data?.detail || '推論に失敗しました');
+        if (!err.response || err.response?.status >= 500) {
+          const onDevice = onDeviceInference(question);
+          setResult(`[端末内AI フォールバック]\n${onDevice.text}`);
+          setError('');
+        } else {
+          setError(err.response?.data?.error?.message || err.response?.data?.detail || '推論に失敗しました');
+        }
       }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleReasoningRouting = async () => {
+    if (!question.trim()) return;
+    try {
+      setLoading(true);
+      setError('');
+      const response = await generativeAiApi.reasoningRouting({ question, auto_route: true });
+      let display = response.answer || response.final_answer || '';
+      if (response.routing) {
+        display += `\n\n【推論AIルーティング】\n難度: ${response.routing.difficulty_score?.toFixed(2)}\n` +
+          `モデル: ${response.routing.model_type} (${response.routing.reasoning_type})\n` +
+          `推奨モデル: ${response.routing.recommended_model || '-'}\n` +
+          `理由: ${response.routing.difficulty_reason}`;
+      }
+      if (response.cached) {
+        display = `【キャッシュヒット】\n${display}`;
+      }
+      setResult(display || JSON.stringify(response, null, 2));
+    } catch (err: any) {
+      const onDevice = onDeviceInference(question);
+      setResult(`[端末内AI フォールバック]\n${onDevice.text}`);
+      setError('');
     } finally {
       setLoading(false);
     }
@@ -151,6 +204,7 @@ export const GenerativeAIPage: React.FC = () => {
           <Tab icon={<Psychology />} label="テキスト生成" />
           <Tab icon={<QuestionAnswer />} label="RAG" />
           <Tab icon={<Lightbulb />} label="CoT推論" />
+          <Tab icon={<Route />} label="推論AIルーティング（o1系）" />
         </Tabs>
       </Box>
 
@@ -303,6 +357,59 @@ export const GenerativeAIPage: React.FC = () => {
                   }}
                 >
                   {result || '推論結果がここに表示されます'}
+                </Paper>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+      </TabPanel>
+
+      <TabPanel value={tabValue} index={3}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={6}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  推論AIルーティング（o1系）
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                  タスク難度に応じて CoT／直接推論を自動選択
+                </Typography>
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={6}
+                  value={question}
+                  onChange={(e) => setQuestion(e.target.value)}
+                  placeholder="質問を入力（難度で自動ルーティング）"
+                  sx={{ mb: 2 }}
+                />
+                <Button
+                  variant="contained"
+                  onClick={handleReasoningRouting}
+                  disabled={loading || !question.trim()}
+                  fullWidth
+                >
+                  {loading ? <CircularProgress size={24} /> : '実行'}
+                </Button>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  結果（ルーティング情報付き）
+                </Typography>
+                <Paper
+                  sx={{
+                    p: 2,
+                    minHeight: 200,
+                    bgcolor: 'grey.100',
+                    whiteSpace: 'pre-wrap',
+                  }}
+                >
+                  {result || '結果がここに表示されます'}
                 </Paper>
               </CardContent>
             </Card>

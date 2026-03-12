@@ -1,12 +1,43 @@
 """
 推論エンジンモジュール
-Chain of Thought (CoT) 推論の実装
+Chain of Thought (CoT) 推論の実装（プロンプト強化版）
 """
 from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel
 
 from .llm_integration import LLMClient
+
+# CoT 強化プロンプトテンプレート
+COT_STEP_PROMPT = """あなたは論理的推論の専門家です。以下の問題を段階的に分析し、根拠に基づいて推論してください。
+
+## 問題
+{problem}
+
+## これまでの推論
+{prior_steps}
+
+## ステップ {step_num} の指示
+1. 現時点で分かっている事実を整理する
+2. 次の論理的な推論ステップを明確に述べる
+3. その推論の根拠・理由を説明する
+4. 結論に到達した場合は「結論:」で明示する
+
+推論:"""
+
+COT_FINAL_PROMPT = """以下の問題に対する推論プロセスを踏まえ、最終回答を導出してください。
+
+## 問題
+{problem}
+
+## 推論プロセス
+{steps}
+
+## 最終回答の指示
+- 推論プロセスを要約し、結論を明確に述べる
+- 不確実な部分があればその旨を記載する
+
+最終回答:"""
 
 
 class ReasoningStep(BaseModel):
@@ -31,7 +62,7 @@ class ReasoningEngine:
         self.llm_client = llm_client
 
     async def chain_of_thought(
-        self, problem: str, max_steps: int = 5
+        self, problem: str, max_steps: int = 5, model: Optional[str] = None
     ) -> Dict[str, Any]:
         """
         Chain of Thought推論を実行
@@ -44,22 +75,18 @@ class ReasoningEngine:
             推論結果
         """
         steps: List[ReasoningStep] = []
-        current_problem = problem
-
+        prior_steps_text = ""
         for step_num in range(1, max_steps + 1):
-            # 推論ステップを生成
-            prompt = f"""問題: {current_problem}
-
-ステップ {step_num}:
-1. 現在の状況を分析してください
-2. 次の推論ステップを考えてください
-3. 結論に到達できるか判断してください
-
-推論:"""
-
-            result = await self.llm_client.generate(
-                prompt, max_tokens=500, temperature=0.7
+            prompt = COT_STEP_PROMPT.format(
+                problem=problem,
+                prior_steps=prior_steps_text or "（初回）",
+                step_num=step_num,
             )
+
+            gen_kw = {"max_tokens": 600, "temperature": 0.5}
+            if model:
+                gen_kw["model"] = model
+            result = await self.llm_client.generate(prompt, **gen_kw)
 
             reasoning_text = result.get("text", "")
 
@@ -72,23 +99,19 @@ class ReasoningEngine:
 
             steps.append(step)
 
-            # 結論に到達したかチェック（簡易実装）
-            if "結論" in reasoning_text or "答え" in reasoning_text:
+            if "結論" in reasoning_text or "答え" in reasoning_text or "最終" in reasoning_text:
                 step.conclusion = reasoning_text
+                prior_steps_text += f"\nステップ{step_num}: {reasoning_text}"
                 break
 
-            # 次のステップのための問題を更新
-            current_problem = f"{problem}\n\nこれまでの推論:\n{reasoning_text}"
+            prior_steps_text += f"\nステップ{step_num}: {reasoning_text}"
 
-        # 最終回答を生成
-        final_prompt = f"""問題: {problem}
-
-推論プロセス:
-{chr(10).join([f"ステップ{s.step_number}: {s.reasoning}" for s in steps])}
-
-最終回答:"""
-
-        final_result = await self.llm_client.generate(final_prompt)
+        steps_text = "\n".join([f"ステップ{s.step_number}: {s.reasoning}" for s in steps])
+        final_prompt = COT_FINAL_PROMPT.format(problem=problem, steps=steps_text)
+        final_kw = {"temperature": 0.3}
+        if model:
+            final_kw["model"] = model
+        final_result = await self.llm_client.generate(final_prompt, **final_kw)
 
         return {
             "problem": problem,
@@ -98,7 +121,7 @@ class ReasoningEngine:
         }
 
     async def solve_problem(
-        self, problem: str, reasoning_type: str = "cot"
+        self, problem: str, reasoning_type: str = "cot", model: Optional[str] = None
     ) -> Dict[str, Any]:
         """
         問題を解決
@@ -111,10 +134,12 @@ class ReasoningEngine:
             解決結果
         """
         if reasoning_type == "cot":
-            return await self.chain_of_thought(problem)
+            return await self.chain_of_thought(problem, model=model)
         else:
-            # 直接推論
-            result = await self.llm_client.generate(problem)
+            gen_kw = {}
+            if model:
+                gen_kw["model"] = model
+            result = await self.llm_client.generate(problem, **gen_kw)
             return {
                 "problem": problem,
                 "answer": result.get("text", ""),

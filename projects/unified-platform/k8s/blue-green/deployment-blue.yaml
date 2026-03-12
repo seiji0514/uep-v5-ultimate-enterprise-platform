@@ -1,0 +1,48 @@
+# Phase 4: Blue-Green - Blue deployment (active)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: unified-platform-blue
+  labels:
+    app: unified-platform
+    version: blue
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: unified-platform
+      version: blue
+  template:
+    metadata:
+      labels:
+        app: unified-platform
+        version: blue
+    spec:
+      containers:
+      - name: app
+        image: unified-platform:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DEPLOYMENT_VERSION
+          value: "blue"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: unified-platform-blue
+spec:
+  selector:
+    app: unified-platform
+    version: blue
+  ports:
+  - port: 80
+    targetPort: 8000
