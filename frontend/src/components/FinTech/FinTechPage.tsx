@@ -33,6 +33,7 @@ import {
   RiskScore,
   TransactionMonitoring,
 } from '../../api/fintech';
+import { useAutoPlayNarration } from '../../hooks/useAutoPlayNarration';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -50,6 +51,7 @@ function TabPanel(props: TabPanelProps) {
 }
 
 export const FinTechPage: React.FC = () => {
+  useAutoPlayNarration(3);
   const [tabValue, setTabValue] = useState(0);
   const [payments, setPayments] = useState<PaymentType[]>([]);
   const [riskScores, setRiskScores] = useState<RiskScore[]>([]);

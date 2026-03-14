@@ -159,6 +159,7 @@ from retail.routes import router as retail_router
 from space.routes import router as space_router
 from supply_chain.routes import router as supply_chain_router
 from traffic.routes import router as traffic_router
+from contract_workflow.routes import router as contract_workflow_router
 
 # 統合ビジネスプラットフォーム（業務効率化・人材・顧客対応の3システム統合）
 from unified_business_platform.routes import router as unified_business_router
@@ -409,6 +410,7 @@ app.include_router(retail_router)
 app.include_router(education_router)
 app.include_router(legal_router)
 app.include_router(supply_chain_router)
+app.include_router(contract_workflow_router)
 # Chaos Engineering: 本番環境では無効化（セキュリティ）
 if not settings.is_production:
     try:

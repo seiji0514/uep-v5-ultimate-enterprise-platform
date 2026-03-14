@@ -9,6 +9,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider, createTheme, CssBaseline, Box, CircularProgress } from '@mui/material';
 import { queryClient } from './lib/queryClient';
 import { AuthProvider } from './contexts/AuthContext';
+import { AutoPlayProvider } from './contexts/AutoPlayContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { MainLayout } from './components/Layout/MainLayout';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -48,6 +49,8 @@ const PublicSectorPage = lazy(() => import('./components/PublicSector/PublicSect
 const RetailPage = lazy(() => import('./components/Retail/RetailPage').then((m) => ({ default: m.RetailPage })));
 const EducationPage = lazy(() => import('./components/Education/EducationPage').then((m) => ({ default: m.EducationPage })));
 const LegalPage = lazy(() => import('./components/Legal/LegalPage').then((m) => ({ default: m.LegalPage })));
+const ContractWorkflowPage = lazy(() => import('./components/ContractWorkflow/ContractWorkflowPage').then((m) => ({ default: m.ContractWorkflowPage })));
+const IntegratedModulesOverviewPage = lazy(() => import('./components/IntegratedModules/IntegratedModulesOverviewPage').then((m) => ({ default: m.IntegratedModulesOverviewPage })));
 const SupplyChainPage = lazy(() => import('./components/SupplyChain/SupplyChainPage').then((m) => ({ default: m.SupplyChainPage })));
 
 const PageFallback = () => (
@@ -136,7 +139,7 @@ const theme = createTheme({
 const AppRoutes: React.FC = () => {
   const { logout } = useAuth();
   return (
-    <>
+    <AutoPlayProvider>
       <SessionTimeoutWarning onLogout={logout} />
       <Routes>
         <Route path="/login" element={<LoginPage />} />
@@ -182,10 +185,12 @@ const AppRoutes: React.FC = () => {
         <Route path="/retail" element={<ProtectedRoute><MainLayout><RetailPage /></MainLayout></ProtectedRoute>} />
         <Route path="/education" element={<ProtectedRoute><MainLayout><EducationPage /></MainLayout></ProtectedRoute>} />
         <Route path="/legal" element={<ProtectedRoute><MainLayout><LegalPage /></MainLayout></ProtectedRoute>} />
+        <Route path="/contract-workflow" element={<ProtectedRoute><MainLayout><ContractWorkflowPage /></MainLayout></ProtectedRoute>} />
+        <Route path="/integrated-modules" element={<ProtectedRoute><MainLayout><IntegratedModulesOverviewPage /></MainLayout></ProtectedRoute>} />
         <Route path="/supply-chain" element={<ProtectedRoute><MainLayout><SupplyChainPage /></MainLayout></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </>
+    </AutoPlayProvider>
   );
 };
 

@@ -20,7 +20,7 @@ import {
   CircularProgress,
   Alert,
 } from '@mui/material';
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import {
   PrecisionManufacturing,
   Build,
@@ -33,6 +33,7 @@ import {
   SensorData,
   Anomaly,
 } from '../../api/manufacturing';
+import { useAutoPlayNarration } from '../../hooks/useAutoPlayNarration';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -50,6 +51,7 @@ function TabPanel(props: TabPanelProps) {
 }
 
 export const ManufacturingPage: React.FC = () => {
+  useAutoPlayNarration(1);
   const [tabValue, setTabValue] = useState(0);
   const [predictiveMaintenance, setPredictiveMaintenance] = useState<PredictiveMaintenance[]>([]);
   const [sensorData, setSensorData] = useState<SensorData[]>([]);
@@ -67,8 +69,12 @@ export const ManufacturingPage: React.FC = () => {
       setLoading(true);
       setError('');
       if (tabValue === 0) {
-        const data = await manufacturingApi.getPredictiveMaintenance();
-        setPredictiveMaintenance(data);
+        const [pmData, anomData] = await Promise.all([
+          manufacturingApi.getPredictiveMaintenance(),
+          manufacturingApi.getAnomalies(),
+        ]);
+        setPredictiveMaintenance(pmData);
+        setAnomalies(anomData);
       } else if (tabValue === 1) {
         const data = await manufacturingApi.getSensorData();
         setSensorData(data);
@@ -92,7 +98,7 @@ export const ManufacturingPage: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     if (status.includes('要メンテナンス')) return 'error';
-    if (status.includes('監視中')) return 'warning';
+    if (status.includes('監視中')) return 'info';
     return 'success';
   };
 
@@ -133,9 +139,59 @@ export const ManufacturingPage: React.FC = () => {
         ) : (
           <>
             <TabPanel value={tabValue} index={0}>
+              <Grid container spacing={2} sx={{ mb: 2 }}>
+                <Grid item xs={6} sm={4} md={2}>
+                  <Paper variant="outlined" sx={{ p: 1.5, textAlign: 'center' }}>
+                    <Typography variant="caption" color="text.secondary">機器数</Typography>
+                    <Typography variant="h6">{predictiveMaintenance.length}</Typography>
+                  </Paper>
+                </Grid>
+                <Grid item xs={6} sm={4} md={2}>
+                  <Paper variant="outlined" sx={{ p: 1.5, textAlign: 'center' }}>
+                    <Typography variant="caption" color="text.secondary">要メンテ</Typography>
+                    <Typography variant="h6" color="error">{predictiveMaintenance.filter((p) => p.status === '要メンテナンス').length}</Typography>
+                  </Paper>
+                </Grid>
+                <Grid item xs={6} sm={4} md={2}>
+                  <Paper variant="outlined" sx={{ p: 1.5, textAlign: 'center' }}>
+                    <Typography variant="caption" color="text.secondary">監視中</Typography>
+                    <Typography variant="h6" color="success.main">{predictiveMaintenance.filter((p) => p.status === '監視中').length}</Typography>
+                  </Paper>
+                </Grid>
+                <Grid item xs={6} sm={4} md={2}>
+                  <Paper variant="outlined" sx={{ p: 1.5, textAlign: 'center' }}>
+                    <Typography variant="caption" color="text.secondary">異常件数</Typography>
+                    <Typography variant="h6" color="error">{anomalies.length}</Typography>
+                  </Paper>
+                </Grid>
+                <Grid item xs={6} sm={4} md={2}>
+                  <Paper variant="outlined" sx={{ p: 1.5, textAlign: 'center' }}>
+                    <Typography variant="caption" color="text.secondary">平均 RUL</Typography>
+                    <Typography variant="h6">-</Typography>
+                  </Paper>
+                </Grid>
+                <Grid item xs={6} sm={4} md={2}>
+                  <Paper variant="outlined" sx={{ p: 1.5, textAlign: 'center' }}>
+                    <Typography variant="caption" color="text.secondary">モデル推移</Typography>
+                    <Typography variant="h6">&nbsp;</Typography>
+                  </Paper>
+                </Grid>
+              </Grid>
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="subtitle2" color="text.secondary" gutterBottom>設備別 RUL (相対寿命)</Typography>
+                <ResponsiveContainer width="100%" height={140}>
+                  <LineChart data={predictiveMaintenance.map((p, i) => ({ name: p.equipment, RUL: 2 - i * 0.3 }))} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+                    <XAxis dataKey="name" tick={{ fontSize: 10 }} />
+                    <YAxis domain={[0, 4]} tick={{ fontSize: 10 }} />
+                    <Tooltip />
+                    <Line type="monotone" dataKey="RUL" stroke="#5794F2" strokeWidth={2} dot={{ r: 3 }} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </Box>
               <Grid container spacing={2}>
                 <Grid item xs={12} md={5}>
-                  <Typography variant="subtitle2" color="text.secondary" gutterBottom>予知保全 ステータス構成</Typography>
+                  <Typography variant="subtitle2" color="text.secondary" gutterBottom>予知保全ステータス概況</Typography>
                   <ResponsiveContainer width="100%" height={200}>
                     <PieChart margin={{ top: 20, right: 40, bottom: 20, left: 40 }}>
                       <Pie
@@ -179,7 +235,7 @@ export const ManufacturingPage: React.FC = () => {
                         {predictiveMaintenance.map((pm) => (
                           <TableRow key={pm.id}>
                             <TableCell>{pm.equipment}</TableCell>
-                            <TableCell>{pm.predicted_failure}</TableCell>
+                            <TableCell>{pm.predicted_failure.replace(/-/g, '/')}</TableCell>
                             <TableCell>{(pm.confidence * 100).toFixed(0)}%</TableCell>
                             <TableCell>
                               <Chip size="small" label={pm.status} color={getStatusColor(pm.status)} />
@@ -295,13 +351,13 @@ export const ManufacturingPage: React.FC = () => {
       <Paper sx={{ p: 2, mt: 2 }} elevation={0}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
           <Build color="primary" />
-          <Typography variant="overline" color="text.secondary">技術スタック</Typography>
+          <Typography variant="overline" color="text.secondary">連携スタック</Typography>
         </Box>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
           <Chip size="small" label="MLOps" />
           <Chip size="small" label="Prometheus" />
           <Chip size="small" label="Grafana" />
-          <Chip size="small" label="時系列分析" />
+          <Chip size="small" label="熱流体解析" />
           <Chip size="small" label="IoT" />
         </Box>
       </Paper>

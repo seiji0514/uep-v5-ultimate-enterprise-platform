@@ -21,6 +21,7 @@ import {
   Menu,
   MenuItem,
   Collapse,
+  Tooltip,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -59,10 +60,12 @@ import {
   LocalShipping,
   LocalHospital,
   Traffic,
+  Assignment,
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { Breadcrumbs } from './Breadcrumbs';
+import { AutoPlayBar } from './AutoPlayBar';
 
 const DRAWER_WIDTH = 320;
 const DRAWER_WIDTH_COLLAPSED = 72;
@@ -93,6 +96,18 @@ interface NavGroup {
 
 // 4〜5分割（企業向けデモ）
 const navGroups: NavGroup[] = [
+  {
+    title: '統合基盤モジュール（5モジュール）',
+    icon: <Hub />,
+    items: [
+      { text: '5モジュール概要', icon: <Layers />, path: '/integrated-modules' },
+      { text: '製造・MLOps', icon: <PrecisionManufacturing />, path: '/manufacturing' },
+      { text: '医療', icon: <LocalHospital />, path: '/medical' },
+      { text: '金融', icon: <AccountBalance />, path: '/fintech' },
+      { text: '障害者雇用', icon: <Work />, path: '/inclusive-work' },
+      { text: '契約ワークフロー', icon: <Assignment />, path: '/contract-workflow' },
+    ],
+  },
   {
     title: 'インフラ基盤',
     icon: <Cloud />,
@@ -163,11 +178,15 @@ const bottomItems: NavItem[] = [
   { text: '設定', icon: <Settings />, path: '/settings' },
 ];
 
+const INTEGRATED_GROUP_TITLE = '統合基盤モジュール（5モジュール）';
+
 export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [drawerCollapsed, setDrawerCollapsed] = useState(false);
+  const [integratedOnly, setIntegratedOnly] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
+    '統合基盤モジュール（5モジュール）': true,
     'インフラ基盤': true,
     'AI・ML': true,
     '監視・セキュリティ': true,
@@ -236,7 +255,7 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
       </List>
       <Divider sx={{ my: 1 }} />
       <List dense sx={{ display: drawerCollapsed ? 'none' : 'block' }}>
-        {navGroups.map((group) => (
+        {(integratedOnly ? navGroups.filter((g) => g.title === INTEGRATED_GROUP_TITLE) : navGroups).map((group) => (
           <React.Fragment key={group.title}>
             <ListItemButton
               onClick={() => handleGroupToggle(group.title)}
@@ -279,7 +298,7 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
       </List>
       <Divider sx={{ my: 1 }} />
       <List dense>
-        {bottomItems.map((item) => (
+        {(integratedOnly ? bottomItems.filter((i) => i.text === '設定') : bottomItems).map((item) => (
           <ListItem key={item.text} disablePadding>
             <ListItemButton
               selected={location.pathname === item.path}
@@ -318,6 +337,17 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
             UEP v5.0 · 統合ダッシュボード
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Tooltip title={integratedOnly ? 'すべて表示に切替' : '統合基盤のみ表示に切替'}>
+              <IconButton
+                onClick={() => setIntegratedOnly(!integratedOnly)}
+                size="small"
+                color={integratedOnly ? 'primary' : 'default'}
+                aria-label={integratedOnly ? 'すべて表示' : '統合基盤のみ表示'}
+                sx={{ '&:focus-visible': { outline: '2px solid', outlineColor: 'primary.main' } }}
+              >
+                <Layers />
+              </IconButton>
+            </Tooltip>
             <Typography variant="body2">{user?.full_name || user?.username}</Typography>
             <IconButton
               onClick={handleMenuOpen}
@@ -362,6 +392,7 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
         <Breadcrumbs />
         {children}
       </Box>
+      <AutoPlayBar />
     </Box>
   );
 };

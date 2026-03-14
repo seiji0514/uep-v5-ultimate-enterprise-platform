@@ -27,6 +27,7 @@ import {
   Psychology,
 } from '@mui/icons-material';
 import apiClient from '../../api/client';
+import { useAutoPlayNarration } from '../../hooks/useAutoPlayNarration';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -44,6 +45,7 @@ function TabPanel(props: TabPanelProps) {
 }
 
 export const InclusiveWorkPage: React.FC = () => {
+  useAutoPlayNarration(4);
   const [tabValue, setTabValue] = useState(0);
   const [skills, setSkills] = useState('');
   const [chatMessage, setChatMessage] = useState('');

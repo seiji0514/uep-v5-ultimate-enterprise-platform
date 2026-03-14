@@ -17,9 +17,9 @@ def _predictive_maintenance_list() -> List[Dict[str, Any]]:
     return [
         {
             "id": "pm-001",
-            "equipment": "CNC旋盤A",
+            "equipment": "CNC設備A",
             "predicted_failure": "2026-03-15",
-            "confidence": 0.92,
+            "confidence": 0.52,
             "status": "要メンテナンス",
             "line": "ライン1",
         },
@@ -41,7 +41,7 @@ def _predictive_maintenance_list() -> List[Dict[str, Any]]:
         },
         {
             "id": "pm-004",
-            "equipment": "塗装ロボットD",
+            "equipment": "搬送ロボットD",
             "predicted_failure": "2026-03-28",
             "confidence": 0.88,
             "status": "要メンテナンス",
@@ -59,7 +59,7 @@ def _predictive_maintenance_list() -> List[Dict[str, Any]]:
             "id": "pm-006",
             "equipment": "検査装置F",
             "predicted_failure": "2026-04-15",
-            "confidence": 0.85,
+            "confidence": 0.67,
             "status": "監視中",
             "line": "ライン3",
         },
@@ -73,7 +73,7 @@ def _sensor_data_list() -> List[Dict[str, Any]]:
             "value": 72.5,
             "unit": "°C",
             "timestamp": (datetime.utcnow() - timedelta(minutes=1)).isoformat(),
-            "equipment": "CNC旋盤A",
+            "equipment": "CNC設備A",
         },
         {
             "sensor_id": "vibration-002",
@@ -94,7 +94,7 @@ def _sensor_data_list() -> List[Dict[str, Any]]:
             "value": 68.2,
             "unit": "°C",
             "timestamp": (datetime.utcnow() - timedelta(minutes=3)).isoformat(),
-            "equipment": "塗装ロボットD",
+            "equipment": "搬送ロボットD",
         },
         {
             "sensor_id": "current-005",
@@ -118,7 +118,7 @@ def _anomaly_list() -> List[Dict[str, Any]]:
         {
             "id": "ano-001",
             "type": "振動異常",
-            "equipment": "CNC旋盤A",
+            "equipment": "CNC設備A",
             "severity": "高",
             "detected_at": (datetime.utcnow() - timedelta(hours=2)).isoformat(),
         },
@@ -138,8 +138,8 @@ def _anomaly_list() -> List[Dict[str, Any]]:
         },
         {
             "id": "ano-004",
-            "type": "塗装むら",
-            "equipment": "塗装ロボットD",
+            "type": "搬送異常",
+            "equipment": "搬送ロボットD",
             "severity": "中",
             "detected_at": (datetime.utcnow() - timedelta(hours=1)).isoformat(),
         },

@@ -34,6 +34,7 @@ import {
   MedicalAnomaly,
   PlatformStats,
 } from '../../api/medical';
+import { useAutoPlayNarration } from '../../hooks/useAutoPlayNarration';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -51,6 +52,7 @@ function TabPanel(props: TabPanelProps) {
 }
 
 export const MedicalPage: React.FC = () => {
+  useAutoPlayNarration(2);
   const [tabValue, setTabValue] = useState(0);
   const [aiDiagnosis, setAIDiagnosis] = useState<AIDiagnosis[]>([]);
   const [voiceResponse, setVoiceResponse] = useState<VoiceResponse[]>([]);
