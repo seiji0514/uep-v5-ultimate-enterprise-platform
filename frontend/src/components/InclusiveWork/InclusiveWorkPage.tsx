@@ -45,7 +45,7 @@ function TabPanel(props: TabPanelProps) {
 }
 
 export const InclusiveWorkPage: React.FC = () => {
-  useAutoPlayNarration(4);
+  useAutoPlayNarration(5);
   const [tabValue, setTabValue] = useState(0);
   const [skills, setSkills] = useState('');
   const [chatMessage, setChatMessage] = useState('');
@@ -126,6 +126,9 @@ export const InclusiveWorkPage: React.FC = () => {
       </Typography>
       <Typography variant="body1" color="text.secondary" paragraph>
         障害者雇用マッチング + アクセシビリティ特化AI + 当事者視点UX評価
+      </Typography>
+      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
+        公開データ: 厚労省など公的求人オープンデータとの連携でマッチング精度の検証が可能。顧客PoCでは実データに置換。
       </Typography>
 
       <Tabs value={tabValue} onChange={(_, v) => setTabValue(v)} sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>

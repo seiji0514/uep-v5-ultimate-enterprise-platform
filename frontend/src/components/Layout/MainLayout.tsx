@@ -3,7 +3,7 @@
  * 統合ダッシュボードUI・4〜5分割（企業向けデモ）
  * サイドバー折りたたみ・パンくず・アクセシビリティ対応
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Drawer,
@@ -64,6 +64,7 @@ import {
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useAutoPlay } from '../../contexts/AutoPlayContext';
 import { Breadcrumbs } from './Breadcrumbs';
 import { AutoPlayBar } from './AutoPlayBar';
 
@@ -197,6 +198,19 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
+  const autoPlay = useAutoPlay();
+
+  useEffect(() => {
+    if (!autoPlay?.isAutoPlaying || !autoPlay?.togglePause) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Space' && !['INPUT', 'TEXTAREA', 'BUTTON'].includes((e.target as HTMLElement)?.tagName)) {
+        e.preventDefault();
+        autoPlay.togglePause();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [autoPlay?.isAutoPlaying, autoPlay?.togglePause]);
 
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget);

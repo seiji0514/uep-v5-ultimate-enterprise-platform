@@ -46,13 +46,13 @@ function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
   return (
     <div role="tabpanel" hidden={value !== index} {...other}>
-      {value === index && <Box sx={{ p: 2 }}>{children}</Box>}
+      {value === index && <Box sx={{ p: 1.5 }}>{children}</Box>}
     </div>
   );
 }
 
 export const MedicalPage: React.FC = () => {
-  useAutoPlayNarration(2);
+  useAutoPlayNarration(3);
   const [tabValue, setTabValue] = useState(0);
   const [aiDiagnosis, setAIDiagnosis] = useState<AIDiagnosis[]>([]);
   const [voiceResponse, setVoiceResponse] = useState<VoiceResponse[]>([]);
@@ -104,13 +104,16 @@ export const MedicalPage: React.FC = () => {
   };
 
   return (
-    <Box sx={{ p: 0 }}>
-      <Box sx={{ mb: 3 }}>
+    <Box sx={{ p: 0, transform: 'scale(0.94)', transformOrigin: 'top left' }}>
+      <Box sx={{ mb: 2 }}>
         <Typography variant="h5" fontWeight={600} gutterBottom>
           医療
         </Typography>
         <Typography variant="body2" color="text.secondary">
           AI診断、音声応答、異常検知、医療プラットフォーム。MLOps、医療プラットフォームとの相性が良い。
+        </Typography>
+        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
+          公開データ: MIMIC-III、PhysioNet など匿名化医療データでPoC検証可能。デモはサンプル、顧客環境では実データに置換。
         </Typography>
       </Box>
 
@@ -135,9 +138,9 @@ export const MedicalPage: React.FC = () => {
         ) : (
           <>
             <TabPanel value={tabValue} index={0}>
-              <Box sx={{ mb: 2 }}>
+              <Box sx={{ mb: 1.5 }}>
                 <Typography variant="subtitle2" color="text.secondary" gutterBottom>AI診断 ステータス構成</Typography>
-                <ResponsiveContainer width="100%" height={200}>
+                <ResponsiveContainer width="100%" height={160}>
                   <PieChart margin={{ top: 20, right: 40, bottom: 20, left: 40 }}>
                     <Pie
                       data={(() => {
@@ -213,9 +216,9 @@ export const MedicalPage: React.FC = () => {
               </TableContainer>
             </TabPanel>
             <TabPanel value={tabValue} index={2}>
-              <Box sx={{ mb: 2 }}>
+              <Box sx={{ mb: 1.5 }}>
                 <Typography variant="subtitle2" color="text.secondary" gutterBottom>異常検知 深刻度構成</Typography>
-                <ResponsiveContainer width="100%" height={200}>
+                <ResponsiveContainer width="100%" height={160}>
                   <PieChart margin={{ top: 20, right: 40, bottom: 20, left: 40 }}>
                     <Pie
                       data={(() => {
@@ -273,9 +276,9 @@ export const MedicalPage: React.FC = () => {
             <TabPanel value={tabValue} index={3}>
               {platformStats && (
                 <>
-                <Box sx={{ mb: 2 }}>
+                <Box sx={{ mb: 1.5 }}>
                   <Typography variant="subtitle2" color="text.secondary" gutterBottom>本日の統計</Typography>
-                  <ResponsiveContainer width="100%" height={180}>
+                  <ResponsiveContainer width="100%" height={140}>
                     <BarChart data={[
                       { name: 'AI診断', 件数: platformStats.ai_diagnosis_today },
                       { name: '音声処理', 件数: platformStats.voice_processed_today },
@@ -289,27 +292,27 @@ export const MedicalPage: React.FC = () => {
                     </BarChart>
                   </ResponsiveContainer>
                 </Box>
-                <Grid container spacing={2}>
+                <Grid container spacing={1.5}>
                   <Grid item xs={12} sm={6} md={3}>
-                    <Paper variant="outlined" sx={{ p: 2, textAlign: 'center' }}>
+                    <Paper variant="outlined" sx={{ p: 1.5, textAlign: 'center' }}>
                       <Typography variant="overline" color="text.secondary">アクティブ患者数</Typography>
                       <Typography variant="h6">{platformStats.active_patients}</Typography>
                     </Paper>
                   </Grid>
                   <Grid item xs={12} sm={6} md={3}>
-                    <Paper variant="outlined" sx={{ p: 2, textAlign: 'center' }}>
+                    <Paper variant="outlined" sx={{ p: 1.5, textAlign: 'center' }}>
                       <Typography variant="overline" color="text.secondary">本日のAI診断</Typography>
                       <Typography variant="h6">{platformStats.ai_diagnosis_today}</Typography>
                     </Paper>
                   </Grid>
                   <Grid item xs={12} sm={6} md={3}>
-                    <Paper variant="outlined" sx={{ p: 2, textAlign: 'center' }}>
+                    <Paper variant="outlined" sx={{ p: 1.5, textAlign: 'center' }}>
                       <Typography variant="overline" color="text.secondary">本日の音声処理</Typography>
                       <Typography variant="h6">{platformStats.voice_processed_today}</Typography>
                     </Paper>
                   </Grid>
                   <Grid item xs={12} sm={6} md={3}>
-                    <Paper variant="outlined" sx={{ p: 2, textAlign: 'center' }}>
+                    <Paper variant="outlined" sx={{ p: 1.5, textAlign: 'center' }}>
                       <Typography variant="overline" color="text.secondary">本日の異常検知</Typography>
                       <Typography variant="h6">{platformStats.anomalies_detected_today}</Typography>
                     </Paper>
@@ -327,7 +330,7 @@ export const MedicalPage: React.FC = () => {
         )}
       </Paper>
 
-      <Paper sx={{ p: 2, mt: 2 }} elevation={0}>
+      <Paper sx={{ p: 1.5, mt: 1.5 }} elevation={0}>
         <Typography variant="overline" color="text.secondary">技術スタック</Typography>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
           <Chip size="small" label="MLOps" />

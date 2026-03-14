@@ -51,7 +51,7 @@ function TabPanel(props: TabPanelProps) {
 }
 
 export const FinTechPage: React.FC = () => {
-  useAutoPlayNarration(3);
+  useAutoPlayNarration(4);
   const [tabValue, setTabValue] = useState(0);
   const [payments, setPayments] = useState<PaymentType[]>([]);
   const [riskScores, setRiskScores] = useState<RiskScore[]>([]);
@@ -62,22 +62,20 @@ export const FinTechPage: React.FC = () => {
   useEffect(() => {
     loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tabValue]);
+  }, []);
 
   const loadData = async () => {
     try {
       setLoading(true);
       setError('');
-      if (tabValue === 0) {
-        const data = await fintechApi.getPayments();
-        setPayments(data);
-      } else if (tabValue === 1) {
-        const data = await fintechApi.getRiskScores();
-        setRiskScores(data);
-      } else if (tabValue === 2) {
-        const data = await fintechApi.getTransactionMonitoring();
-        setMonitoring(data);
-      }
+      const [p, r, m] = await Promise.all([
+        fintechApi.getPayments(),
+        fintechApi.getRiskScores(),
+        fintechApi.getTransactionMonitoring(),
+      ]);
+      setPayments(p);
+      setRiskScores(r);
+      setMonitoring(m);
     } catch (err: any) {
       console.error('FinTech API Error:', err);
       if (err.code === 'ECONNREFUSED' || err.message?.includes('Network Error')) {
@@ -113,7 +111,39 @@ export const FinTechPage: React.FC = () => {
         <Typography variant="body2" color="text.secondary">
           決済API・リスクスコア・取引監視。高可用性・低レイテンシ・監視の経験をそのまま活かせる。
         </Typography>
+        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
+          公開データ: Kaggle 不正検知、取引シミュレーションなどでリスクモデル・異常検知の検証が可能。
+        </Typography>
       </Box>
+
+      {!loading && (
+        <Grid container spacing={2} sx={{ mb: 2 }}>
+          <Grid item xs={6} sm={3}>
+            <Paper variant="outlined" sx={{ p: 1.5, textAlign: 'center' }}>
+              <Typography variant="caption" color="text.secondary">決済件数</Typography>
+              <Typography variant="h6">{payments.length}</Typography>
+            </Paper>
+          </Grid>
+          <Grid item xs={6} sm={3}>
+            <Paper variant="outlined" sx={{ p: 1.5, textAlign: 'center' }}>
+              <Typography variant="caption" color="text.secondary">決済合計</Typography>
+              <Typography variant="h6">¥{(payments.reduce((s, p) => s + p.amount, 0) / 10000).toFixed(0)}万</Typography>
+            </Paper>
+          </Grid>
+          <Grid item xs={6} sm={3}>
+            <Paper variant="outlined" sx={{ p: 1.5, textAlign: 'center' }}>
+              <Typography variant="caption" color="text.secondary">リスク高</Typography>
+              <Typography variant="h6" color="error.main">{riskScores.filter((r) => r.level === '高').length}</Typography>
+            </Paper>
+          </Grid>
+          <Grid item xs={6} sm={3}>
+            <Paper variant="outlined" sx={{ p: 1.5, textAlign: 'center' }}>
+              <Typography variant="caption" color="text.secondary">監視要確認</Typography>
+              <Typography variant="h6" color="warning.main">{monitoring.filter((m) => m.status === '要確認').length}</Typography>
+            </Paper>
+          </Grid>
+        </Grid>
+      )}
 
       <Paper elevation={0}>
         <Tabs value={tabValue} onChange={(_, v) => setTabValue(v)}>

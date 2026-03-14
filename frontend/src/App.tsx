@@ -51,6 +51,7 @@ const EducationPage = lazy(() => import('./components/Education/EducationPage').
 const LegalPage = lazy(() => import('./components/Legal/LegalPage').then((m) => ({ default: m.LegalPage })));
 const ContractWorkflowPage = lazy(() => import('./components/ContractWorkflow/ContractWorkflowPage').then((m) => ({ default: m.ContractWorkflowPage })));
 const IntegratedModulesOverviewPage = lazy(() => import('./components/IntegratedModules/IntegratedModulesOverviewPage').then((m) => ({ default: m.IntegratedModulesOverviewPage })));
+const OverviewDetailPage = lazy(() => import('./components/IntegratedModules/OverviewDetailPage').then((m) => ({ default: m.OverviewDetailPage })));
 const SupplyChainPage = lazy(() => import('./components/SupplyChain/SupplyChainPage').then((m) => ({ default: m.SupplyChainPage })));
 
 const PageFallback = () => (
@@ -187,6 +188,7 @@ const AppRoutes: React.FC = () => {
         <Route path="/legal" element={<ProtectedRoute><MainLayout><LegalPage /></MainLayout></ProtectedRoute>} />
         <Route path="/contract-workflow" element={<ProtectedRoute><MainLayout><ContractWorkflowPage /></MainLayout></ProtectedRoute>} />
         <Route path="/integrated-modules" element={<ProtectedRoute><MainLayout><IntegratedModulesOverviewPage /></MainLayout></ProtectedRoute>} />
+        <Route path="/integrated-modules/detail" element={<ProtectedRoute><MainLayout><OverviewDetailPage /></MainLayout></ProtectedRoute>} />
         <Route path="/supply-chain" element={<ProtectedRoute><MainLayout><SupplyChainPage /></MainLayout></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

@@ -27,6 +27,7 @@ import {
   LocalShipping,
   Receipt,
   PictureAsPdf,
+  VerifiedUser,
 } from '@mui/icons-material';
 import { contractWorkflowApi } from '../../api/contractWorkflow';
 import { useAutoPlayNarration } from '../../hooks/useAutoPlayNarration';
@@ -36,7 +37,7 @@ function TabPanel({ children, value, index }: { children?: React.ReactNode; inde
 }
 
 export const ContractWorkflowPage: React.FC = () => {
-  useAutoPlayNarration(5);
+  useAutoPlayNarration(6);
   const [tabValue, setTabValue] = useState(0);
   const [estimates, setEstimates] = useState<any[]>([]);
   const [contracts, setContracts] = useState<any[]>([]);
@@ -83,6 +84,29 @@ export const ContractWorkflowPage: React.FC = () => {
 
   return (
     <Box sx={{ p: 0 }}>
+      <Box
+        sx={{
+          mb: 2,
+          p: 2,
+          borderRadius: 1,
+          bgcolor: 'rgba(76, 175, 80, 0.2)',
+          borderLeft: '4px solid',
+          borderColor: 'success.main',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 2,
+        }}
+      >
+        <VerifiedUser sx={{ fontSize: 32, color: 'success.main' }} />
+        <Box>
+          <Typography variant="subtitle1" fontWeight={700} color="success.main">
+            実データ運用中
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            見積・契約・納品・請求を一気通貫で実運用。DB化・PDF出力に対応し、デモではなく本番データで稼働しています。
+          </Typography>
+        </Box>
+      </Box>
       <Box sx={{ mb: 3 }}>
         <Typography variant="h5" fontWeight={600} gutterBottom>契約ワークフロー</Typography>
         <Typography variant="body2" color="text.secondary">

@@ -45,13 +45,13 @@ function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
   return (
     <div role="tabpanel" hidden={value !== index} {...other}>
-      {value === index && <Box sx={{ p: 2 }}>{children}</Box>}
+      {value === index && <Box sx={{ p: 1.5 }}>{children}</Box>}
     </div>
   );
 }
 
 export const ManufacturingPage: React.FC = () => {
-  useAutoPlayNarration(1);
+  useAutoPlayNarration(2);
   const [tabValue, setTabValue] = useState(0);
   const [predictiveMaintenance, setPredictiveMaintenance] = useState<PredictiveMaintenance[]>([]);
   const [sensorData, setSensorData] = useState<SensorData[]>([]);
@@ -109,8 +109,8 @@ export const ManufacturingPage: React.FC = () => {
   };
 
   return (
-    <Box sx={{ p: 0 }}>
-      <Box sx={{ mb: 3 }}>
+    <Box sx={{ p: 0, transform: 'scale(0.94)', transformOrigin: 'top left' }}>
+      <Box sx={{ mb: 2 }}>
         <Typography variant="h5" fontWeight={600} gutterBottom>
           製造・IoT
         </Typography>
@@ -139,7 +139,7 @@ export const ManufacturingPage: React.FC = () => {
         ) : (
           <>
             <TabPanel value={tabValue} index={0}>
-              <Grid container spacing={2} sx={{ mb: 2 }}>
+              <Grid container spacing={1.5} sx={{ mb: 1.5 }}>
                 <Grid item xs={6} sm={4} md={2}>
                   <Paper variant="outlined" sx={{ p: 1.5, textAlign: 'center' }}>
                     <Typography variant="caption" color="text.secondary">機器数</Typography>
@@ -177,9 +177,9 @@ export const ManufacturingPage: React.FC = () => {
                   </Paper>
                 </Grid>
               </Grid>
-              <Box sx={{ mb: 2 }}>
+              <Box sx={{ mb: 1.5 }}>
                 <Typography variant="subtitle2" color="text.secondary" gutterBottom>設備別 RUL (相対寿命)</Typography>
-                <ResponsiveContainer width="100%" height={140}>
+                <ResponsiveContainer width="100%" height={120}>
                   <LineChart data={predictiveMaintenance.map((p, i) => ({ name: p.equipment, RUL: 2 - i * 0.3 }))} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#333" />
                     <XAxis dataKey="name" tick={{ fontSize: 10 }} />
@@ -189,10 +189,10 @@ export const ManufacturingPage: React.FC = () => {
                   </LineChart>
                 </ResponsiveContainer>
               </Box>
-              <Grid container spacing={2}>
+              <Grid container spacing={1.5}>
                 <Grid item xs={12} md={5}>
                   <Typography variant="subtitle2" color="text.secondary" gutterBottom>予知保全ステータス概況</Typography>
-                  <ResponsiveContainer width="100%" height={200}>
+                  <ResponsiveContainer width="100%" height={160}>
                     <PieChart margin={{ top: 20, right: 40, bottom: 20, left: 40 }}>
                       <Pie
                         data={(() => {
@@ -249,9 +249,9 @@ export const ManufacturingPage: React.FC = () => {
               </Grid>
             </TabPanel>
             <TabPanel value={tabValue} index={1}>
-              <Box sx={{ mb: 2 }}>
+              <Box sx={{ mb: 1.5 }}>
                 <Typography variant="subtitle2" color="text.secondary" gutterBottom>センサー値 比較</Typography>
-                <ResponsiveContainer width="100%" height={160}>
+                <ResponsiveContainer width="100%" height={130}>
                   <BarChart data={sensorData.map((s) => ({ name: s.sensor_id, 値: s.value, 単位: s.unit }))}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#333" />
                     <XAxis dataKey="name" tick={{ fontSize: 11 }} />
@@ -285,10 +285,10 @@ export const ManufacturingPage: React.FC = () => {
               </TableContainer>
             </TabPanel>
             <TabPanel value={tabValue} index={2}>
-              <Grid container spacing={2}>
+              <Grid container spacing={1.5}>
                 <Grid item xs={12} md={5}>
                   <Typography variant="subtitle2" color="text.secondary" gutterBottom>異常検知 深刻度構成</Typography>
-                  <ResponsiveContainer width="100%" height={200}>
+                  <ResponsiveContainer width="100%" height={160}>
                     <PieChart margin={{ top: 20, right: 40, bottom: 20, left: 40 }}>
                       <Pie
                         data={(() => {
@@ -348,7 +348,7 @@ export const ManufacturingPage: React.FC = () => {
         )}
       </Paper>
 
-      <Paper sx={{ p: 2, mt: 2 }} elevation={0}>
+      <Paper sx={{ p: 1.5, mt: 1.5 }} elevation={0}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
           <Build color="primary" />
           <Typography variant="overline" color="text.secondary">連携スタック</Typography>

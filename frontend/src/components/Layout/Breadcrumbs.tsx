@@ -33,6 +33,7 @@ const pathLabels: Record<string, string> = {
   '/fintech': '金融・FinTech',
   '/contract-workflow': '契約ワークフロー',
   '/integrated-modules': '5モジュール概要',
+  '/integrated-modules/detail': '詳細説明',
   '/energy': 'エネルギー',
   '/medical': '医療',
   '/space': '宇宙・航空',
