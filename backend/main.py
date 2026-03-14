@@ -443,13 +443,20 @@ except Exception:
 # セキュリティヘッダーミドルウェア（最初に追加）
 app.add_middleware(SecurityHeadersMiddleware)
 
-# CORS設定
+# CORS設定（allow_credentials=True のため allow_headers は明示的に指定）
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allow_headers=["*"],
+    allow_headers=[
+        "Content-Type",
+        "Authorization",
+        "X-Requested-With",
+        "Accept",
+        "Origin",
+        "X-CSRF-Token",
+    ],
     expose_headers=[
         "X-Request-ID",
         "X-RateLimit-Limit",

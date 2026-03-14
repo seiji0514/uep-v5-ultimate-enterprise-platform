@@ -34,6 +34,11 @@ class Settings(BaseSettings):
     REDIS_URL: str = Field(default="redis://localhost:6379/0", env="REDIS_URL")
     REDIS_PASSWORD: Optional[str] = Field(default=None, env="REDIS_PASSWORD")
 
+    # 本番ユーザー永続化（認証用）
+    PRODUCTION_USERS_FILE: str = Field(
+        default="./data/production_users.json", env="PRODUCTION_USERS_FILE"
+    )
+
     # セキュリティ設定
     SECRET_KEY: str = Field(
         default="change-this-secret-key-in-production", env="SECRET_KEY"
@@ -46,7 +51,15 @@ class Settings(BaseSettings):
 
     # CORS設定（カンマ区切り文字列 or JSON配列をサポート。Unionで生文字列を許可）
     CORS_ORIGINS: Union[str, List[str]] = Field(
-        default=["http://localhost:3000", "http://localhost:8080"],
+        default=[
+            "http://localhost:3000",
+            "http://localhost:3018",
+            "http://localhost:3020",
+            "http://localhost:8080",
+            "http://127.0.0.1:3000",
+            "http://127.0.0.1:3018",
+            "http://127.0.0.1:3020",
+        ],
         env="CORS_ORIGINS",
         description='カンマ区切り: https://a.com,https://b.com または JSON: ["https://a.com"]',
     )
@@ -118,13 +131,13 @@ class Settings(BaseSettings):
     def parse_cors_origins(cls, v):
         """CORS_ORIGINSをリストに変換（カンマ区切り or JSON配列）"""
         if v is None:
-            return ["http://localhost:3000", "http://localhost:8000"]
+            return ["http://localhost:3000", "http://localhost:3018", "http://localhost:3020", "http://localhost:8080"]
         if isinstance(v, list):
             return v
         if isinstance(v, str):
             s = v.strip()
             if not s:
-                return ["http://localhost:3000", "http://localhost:8000"]
+                return ["http://localhost:3000", "http://localhost:3018", "http://localhost:3020", "http://localhost:8080"]
             # JSON配列形式を試行（Render等で["url"]と設定した場合）
             if s.startswith("["):
                 try:

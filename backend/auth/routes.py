@@ -144,9 +144,16 @@ def get_demo_users() -> Dict[str, Dict[str, Any]]:
 
             if env == "production" and prod_file:
                 _demo_users_cache = _load_production_users()
-                logging.getLogger(__name__).info(
-                    f"Production users loaded from {prod_file}: {list(_demo_users_cache.keys())}"
-                )
+                if not _demo_users_cache:
+                    _demo_users_cache = _init_demo_users()
+                    _save_production_users(_demo_users_cache)
+                    logging.getLogger(__name__).info(
+                        f"Created {prod_file} with demo users: {list(_demo_users_cache.keys())}"
+                    )
+                else:
+                    logging.getLogger(__name__).info(
+                        f"Production users loaded from {prod_file}: {list(_demo_users_cache.keys())}"
+                    )
             else:
                 _demo_users_cache = _init_demo_users()
                 logging.getLogger(__name__).info(

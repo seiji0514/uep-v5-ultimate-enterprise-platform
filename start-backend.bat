@@ -14,8 +14,7 @@ cd /d "%~dp0"
 REM Pythonの確認
 python --version >nul 2>&1
 if errorlevel 1 (
-    echo エラー: Pythonがインストールされていません
-    echo Python 3.11以上をインストールしてください
+    echo Error: Python not installed. Install Python 3.11+
     pause
     exit /b 1
 )
@@ -25,28 +24,28 @@ cd backend
 
 REM ポート8080を使用（8000はWindows予約範囲7938-8037に含まれる場合あり）
 set USE_PORT=8080
-echo ポート%USE_PORT%で起動します。
+echo Port: %USE_PORT%
 
 REM 仮想環境の作成
 if not exist "venv" (
-    echo 仮想環境を作成中...
+    echo Creating venv...
     python -m venv venv
     if errorlevel 1 (
-        echo エラー: 仮想環境の作成に失敗しました
-        echo 管理者権限で実行するか、venvフォルダを手動で削除してください
+        echo Error: Failed to create venv
+        echo Run as admin or delete venv folder manually
         pause
         exit /b 1
     )
 )
 
 REM 仮想環境の有効化
-echo 仮想環境を有効化中...
+echo Activating venv...
 if not exist "venv\Scripts\activate.bat" (
-    echo エラー: 仮想環境が破損しています。再作成します...
+    echo Error: venv corrupted. Recreating...
     rmdir /s /q venv >nul 2>&1
     python -m venv venv
     if errorlevel 1 (
-        echo エラー: 仮想環境の再作成に失敗しました
+        echo Error: Failed to recreate venv
         pause
         exit /b 1
     )
@@ -54,7 +53,7 @@ if not exist "venv\Scripts\activate.bat" (
 call venv\Scripts\activate.bat
 
 REM 依存パッケージのインストール
-echo 依存パッケージをインストール中...
+echo Installing dependencies...
 python -m pip install --upgrade pip
 pip install -r requirements.txt
 
@@ -77,9 +76,12 @@ if exist ".env" (
     findstr /C:"PRODUCTION_USERS_FILE" .env >nul 2>&1
     if errorlevel 1 (
         echo PRODUCTION_USERS_FILE=./data/production_users.json>>.env
-        echo .env に本番ユーザー永続化を追加しました
+        echo Added PRODUCTION_USERS_FILE to .env
     )
 )
+
+REM 既存 .env で SECRET_KEY が空の場合は生成して更新
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$f='.env';if(Test-Path $f){$c=Get-Content $f -Raw;$k=[BitConverter]::ToString([Security.Cryptography.RandomNumberGenerator]::GetBytes(32)).Replace('-','').ToLower();if($c -match 'SECRET_KEY=\s*$' -or $c -match 'SECRET_KEY=change-this'){(Get-Content $f)-replace 'SECRET_KEY=.*',('SECRET_KEY='+$k)|Set-Content $f}}" 2>nul
 
 REM data ディレクトリを用意
 if not exist "data" mkdir data
@@ -96,12 +98,12 @@ if "%USE_PORT%"=="8000" (
 REM バックエンドAPIの起動
 echo.
 echo ==========================================
-echo バックエンドAPIを起動中...
+echo Starting backend API...
 set PORT=%USE_PORT%
 echo URL: http://localhost:%USE_PORT%
-echo API Docs: 本番時は無効
+echo API Docs: disabled in production
 echo.
-echo 停止: Ctrl+C
+echo Stop: Ctrl+C
 echo ==========================================
 echo.
 
