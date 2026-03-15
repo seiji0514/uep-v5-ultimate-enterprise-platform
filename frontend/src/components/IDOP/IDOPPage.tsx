@@ -23,6 +23,7 @@ import {
   Apps,
 } from '@mui/icons-material';
 import { idopApi, CICDPipeline, Application } from '../../api/idop';
+import { EmptyState } from '../common/EmptyState';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -132,7 +133,7 @@ export const IDOPPage: React.FC = () => {
 
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-          <CircularProgress />
+          <CircularProgress aria-label="読み込み中" />
         </Box>
       ) : (
         <>
@@ -196,8 +197,8 @@ export const IDOPPage: React.FC = () => {
                 <TableBody>
                   {applications.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={5} align="center">
-                        アプリケーションがありません
+                      <TableCell colSpan={5} sx={{ border: 'none', py: 4 }}>
+                        <EmptyState message="アプリケーションがありません" subMessage="アプリケーションを登録するとここに表示されます" />
                       </TableCell>
                     </TableRow>
                   ) : (

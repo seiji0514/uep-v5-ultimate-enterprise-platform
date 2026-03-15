@@ -158,7 +158,7 @@ export const InclusiveWorkPage: React.FC = () => {
                   onChange={(e) => setSkills(e.target.value)}
                   sx={{ mb: 2 }}
                 />
-                <Button variant="contained" onClick={handleMatching} disabled={loading} fullWidth>
+                <Button variant="contained" onClick={handleMatching} disabled={loading} fullWidth aria-label="マッチング検索を実行">
                   {loading ? <CircularProgress size={24} /> : '検索'}
                 </Button>
               </CardContent>
@@ -210,7 +210,7 @@ export const InclusiveWorkPage: React.FC = () => {
                   onChange={(e) => setChatMessage(e.target.value)}
                   sx={{ mb: 2 }}
                 />
-                <Button variant="contained" onClick={handleChat} disabled={loading || !chatMessage.trim()} fullWidth>
+                <Button variant="contained" onClick={handleChat} disabled={loading || !chatMessage.trim()} fullWidth aria-label="チャットを送信">
                   {loading ? <CircularProgress size={24} /> : '送信'}
                 </Button>
               </CardContent>
@@ -243,7 +243,7 @@ export const InclusiveWorkPage: React.FC = () => {
                   onChange={(e) => setEvalUrl(e.target.value)}
                   sx={{ mb: 2 }}
                 />
-                <Button variant="contained" onClick={handleEval} disabled={loading || !evalUrl.trim()} fullWidth>
+                <Button variant="contained" onClick={handleEval} disabled={loading || !evalUrl.trim()} fullWidth aria-label="UX評価を実行">
                   {loading ? <CircularProgress size={24} /> : '評価'}
                 </Button>
               </CardContent>
@@ -288,7 +288,7 @@ export const InclusiveWorkPage: React.FC = () => {
                   onChange={(e) => setAgentQuery(e.target.value)}
                   sx={{ mb: 2 }}
                 />
-                <Button variant="contained" onClick={handleAgent} disabled={loading || !agentQuery.trim()} fullWidth>
+                <Button variant="contained" onClick={handleAgent} disabled={loading || !agentQuery.trim()} fullWidth aria-label="エージェントを実行">
                   {loading ? <CircularProgress size={24} /> : '実行'}
                 </Button>
               </CardContent>

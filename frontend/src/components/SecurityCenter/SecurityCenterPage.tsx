@@ -26,6 +26,7 @@ import {
   TableRow,
   MenuItem,
 } from '@mui/material';
+import { EmptyState } from '../common/EmptyState';
 import {
   Security,
   Warning,
@@ -206,7 +207,7 @@ export const SecurityCenterPage: React.FC = () => {
           <TabPanel value={tabValue} index={0}>
             <Stack spacing={2}>
               {events.length === 0 ? (
-                <Paper sx={{ p: 4, textAlign: 'center' }}>セキュリティイベントがありません</Paper>
+                <EmptyState message="セキュリティイベントがありません" subMessage="イベントが検知されるとここに表示されます" />
               ) : (
                 events.map((event) => (
                   <Card key={event.id} variant="outlined">
@@ -233,7 +234,7 @@ export const SecurityCenterPage: React.FC = () => {
           <TabPanel value={tabValue} index={1}>
             <Stack spacing={2}>
               {incidents.length === 0 ? (
-                <Paper sx={{ p: 4, textAlign: 'center' }}>インシデントがありません</Paper>
+                <EmptyState message="インシデントがありません" subMessage="インシデントが登録されるとここに表示されます" />
               ) : (
                 incidents.map((incident) => (
                   <Card key={incident.id} variant="outlined">
@@ -260,7 +261,7 @@ export const SecurityCenterPage: React.FC = () => {
           <TabPanel value={tabValue} index={2}>
             <Stack spacing={2}>
               {risks.length === 0 ? (
-                <Paper sx={{ p: 4, textAlign: 'center' }}>リスクがありません</Paper>
+                <EmptyState message="リスクがありません" subMessage="リスクが登録されるとここに表示されます" />
               ) : (
                 risks.map((risk) => (
                   <Card key={risk.id} variant="outlined">
@@ -421,7 +422,7 @@ export const SecurityCenterPage: React.FC = () => {
                   onChange={(e) => setIocValue(e.target.value)}
                   fullWidth
                 />
-                <Button variant="contained" onClick={handleThreatIntelCheck} disabled={!iocValue.trim() || loading}>
+                <Button variant="contained" onClick={handleThreatIntelCheck} disabled={!iocValue.trim() || loading} aria-label="IOC照合を実行">
                   照合
                 </Button>
               </Stack>

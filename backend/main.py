@@ -287,7 +287,16 @@ _openapi_url = None if settings.is_production else "/openapi.json"
 
 app = FastAPI(
     title=settings.APP_NAME,
-    description="次世代エンタープライズ統合プラットフォーム v5.0 - 本番運用対応",
+    description="""次世代エンタープライズ統合プラットフォーム v5.0 - 本番運用対応
+
+## 主なAPI
+- **認証**: `/api/v1/auth/login`, `/api/v1/auth/me`, `/api/v1/auth/refresh`
+- **ヘルス**: `/health`, `/health/detailed`
+- **MLOps**: `/api/v1/mlops/pipelines`, `/api/v1/mlops/models`
+- **製造**: `/api/v1/manufacturing/anomalies`, `/api/v1/manufacturing/predictive-maintenance`
+- **医療**: `/api/v1/medical/anomalies`, `/api/v1/medical/platform-stats`
+- **物流**: `/api/v1/supply-chain/shipments`, `/api/v1/supply-chain/inventory`
+- **横断**: `/api/v1/cross-module/action-items`""",
     version=settings.APP_VERSION,
     docs_url=_docs_url,
     redoc_url=_redoc_url,

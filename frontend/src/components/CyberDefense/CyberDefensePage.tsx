@@ -26,6 +26,7 @@ import {
   TableRow,
   MenuItem,
 } from '@mui/material';
+import { EmptyState } from '../common/EmptyState';
 import {
   Security,
   Warning,
@@ -148,7 +149,7 @@ export const CyberDefensePage: React.FC = () => {
 
       {loading && tabValue !== 3 ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-          <CircularProgress />
+          <CircularProgress aria-label="読み込み中" />
         </Box>
       ) : (
         <>
@@ -230,7 +231,7 @@ export const CyberDefensePage: React.FC = () => {
                     </TableRow>
                   ))}
                   {suricataAlerts.length === 0 && (
-                    <TableRow><TableCell colSpan={5} align="center">アラートがありません</TableCell></TableRow>
+                    <TableRow><TableCell colSpan={5} sx={{ border: 'none', py: 4 }}><EmptyState message="Suricataアラートがありません" subMessage="アラートが検知されるとここに表示されます" /></TableCell></TableRow>
                   )}
                 </TableBody>
               </Table>
@@ -258,7 +259,7 @@ export const CyberDefensePage: React.FC = () => {
                     </TableRow>
                   ))}
                   {wazuhAlerts.length === 0 && (
-                    <TableRow><TableCell colSpan={4} align="center">アラートがありません</TableCell></TableRow>
+                    <TableRow><TableCell colSpan={4} sx={{ border: 'none', py: 4 }}><EmptyState message="Wazuhアラートがありません" subMessage="アラートが検知されるとここに表示されます" /></TableCell></TableRow>
                   )}
                 </TableBody>
               </Table>
@@ -287,7 +288,7 @@ export const CyberDefensePage: React.FC = () => {
                   onChange={(e) => setIocValue(e.target.value)}
                   fullWidth
                 />
-                <Button variant="contained" onClick={handleThreatIntelCheck} disabled={!iocValue.trim() || loading}>
+                <Button variant="contained" onClick={handleThreatIntelCheck} disabled={!iocValue.trim() || loading} aria-label="IOC照合を実行">
                   照合
                 </Button>
               </Stack>

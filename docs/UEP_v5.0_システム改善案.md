@@ -157,12 +157,23 @@
 
 ---
 
-## 10. 即時対応可能な小改善
+## 10. 即時対応可能な小改善 ✅ 完了（2026年3月16日）
 
-- ダッシュボードパネルに `role="button"` と `tabIndex={0}` を追加（キーボード操作）
-- 主要ボタンに `aria-label` を追加
-- フォーカス時の `outline` を `outline: 2px solid` に変更
-- ローディング中に `aria-busy="true"` を設定
+- [x] ダッシュボードパネルに `role="button"` と `tabIndex={0}` を追加（キーボード操作）
+- [x] 主要ボタン・Chip に `aria-label` を追加
+- [x] フォーカス時の `outline` を `outline: 2px solid` に変更（MuiChip 含む）
+- [x] ローディング中に `aria-busy="true"` を設定
+- [x] EmptyState を MLOps・InfraBuilder・CloudInfra・IDOP・SecurityCenter・CyberDefense・PersonalAccounting に統一導入
+- [x] E2E テスト拡充（6モジュール概要・現場AIエージェント）
+
+## 11. 未実装分の追加完了（2026年3月16日）
+
+- [x] README 更新（6モジュール・現場AI・VS Code + Continue）
+- [x] 参画者向けガイド更新（6モジュール・改善済み・VS Code セットアップ）
+- [x] 全ページ aria-label 補完（Projects・InclusiveWork・CyberDefense・SecurityCenter・SessionTimeout 等）
+- [x] レスポンシブ調整（モバイル drawer 幅・メインコンテンツ padding）
+- [x] フォームバリデーション（Login: ユーザー名2文字以上・パスワード4文字以上・リアルタイム表示）
+- [x] ローディング状態の統一（CircularProgress に aria-label="読み込み中" を全ページに追加）
 
 ---
 

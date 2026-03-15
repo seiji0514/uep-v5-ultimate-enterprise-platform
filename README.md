@@ -239,15 +239,32 @@ uep-v5-ultimate-enterprise-platform/
 
 ---
 
-## 🤖 Cursor AIエージェント向け情報
+## 📱 6モジュール・現場AIエージェント（2026年3月）
 
-このプロジェクトをCursor AIエージェントが理解するための情報：
+統合基盤モジュール（製造・障害者雇用・医療・金融・契約・物流）と現場AIエージェントを統合。
+
+- **6モジュール概要**: `/integrated-modules` - 6つのモジュールの説明を1画面で表示
+- **現場AIエージェント**: `/field-agent` - 製造・医療・物流の現場向け簡易UI（タブレット対応）
+
+---
+
+## 🛠️ 開発環境（VS Code + Continue + Ollama）
+
+完全無料でAIコーディングアシスタントを使用する場合：
+
+- **セットアップ**: [docs/セットアップ_VSCode_Continue_Ollama.md](docs/セットアップ_VSCode_Continue_Ollama.md)
+- **移行チェックリスト**: [docs/CursorからVSCode移行チェックリスト.md](docs/CursorからVSCode移行チェックリスト.md)
+
+---
+
+## 🤖 Cursor / AIエージェント向け情報
+
+このプロジェクトをAIエージェントが理解するための情報：
 
 - **[PROJECT_CONTEXT.md](PROJECT_CONTEXT.md)** - プロジェクトの詳細なコンテキスト情報
 - **[.cursorrules](.cursorrules)** - Cursor AIエージェント設定
 - **[AGENT_INSTRUCTIONS.md](AGENT_INSTRUCTIONS.md)** - Cursor AIエージェント向け指示書
-
-デスクトップPC側のCursor AIエージェントは、これらのファイルを参照してプロジェクトを理解できます。
+- **[.continue/config.yaml](.continue/config.yaml)** - Continue（VS Code）用プロジェクトルール
 
 ---
 

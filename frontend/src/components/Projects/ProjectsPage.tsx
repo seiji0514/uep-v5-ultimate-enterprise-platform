@@ -169,7 +169,7 @@ export const ProjectsPage: React.FC = () => {
                       {project.status}
                     </Box>
                   </Box>
-                  <IconButton size="small" className="panel-action" sx={{ opacity: 0.6 }}>
+                  <IconButton size="small" className="panel-action" sx={{ opacity: 0.6 }} aria-label={`${project.name}を開く`}>
                     <ArrowForward fontSize="small" />
                   </IconButton>
                 </Box>

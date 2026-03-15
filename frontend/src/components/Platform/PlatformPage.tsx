@@ -127,7 +127,7 @@ export const PlatformPage: React.FC = () => {
       </Tabs>
 
       {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
-      {loading && <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}><CircularProgress /></Box>}
+      {loading && <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}><CircularProgress aria-label="読み込み中" /></Box>}
 
       {!loading && (
         <>

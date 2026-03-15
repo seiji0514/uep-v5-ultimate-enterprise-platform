@@ -134,7 +134,7 @@ export const ManufacturingPage: React.FC = () => {
 
         {loading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-            <CircularProgress />
+            <CircularProgress aria-label="読み込み中" />
           </Box>
         ) : (
           <>

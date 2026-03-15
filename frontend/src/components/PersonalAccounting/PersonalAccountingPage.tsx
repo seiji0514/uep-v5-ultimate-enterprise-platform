@@ -33,6 +33,7 @@ import {
   Stack,
 } from '@mui/material';
 import { Add, Delete, Receipt, AttachMoney, FileDownload, OpenInNew, Help } from '@mui/icons-material';
+import { EmptyState } from '../common/EmptyState';
 import {
   personalAccountingApi,
   Expense,
@@ -308,7 +309,9 @@ export const PersonalAccountingPage: React.FC = () => {
               ))}
               {expenses.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={6} align="center" sx={{ py: 4 }}>経費がありません</TableCell>
+                  <TableCell colSpan={6} sx={{ border: 'none', py: 4 }}>
+                    <EmptyState message="経費がありません" subMessage="経費を登録するとここに表示されます" />
+                  </TableCell>
                 </TableRow>
               )}
             </TableBody>
@@ -347,7 +350,9 @@ export const PersonalAccountingPage: React.FC = () => {
               ))}
               {income.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={5} align="center" sx={{ py: 4 }}>売上がありません</TableCell>
+                  <TableCell colSpan={5} sx={{ border: 'none', py: 4 }}>
+                    <EmptyState message="売上がありません" subMessage="売上を登録するとここに表示されます" />
+                  </TableCell>
                 </TableRow>
               )}
             </TableBody>

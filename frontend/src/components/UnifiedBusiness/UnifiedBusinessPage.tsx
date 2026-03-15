@@ -167,7 +167,7 @@ export const UnifiedBusinessPage: React.FC = () => {
       <TabPanel value={tabValue} index={0}>
         {loading ? (
           <Box display="flex" justifyContent="center" p={4}>
-            <CircularProgress />
+            <CircularProgress aria-label="読み込み中" />
           </Box>
         ) : summary ? (
           <Grid container spacing={3}>
@@ -223,7 +223,7 @@ export const UnifiedBusinessPage: React.FC = () => {
       <TabPanel value={tabValue} index={1}>
         {loading ? (
           <Box display="flex" justifyContent="center" p={4}>
-            <CircularProgress />
+            <CircularProgress aria-label="読み込み中" />
           </Box>
         ) : (
           <Grid container spacing={3}>
@@ -323,7 +323,7 @@ export const UnifiedBusinessPage: React.FC = () => {
       <TabPanel value={tabValue} index={2}>
         {loading ? (
           <Box display="flex" justifyContent="center" p={4}>
-            <CircularProgress />
+            <CircularProgress aria-label="読み込み中" />
           </Box>
         ) : (
           <Grid container spacing={3}>
@@ -423,7 +423,7 @@ export const UnifiedBusinessPage: React.FC = () => {
       <TabPanel value={tabValue} index={3}>
         {loading ? (
           <Box display="flex" justifyContent="center" p={4}>
-            <CircularProgress />
+            <CircularProgress aria-label="読み込み中" />
           </Box>
         ) : (
           <Card>

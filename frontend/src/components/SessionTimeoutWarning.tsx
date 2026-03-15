@@ -68,7 +68,7 @@ export const SessionTimeoutWarning: React.FC<{ onExtend?: () => void; onLogout?:
         <Button onClick={handleLogout} color="inherit">
           ログアウト
         </Button>
-        <Button onClick={handleExtend} variant="contained" autoFocus>
+        <Button onClick={handleExtend} variant="contained" autoFocus aria-label="セッションを延長">
           続ける
         </Button>
       </DialogActions>

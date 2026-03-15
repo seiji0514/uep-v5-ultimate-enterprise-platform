@@ -67,7 +67,7 @@ export const SupplyChainPage: React.FC = () => {
           <Tab icon={<ShoppingBag />} iconPosition="start" label="調達" />
         </Tabs>
         {error && <Alert severity="error" sx={{ m: 2 }} onClose={() => setError('')}>{error}</Alert>}
-        {loading ? <Box sx={{ p: 4, textAlign: 'center' }}><CircularProgress /></Box> : (
+        {loading ? <Box sx={{ p: 4, textAlign: 'center' }}><CircularProgress aria-label="読み込み中" /></Box> : (
           <>
             <TabPanel value={tabValue} index={0}>
               <TableContainer>

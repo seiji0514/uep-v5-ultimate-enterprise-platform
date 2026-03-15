@@ -99,7 +99,7 @@ const DashboardPanel: React.FC<PanelProps> = ({ title, description, icon, path, 
               {title}
             </Typography>
           </Box>
-          <IconButton size="small" className="panel-action" sx={{ opacity: 0.6 }} aria-hidden>
+          <IconButton size="small" className="panel-action" sx={{ opacity: 0.6 }} aria-label={`${title}へ移動`}>
             <ArrowForward fontSize="small" />
           </IconButton>
         </Box>
@@ -300,11 +300,11 @@ export const DashboardPage: React.FC = () => {
           ) : actionItems && (actionItems.total ?? 0) > 0 ? (
             <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
               <Typography variant="body2" color="text.secondary" sx={{ mr: 1 }}>合計:</Typography>
-              <Chip label={`${actionItems.total} 件`} color="error" size="small" sx={{ fontWeight: 600 }} />
-              {(actionItems.manufacturing ?? 0) > 0 && <Chip label={`製造 ${actionItems.manufacturing}`} size="small" color="warning" onClick={() => navigate('/manufacturing')} sx={{ cursor: 'pointer' }} />}
-              {(actionItems.medical ?? 0) > 0 && <Chip label={`医療 ${actionItems.medical}`} size="small" color="warning" onClick={() => navigate('/medical')} sx={{ cursor: 'pointer' }} />}
-              {(actionItems.fintech ?? 0) > 0 && <Chip label={`金融 ${actionItems.fintech}`} size="small" color="warning" onClick={() => navigate('/fintech')} sx={{ cursor: 'pointer' }} />}
-              {(actionItems.contract ?? 0) > 0 && <Chip label={`契約 ${actionItems.contract}`} size="small" color="warning" onClick={() => navigate('/contract-workflow')} sx={{ cursor: 'pointer' }} />}
+              <Chip label={`${actionItems.total} 件`} color="error" size="small" sx={{ fontWeight: 600 }} aria-label={`要対応合計 ${actionItems.total} 件`} />
+              {(actionItems.manufacturing ?? 0) > 0 && <Chip label={`製造 ${actionItems.manufacturing}`} size="small" color="warning" onClick={() => navigate('/manufacturing')} sx={{ cursor: 'pointer' }} aria-label={`製造の要対応 ${actionItems.manufacturing} 件、クリックで製造ページへ`} />}
+              {(actionItems.medical ?? 0) > 0 && <Chip label={`医療 ${actionItems.medical}`} size="small" color="warning" onClick={() => navigate('/medical')} sx={{ cursor: 'pointer' }} aria-label={`医療の要対応 ${actionItems.medical} 件、クリックで医療ページへ`} />}
+              {(actionItems.fintech ?? 0) > 0 && <Chip label={`金融 ${actionItems.fintech}`} size="small" color="warning" onClick={() => navigate('/fintech')} sx={{ cursor: 'pointer' }} aria-label={`金融の要対応 ${actionItems.fintech} 件、クリックで金融ページへ`} />}
+              {(actionItems.contract ?? 0) > 0 && <Chip label={`契約 ${actionItems.contract}`} size="small" color="warning" onClick={() => navigate('/contract-workflow')} sx={{ cursor: 'pointer' }} aria-label={`契約の要対応 ${actionItems.contract} 件、クリックで契約ページへ`} />}
             </Box>
           ) : (
             <Typography variant="body2" color="text.secondary">要対応はありません</Typography>

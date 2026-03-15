@@ -19,6 +19,7 @@ export const LoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [touched, setTouched] = useState({ username: false, password: false });
   const { login, isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
 
@@ -98,6 +99,9 @@ export const LoginPage: React.FC = () => {
               fullWidth
               id="username"
               label="ユーザー名"
+              error={touched.username && username.trim().length > 0 && username.trim().length < 2}
+              helperText={touched.username && username.trim().length > 0 && username.trim().length < 2 ? '2文字以上で入力してください' : ''}
+              onBlur={() => setTouched((t) => ({ ...t, username: true }))}
               name="username"
               autoComplete="username"
               autoFocus
@@ -113,6 +117,9 @@ export const LoginPage: React.FC = () => {
               type="password"
               id="password"
               autoComplete="current-password"
+              error={touched.password && password.length > 0 && password.length < 4}
+              helperText={touched.password && password.length > 0 && password.length < 4 ? '4文字以上で入力してください' : ''}
+              onBlur={() => setTouched((t) => ({ ...t, password: true }))}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -122,6 +129,7 @@ export const LoginPage: React.FC = () => {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
               disabled={loading}
+              aria-label="ログイン"
             >
               {loading ? 'ログイン中...' : 'ログイン'}
             </Button>

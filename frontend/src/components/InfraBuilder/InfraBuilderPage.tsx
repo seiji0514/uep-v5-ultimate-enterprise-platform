@@ -31,6 +31,7 @@ import {
   PlayArrow,
   CheckCircle,
 } from '@mui/icons-material';
+import { EmptyState } from '../common/EmptyState';
 import {
   infraBuilderApi,
   BuildProject,
@@ -158,7 +159,7 @@ export const InfraBuilderPage: React.FC = () => {
 
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-          <CircularProgress />
+          <CircularProgress aria-label="読み込み中" />
         </Box>
       ) : (
         <>
@@ -234,8 +235,8 @@ export const InfraBuilderPage: React.FC = () => {
                 <TableBody>
                   {projects.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} align="center">
-                        プロジェクトがありません
+                      <TableCell colSpan={6} sx={{ border: 'none', py: 4 }}>
+                        <EmptyState message="プロジェクトがありません" subMessage="プロジェクトを作成するとここに表示されます" />
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -295,8 +296,8 @@ export const InfraBuilderPage: React.FC = () => {
                 <TableBody>
                   {blueprints.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={5} align="center">
-                        ブループリントがありません
+                      <TableCell colSpan={5} sx={{ border: 'none', py: 4 }}>
+                        <EmptyState message="ブループリントがありません" subMessage="ブループリントを作成するとここに表示されます" />
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -333,8 +334,8 @@ export const InfraBuilderPage: React.FC = () => {
                 <TableBody>
                   {pipelines.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} align="center">
-                        パイプライン実行履歴がありません
+                      <TableCell colSpan={6} sx={{ border: 'none', py: 4 }}>
+                        <EmptyState message="パイプライン実行履歴がありません" subMessage="パイプラインを実行するとここに表示されます" />
                       </TableCell>
                     </TableRow>
                   ) : (

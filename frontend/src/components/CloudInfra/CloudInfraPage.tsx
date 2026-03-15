@@ -24,6 +24,7 @@ import {
   SettingsApplications,
 } from '@mui/icons-material';
 import { cloudInfraApi, InfrastructureResource, IaCTemplate, Deployment } from '../../api/cloudInfra';
+import { EmptyState } from '../common/EmptyState';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -136,7 +137,7 @@ export const CloudInfraPage: React.FC = () => {
 
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-          <CircularProgress />
+          <CircularProgress aria-label="読み込み中" />
         </Box>
       ) : (
         <>
@@ -156,8 +157,8 @@ export const CloudInfraPage: React.FC = () => {
                 <TableBody>
                   {resources.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} align="center">
-                        リソースがありません
+                      <TableCell colSpan={6} sx={{ border: 'none', py: 4 }}>
+                        <EmptyState message="リソースがありません" subMessage="リソースを登録するとここに表示されます" />
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -199,8 +200,8 @@ export const CloudInfraPage: React.FC = () => {
                 <TableBody>
                   {templates.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={4} align="center">
-                        IaCテンプレートがありません
+                      <TableCell colSpan={4} sx={{ border: 'none', py: 4 }}>
+                        <EmptyState message="IaCテンプレートがありません" subMessage="テンプレートを登録するとここに表示されます" />
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -235,8 +236,8 @@ export const CloudInfraPage: React.FC = () => {
                 <TableBody>
                   {deployments.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={5} align="center">
-                        デプロイメントがありません
+                      <TableCell colSpan={5} sx={{ border: 'none', py: 4 }}>
+                        <EmptyState message="デプロイメントがありません" subMessage="デプロイを実行するとここに表示されます" />
                       </TableCell>
                     </TableRow>
                   ) : (

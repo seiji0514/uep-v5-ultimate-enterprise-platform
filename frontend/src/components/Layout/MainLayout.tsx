@@ -429,7 +429,7 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
           open={mobileOpen}
           onClose={handleDrawerToggle}
           ModalProps={{ keepMounted: true }}
-          sx={{ display: { xs: 'block', sm: 'none' }, '& .MuiDrawer-paper': { boxSizing: 'border-box', width: DRAWER_WIDTH } }}
+          sx={{ display: { xs: 'block', sm: 'none' }, '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 'min(320px, 85vw)' } }}
         >
           {drawer}
         </Drawer>
@@ -441,7 +441,7 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
           {drawer}
         </Drawer>
       </Box>
-      <Box component="main" sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}>
+      <Box component="main" sx={{ flexGrow: 1, p: { xs: 2, sm: 3 }, width: { sm: `calc(100% - ${drawerWidth}px)` } }}>
         <RecentPageTracker />
         <Toolbar />
         <Breadcrumbs />

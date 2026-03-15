@@ -142,6 +142,16 @@ function createAppTheme(mode: 'dark' | 'light') {
           },
         },
       },
+      MuiChip: {
+        styleOverrides: {
+          root: {
+            '&:focus-visible': {
+              outline: '2px solid',
+              outlineColor: 'primary.main',
+            },
+          },
+        },
+      },
     },
   });
 }

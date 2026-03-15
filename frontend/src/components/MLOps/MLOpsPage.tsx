@@ -24,6 +24,7 @@ import {
 } from '@mui/icons-material';
 import { mlopsApi, MLPipeline, MLModel, Experiment } from '../../api/mlops';
 import { LoadingSkeleton } from '../common/LoadingSkeleton';
+import { EmptyState } from '../common/EmptyState';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -200,8 +201,8 @@ export const MLOpsPage: React.FC = () => {
                 <TableBody>
                   {models.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} align="center">
-                        モデルがありません
+                      <TableCell colSpan={6} sx={{ border: 'none', py: 4 }}>
+                        <EmptyState message="モデルがありません" subMessage="モデルを登録するとここに表示されます" />
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -248,8 +249,8 @@ export const MLOpsPage: React.FC = () => {
                 <TableBody>
                   {experiments.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={5} align="center">
-                        実験がありません
+                      <TableCell colSpan={5} sx={{ border: 'none', py: 4 }}>
+                        <EmptyState message="実験がありません" subMessage="実験を実行するとここに表示されます" />
                       </TableCell>
                     </TableRow>
                   ) : (
