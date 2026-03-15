@@ -196,6 +196,7 @@
     <hr />
 
     <h2>2. UEP v5.0 起動方法</h2>
+    <p class="note">※ .bat は使用していない（起動しない等のため）。手動で起動する。</p>
 
     <h3>前提条件</h3>
     <ul>
@@ -205,39 +206,22 @@
     </ul>
 
     <h3>2.1 バックエンドの起動</h3>
-    <p><strong>コマンドプロンプト:</strong></p>
-    <pre>
-cd C:\uep-v5-ultimate-enterprise-platform
-.\start-backend.bat</pre
-    >
-
-    <p><strong>PowerShell:</strong></p>
+    <p><strong>手動起動（PowerShell または コマンドプロンプト）:</strong></p>
     <pre>
 cd C:\uep-v5-ultimate-enterprise-platform\backend
+venv\Scripts\activate
 python main.py</pre
     >
 
     <ul>
-      <li><strong>URL</strong>: http://localhost:8080</li>
+      <li><strong>URL</strong>: http://localhost:8080（または http://localhost:8000）</li>
       <li><strong>API Docs</strong>: 本番モード時は無効（常に本番モードで起動）</li>
       <li><strong>停止</strong>: Ctrl+C</li>
     </ul>
-    <p class="note">※ start-backend.bat は常に本番モード（ENVIRONMENT=production）で起動します。デモユーザー（kaho0525 / developer / viewer）でログイン可能です。</p>
+    <p class="note">※ 本番モード（ENVIRONMENT=production）で起動。デモユーザー（kaho0525 / developer / viewer）でログイン可能です。</p>
 
     <h3>2.2 フロントエンドの起動</h3>
-    <p><strong>PowerShell（推奨）:</strong></p>
-    <pre>
-cd C:\uep-v5-ultimate-enterprise-platform
-.\start-frontend.ps1</pre
-    >
-
-    <p><strong>コマンドプロンプト:</strong></p>
-    <pre>
-cd C:\uep-v5-ultimate-enterprise-platform
-.\start-frontend.bat</pre
-    >
-
-    <p><strong>直接 npm で起動:</strong></p>
+    <p><strong>手動起動（PowerShell または コマンドプロンプト）:</strong></p>
     <pre>
 cd C:\uep-v5-ultimate-enterprise-platform\frontend
 npm install   # 初回のみ
@@ -245,7 +229,7 @@ npm start</pre
     >
 
     <ul>
-      <li><strong>URL</strong>: http://localhost:3000</li>
+      <li><strong>URL</strong>: http://localhost:3000 または http://localhost:3018</li>
       <li><strong>停止</strong>: Ctrl+C</li>
     </ul>
 
@@ -583,48 +567,12 @@ npm start</pre>
 
     <hr />
 
-    <h2>7.9 個人会計（スタンドアロン版）起動方法</h2>
-    <p>UEP v5.0 から独立した、個人用会計システム（freee・マネーフォワード風）。経費・売上・領収書OCR・請求書PDF出力・タスク管理・契約書管理など。</p>
-
-    <h3>7.9.1 本番モードの起動</h3>
-    <pre>
-cd C:\uep-v5-ultimate-enterprise-platform\standalone-personal-accounting
-.\start-standalone.bat</pre
-    >
-
+    <h2>7.9 個人会計（UEP版）</h2>
+    <p>個人会計は UEP v5.0 に統合されています。UEP のバックエンド・フロントエンドを起動後、ダッシュボードの「企業・個人会計」メニューからアクセスしてください。</p>
     <ul>
-      <li><strong>バックエンド</strong>: http://localhost:5000</li>
-      <li><strong>フロントエンド</strong>: http://localhost:3001</li>
-      <li><strong>API Docs</strong>: http://localhost:5000/docs</li>
-      <li><strong>認証</strong>: 不要</li>
-      <li><strong>停止</strong>: Ctrl+C</li>
+      <li><strong>UEP フロントエンド</strong>: http://localhost:3000</li>
+      <li><strong>個人会計画面</strong>: ダッシュボード → 企業・個人会計</li>
     </ul>
-
-    <h3>7.9.2 練習モードの起動</h3>
-    <p>架空データで操作を試す場合。本番データと完全に分離。</p>
-    <pre>
-cd C:\uep-v5-ultimate-enterprise-platform\standalone-personal-accounting
-.\start-standalone-practice.bat</pre
-    >
-
-    <ul>
-      <li><strong>バックエンド</strong>: http://localhost:5001</li>
-      <li><strong>フロントエンド</strong>: http://localhost:3010</li>
-    </ul>
-
-    <h3>7.9.3 手動起動</h3>
-    <pre>
-REM ターミナル1: バックエンド
-cd C:\uep-v5-ultimate-enterprise-platform\standalone-personal-accounting\backend
-pip install -r requirements.txt
-python main.py
-
-REM ターミナル2: フロントエンド
-cd C:\uep-v5-ultimate-enterprise-platform\standalone-personal-accounting\frontend
-python -m http.server 3001</pre
-    >
-
-    <p class="note">領収書OCR（日本語）利用時は Tesseract-OCR のインストールと jpn データの追加が必要です。詳細は <code>standalone-personal-accounting/README.md</code> を参照してください。</p>
 
     <hr />
 
@@ -860,7 +808,7 @@ cd C:\uep-v5-ultimate-enterprise-platform\personal-pc-cleanup
       </tr>
       <tr>
         <td>UEP</td>
-        <td>cd C:\uep-v5-ultimate-enterprise-platform → .\start-backend.bat / .\start-frontend.ps1</td>
+        <td>手動: cd backend → venv\Scripts\activate → python main.py / cd frontend → npm start（.batは使用しない）</td>
         <td>8080 / 3000</td>
       </tr>
       <tr>
@@ -892,11 +840,6 @@ cd C:\uep-v5-ultimate-enterprise-platform\personal-pc-cleanup
         <td>企業横断オペレーション基盤</td>
         <td>cd ...\enterprise_operations_hub → .\start-backend.bat / cd frontend → npm start</td>
         <td>9020 / 3020</td>
-      </tr>
-      <tr>
-        <td>個人会計（スタンドアロン版）</td>
-        <td>cd ...\standalone-personal-accounting → .\start-standalone.bat</td>
-        <td>5000 / 3001</td>
       </tr>
       <tr>
         <td>個人用 PC 容量確保</td>

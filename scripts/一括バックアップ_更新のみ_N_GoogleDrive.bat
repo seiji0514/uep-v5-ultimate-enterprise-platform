@@ -49,7 +49,6 @@ if exist "%EXT_N%\" (
     if not exist "%DEST%" mkdir "%DEST%"
     echo コピー先: %EXT_N%\uep-v5-backup\%SUBPATH%
     robocopy "%ROOT%" "%DEST%uep-v5-ultimate-enterprise-platform" /E /XD node_modules venv __pycache__ .git .vscode .idea /XF *.sqlite *.db /NFL /NDL /NJH /NJS /nc /ns /np
-    if exist "%ROOT%\standalone-personal-accounting" robocopy "%ROOT%\standalone-personal-accounting" "%DEST%standalone-personal-accounting" /E /XD venv __pycache__ .git /XF *.sqlite *.db /NFL /NDL /NJH /NJS /nc /ns /np
     if exist "%ROOT%\docs" robocopy "%ROOT%\docs" "%DEST%docs" /E /NFL /NDL /NJH /NJS /nc /ns /np
     call "%~dp0backup_create_manifest.bat" "%EXT_N%\uep-v5-backup" "%USE_DATE%"
     echo [完了] 外付けドライブ N
@@ -67,7 +66,6 @@ if exist "%GDRIVE%\" (
     if not exist "%DEST%" mkdir "%DEST%"
     echo コピー先: %GDRIVE%\uep-v5-backup\%SUBPATH%
     robocopy "%ROOT%" "%DEST%uep-v5-ultimate-enterprise-platform" /E /XD node_modules venv __pycache__ .git .vscode .idea /XF *.sqlite *.db /NFL /NDL /NJH /NJS /nc /ns /np
-    if exist "%ROOT%\standalone-personal-accounting" robocopy "%ROOT%\standalone-personal-accounting" "%DEST%standalone-personal-accounting" /E /XD venv __pycache__ .git /XF *.sqlite *.db /NFL /NDL /NJH /NJS /nc /ns /np
     if exist "%ROOT%\docs" robocopy "%ROOT%\docs" "%DEST%docs" /E /NFL /NDL /NJH /NJS /nc /ns /np
     call "%~dp0backup_create_manifest.bat" "%GDRIVE%\uep-v5-backup" "%USE_DATE%"
     echo [完了] Google Drive

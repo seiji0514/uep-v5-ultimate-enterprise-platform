@@ -83,4 +83,18 @@ export const personalAccountingApi = {
       '/api/v1/personal-accounting/summary/monthly',
       { params: { year, month } }
     ).then((r) => r.data),
+
+  /** 確定申告用データをCSVでダウンロード（e-Taxインポート可能な形式） */
+  exportTaxReport: async (year?: number) => {
+    const res = await apiClient.get<Blob>('/api/v1/personal-accounting/export/tax-report', {
+      params: { year },
+      responseType: 'blob',
+    });
+    const blob = res.data;
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `kakuteishinkoku_${year || 'all'}.csv`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  },
 };

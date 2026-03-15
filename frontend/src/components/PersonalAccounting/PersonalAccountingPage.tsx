@@ -26,8 +26,13 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Stack,
 } from '@mui/material';
-import { Add, Delete, Receipt, AttachMoney } from '@mui/icons-material';
+import { Add, Delete, Receipt, AttachMoney, FileDownload, OpenInNew, Help } from '@mui/icons-material';
 import {
   personalAccountingApi,
   Expense,
@@ -65,6 +70,12 @@ export const PersonalAccountingPage: React.FC = () => {
   const [incomeOpen, setIncomeOpen] = useState(false);
   const [expenseForm, setExpenseForm] = useState({ date: new Date().toISOString().slice(0, 10), category_id: 'communication', amount: 0, description: '' });
   const [incomeForm, setIncomeForm] = useState({ date: new Date().toISOString().slice(0, 10), amount: 0, description: '', client_name: '' });
+  const [accountMode, setAccountMode] = useState<'personal' | 'corporate'>(() => {
+    try {
+      return (localStorage.getItem('personal_accounting_mode') as 'personal' | 'corporate') || 'personal';
+    } catch { return 'personal'; }
+  });
+  const [guideOpen, setGuideOpen] = useState(false);
 
   const loadData = async () => {
     try {
@@ -151,14 +162,57 @@ export const PersonalAccountingPage: React.FC = () => {
     );
   }
 
+  const handleExportTax = async () => {
+    try {
+      await personalAccountingApi.exportTaxReport(new Date().getFullYear());
+    } catch (err: any) {
+      setError(err?.message || 'エクスポートに失敗しました');
+    }
+  };
+
   return (
     <Box>
-      <Typography variant="h5" sx={{ mb: 2 }} component="h1">
-        個人会計
-      </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-        freee・マネーフォワード風の個人用経費・売上管理。経費判定付き。
-      </Typography>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+        <Box>
+          <Typography variant="h5" component="h1">
+            企業・個人会計
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            freee・マネーフォワード風。経費・売上管理、経費判定付き。
+          </Typography>
+        </Box>
+        <Stack direction="row" spacing={1} alignItems="center">
+          <FormControl size="small" sx={{ minWidth: 120 }}>
+            <InputLabel>モード</InputLabel>
+            <Select
+              value={accountMode}
+              label="モード"
+              onChange={(e) => {
+                const v = e.target.value as 'personal' | 'corporate';
+                setAccountMode(v);
+                localStorage.setItem('personal_accounting_mode', v);
+              }}
+            >
+              <MenuItem value="personal">個人</MenuItem>
+              <MenuItem value="corporate">法人</MenuItem>
+            </Select>
+          </FormControl>
+          <Button size="small" startIcon={<FileDownload />} variant="outlined" onClick={handleExportTax}>
+            確定申告データ出力
+          </Button>
+          <Button size="small" startIcon={<OpenInNew />} variant="outlined" href="https://www.e-tax.nta.go.jp/" target="_blank" rel="noopener noreferrer">
+            e-Taxで確定申告
+          </Button>
+          <IconButton size="small" onClick={() => setGuideOpen(true)} aria-label="利用ガイド">
+            <Help />
+          </IconButton>
+        </Stack>
+      </Box>
+      {accountMode === 'corporate' && (
+        <Alert severity="info" sx={{ mb: 2 }}>
+          法人向け機能（勘定科目・仕訳・決算）は準備中です。現在は個人モードと同様の経費・売上管理が利用できます。
+        </Alert>
+      )}
 
       {error && (
         <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError('')}>
@@ -419,6 +473,30 @@ export const PersonalAccountingPage: React.FC = () => {
           <Button onClick={() => setIncomeOpen(false)}>キャンセル</Button>
           <Button variant="contained" onClick={handleAddIncome} disabled={incomeForm.amount <= 0}>
             登録
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={guideOpen} onClose={() => setGuideOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>マイナンバーカード・e-Tax 利用ガイド</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" paragraph>
+            <strong>1. 確定申告データ出力</strong><br />
+            本画面の「確定申告データ出力」で、経費・収入データをCSV形式でエクスポートできます。e-Taxや申告ソフトへのインポートに活用してください。
+          </Typography>
+          <Typography variant="body2" paragraph>
+            <strong>2. e-Taxで確定申告</strong><br />
+            「e-Taxで確定申告」ボタンから国税庁のe-Taxポータルを開きます。マイナンバーカードとICカードリーダーを使用して、自宅から確定申告が可能です。
+          </Typography>
+          <Typography variant="body2" paragraph>
+            <strong>3. ICカードリーダー（マイナンバーカード対応）</strong><br />
+            公的個人認証サービスを利用するには、利用者クライアントソフトのインストールが必要です。国税庁のe-Taxポータルから案内を確認してください。
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setGuideOpen(false)}>閉じる</Button>
+          <Button href="https://www.e-tax.nta.go.jp/" target="_blank" rel="noopener noreferrer">
+            e-Taxポータルを開く
           </Button>
         </DialogActions>
       </Dialog>

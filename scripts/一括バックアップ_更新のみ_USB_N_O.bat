@@ -47,7 +47,6 @@ if exist "%USB1%\" (
     if not exist "%DEST%" mkdir "%DEST%"
     echo コピー先: %USB1%\uep-v5-backup\%SUBPATH%
     robocopy "%ROOT%" "%DEST%uep-v5-ultimate-enterprise-platform" /E /XD node_modules venv __pycache__ .git .vscode .idea /XF *.sqlite *.db /NFL /NDL /NJH /NJS /nc /ns /np
-    if exist "%ROOT%\standalone-personal-accounting" robocopy "%ROOT%\standalone-personal-accounting" "%DEST%standalone-personal-accounting" /E /XD venv __pycache__ .git /XF *.sqlite *.db /NFL /NDL /NJH /NJS /nc /ns /np
     if exist "%ROOT%\docs" robocopy "%ROOT%\docs" "%DEST%docs" /E /NFL /NDL /NJH /NJS /nc /ns /np
     call "%~dp0backup_create_manifest.bat" "%USB1%\uep-v5-backup" "%USE_DATE%"
     echo [完了] USB N
@@ -65,7 +64,6 @@ if exist "%USB2%\" (
     if not exist "%DEST%" mkdir "%DEST%"
     echo コピー先: %USB2%\uep-v5-backup\%SUBPATH%
     robocopy "%ROOT%" "%DEST%uep-v5-ultimate-enterprise-platform" /E /XD node_modules venv __pycache__ .git .vscode .idea /XF *.sqlite *.db /NFL /NDL /NJH /NJS /nc /ns /np
-    if exist "%ROOT%\standalone-personal-accounting" robocopy "%ROOT%\standalone-personal-accounting" "%DEST%standalone-personal-accounting" /E /XD venv __pycache__ .git /XF *.sqlite *.db /NFL /NDL /NJH /NJS /nc /ns /np
     if exist "%ROOT%\docs" robocopy "%ROOT%\docs" "%DEST%docs" /E /NFL /NDL /NJH /NJS /nc /ns /np
     call "%~dp0backup_create_manifest.bat" "%USB2%\uep-v5-backup" "%USE_DATE%"
     echo [完了] USB O

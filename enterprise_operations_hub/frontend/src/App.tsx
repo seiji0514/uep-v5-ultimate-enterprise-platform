@@ -27,6 +27,10 @@ import {
   InputLabel,
   Select,
   Badge,
+  CircularProgress,
+  ThemeProvider,
+  createTheme,
+  CssBaseline,
 } from '@mui/material';
 import {
   Dashboard,
@@ -55,6 +59,51 @@ function createApi() {
   return api;
 }
 const api = createApi();
+
+// UEP と統一したダークテーマ
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: { main: '#F46800' },
+    secondary: { main: '#5794F2' },
+    background: {
+      default: '#0b0c0e',
+      paper: '#181b1f',
+    },
+    text: {
+      primary: '#d8d9da',
+      secondary: '#9e9e9e',
+    },
+  },
+  components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundImage: 'none',
+          backgroundColor: '#1e1e1e',
+          border: '1px solid #2d2d2d',
+        },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          backgroundImage: 'none',
+          backgroundColor: '#1e1e1e',
+          border: '1px solid #2d2d2d',
+        },
+      },
+    },
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#0b0c0e',
+          borderBottom: '1px solid #2d2d2d',
+        },
+      },
+    },
+  },
+});
 
 interface DashboardData {
   observations: { total: number; by_domain: Record<string, number> };
@@ -196,7 +245,26 @@ function MainApp() {
       </AppBar>
 
       <Container maxWidth="lg" sx={{ py: 3 }}>
-        {error && <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError('')}>{error}</Alert>}
+        {error && (
+          <Alert
+            severity="error"
+            sx={{ mb: 2 }}
+            onClose={() => setError('')}
+            action={
+              <Button color="inherit" size="small" onClick={() => loadAll()}>
+                再試行
+              </Button>
+            }
+          >
+            {error}
+          </Alert>
+        )}
+        {loading && (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2, p: 2, bgcolor: 'action.hover', borderRadius: 1 }}>
+            <CircularProgress size={24} />
+            <Typography variant="body2" color="text.secondary">読み込み中...</Typography>
+          </Box>
+        )}
 
         <Paper variant="outlined" sx={{ p: 2, mb: 3, bgcolor: 'action.hover' }}>
           <Typography variant="subtitle2" color="text.secondary" gutterBottom>要対応・タスク・リスク サマリ</Typography>
@@ -257,14 +325,21 @@ function MainApp() {
           </Stack>
         </Paper>
 
-        <Tabs value={tabValue} onChange={(_, v) => setTabValue(v)} sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
-          <Tab icon={<Visibility />} label="観測" iconPosition="start" />
-          <Tab icon={<Assignment />} label="タスク" iconPosition="start" />
-          <Tab icon={<Warning />} label="リスク" iconPosition="start" />
+        <Tabs
+          value={tabValue}
+          onChange={(_, v) => setTabValue(v)}
+          sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}
+          aria-label="観測・タスク・リスク・アラートのタブ"
+        >
+          <Tab icon={<Visibility />} label="観測" iconPosition="start" id="eoh-tab-0" aria-controls="eoh-panel-0" />
+          <Tab icon={<Assignment />} label="タスク" iconPosition="start" id="eoh-tab-1" aria-controls="eoh-panel-1" />
+          <Tab icon={<Warning />} label="リスク" iconPosition="start" id="eoh-tab-2" aria-controls="eoh-panel-2" />
           <Tab
             icon={unreadAlerts.length > 0 ? <Badge badgeContent={unreadAlerts.length} color="error"><Notifications /></Badge> : <Notifications />}
             label={`アラート${unreadAlerts.length ? ` (${unreadAlerts.length})` : ''}`}
             iconPosition="start"
+            id="eoh-tab-3"
+            aria-controls="eoh-panel-3"
           />
         </Tabs>
 
@@ -303,6 +378,13 @@ function MainApp() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
+                  {observations.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={5} align="center" sx={{ py: 4, color: 'text.secondary' }}>
+                        観測データがありません。業種テンプレートを変更するか、外部インポートでデータを追加できます。
+                      </TableCell>
+                    </TableRow>
+                  )}
                   {observations.map((o) => (
                     <TableRow key={o.id}>
                       <TableCell><Chip size="small" label={DOMAIN_LABELS[o.domain] || o.domain} /></TableCell>
@@ -356,6 +438,13 @@ function MainApp() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
+                  {tasks.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={5} align="center" sx={{ py: 4, color: 'text.secondary' }}>
+                        タスクがありません。上のフォームからタスクを追加できます。
+                      </TableCell>
+                    </TableRow>
+                  )}
                   {tasks.map((t) => (
                     <TableRow key={t.id}>
                       <TableCell><Chip size="small" label={DOMAIN_LABELS[t.domain] || t.domain} /></TableCell>
@@ -399,6 +488,13 @@ function MainApp() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
+                  {risks.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={5} align="center" sx={{ py: 4, color: 'text.secondary' }}>
+                        リスクデータがありません。
+                      </TableCell>
+                    </TableRow>
+                  )}
                   {risks.map((r) => (
                     <TableRow key={r.id}>
                       <TableCell><Chip size="small" label={DOMAIN_LABELS[r.domain] || r.domain} /></TableCell>
@@ -428,6 +524,13 @@ function MainApp() {
                 </TableRow>
               </TableHead>
               <TableBody>
+                {alerts.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={6} align="center" sx={{ py: 4, color: 'text.secondary' }}>
+                      アラートはありません。
+                    </TableCell>
+                  </TableRow>
+                )}
                 {alerts.map((a) => (
                   <TableRow key={a.id} sx={{ bgcolor: a.read ? undefined : 'action.hover' }}>
                     <TableCell><Chip size="small" label={DOMAIN_LABELS[a.domain] || a.domain} /></TableCell>
@@ -451,8 +554,11 @@ function MainApp() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <MainApp />
-    </AuthProvider>
+    <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
+      <AuthProvider>
+        <MainApp />
+      </AuthProvider>
+    </ThemeProvider>
   );
 }

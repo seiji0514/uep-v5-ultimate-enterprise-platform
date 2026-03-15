@@ -2,13 +2,15 @@
  * ダッシュボードページ
  * 統合ダッシュボード・画面構成（24カラムグリッド、パネル、左寄せタイトル）
  */
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
   Grid,
   Paper,
   IconButton,
+  Chip,
+  CircularProgress,
 } from '@mui/material';
 import {
   Science,
@@ -30,6 +32,7 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { apiClient } from '../../api/client';
 
 const getIndustryUnifiedUrl = () => {
   const base = process.env.REACT_APP_INDUSTRY_UNIFIED_URL || 'http://localhost:3010';
@@ -108,8 +111,29 @@ const DashboardPanel: React.FC<PanelProps> = ({ title, description, icon, path, 
   );
 };
 
+interface ActionItems {
+  manufacturing?: number;
+  medical?: number;
+  fintech?: number;
+  inclusive_work?: number;
+  contract?: number;
+  total?: number;
+}
+
 export const DashboardPage: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const [actionItems, setActionItems] = useState<ActionItems | null>(null);
+  const [actionItemsLoading, setActionItemsLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    apiClient.get<ActionItems>('/api/v1/cross-module/action-items')
+      .then((r) => { if (!cancelled) setActionItems(r.data); })
+      .catch(() => { if (!cancelled) setActionItems(null); })
+      .finally(() => { if (!cancelled) setActionItemsLoading(false); });
+    return () => { cancelled = true; };
+  }, []);
 
   const panels: PanelProps[] = [
     {
@@ -246,6 +270,32 @@ export const DashboardPage: React.FC = () => {
         <Typography variant="body2" color="text.secondary">
           {user?.full_name || user?.username} · 4分割統合プラットフォーム
         </Typography>
+      </Box>
+
+      {/* 要対応横断（5モジュール） */}
+      <Box component="section" sx={{ mb: 3 }}>
+        <Typography variant="overline" color="text.secondary" sx={{ display: 'block', mb: 1.5 }}>
+          要対応横断（5モジュール）
+        </Typography>
+        <Paper sx={{ p: 2 }} elevation={0}>
+          {actionItemsLoading ? (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <CircularProgress size={24} />
+              <Typography variant="body2" color="text.secondary">読み込み中...</Typography>
+            </Box>
+          ) : actionItems && (actionItems.total ?? 0) > 0 ? (
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
+              <Typography variant="body2" color="text.secondary" sx={{ mr: 1 }}>合計:</Typography>
+              <Chip label={`${actionItems.total} 件`} color="error" size="small" sx={{ fontWeight: 600 }} />
+              {(actionItems.manufacturing ?? 0) > 0 && <Chip label={`製造 ${actionItems.manufacturing}`} size="small" color="warning" onClick={() => navigate('/manufacturing')} sx={{ cursor: 'pointer' }} />}
+              {(actionItems.medical ?? 0) > 0 && <Chip label={`医療 ${actionItems.medical}`} size="small" color="warning" onClick={() => navigate('/medical')} sx={{ cursor: 'pointer' }} />}
+              {(actionItems.fintech ?? 0) > 0 && <Chip label={`金融 ${actionItems.fintech}`} size="small" color="warning" onClick={() => navigate('/fintech')} sx={{ cursor: 'pointer' }} />}
+              {(actionItems.contract ?? 0) > 0 && <Chip label={`契約 ${actionItems.contract}`} size="small" color="warning" onClick={() => navigate('/contract-workflow')} sx={{ cursor: 'pointer' }} />}
+            </Box>
+          ) : (
+            <Typography variant="body2" color="text.secondary">要対応はありません</Typography>
+          )}
+        </Paper>
       </Box>
 
       {/* 大きなKPI（Statsパネル） */}

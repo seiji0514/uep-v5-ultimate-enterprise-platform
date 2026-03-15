@@ -256,6 +256,21 @@ async def get_dashboard(db: Session = Depends(get_db), user: Dict = Depends(get_
     }
 
 
+@app.get("/api/v1/action-items")
+async def get_action_items(db: Session = Depends(get_db), user: Dict = Depends(get_current_user)):
+    """データ連携用: 要対応・タスク・リスクの集計（UEP横断表示用）"""
+    obs = db.query(Observation).filter(Observation.status.in_(["要対応", "対応中"])).count()
+    tasks = db.query(Task).filter(Task.status != "完了").count()
+    risks = db.query(Risk).filter(Risk.status != "解消").count()
+    return {
+        "eoh_observations": obs,
+        "eoh_tasks": tasks,
+        "eoh_risks": risks,
+        "eoh_total": obs + tasks + risks,
+        "source": "enterprise_operations_hub",
+    }
+
+
 @app.get("/api/v1/observations")
 async def list_observations(
     domain: Optional[str] = None, status: Optional[str] = None, q: Optional[str] = None,

@@ -150,3 +150,33 @@ async def get_monthly(
 ):
     """月次サマリ"""
     return get_monthly_summary(year, month)
+
+
+@router.get("/export/tax-report")
+async def export_tax_report(
+    year: Optional[int] = Query(None),
+    current_user: Dict[str, Any] = Depends(get_current_active_user),
+):
+    """確定申告用データ出力（CSV形式・e-Taxインポート可能な形式）"""
+    from fastapi.responses import StreamingResponse
+    import csv
+    import io
+
+    expenses = get_expenses(year=year)
+    income = get_income(year=year)
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["種別", "日付", "金額", "カテゴリ/取引先", "内容"])
+    for e in expenses:
+        writer.writerow(["経費", e.get("date", ""), e.get("amount", 0), e.get("category_name", ""), e.get("description", "") or ""])
+    for i in income:
+        writer.writerow(["収入", i.get("date", ""), i.get("amount", 0), i.get("client_name", "") or "", i.get("description", "") or ""])
+
+    output.seek(0)
+    filename = f"kakuteishinkoku_{year or 'all'}.csv"
+    return StreamingResponse(
+        iter([output.getvalue().encode("utf-8-sig")]),
+        media_type="text/csv; charset=utf-8",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )

@@ -27,14 +27,13 @@ echo   - 医療・ヘルスケアプラットフォーム
 echo   - 金融・FinTechプラットフォーム
 echo   - 産業統合プラットフォーム
 echo   - 企業横断オペレーション基盤
-echo   - 個人会計（スタンドアロン版^)
+echo   - 個人会計（UEP版・backend/personal_accounting^)
 echo   - 個人用 PC 容量確保
 echo.
 echo ------------------------------------------
 echo フォルダ構成
 echo ------------------------------------------
 echo   uep-v5-ultimate-enterprise-platform\  ... 上記すべてを含む
-echo   standalone-personal-accounting\       ... 個人会計（別途トップレベルにも^)
 echo   docs\                                 ... 職務経歴書・ポートフォリオ等
 echo.
 echo ------------------------------------------
