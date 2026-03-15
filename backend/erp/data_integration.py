@@ -2,7 +2,8 @@
 ERP - データ連携基盤
 基幹システムと周辺システムの連携・データ統合
 """
-from datetime import datetime
+from datetime import datetime, timezone
+
 from typing import Any, Dict, List, Optional
 
 
@@ -33,7 +34,7 @@ class DataIntegrationManager:
             "schedule": schedule,
             "mapping": mapping or {},
             "enabled": True,
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
         }
         self._rules[rule_id] = rule
         return rule
@@ -50,7 +51,7 @@ class DataIntegrationManager:
             return {"success": False, "error": "Rule not found"}
         log = {
             "rule_id": rule_id,
-            "executed_at": datetime.utcnow().isoformat(),
+            "executed_at": datetime.now(timezone.utc).isoformat(),
             "status": "success",
             "records_synced": 0,
         }

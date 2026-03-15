@@ -13,6 +13,12 @@ const resources = {
       logout: 'ログアウト',
       dashboard: 'ダッシュボード',
       settings: '設定',
+      search: 'ページを検索...',
+      notifications: '通知',
+      themeDark: 'ダークモード',
+      themeLight: 'ライトモード',
+      offline: 'オフラインです',
+      saveSuccess: '設定を保存しました',
     },
   },
   en: {
@@ -22,13 +28,30 @@ const resources = {
       logout: 'Logout',
       dashboard: 'Dashboard',
       settings: 'Settings',
+      search: 'Search pages...',
+      notifications: 'Notifications',
+      themeDark: 'Dark mode',
+      themeLight: 'Light mode',
+      offline: 'You are offline',
+      saveSuccess: 'Settings saved',
     },
   },
 };
 
+const savedLang = (() => {
+  try {
+    const raw = localStorage.getItem('uep_user_settings');
+    if (!raw) return 'ja';
+    const parsed = JSON.parse(raw);
+    return parsed.language === 'en' ? 'en' : 'ja';
+  } catch {
+    return 'ja';
+  }
+})();
+
 i18n.use(initReactI18next).init({
   resources,
-  lng: 'ja',
+  lng: savedLang,
   fallbackLng: 'en',
   interpolation: { escapeValue: false },
 });

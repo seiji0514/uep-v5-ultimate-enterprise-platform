@@ -3,7 +3,7 @@
 """
 import hashlib
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, Optional
 
 
@@ -28,7 +28,7 @@ class CacheManager:
             return None
 
         # TTLチェック
-        if datetime.utcnow() > cached_item["expires_at"]:
+        if datetime.now(timezone.utc) > cached_item["expires_at"]:
             del self._cache[key]
             return None
 
@@ -37,12 +37,12 @@ class CacheManager:
     def set(self, key: str, value: Any, ttl: Optional[int] = None):
         """キャッシュに設定"""
         ttl = ttl or self._default_ttl
-        expires_at = datetime.utcnow() + timedelta(seconds=ttl)
+        expires_at = datetime.now(timezone.utc) + timedelta(seconds=ttl)
 
         self._cache[key] = {
             "value": value,
             "expires_at": expires_at,
-            "created_at": datetime.utcnow(),
+            "created_at": datetime.now(timezone.utc),
         }
 
     def delete(self, key: str) -> bool:
@@ -65,7 +65,7 @@ class CacheManager:
         """キャッシュ統計を取得"""
         total_items = len(self._cache)
         expired_items = sum(
-            1 for item in self._cache.values() if datetime.utcnow() > item["expires_at"]
+            1 for item in self._cache.values() if datetime.now(timezone.utc) > item["expires_at"]
         )
 
         return {

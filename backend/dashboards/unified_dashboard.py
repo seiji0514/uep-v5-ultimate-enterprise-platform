@@ -1,7 +1,8 @@
 """
 統合管理ダッシュボードモジュール
 """
-from datetime import datetime
+from datetime import datetime, timezone
+
 from typing import Any, Dict, List
 
 from pydantic import BaseModel
@@ -45,13 +46,13 @@ class UnifiedDashboard:
             },
             "recent_activities": [
                 {
-                    "timestamp": datetime.utcnow().isoformat(),
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
                     "service": "MLOps",
                     "action": "Model deployed",
                     "user": "admin",
                 },
                 {
-                    "timestamp": datetime.utcnow().isoformat(),
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
                     "service": "生成AI",
                     "action": "RAG query processed",
                     "user": "developer",

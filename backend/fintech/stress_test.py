@@ -4,7 +4,8 @@
 補強スキル: FinTech、規制対応
 """
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
+
 from typing import Any, Dict, List
 
 
@@ -48,7 +49,7 @@ def run_stress_test(
         "portfolio_value": portfolio_value,
         "scenarios": results,
         "max_loss": min(r["impact"] for r in results) if results else 0,
-        "generated_at": datetime.utcnow().isoformat(),
+        "generated_at": datetime.now(timezone.utc).isoformat(),
     }
 
 

@@ -3,17 +3,22 @@
  * 次世代エンタープライズ統合プラットフォーム v5.0
  * React.lazy コード分割・エラーバウンダリ・アクセシビリティ対応
  */
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider, createTheme, CssBaseline, Box, CircularProgress } from '@mui/material';
 import { queryClient } from './lib/queryClient';
 import { AuthProvider } from './contexts/AuthContext';
 import { AutoPlayProvider } from './contexts/AutoPlayContext';
+import { UserSettingsProvider, useUserSettings } from './contexts/UserSettingsContext';
+import { NotificationProvider } from './contexts/NotificationContext';
+import { ToastProvider } from './contexts/ToastContext';
+import { AuditLogProvider } from './contexts/AuditLogContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { MainLayout } from './components/Layout/MainLayout';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { SessionTimeoutWarning } from './components/SessionTimeoutWarning';
+import { LanguageSync } from './components/LanguageSync';
 import { useAuth } from './contexts/AuthContext';
 
 const LoginPage = lazy(() => import('./components/Auth/LoginPage').then((m) => ({ default: m.LoginPage })));
@@ -61,81 +66,95 @@ const PageFallback = () => (
 );
 
 // エンタープライズ向けテーマ（近代的・データ重視・アクセシビリティ対応）
-const theme = createTheme({
-  palette: {
-    mode: 'dark',
-    primary: {
-      main: '#F46800', // アクセントオレンジ
-    },
-    secondary: {
-      main: '#5794F2', // アクセントブルー
-    },
-    background: {
-      default: '#0b0c0e',
-      paper: '#181b1f',
-    },
-    text: {
-      primary: '#d8d9da',
-      secondary: '#9e9e9e',
-    },
-  },
-  components: {
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          backgroundImage: 'none',
-          backgroundColor: '#1e1e1e',
-          border: '1px solid #2d2d2d',
-        },
+function createAppTheme(mode: 'dark' | 'light') {
+  const isDark = mode === 'dark';
+  return createTheme({
+    palette: {
+      mode,
+      primary: {
+        main: '#F46800', // アクセントオレンジ
+      },
+      secondary: {
+        main: '#5794F2', // アクセントブルー
+      },
+      background: {
+        default: isDark ? '#0b0c0e' : '#f5f5f5',
+        paper: isDark ? '#181b1f' : '#ffffff',
+      },
+      text: {
+        primary: isDark ? '#d8d9da' : '#1a1a1a',
+        secondary: isDark ? '#9e9e9e' : '#666666',
       },
     },
-    MuiCard: {
-      styleOverrides: {
-        root: {
-          backgroundImage: 'none',
-          backgroundColor: '#1e1e1e',
-          border: '1px solid #2d2d2d',
+    components: {
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            backgroundImage: 'none',
+            backgroundColor: isDark ? '#1e1e1e' : '#ffffff',
+            border: isDark ? '1px solid #2d2d2d' : '1px solid #e0e0e0',
+          },
         },
       },
-    },
-    MuiAppBar: {
-      styleOverrides: {
-        root: {
-          backgroundColor: '#0b0c0e',
-          borderBottom: '1px solid #2d2d2d',
+      MuiCard: {
+        styleOverrides: {
+          root: {
+            backgroundImage: 'none',
+            backgroundColor: isDark ? '#1e1e1e' : '#ffffff',
+            border: isDark ? '1px solid #2d2d2d' : '1px solid #e0e0e0',
+          },
         },
       },
-    },
-    MuiDrawer: {
-      styleOverrides: {
-        paper: {
-          backgroundColor: '#0b0c0e',
-          borderRight: '1px solid #2d2d2d',
+      MuiAppBar: {
+        styleOverrides: {
+          root: {
+            backgroundColor: isDark ? '#0b0c0e' : '#1976d2',
+            borderBottom: isDark ? '1px solid #2d2d2d' : '1px solid rgba(0,0,0,0.12)',
+          },
         },
       },
-    },
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          '&:focus-visible': {
-            outline: '2px solid',
-            outlineColor: 'primary.main',
+      MuiDrawer: {
+        styleOverrides: {
+          paper: {
+            backgroundColor: isDark ? '#0b0c0e' : '#ffffff',
+            borderRight: isDark ? '1px solid #2d2d2d' : '1px solid #e0e0e0',
+          },
+        },
+      },
+      MuiButton: {
+        styleOverrides: {
+          root: {
+            '&:focus-visible': {
+              outline: '2px solid',
+              outlineColor: 'primary.main',
+            },
+          },
+        },
+      },
+      MuiIconButton: {
+        styleOverrides: {
+          root: {
+            '&:focus-visible': {
+              outline: '2px solid',
+              outlineColor: 'primary.main',
+            },
           },
         },
       },
     },
-    MuiIconButton: {
-      styleOverrides: {
-        root: {
-          '&:focus-visible': {
-            outline: '2px solid',
-            outlineColor: 'primary.main',
-          },
-        },
-      },
-    },
-  },
-});
+  });
+}
+
+const ThemeWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { themeMode } = useUserSettings();
+  const theme = useMemo(() => createAppTheme(themeMode), [themeMode]);
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      {children}
+    </ThemeProvider>
+  );
+};
 
 const AppRoutes: React.FC = () => {
   const { logout } = useAuth();
@@ -199,18 +218,27 @@ const AppRoutes: React.FC = () => {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <ErrorBoundary>
-          <AuthProvider>
-            <Router>
-              <Suspense fallback={<PageFallback />}>
-                <AppRoutes />
-              </Suspense>
-            </Router>
-          </AuthProvider>
-        </ErrorBoundary>
-      </ThemeProvider>
+      <UserSettingsProvider>
+        <LanguageSync>
+          <ThemeWrapper>
+            <NotificationProvider>
+              <ToastProvider>
+                <AuditLogProvider>
+                  <ErrorBoundary>
+                    <AuthProvider>
+                      <Router>
+                        <Suspense fallback={<PageFallback />}>
+                          <AppRoutes />
+                        </Suspense>
+                      </Router>
+                    </AuthProvider>
+                  </ErrorBoundary>
+                </AuditLogProvider>
+              </ToastProvider>
+            </NotificationProvider>
+          </ThemeWrapper>
+        </LanguageSync>
+      </UserSettingsProvider>
     </QueryClientProvider>
   );
 }

@@ -23,6 +23,7 @@ import {
 } from '@mui/material';
 import { ShoppingCart, Inventory, Sync } from '@mui/icons-material';
 import { erpApi, ERPSummary } from '../../api/erp';
+import { EmptyState } from '../common/EmptyState';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -202,8 +203,8 @@ export const ERPPage: React.FC = () => {
             <TableBody>
               {salesOrders.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} align="center">
-                    受注データがありません
+                  <TableCell colSpan={5} sx={{ border: 'none', py: 4 }}>
+                    <EmptyState message="受注データがありません" subMessage="受注が登録されるとここに表示されます" />
                   </TableCell>
                 </TableRow>
               ) : (
@@ -237,8 +238,8 @@ export const ERPPage: React.FC = () => {
             <TableBody>
               {purchaseOrders.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} align="center">
-                    発注データがありません
+                  <TableCell colSpan={5} sx={{ border: 'none', py: 4 }}>
+                    <EmptyState message="発注データがありません" subMessage="発注が登録されるとここに表示されます" />
                   </TableCell>
                 </TableRow>
               ) : (
@@ -272,8 +273,8 @@ export const ERPPage: React.FC = () => {
             <TableBody>
               {syncRules.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} align="center">
-                    連携ルールがありません
+                  <TableCell colSpan={5} sx={{ border: 'none', py: 4 }}>
+                    <EmptyState message="連携ルールがありません" subMessage="データ連携ルールを設定するとここに表示されます" />
                   </TableCell>
                 </TableRow>
               ) : (

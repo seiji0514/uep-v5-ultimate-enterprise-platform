@@ -5,7 +5,7 @@
 物理的にリアルなデモ体験を提供する。
 """
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +47,7 @@ def _seed_cloud_infra() -> None:
     if infrastructure_manager.list_resources():
         return
 
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     base_tags = {"project": UNIFIED_PROJECT_ID, "env": "demo"}
 
     # インフラリソース（ap-northeast-1 = Level 5 東京リージョンと連携）
@@ -150,7 +150,7 @@ def _seed_infra_builder() -> None:
     if any(p.name == UNIFIED_PROJECT_NAME for p in service._projects.values()):
         return
 
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     proj = BuildProject(
         id="proj-uep-unified",
         name=UNIFIED_PROJECT_NAME,
@@ -177,7 +177,7 @@ def _seed_mlops() -> None:
         pipeline_executor,
     )
 
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
 
     # パイプライン（企業デモ用・空だと信用されない）
     if not pipeline_executor._pipelines:
@@ -319,7 +319,7 @@ def _seed_security_center() -> None:
     )
     from security_center.monitoring import SecurityEvent, ThreatLevel, security_monitor
 
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
 
     if not security_monitor._events:
         events = [
@@ -402,7 +402,7 @@ def _seed_idop() -> None:
     from idop.cicd import CICDPipelineModel, CICDStatus, PipelineStage, cicd_pipeline
     from idop.devops import Application, Environment, devops_manager
 
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
 
     if not cicd_pipeline._pipelines:
         pipes = [

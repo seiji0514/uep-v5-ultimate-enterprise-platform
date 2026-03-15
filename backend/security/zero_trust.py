@@ -2,7 +2,7 @@
 ゼロトラストアーキテクチャモジュール
 すべての通信を検証・認証
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
@@ -47,7 +47,7 @@ class ZeroTrustPolicy:
 
     def _initialize_default_policies(self):
         """デフォルトポリシーを初期化"""
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         default_policies = [
             ZeroTrustPolicyModel(

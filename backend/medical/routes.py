@@ -2,7 +2,8 @@
 医療 APIエンドポイント
 AI診断、音声応答、異常検知、医療プラットフォーム
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Depends
@@ -177,7 +178,7 @@ def _platform_stats() -> Dict[str, Any]:
         "ai_diagnosis_today": 42,
         "voice_processed_today": 89,
         "anomalies_detected_today": 5,
-        "last_updated": datetime.utcnow().isoformat(),
+        "last_updated": datetime.now(timezone.utc).isoformat(),
     }
 
 

@@ -5,7 +5,8 @@ AI利用ログ記録
 import threading
 import uuid
 from collections import deque
-from datetime import datetime
+from datetime import datetime, timezone
+
 from typing import Any, Dict, List
 
 # スレッドセーフなログストア（メモリ、最大1000件）
@@ -38,8 +39,8 @@ def log_ai_usage(
         記録されたログエントリ
     """
     entry = {
-        "id": f"log_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{uuid.uuid4().hex[:8]}",
-        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "id": f"log_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}_{uuid.uuid4().hex[:8]}",
+        "timestamp": datetime.now(timezone.utc).isoformat() + "Z",
         "operation": operation,
         "model": model,
         "user_id": user_id,

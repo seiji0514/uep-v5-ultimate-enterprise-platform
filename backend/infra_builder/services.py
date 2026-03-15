@@ -2,7 +2,8 @@
 インフラ構築専用システム - ビジネスロジック
 """
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
+
 from typing import Any, Dict, List, Optional
 
 from .models import BuildProjectStatus, BuildStage, PipelineStatus
@@ -31,8 +32,8 @@ class BuildProject:
         self.blueprint = blueprint or {}
         self.status = status
         self.current_stage = current_stage
-        self.created_at = created_at or datetime.utcnow()
-        self.updated_at = updated_at or datetime.utcnow()
+        self.created_at = created_at or datetime.now(timezone.utc)
+        self.updated_at = updated_at or datetime.now(timezone.utc)
         self.created_by = created_by or "system"
 
     def to_dict(self) -> Dict[str, Any]:
@@ -69,7 +70,7 @@ class PipelineRun:
         self.stages = stages
         self.status = status
         self.current_stage = current_stage
-        self.started_at = started_at or datetime.utcnow()
+        self.started_at = started_at or datetime.now(timezone.utc)
         self.completed_at = completed_at
         self.logs = logs or []
 
@@ -108,7 +109,7 @@ class Blueprint:
         self.content = content
         self.variables = variables or {}
         self.description = description or ""
-        self.created_at = created_at or datetime.utcnow()
+        self.created_at = created_at or datetime.now(timezone.utc)
         self.created_by = created_by or "system"
 
     def to_dict(self) -> Dict[str, Any]:
@@ -187,7 +188,7 @@ class InfraBuilderService:
             stages=["design", "build", "deploy", "verify"],
             status=PipelineStatus.SUCCESS,
             current_stage="verify",
-            completed_at=datetime.utcnow(),
+            completed_at=datetime.now(timezone.utc),
             logs=[
                 "[design] 設計完了",
                 "[build] Docker イメージビルド成功",

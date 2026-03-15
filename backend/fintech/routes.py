@@ -2,7 +2,7 @@
 金融・FinTech APIエンドポイント
 決済API、リスクスコア、取引監視
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List
 
 from fastapi import APIRouter, Depends
@@ -19,7 +19,7 @@ def _payment_list() -> List[Dict[str, Any]]:
             "amount": 15000,
             "currency": "JPY",
             "status": "完了",
-            "created_at": (datetime.utcnow() - timedelta(minutes=10)).isoformat(),
+            "created_at": (datetime.now(timezone.utc) - timedelta(minutes=10)).isoformat(),
             "method": "credit",
         },
         {
@@ -27,7 +27,7 @@ def _payment_list() -> List[Dict[str, Any]]:
             "amount": 8500,
             "currency": "JPY",
             "status": "処理中",
-            "created_at": (datetime.utcnow() - timedelta(minutes=2)).isoformat(),
+            "created_at": (datetime.now(timezone.utc) - timedelta(minutes=2)).isoformat(),
             "method": "bank",
         },
         {
@@ -35,7 +35,7 @@ def _payment_list() -> List[Dict[str, Any]]:
             "amount": 32000,
             "currency": "JPY",
             "status": "完了",
-            "created_at": (datetime.utcnow() - timedelta(hours=1)).isoformat(),
+            "created_at": (datetime.now(timezone.utc) - timedelta(hours=1)).isoformat(),
             "method": "credit",
         },
         {
@@ -43,7 +43,7 @@ def _payment_list() -> List[Dict[str, Any]]:
             "amount": 5200,
             "currency": "JPY",
             "status": "完了",
-            "created_at": (datetime.utcnow() - timedelta(minutes=25)).isoformat(),
+            "created_at": (datetime.now(timezone.utc) - timedelta(minutes=25)).isoformat(),
             "method": "qr",
         },
         {
@@ -51,7 +51,7 @@ def _payment_list() -> List[Dict[str, Any]]:
             "amount": 98000,
             "currency": "JPY",
             "status": "処理中",
-            "created_at": (datetime.utcnow() - timedelta(minutes=5)).isoformat(),
+            "created_at": (datetime.now(timezone.utc) - timedelta(minutes=5)).isoformat(),
             "method": "bank",
         },
         {
@@ -59,7 +59,7 @@ def _payment_list() -> List[Dict[str, Any]]:
             "amount": 45000,
             "currency": "JPY",
             "status": "完了",
-            "created_at": (datetime.utcnow() - timedelta(hours=2)).isoformat(),
+            "created_at": (datetime.now(timezone.utc) - timedelta(hours=2)).isoformat(),
             "method": "credit",
         },
     ]

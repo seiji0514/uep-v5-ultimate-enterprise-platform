@@ -2,7 +2,8 @@
 WebSocketエンドポイント
 リアルタイム通信
 """
-from datetime import datetime
+from datetime import datetime, timezone
+
 from typing import Optional
 
 from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect
@@ -27,7 +28,7 @@ async def websocket_endpoint(websocket: WebSocket, room: str = "default"):
                     "type": "message",
                     "room": room,
                     "data": data,
-                    "timestamp": str(datetime.utcnow()),
+                    "timestamp": str(datetime.now(timezone.utc)),
                 },
                 room=room,
             )
@@ -53,7 +54,7 @@ async def user_websocket_endpoint(
                     "type": "user_message",
                     "user_id": user_id,
                     "data": data,
-                    "timestamp": str(datetime.utcnow()),
+                    "timestamp": str(datetime.now(timezone.utc)),
                 },
                 user_id=user_id,
             )
@@ -79,7 +80,7 @@ async def notifications_websocket_endpoint(
                 {
                     "type": "notification",
                     "data": data,
-                    "timestamp": str(datetime.utcnow()),
+                    "timestamp": str(datetime.now(timezone.utc)),
                 },
                 websocket,
             )

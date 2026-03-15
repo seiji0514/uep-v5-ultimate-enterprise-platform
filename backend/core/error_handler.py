@@ -4,7 +4,7 @@
 """
 import logging
 import traceback
-from datetime import datetime
+from datetime import datetime, timezone
 
 from fastapi import Request, status
 from fastapi.exceptions import RequestValidationError
@@ -38,7 +38,7 @@ async def uep_exception_handler(request: Request, exc: UEPException):
                 "message": exc.message,
                 "details": exc.details,
                 "path": request.url.path,
-                "timestamp": str(datetime.utcnow()),
+                "timestamp": str(datetime.now(timezone.utc)),
             }
         },
     )
@@ -72,7 +72,7 @@ async def http_exception_handler(request: Request, exc: StarletteHTTPException):
                 "message": exc.detail,
                 "status_code": exc.status_code,
                 "path": request.url.path,
-                "timestamp": str(datetime.utcnow()),
+                "timestamp": str(datetime.now(timezone.utc)),
             }
         },
     )
@@ -98,7 +98,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
                 "message": "Validation failed",
                 "errors": errors,
                 "path": request.url.path,
-                "timestamp": str(datetime.utcnow()),
+                "timestamp": str(datetime.now(timezone.utc)),
             }
         },
     )
@@ -137,7 +137,7 @@ async def general_exception_handler(request: Request, exc: Exception):
                 else "An internal server error occurred",
                 "details": error_detail,
                 "path": request.url.path,
-                "timestamp": str(datetime.utcnow()),
+                "timestamp": str(datetime.now(timezone.utc)),
             }
         },
     )

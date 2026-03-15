@@ -3,7 +3,8 @@
 Suricata, Wazuh, MISP 連携（外部サービス未起動時はメモリ内で動作）
 """
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+
 from typing import Any, Dict, List, Optional
 
 from security_center.monitoring import SecurityEvent, ThreatLevel, security_monitor
@@ -31,7 +32,7 @@ def _init_demo_data():
         aid = str(uuid.uuid4())
         _suricata_alerts[aid] = {
             "id": aid,
-            "timestamp": (datetime.utcnow() - timedelta(hours=i)).isoformat(),
+            "timestamp": (datetime.now(timezone.utc) - timedelta(hours=i)).isoformat(),
             "src_ip": "192.168.1.100",
             "dest_ip": "10.0.0.1",
             "rule_id": rid,
@@ -50,7 +51,7 @@ def _init_demo_data():
         aid = str(uuid.uuid4())
         _wazuh_alerts[aid] = {
             "id": aid,
-            "timestamp": (datetime.utcnow() - timedelta(hours=i)).isoformat(),
+            "timestamp": (datetime.now(timezone.utc) - timedelta(hours=i)).isoformat(),
             "agent_id": "001",
             "rule_id": rid,
             "rule_description": desc,
@@ -81,7 +82,7 @@ def ingest_suricata_alert(data: Dict[str, Any]) -> Dict[str, Any]:
     )
     alert = {
         "id": alert_id,
-        "timestamp": data.get("timestamp", datetime.utcnow().isoformat()),
+        "timestamp": data.get("timestamp", datetime.now(timezone.utc).isoformat()),
         "src_ip": data.get("src_ip", ""),
         "dest_ip": data.get("dest_ip", ""),
         "rule_id": data.get("rule_id", ""),
@@ -113,7 +114,7 @@ def ingest_wazuh_alert(data: Dict[str, Any]) -> Dict[str, Any]:
     )
     alert = {
         "id": alert_id,
-        "timestamp": data.get("timestamp", datetime.utcnow().isoformat()),
+        "timestamp": data.get("timestamp", datetime.now(timezone.utc).isoformat()),
         "agent_id": data.get("agent_id"),
         "agent_name": data.get("agent_name"),
         "rule_id": data.get("rule_id", ""),
@@ -171,7 +172,7 @@ def check_threat_intel(ioc_type: str, ioc_value: str) -> Dict[str, Any]:
 
 def generate_compliance_report(period_days: int = 30) -> Dict[str, Any]:
     """コンプライアンスレポート生成"""
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     start = now - timedelta(days=period_days)
     events = security_monitor.get_events()
     incidents = []  # incident_response から取得可能だが簡略化

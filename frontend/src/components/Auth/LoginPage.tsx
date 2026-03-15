@@ -30,10 +30,24 @@ export const LoginPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    const u = username.trim();
+    const p = password.trim();
+    if (!u || !p) {
+      setError('ユーザー名とパスワードを入力してください。');
+      return;
+    }
+    if (u.length < 2) {
+      setError('ユーザー名は2文字以上で入力してください。');
+      return;
+    }
+    if (p.length < 4) {
+      setError('パスワードは4文字以上で入力してください。');
+      return;
+    }
     setLoading(true);
 
     try {
-      await login({ username: username.trim(), password: password.trim() });
+      await login({ username: u, password: p });
       setLoading(false); // CircularProgress を先にアンマウント（removeChild エラー回避）
       // 次のフレームでナビゲート（DOM 更新を待つ）
       requestAnimationFrame(() => {

@@ -2,7 +2,7 @@
 インシデント対応モジュール
 """
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
@@ -103,8 +103,8 @@ class IncidentResponse:
             description=description,
             severity=severity,
             affected_systems=affected_systems or [],
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow(),
+            created_at=datetime.now(timezone.utc),
+            updated_at=datetime.now(timezone.utc),
             metadata={"type": incident_type} if incident_type else None,
         )
 
@@ -125,7 +125,7 @@ class IncidentResponse:
             incident.metadata["automated_response"] = {
                 "playbook": incident_type,
                 "steps": playbook["steps"],
-                "executed_at": datetime.utcnow().isoformat(),
+                "executed_at": datetime.now(timezone.utc).isoformat(),
             }
 
     def update_incident(
@@ -143,7 +143,7 @@ class IncidentResponse:
         if status:
             incident.status = status
             if status == IncidentStatus.RESOLVED:
-                incident.resolved_at = datetime.utcnow()
+                incident.resolved_at = datetime.now(timezone.utc)
 
         if assigned_to:
             incident.assigned_to = assigned_to
@@ -151,7 +151,7 @@ class IncidentResponse:
         if resolution:
             incident.resolution = resolution
 
-        incident.updated_at = datetime.utcnow()
+        incident.updated_at = datetime.now(timezone.utc)
         return incident
 
     def get_incident(self, incident_id: str) -> Optional[Incident]:

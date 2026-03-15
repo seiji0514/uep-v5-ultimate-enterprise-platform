@@ -54,7 +54,7 @@ def add_expense(
         "description": description or "",
         "memo": memo,
         "is_expense": judgment["is_expense"],
-        "created_at": datetime.utcnow().isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat(),
     }
     data["expenses"].append(item)
     _save_data(data)
@@ -76,7 +76,7 @@ def add_income(
         "description": description or "",
         "client_name": client_name,
         "memo": memo,
-        "created_at": datetime.utcnow().isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat(),
     }
     data["income"].append(item)
     _save_data(data)

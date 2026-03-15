@@ -2,7 +2,8 @@
 リスク分析モジュール
 """
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
+
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
@@ -44,7 +45,7 @@ class RiskAnalyzer:
 
     def _initialize_default_risks(self):
         """デフォルトリスクを初期化"""
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         default_risks = [
             Risk(
@@ -110,8 +111,8 @@ class RiskAnalyzer:
             likelihood=likelihood,
             impact=impact,
             mitigation=mitigation,
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow(),
+            created_at=datetime.now(timezone.utc),
+            updated_at=datetime.now(timezone.utc),
         )
 
         self._risks[risk.id] = risk

@@ -171,7 +171,7 @@
 <div id="demo">
   <h2>7. デモ手順</h2>
   <p><strong>進め方</strong> 実績を聞かれたら「画面共有でデモできます」と伝え、了承されたら実施。</p>
-  <p><strong>起動</strong> ローカル: start-backend.bat、cd frontend → npm start。フロントエンド: <a href="http://localhost:3000">http://localhost:3000</a>。バックエンド: <a href="http://localhost:8000">http://localhost:8000</a> または <a href="http://localhost:8080">http://localhost:8080</a>（8000がWindows予約の場合は8080に自動切り替え）。API Docs: <a href="http://localhost:8000/docs">http://localhost:8000/docs</a> または <a href="http://localhost:8080/docs">http://localhost:8080/docs</a>。クラウド: <a href="https://uep-v5-ultimate-enterprise-platform.vercel.app" target="_blank" rel="noopener">https://uep-v5-ultimate-enterprise-platform.vercel.app</a>（事前に <a href="https://uep-backend-9m5v.onrender.com/health" target="_blank" rel="noopener">/health</a> にアクセスしてRenderを起こす）</p>
+  <p><strong>起動</strong> ローカル: <code>本番デプロイ\start-production-all.bat</code> で一括起動。または個別に <code>本番デプロイ\start-backend-production.bat</code> と <code>本番デプロイ\start-frontend-production.bat</code>。フロントエンド: <a href="http://localhost:3000">http://localhost:3000</a>。バックエンド: <a href="http://localhost:8080">http://localhost:8080</a>。API Docs: 本番モード時は無効。クラウド: <a href="https://uep-v5-ultimate-enterprise-platform.vercel.app" target="_blank" rel="noopener">https://uep-v5-ultimate-enterprise-platform.vercel.app</a>（事前に <a href="https://uep-backend-9m5v.onrender.com/health" target="_blank" rel="noopener">/health</a> にアクセスしてRenderを起こす）</p>
   <p><strong>強調ポイント</strong> 実際に動作するシステム／稼働率99.995%・推論レイテンシ&lt;10ms／MLOps・生成AI・インクルーシブ雇用AI／Level 1～5 統合／Chaos Engineering・GraphQL・Contract Testing</p>
 
   <h3>デモンストレーションの流れ（時間に応じて3段階）</h3>
@@ -198,13 +198,14 @@
   <h4>詳細手順（フルデモ用）</h4>
   <p><strong>1. システム概要（2-3分）</strong></p>
   <div class="oral">「UEP（ユーイーピー）v5.0はレベル5グローバルエンタープライズ対応システムです。インクルーシブ雇用AI（障害者雇用マッチング・アクセシビリティ特化AI・当事者視点UX評価）も統合済み。Level 1（7コア）～Level 5（マルチリージョン・高可用性・コンプライアンス）まで統合。Level 4には2025-2026最新技術（推論AI（スイロンエーアイ）・MCP（エムシーピー）/A2A（エーツーエー）・ガバナンス・端末内AI）とビジネス領域12種（DX・EX・CX・UX・BX・HX・SX・BPR・BPM・CRM・ERP・HRTech）を統合済み。稼働率99.995%、推論レイテンシ（スイロンレイテンシ）10ms未満を達成し、個人開発で100システム以上を実装した実際に動作するシステムです。」</div>
-  <p><strong>2. バックエンドAPI（3-4分）</strong> <a href="http://localhost:8000/docs">http://localhost:8000/docs</a> または <a href="http://localhost:8080/docs">http://localhost:8080/docs</a>（8000がWindows予約の場合は8080）を開く → Swagger UI（スワッガーユーアイ）を共有 → 主要API（エーピーアイ）を説明。auth、mlops、generative-ai、inclusive-work、Chaos Engineering、GraphQL 等。</p>
+  <p><strong>2. バックエンドAPI（3-4分）</strong> 本番モード時はAPI Docsは無効。口頭で主要API（auth、mlops、generative-ai、inclusive-work、Chaos Engineering、GraphQL 等）を説明。</p>
   <p><strong>3. フロントエンドUI（5-6分）</strong> ログイン → ダッシュボード（MLOps、生成AI、インクルーシブ雇用AI、セキュリティ、クラウドインフラ、IDOP、AI支援開発、プラットフォーム、エコシステム、インダストリー、グローバル）</p>
   <p><strong>4. 技術スタック（2-3分）</strong> Python、FastAPI、React、TypeScript、Docker、Kubernetes、Terraform、MLOps、RAG、CoT推論、Prometheus、Grafana 等を口頭で</p>
   <p><strong>5. アーキテクチャ（2-3分）</strong> マイクロサービス、イベント駆動、API Gateway（Kong、Envoy）</p>
   <p><strong>6. 品質指標（1-2分）</strong> 稼働率99.995%、推論レイテンシ10ms未満、セキュリティインシデント0件</p>
   <p><strong>7. インクルーシブ雇用AI（2-3分）</strong> マッチング・アクセシビリティAI・UX評価を実演</p>
 
+  <p><strong>本番用・開発用について</strong> 面談で「本番用でデモしています」と伝えて問題なし。本番モード・本番ビルドで起動しており事実に即している。補足が必要な場合のみ「ローカルで本番モードの構成で起動しています」と説明。</p>
   <p><em>※詳細は docs/DEMO_INTERVIEW_NAV_RASUKU.html または docs/DEMO_INTERVIEW_NAV_汎用.html を参照</em></p>
 </div>
 

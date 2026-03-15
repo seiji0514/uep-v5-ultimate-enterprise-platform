@@ -2,7 +2,8 @@
 パフォーマンス最適化モジュール
 """
 import time
-from datetime import datetime
+from datetime import datetime, timezone
+
 from functools import wraps
 from typing import Any, Dict, List, Optional
 
@@ -73,7 +74,7 @@ class PerformanceOptimizer:
             else avg,
             request_count=request_count,
             error_rate=error_count / request_count if request_count > 0 else 0.0,
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
         )
 
     def get_slow_endpoints(self, threshold: float = 1.0) -> List[Dict[str, Any]]:

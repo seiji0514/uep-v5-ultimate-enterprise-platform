@@ -2,7 +2,7 @@
 小売・EC APIエンドポイント
 POS、EC、在庫、顧客分析
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List
 
 from fastapi import APIRouter
@@ -17,7 +17,7 @@ def _pos_transactions() -> List[Dict[str, Any]]:
             "store": "店舗A",
             "amount": 3500,
             "items": 3,
-            "timestamp": (datetime.utcnow() - timedelta(minutes=5)).isoformat(),
+            "timestamp": (datetime.now(timezone.utc) - timedelta(minutes=5)).isoformat(),
             "payment": "カード",
         },
         {
@@ -25,7 +25,7 @@ def _pos_transactions() -> List[Dict[str, Any]]:
             "store": "店舗B",
             "amount": 12800,
             "items": 5,
-            "timestamp": (datetime.utcnow() - timedelta(minutes=12)).isoformat(),
+            "timestamp": (datetime.now(timezone.utc) - timedelta(minutes=12)).isoformat(),
             "payment": "現金",
         },
         {
@@ -33,7 +33,7 @@ def _pos_transactions() -> List[Dict[str, Any]]:
             "store": "店舗A",
             "amount": 5200,
             "items": 2,
-            "timestamp": (datetime.utcnow() - timedelta(minutes=18)).isoformat(),
+            "timestamp": (datetime.now(timezone.utc) - timedelta(minutes=18)).isoformat(),
             "payment": "QR",
         },
         {
@@ -41,7 +41,7 @@ def _pos_transactions() -> List[Dict[str, Any]]:
             "store": "店舗C",
             "amount": 8900,
             "items": 4,
-            "timestamp": (datetime.utcnow() - timedelta(minutes=25)).isoformat(),
+            "timestamp": (datetime.now(timezone.utc) - timedelta(minutes=25)).isoformat(),
             "payment": "カード",
         },
         {
@@ -49,7 +49,7 @@ def _pos_transactions() -> List[Dict[str, Any]]:
             "store": "店舗B",
             "amount": 2100,
             "items": 1,
-            "timestamp": (datetime.utcnow() - timedelta(minutes=30)).isoformat(),
+            "timestamp": (datetime.now(timezone.utc) - timedelta(minutes=30)).isoformat(),
             "payment": "現金",
         },
         {
@@ -57,7 +57,7 @@ def _pos_transactions() -> List[Dict[str, Any]]:
             "store": "店舗A",
             "amount": 15600,
             "items": 6,
-            "timestamp": (datetime.utcnow() - timedelta(minutes=35)).isoformat(),
+            "timestamp": (datetime.now(timezone.utc) - timedelta(minutes=35)).isoformat(),
             "payment": "カード",
         },
     ]
@@ -70,42 +70,42 @@ def _ec_orders() -> List[Dict[str, Any]]:
             "customer_id": "C001",
             "amount": 8500,
             "status": "発送済",
-            "ordered_at": (datetime.utcnow() - timedelta(days=1)).isoformat(),
+            "ordered_at": (datetime.now(timezone.utc) - timedelta(days=1)).isoformat(),
         },
         {
             "id": "ec-002",
             "customer_id": "C002",
             "amount": 3200,
             "status": "出荷準備中",
-            "ordered_at": (datetime.utcnow() - timedelta(hours=5)).isoformat(),
+            "ordered_at": (datetime.now(timezone.utc) - timedelta(hours=5)).isoformat(),
         },
         {
             "id": "ec-003",
             "customer_id": "C003",
             "amount": 12500,
             "status": "入金確認",
-            "ordered_at": (datetime.utcnow() - timedelta(hours=2)).isoformat(),
+            "ordered_at": (datetime.now(timezone.utc) - timedelta(hours=2)).isoformat(),
         },
         {
             "id": "ec-004",
             "customer_id": "C001",
             "amount": 4500,
             "status": "発送済",
-            "ordered_at": (datetime.utcnow() - timedelta(days=2)).isoformat(),
+            "ordered_at": (datetime.now(timezone.utc) - timedelta(days=2)).isoformat(),
         },
         {
             "id": "ec-005",
             "customer_id": "C004",
             "amount": 9800,
             "status": "キャンセル",
-            "ordered_at": (datetime.utcnow() - timedelta(hours=1)).isoformat(),
+            "ordered_at": (datetime.now(timezone.utc) - timedelta(hours=1)).isoformat(),
         },
         {
             "id": "ec-006",
             "customer_id": "C005",
             "amount": 21000,
             "status": "出荷準備中",
-            "ordered_at": (datetime.utcnow() - timedelta(hours=8)).isoformat(),
+            "ordered_at": (datetime.now(timezone.utc) - timedelta(hours=8)).isoformat(),
         },
     ]
 

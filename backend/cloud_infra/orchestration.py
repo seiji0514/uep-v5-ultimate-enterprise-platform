@@ -3,7 +3,8 @@
 コンテナ化・オーケストレーション
 """
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
+
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
@@ -73,15 +74,15 @@ class OrchestrationManager:
             config=config or {},
             namespace=namespace,
             status=DeploymentStatus.DEPLOYING,
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow(),
+            created_at=datetime.now(timezone.utc),
+            updated_at=datetime.now(timezone.utc),
         )
 
         self._deployments[deployment_id] = deployment
 
         # デプロイ処理（簡易実装）
         deployment.status = DeploymentStatus.RUNNING
-        deployment.updated_at = datetime.utcnow()
+        deployment.updated_at = datetime.now(timezone.utc)
 
         return deployment
 
@@ -95,11 +96,11 @@ class OrchestrationManager:
 
         deployment.replicas = replicas
         deployment.status = DeploymentStatus.UPDATING
-        deployment.updated_at = datetime.utcnow()
+        deployment.updated_at = datetime.now(timezone.utc)
 
         # スケール処理（簡易実装）
         deployment.status = DeploymentStatus.RUNNING
-        deployment.updated_at = datetime.utcnow()
+        deployment.updated_at = datetime.now(timezone.utc)
 
         return deployment
 
@@ -145,11 +146,11 @@ class OrchestrationManager:
             deployment.config.update(config)
 
         deployment.status = DeploymentStatus.UPDATING
-        deployment.updated_at = datetime.utcnow()
+        deployment.updated_at = datetime.now(timezone.utc)
 
         # 更新処理（簡易実装）
         deployment.status = DeploymentStatus.RUNNING
-        deployment.updated_at = datetime.utcnow()
+        deployment.updated_at = datetime.now(timezone.utc)
 
         return deployment
 
@@ -158,7 +159,7 @@ class OrchestrationManager:
         deployment = self._deployments.get(deployment_id)
         if deployment:
             deployment.status = DeploymentStatus.STOPPED
-            deployment.updated_at = datetime.utcnow()
+            deployment.updated_at = datetime.now(timezone.utc)
             return True
         return False
 

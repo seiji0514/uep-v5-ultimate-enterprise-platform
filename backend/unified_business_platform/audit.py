@@ -2,7 +2,8 @@
 統合ビジネスプラットフォーム - 監査ログ
 実用的最高難易度: セキュリティ・コンプライアンス統合
 """
-from datetime import datetime
+from datetime import datetime, timezone
+
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
@@ -42,14 +43,14 @@ class AuditLogger:
     ) -> Dict[str, Any]:
         """監査ログを記録"""
         entry = {
-            "id": f"audit_{len(self._logs)}_{datetime.utcnow().timestamp()}",
+            "id": f"audit_{len(self._logs)}_{datetime.now(timezone.utc).timestamp()}",
             "action": action.value,
             "user_id": user_id,
             "resource_type": resource_type,
             "resource_id": resource_id,
             "details": details or {},
             "ip_address": ip_address,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         }
         self._logs.append(entry)
         if len(self._logs) > self._max_entries:

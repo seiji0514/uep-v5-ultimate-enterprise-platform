@@ -2,7 +2,7 @@
 製造・IoT APIエンドポイント
 予知保全API、センサーデータ取得、異常検知
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List
 
 from fastapi import APIRouter, Depends
@@ -72,42 +72,42 @@ def _sensor_data_list() -> List[Dict[str, Any]]:
             "sensor_id": "temp-001",
             "value": 72.5,
             "unit": "°C",
-            "timestamp": (datetime.utcnow() - timedelta(minutes=1)).isoformat(),
+            "timestamp": (datetime.now(timezone.utc) - timedelta(minutes=1)).isoformat(),
             "equipment": "CNC設備A",
         },
         {
             "sensor_id": "vibration-002",
             "value": 0.12,
             "unit": "mm/s",
-            "timestamp": (datetime.utcnow() - timedelta(minutes=2)).isoformat(),
+            "timestamp": (datetime.now(timezone.utc) - timedelta(minutes=2)).isoformat(),
             "equipment": "溶接ロボットB",
         },
         {
             "sensor_id": "pressure-003",
             "value": 5.2,
             "unit": "MPa",
-            "timestamp": (datetime.utcnow() - timedelta(minutes=1)).isoformat(),
+            "timestamp": (datetime.now(timezone.utc) - timedelta(minutes=1)).isoformat(),
             "equipment": "プレス機C",
         },
         {
             "sensor_id": "temp-004",
             "value": 68.2,
             "unit": "°C",
-            "timestamp": (datetime.utcnow() - timedelta(minutes=3)).isoformat(),
+            "timestamp": (datetime.now(timezone.utc) - timedelta(minutes=3)).isoformat(),
             "equipment": "搬送ロボットD",
         },
         {
             "sensor_id": "current-005",
             "value": 12.8,
             "unit": "A",
-            "timestamp": (datetime.utcnow() - timedelta(minutes=1)).isoformat(),
+            "timestamp": (datetime.now(timezone.utc) - timedelta(minutes=1)).isoformat(),
             "equipment": "組立ロボットE",
         },
         {
             "sensor_id": "humidity-006",
             "value": 45.0,
             "unit": "%",
-            "timestamp": (datetime.utcnow() - timedelta(minutes=5)).isoformat(),
+            "timestamp": (datetime.now(timezone.utc) - timedelta(minutes=5)).isoformat(),
             "equipment": "検査装置F",
         },
     ]
@@ -120,35 +120,35 @@ def _anomaly_list() -> List[Dict[str, Any]]:
             "type": "振動異常",
             "equipment": "CNC設備A",
             "severity": "高",
-            "detected_at": (datetime.utcnow() - timedelta(hours=2)).isoformat(),
+            "detected_at": (datetime.now(timezone.utc) - timedelta(hours=2)).isoformat(),
         },
         {
             "id": "ano-002",
             "type": "温度上昇",
             "equipment": "溶接ロボットB",
             "severity": "中",
-            "detected_at": (datetime.utcnow() - timedelta(hours=5)).isoformat(),
+            "detected_at": (datetime.now(timezone.utc) - timedelta(hours=5)).isoformat(),
         },
         {
             "id": "ano-003",
             "type": "圧力変動",
             "equipment": "プレス機C",
             "severity": "低",
-            "detected_at": (datetime.utcnow() - timedelta(hours=8)).isoformat(),
+            "detected_at": (datetime.now(timezone.utc) - timedelta(hours=8)).isoformat(),
         },
         {
             "id": "ano-004",
             "type": "搬送異常",
             "equipment": "搬送ロボットD",
             "severity": "中",
-            "detected_at": (datetime.utcnow() - timedelta(hours=1)).isoformat(),
+            "detected_at": (datetime.now(timezone.utc) - timedelta(hours=1)).isoformat(),
         },
         {
             "id": "ano-005",
             "type": "電流異常",
             "equipment": "組立ロボットE",
             "severity": "高",
-            "detected_at": (datetime.utcnow() - timedelta(minutes=30)).isoformat(),
+            "detected_at": (datetime.now(timezone.utc) - timedelta(minutes=30)).isoformat(),
         },
     ]
 

@@ -2,7 +2,7 @@
 イベントストリーミングAPIエンドポイント
 """
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -166,7 +166,7 @@ async def create_domain_event(
             aggregate_type=event_data.aggregate_type,
             event_type=event_data.event_type,
             event_data=event_data.event_data,
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             version=next_version,
             metadata=event_data.metadata,
         )
@@ -255,7 +255,7 @@ async def execute_command(
             command_type=command_data.command_type,
             aggregate_id=command_data.aggregate_id,
             command_data=command_data.command_data,
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             user_id=current_user["username"],
         )
 
@@ -280,7 +280,7 @@ async def execute_query(
             query_id=str(uuid.uuid4()),
             query_type=query_data.query_type,
             query_params=query_data.query_params,
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             user_id=current_user["username"],
         )
 

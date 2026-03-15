@@ -15,6 +15,40 @@
 | **堅牢性**           | グローバルエラーバウンダリ（ErrorBoundary）、再試行UI                                           |
 | **セキュリティ**     | CSP設定（index.html）、セッションタイムアウト警告（5分前ダイアログ）                            |
 
+## ✅ 追加実装済み（2026年3月15日）
+
+| カテゴリ             | 実装内容                                                                                        |
+| -------------------- | ----------------------------------------------------------------------------------------------- |
+| **バックエンド**     | datetime.utcnow() → datetime.now(timezone.utc) 一括置換（Python 3.12+ DeprecationWarning 対応）  |
+| **アクセシビリティ** | ローディング時の aria-busy、aria-label 追加（DashboardPage）                                    |
+| **共通コンポーネント** | EmptyState コンポーネント（空データ表示の統一）                                                |
+| **フロントエンド**   | メモリ不足対策（start-frontend.bat に NODE_OPTIONS=8192、GENERATE_SOURCEMAP=false）             |
+| **機能拡張**         | グローバル検索（GlobalSearch）、お気に入り・最近使ったページ（UserSettingsContext）             |
+| **機能拡張**         | 通知センター（NotificationCenter）、トースト通知（ToastContext）                                 |
+| **UX/UI**            | ダーク/ライトモード切替、ユーザー設定のlocalStorage永続化                                      |
+| **パフォーマンス**   | React Query キャッシュ拡張（staleTime 2分、gcTime 10分、refetchOnWindowFocus等）               |
+| **堅牢性**           | EmptyState を ERP ページ（受注・発注・連携ルール）に導入                                        |
+| **開発者体験**       | E2E テスト追加（dashboard.spec.ts: 検索・テーマ・通知・サイドバー）                             |
+| **堅牢性**           | オフライン対応（Service Worker・OfflineBanner）                                                 |
+| **堅牢性**           | LoadingSkeleton・フォームバリデーション（Login）                                               |
+| **機能拡張**         | 多言語対応拡張（i18n・UserSettings・言語切替）                                                  |
+| **セキュリティ**     | 監査ログ（AuditLogContext・login/logout記録）                                                   |
+| **パフォーマンス**   | Web Vitals計測（sendToAnalytics）                                                               |
+| **開発者体験**       | MSW（REACT_APP_ENABLE_MSW=true でモック）、Storybook（EmptyState・LoadingSkeleton）            |
+| **バックエンド**     | /health/detailed（DB・Redis個別状態）、/api/v1（バージョン情報）                                 |
+| **UX/UI**            | モバイル検索（検索アイコン→ダイアログ）                                                        |
+
+## ✅ 本番化対応（2026年3月15日）
+
+| カテゴリ       | 実装内容                                                                 |
+| -------------- | ------------------------------------------------------------------------ |
+| **認証**       | リフレッシュトークン（自動延長）、ログイン 10回/分レート制限             |
+| **監査**       | 監査ログAPI（/api/v1/audit）永続化、フロントから送信                     |
+| **監視**       | Sentry エラー収集（REACT_APP_SENTRY_DSN）、ErrorBoundary連携             |
+| **環境**       | .env.example（backend/frontend）、本番用環境変数サンプル                 |
+| **セキュリティ** | CSP に Sentry 許可、ログインレート制限                                 |
+| **ドキュメント** | docs/本番化チェックリスト.md                                            |
+
 ---
 
 ## 1. UX/UI 改善
@@ -109,6 +143,7 @@
 | 中     | **OpenAPI仕様の充実**      | 一部       | 全エンドポイントのexamples・description |
 | 中     | **レート制限の細分化**     | グローバル | エンドポイント別のレート制限            |
 | 低     | **ヘルスチェックの詳細化** | /health    | DB・Redis・Kafka等の個別状態を返す      |
+| 低     | **datetime.utcnow() の置換** | ~~多数使用~~ ✅ 完了 | `datetime.now(timezone.utc)` へ一括置換済み（Python 3.12+ の DeprecationWarning 対応） |
 
 ---
 

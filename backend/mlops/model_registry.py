@@ -3,7 +3,8 @@ MLモデルレジストリモジュール
 MLモデルの管理・デプロイ・監視
 """
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
+
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
@@ -74,8 +75,8 @@ class ModelRegistry:
             description=description,
             model_type=model_type,
             framework=framework,
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow(),
+            created_at=datetime.now(timezone.utc),
+            updated_at=datetime.now(timezone.utc),
             created_by=created_by,
         )
 
@@ -100,14 +101,14 @@ class ModelRegistry:
             version=version,
             model_path=model_path,
             metrics=metrics,
-            created_at=datetime.utcnow(),
+            created_at=datetime.now(timezone.utc),
             created_by=created_by,
             metadata=metadata,
         )
 
         model.versions.append(model_version)
         model.current_version = version
-        model.updated_at = datetime.utcnow()
+        model.updated_at = datetime.now(timezone.utc)
 
         return model_version
 
@@ -127,7 +128,7 @@ class ModelRegistry:
         if target_status == ModelStatus.PRODUCTION:
             model.current_version = version
 
-        model.updated_at = datetime.utcnow()
+        model.updated_at = datetime.now(timezone.utc)
         return True
 
     def get_model(self, model_id: str) -> Optional[MLModel]:
@@ -177,7 +178,7 @@ class ModelRegistry:
             "version": version,
             "status": "deployed",
             "endpoint": f"/api/v1/mlops/models/{model_id}/predict",
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
         }
 
 

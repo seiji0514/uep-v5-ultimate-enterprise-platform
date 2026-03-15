@@ -4,7 +4,8 @@
 実用的最高難易度: 多段階承認・条件分岐
 """
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
+
 from typing import Any, Dict, List, Optional
 
 
@@ -57,8 +58,8 @@ class WorkflowManager:
             "description": description or "",
             "steps": steps or [],
             "status": "draft",
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat(),
         }
         self._workflows[workflow_id] = workflow
         return workflow
@@ -89,8 +90,8 @@ class WorkflowManager:
             "approval_route": approval_route,
             "current_stage": 1,
             "approvals": [],
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat(),
         }
         self._approval_requests[request_id] = request
         return request
@@ -115,7 +116,7 @@ class WorkflowManager:
                 "approver_id": approver_id,
                 "approved": approved,
                 "comment": comment,
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
             }
         )
 
@@ -127,7 +128,7 @@ class WorkflowManager:
             req["current_stage"] = current + 1
             req["status"] = "pending"  # 次の段階へ
 
-        req["updated_at"] = datetime.utcnow().isoformat()
+        req["updated_at"] = datetime.now(timezone.utc).isoformat()
         return req
 
     def list_approval_requests(self) -> List[Dict[str, Any]]:
@@ -158,8 +159,8 @@ class RPAManager:
             "config": config or {},
             "status": "idle",
             "last_run": None,
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat(),
         }
         self._jobs[job_id] = job
         return job
@@ -174,8 +175,8 @@ class RPAManager:
             return None
         job = self._jobs[job_id]
         job["status"] = "running"
-        job["last_run"] = datetime.utcnow().isoformat()
-        job["updated_at"] = datetime.utcnow().isoformat()
+        job["last_run"] = datetime.now(timezone.utc).isoformat()
+        job["updated_at"] = datetime.now(timezone.utc).isoformat()
         # シミュレーション: 即座に完了
         job["status"] = "completed"
         return job

@@ -3,7 +3,7 @@ SOAR 連携
 セキュリティオーケストレーション・自動応答
 補強スキル: サイバー防衛、SOAR
 """
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
@@ -34,14 +34,14 @@ def execute_playbook(
                 "action": action.value,
                 "status": "simulated",
                 "alert_id": alert_id,
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
             }
         )
     return {
         "alert_id": alert_id,
         "actions": results,
         "status": "completed",
-        "generated_at": datetime.utcnow().isoformat(),
+        "generated_at": datetime.now(timezone.utc).isoformat(),
     }
 
 

@@ -3,7 +3,8 @@ DevOps管理モジュール
 開発から運用まで
 """
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
+
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
@@ -57,8 +58,8 @@ class DevOpsManager:
             description=description,
             repository=repository,
             environments=environments or [Environment.DEVELOPMENT],
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow(),
+            created_at=datetime.now(timezone.utc),
+            updated_at=datetime.now(timezone.utc),
             created_by=created_by,
         )
 
@@ -87,17 +88,17 @@ class DevOpsManager:
             "version": version,
             "status": "deploying",
             "config": config or {},
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
         }
 
         self._deployments[deployment_id] = deployment
 
         # デプロイ処理（簡易実装）
         deployment["status"] = "deployed"
-        deployment["completed_at"] = datetime.utcnow().isoformat()
+        deployment["completed_at"] = datetime.now(timezone.utc).isoformat()
 
         application.current_version = version
-        application.updated_at = datetime.utcnow()
+        application.updated_at = datetime.now(timezone.utc)
 
         return deployment
 

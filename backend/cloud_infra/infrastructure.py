@@ -3,7 +3,7 @@
 クラウド設計・運用
 """
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
@@ -74,15 +74,15 @@ class InfrastructureManager:
             config=config or {},
             tags=tags or {},
             status=ResourceStatus.CREATING,
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow(),
+            created_at=datetime.now(timezone.utc),
+            updated_at=datetime.now(timezone.utc),
         )
 
         self._resources[resource_id] = resource
 
         # 作成処理（簡易実装）
         resource.status = ResourceStatus.RUNNING
-        resource.updated_at = datetime.utcnow()
+        resource.updated_at = datetime.now(timezone.utc)
 
         return resource
 
@@ -127,7 +127,7 @@ class InfrastructureManager:
         if tags:
             resource.tags.update(tags)
 
-        resource.updated_at = datetime.utcnow()
+        resource.updated_at = datetime.now(timezone.utc)
         return resource
 
     def delete_resource(self, resource_id: str) -> bool:
@@ -135,7 +135,7 @@ class InfrastructureManager:
         resource = self._resources.get(resource_id)
         if resource:
             resource.status = ResourceStatus.DELETED
-            resource.updated_at = datetime.utcnow()
+            resource.updated_at = datetime.now(timezone.utc)
             return True
         return False
 

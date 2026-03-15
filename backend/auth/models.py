@@ -47,6 +47,7 @@ class TokenResponse(BaseModel):
     """トークンレスポンスモデル"""
 
     access_token: str
+    refresh_token: Optional[str] = None
     token_type: str = "bearer"
     expires_in: int
     user: UserResponse
@@ -57,3 +58,9 @@ class PasswordChangeRequest(BaseModel):
 
     current_password: str
     new_password: str
+
+
+class RefreshTokenRequest(BaseModel):
+    """リフレッシュトークンリクエスト"""
+
+    refresh_token: str

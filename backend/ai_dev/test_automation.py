@@ -2,7 +2,7 @@
 テスト自動化モジュール
 """
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
@@ -54,7 +54,7 @@ class TestAutomation:
             "name": name,
             "description": description,
             "test_cases": test_cases or [],
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
         }
 
         self._test_suites[suite_id] = suite
@@ -79,7 +79,7 @@ class TestAutomation:
             "suite_name": suite["name"],
             "status": TestStatus.RUNNING,
             "test_results": {},
-            "started_at": datetime.utcnow().isoformat(),
+            "started_at": datetime.now(timezone.utc).isoformat(),
         }
 
         passed = 0
@@ -108,7 +108,7 @@ class TestAutomation:
         results["passed"] = passed
         results["failed"] = failed
         results["total"] = len(cases_to_run)
-        results["completed_at"] = datetime.utcnow().isoformat()
+        results["completed_at"] = datetime.now(timezone.utc).isoformat()
 
         self._test_results[execution_id] = results
         return results

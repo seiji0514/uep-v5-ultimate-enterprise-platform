@@ -7,8 +7,11 @@ from datetime import timedelta
 from pathlib import Path
 from typing import Any, Dict
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
+
+from core.rate_limit import limiter
 
 from .jwt_auth import (
     ACCESS_TOKEN_EXPIRE_MINUTES,
@@ -19,6 +22,7 @@ from .jwt_auth import (
 from .models import (
     LoginRequest,
     PasswordChangeRequest,
+    RefreshTokenRequest,
     TokenResponse,
     UserCreate,
     UserResponse,
@@ -209,7 +213,8 @@ async def register(user_data: UserCreate):
 
 
 @router.post("/login", response_model=TokenResponse)
-async def login(login_data: LoginRequest):
+@limiter.limit("10/minute")  # ログイン試行を制限（ブルートフォース対策）
+async def login(request: Request, login_data: LoginRequest):
     """ログイン（JWTトークン発行）"""
     users = get_demo_users()
     user = users.get(login_data.username)
@@ -233,22 +238,22 @@ async def login(login_data: LoginRequest):
             status_code=status.HTTP_403_FORBIDDEN, detail="Inactive user"
         )
 
-    # JWTトークンを生成
+    # JWTトークンを生成（アクセス＋リフレッシュ）
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = JWTAuth.create_access_token(
-        data={
-            "sub": user["username"],
-            "email": user["email"],
-            "roles": user["roles"],
-            "permissions": user["permissions"],
-            "department": user["department"],
-            "security_level": user["security_level"],
-        },
-        expires_delta=access_token_expires,
-    )
+    token_data = {
+        "sub": user["username"],
+        "email": user["email"],
+        "roles": user["roles"],
+        "permissions": user["permissions"],
+        "department": user["department"],
+        "security_level": user["security_level"],
+    }
+    access_token = JWTAuth.create_access_token(data=token_data, expires_delta=access_token_expires)
+    refresh_token = JWTAuth.create_refresh_token(data={"sub": user["username"]})
 
-    return TokenResponse(
+    token_response = TokenResponse(
         access_token=access_token,
+        refresh_token=refresh_token,
         token_type="bearer",
         expires_in=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
         user=UserResponse(
@@ -260,6 +265,8 @@ async def login(login_data: LoginRequest):
             is_active=user["is_active"],
         ),
     )
+    # slowapi互換: Response型を明示的に返す
+    return JSONResponse(content=token_response.model_dump(mode="json"))
 
 
 @router.post("/token", response_model=TokenResponse)
@@ -283,18 +290,70 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
         )
 
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = JWTAuth.create_access_token(
-        data={
-            "sub": user["username"],
-            "email": user["email"],
-            "roles": user["roles"],
-            "permissions": user["permissions"],
-        },
-        expires_delta=access_token_expires,
-    )
+    token_data = {
+        "sub": user["username"],
+        "email": user["email"],
+        "roles": user["roles"],
+        "permissions": user["permissions"],
+    }
+    access_token = JWTAuth.create_access_token(data=token_data, expires_delta=access_token_expires)
+    refresh_token = JWTAuth.create_refresh_token(data={"sub": user["username"]})
 
     return TokenResponse(
         access_token=access_token,
+        refresh_token=refresh_token,
+        token_type="bearer",
+        expires_in=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        user=UserResponse(
+            username=user["username"],
+            email=user["email"],
+            full_name=user["full_name"],
+            department=user["department"],
+            roles=user["roles"],
+            is_active=user["is_active"],
+        ),
+    )
+
+
+@router.post("/refresh", response_model=TokenResponse)
+async def refresh_access_token(req: RefreshTokenRequest):
+    """リフレッシュトークンでアクセストークンを再発行"""
+    try:
+        payload = JWTAuth.decode_access_token(req.refresh_token)
+    except (HTTPException, Exception):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid refresh token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    if payload.get("type") != "refresh":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token type",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    users = get_demo_users()
+    user = users.get(payload.get("sub"))
+    if not user or not user.get("is_active"):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found or inactive",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    token_data = {
+        "sub": user["username"],
+        "email": user["email"],
+        "roles": user["roles"],
+        "permissions": user["permissions"],
+        "department": user["department"],
+        "security_level": user.get("security_level", 1),
+    }
+    access_token = JWTAuth.create_access_token(data=token_data, expires_delta=access_token_expires)
+    new_refresh = JWTAuth.create_refresh_token(data={"sub": user["username"]})
+    return TokenResponse(
+        access_token=access_token,
+        refresh_token=new_refresh,
         token_type="bearer",
         expires_in=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
         user=UserResponse(

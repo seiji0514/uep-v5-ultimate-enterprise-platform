@@ -2,7 +2,7 @@
 データカタログモジュール
 データのメタデータ管理
 """
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict
 from typing import List
 from typing import List as ListType
@@ -55,7 +55,7 @@ class DataCatalog:
     ) -> DataCatalogEntry:
         """データカタログに登録"""
         catalog_id = f"{bucket_name}/{object_name}"
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         entry = DataCatalogEntry(
             id=catalog_id,
@@ -114,7 +114,7 @@ class DataCatalog:
             if key in update_fields:
                 setattr(entry, key, value)
 
-        entry.updated_at = datetime.utcnow()
+        entry.updated_at = datetime.now(timezone.utc)
         entry.version += 1
 
         return entry

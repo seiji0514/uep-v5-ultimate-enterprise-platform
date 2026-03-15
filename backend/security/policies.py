@@ -1,7 +1,8 @@
 """
 セキュリティポリシー管理モジュール
 """
-from datetime import datetime
+from datetime import datetime, timezone
+
 from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel
@@ -30,7 +31,7 @@ class SecurityPolicyManager:
 
     def _initialize_default_policies(self):
         """デフォルトポリシーを初期化"""
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         default_policies = [
             SecurityPolicy(
@@ -80,7 +81,7 @@ class SecurityPolicyManager:
 
     def create_policy(self, policy: SecurityPolicy) -> SecurityPolicy:
         """ポリシーを作成"""
-        policy.updated_at = datetime.utcnow()
+        policy.updated_at = datetime.now(timezone.utc)
         self._policies[policy.id] = policy
         return policy
 
@@ -115,7 +116,7 @@ class SecurityPolicyManager:
             if key in update_fields:
                 setattr(policy, key, value)
 
-        policy.updated_at = datetime.utcnow()
+        policy.updated_at = datetime.now(timezone.utc)
         return policy
 
     def delete_policy(self, policy_id: str) -> bool:

@@ -15,7 +15,6 @@ import {
   Chip,
   Tabs,
   Tab,
-  CircularProgress,
   Alert,
 } from '@mui/material';
 import {
@@ -24,6 +23,7 @@ import {
   Timeline,
 } from '@mui/icons-material';
 import { mlopsApi, MLPipeline, MLModel, Experiment } from '../../api/mlops';
+import { LoadingSkeleton } from '../common/LoadingSkeleton';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -136,9 +136,7 @@ export const MLOpsPage: React.FC = () => {
       )}
 
       {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-          <CircularProgress />
-        </Box>
+        <LoadingSkeleton variant="table" rows={6} />
       ) : (
         <>
           <TabPanel value={tabValue} index={0}>

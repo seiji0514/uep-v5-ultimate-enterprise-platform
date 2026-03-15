@@ -2,7 +2,7 @@
 エネルギー APIエンドポイント
 需給予測API、スマートグリッド制御、メトリクス
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List
 
 from fastapi import APIRouter, Depends
@@ -39,7 +39,7 @@ def _metrics() -> Dict[str, Any]:
         "total_consumption_kwh": 11800,
         "renewable_ratio": 0.38,
         "grid_stability": 99.95,
-        "last_updated": datetime.utcnow().isoformat(),
+        "last_updated": datetime.now(timezone.utc).isoformat(),
     }
 
 

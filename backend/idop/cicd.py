@@ -2,7 +2,7 @@
 CI/CDパイプラインモジュール
 """
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
@@ -75,8 +75,8 @@ class CICDPipeline:
             stages=stages
             or [PipelineStage.BUILD, PipelineStage.TEST, PipelineStage.DEPLOY],
             config=config or {},
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow(),
+            created_at=datetime.now(timezone.utc),
+            updated_at=datetime.now(timezone.utc),
             created_by=created_by,
         )
 
@@ -100,7 +100,7 @@ class CICDPipeline:
             "commit_hash": commit_hash or "unknown",
             "status": CICDStatus.RUNNING,
             "stages": {},
-            "started_at": datetime.utcnow().isoformat(),
+            "started_at": datetime.now(timezone.utc).isoformat(),
         }
 
         self._runs[run_id] = run
@@ -110,25 +110,25 @@ class CICDPipeline:
             for stage in pipeline.stages:
                 run["stages"][stage.value] = {
                     "status": CICDStatus.RUNNING,
-                    "started_at": datetime.utcnow().isoformat(),
+                    "started_at": datetime.now(timezone.utc).isoformat(),
                 }
 
                 # ステージ実行（簡易実装）
                 run["stages"][stage.value]["status"] = CICDStatus.SUCCESS
                 run["stages"][stage.value][
                     "completed_at"
-                ] = datetime.utcnow().isoformat()
+                ] = datetime.now(timezone.utc).isoformat()
 
             run["status"] = CICDStatus.SUCCESS
-            run["completed_at"] = datetime.utcnow().isoformat()
+            run["completed_at"] = datetime.now(timezone.utc).isoformat()
 
         except Exception as e:
             run["status"] = CICDStatus.FAILED
             run["error"] = str(e)
-            run["completed_at"] = datetime.utcnow().isoformat()
+            run["completed_at"] = datetime.now(timezone.utc).isoformat()
 
         pipeline.status = run["status"]
-        pipeline.updated_at = datetime.utcnow()
+        pipeline.updated_at = datetime.now(timezone.utc)
 
         return run
 

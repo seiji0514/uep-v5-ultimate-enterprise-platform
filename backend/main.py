@@ -26,7 +26,7 @@ import os
 import time
 import uuid
 from contextlib import asynccontextmanager
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict
 
@@ -71,6 +71,9 @@ from auth.rbac import require_permission, require_role
 
 # 認証・認可モジュールのインポート
 from auth.routes import router as auth_router
+
+# 監査ログモジュールのインポート
+from audit.routes import router as audit_router
 
 # データレイクモジュールのインポート
 from data_lake.routes import router as data_lake_router
@@ -367,6 +370,9 @@ app.add_exception_handler(Exception, general_exception_handler)
 # 認証ルーターを追加
 app.include_router(auth_router)
 
+# 監査ログルーターを追加
+app.include_router(audit_router)
+
 # データレイクルーターを追加
 app.include_router(data_lake_router)
 
@@ -522,7 +528,7 @@ async def add_request_id(request: Request, call_next):
 
             request_attributes = {
                 "ip": request.client.host if request.client else "unknown",
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
             }
 
             allowed, reason = zero_trust_policy.evaluate_access(
@@ -618,6 +624,43 @@ async def health_check():
     }
 
 
+@app.get("/health/detailed")
+async def health_check_detailed():
+    """ヘルスチェック詳細（DB・Redis等の個別状態）"""
+    from sqlalchemy import text
+
+    db_ok = False
+    try:
+        from core.database import engine
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+        db_ok = True
+    except Exception:
+        db_ok = False
+
+    redis_ok = False
+    try:
+        import redis
+        r = redis.Redis(
+            host=os.getenv("REDIS_HOST", "localhost"),
+            port=int(os.getenv("REDIS_PORT", "6379")),
+        )
+        r.ping()
+        redis_ok = True
+    except Exception:
+        pass  # Redis はオプション
+
+    return {
+        "status": "healthy" if db_ok else "degraded",
+        "version": settings.APP_VERSION,
+        "checks": {
+            "database": "ok" if db_ok else "error",
+            "redis": "ok" if redis_ok else "unavailable",
+        },
+        "timestamp": time.time(),
+    }
+
+
 @app.get("/metrics")
 async def metrics():
     """Prometheusメトリクスエンドポイント"""
@@ -628,6 +671,18 @@ async def metrics():
 async def api_health():
     """APIヘルスチェック"""
     return {"status": "healthy", "version": "5.0.0", "timestamp": time.time()}
+
+
+@app.get("/api/v1")
+async def api_version_info():
+    """APIバージョン情報・非推奨パスの案内"""
+    return {
+        "version": "v1",
+        "current": "/api/v1",
+        "docs": "/docs",
+        "deprecated": [],
+        "message": "UEP API v1. 非推奨パスは /api/v1 のレスポンスで案内します。",
+    }
 
 
 @app.get("/api/v1/grpc/status", tags=["gRPC"])

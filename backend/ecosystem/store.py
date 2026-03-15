@@ -2,7 +2,7 @@
 Level 3 エコシステム - インメモリストア
 """
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
 from .models import PartnerStatus
@@ -31,8 +31,8 @@ class EcosystemStore:
             "description": "ML/AI ソリューション提供",
             "status": PartnerStatus.APPROVED.value,
             "api_endpoint": "https://api.aisolutions.example.com",
-            "created_at": datetime.utcnow().isoformat(),
-            "approved_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "approved_at": datetime.now(timezone.utc).isoformat(),
         }
         self.partners[p1["id"]] = p1
 
@@ -46,7 +46,7 @@ class EcosystemStore:
             "partner_name": "AI Solutions Inc.",
             "price_type": "free",
             "metadata": {"version": "1.0", "tags": ["rag", "llm"]},
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
             "download_count": 42,
         }
         self.marketplace_items[m1["id"]] = m1
@@ -59,7 +59,7 @@ class EcosystemStore:
             "model_type": "ml",
             "source": "mlops",
             "created_by": "kaho0525",
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
             "download_count": 15,
             "tags": ["sentiment", "nlp"],
         }
@@ -72,7 +72,7 @@ class EcosystemStore:
             "content": "Level 3 エコシステムでは、パートナー統合、モデル共有、コミュニティフォーラムを利用できます。",
             "category": "general",
             "author": "kaho0525",
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
             "comment_count": 2,
             "likes": 5,
         }
@@ -83,7 +83,7 @@ class EcosystemStore:
             "post_id": "post-001",
             "content": "素晴らしい機能ですね！",
             "author": "user1",
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
         }
         self.forum_comments[fc1["id"]] = fc1
 
@@ -92,7 +92,7 @@ class EcosystemStore:
         pid = f"partner-{uuid.uuid4().hex[:8]}"
         data["id"] = pid
         data["status"] = PartnerStatus.PENDING.value
-        data["created_at"] = datetime.utcnow().isoformat()
+        data["created_at"] = datetime.now(timezone.utc).isoformat()
         data["approved_at"] = None
         self.partners[pid] = data
         return data
@@ -115,7 +115,7 @@ class EcosystemStore:
         p["status"] = (
             PartnerStatus.APPROVED.value if approved else PartnerStatus.REJECTED.value
         )
-        p["approved_at"] = datetime.utcnow().isoformat() if approved else None
+        p["approved_at"] = datetime.now(timezone.utc).isoformat() if approved else None
         if notes:
             p["approval_notes"] = notes
         return p
@@ -126,7 +126,7 @@ class EcosystemStore:
         partner = self.partners.get(data["partner_id"])
         data["id"] = mid
         data["partner_name"] = partner["name"] if partner else "Unknown"
-        data["created_at"] = datetime.utcnow().isoformat()
+        data["created_at"] = datetime.now(timezone.utc).isoformat()
         data["download_count"] = 0
         self.marketplace_items[mid] = data
         return data
@@ -149,7 +149,7 @@ class EcosystemStore:
         plid = f"plugin-{uuid.uuid4().hex[:8]}"
         data["id"] = plid
         data["status"] = "active"
-        data["created_at"] = datetime.utcnow().isoformat()
+        data["created_at"] = datetime.now(timezone.utc).isoformat()
         self.plugins[plid] = data
         return data
 
@@ -160,7 +160,7 @@ class EcosystemStore:
     def create_shared_model(self, data: dict) -> dict:
         mid = f"model-{uuid.uuid4().hex[:8]}"
         data["id"] = mid
-        data["created_at"] = datetime.utcnow().isoformat()
+        data["created_at"] = datetime.now(timezone.utc).isoformat()
         data.setdefault("download_count", 0)
         data.setdefault("tags", [])
         self.shared_models[mid] = data
@@ -180,7 +180,7 @@ class EcosystemStore:
     def create_forum_post(self, data: dict) -> dict:
         pid = f"post-{uuid.uuid4().hex[:8]}"
         data["id"] = pid
-        data["created_at"] = datetime.utcnow().isoformat()
+        data["created_at"] = datetime.now(timezone.utc).isoformat()
         data["comment_count"] = 0
         data["likes"] = 0
         self.forum_posts[pid] = data
@@ -198,7 +198,7 @@ class EcosystemStore:
         cid = f"comment-{uuid.uuid4().hex[:8]}"
         data["id"] = cid
         data["post_id"] = post_id
-        data["created_at"] = datetime.utcnow().isoformat()
+        data["created_at"] = datetime.now(timezone.utc).isoformat()
         self.forum_comments[cid] = data
         self.forum_posts[post_id]["comment_count"] += 1
         return data

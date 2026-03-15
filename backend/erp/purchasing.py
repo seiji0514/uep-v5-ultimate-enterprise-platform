@@ -3,7 +3,8 @@ ERP - 購買管理
 発注・入荷・支払・仕入集計
 """
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
+
 from typing import Any, Dict, List, Optional
 
 from .models import PurchaseOrderStatus
@@ -36,8 +37,8 @@ class PurchasingManager:
             "total_amount": total_amount,
             "status": PurchaseOrderStatus.DRAFT.value,
             "notes": notes,
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat(),
         }
         self._orders[order_id] = order
         return order
@@ -69,7 +70,7 @@ class PurchasingManager:
             order["received_at"] = received_at
         if invoice_no:
             order["invoice_no"] = invoice_no
-        order["updated_at"] = datetime.utcnow().isoformat()
+        order["updated_at"] = datetime.now(timezone.utc).isoformat()
         return order
 
     def get_purchasing_summary(self) -> Dict[str, Any]:

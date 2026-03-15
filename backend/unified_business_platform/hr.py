@@ -3,7 +3,7 @@
 障害者雇用支援、オンボーディング、スキルマッチング
 """
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 
@@ -34,8 +34,8 @@ class DisabilitySupportManager:
             "remote_work_eligible": remote_work_eligible,
             "notes": notes or "",
             "status": "active",
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat(),
         }
         self._supports[support_id] = support
         return support
@@ -88,8 +88,8 @@ class OnboardingManager:
             "assignee_id": assignee_id,
             "status": "pending",
             "completed_at": None,
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat(),
         }
         self._tasks[task_id] = task
         return task
@@ -120,8 +120,8 @@ class OnboardingManager:
             return None
         task = self._tasks[task_id]
         task["status"] = "completed"
-        task["completed_at"] = datetime.utcnow().isoformat()
-        task["updated_at"] = datetime.utcnow().isoformat()
+        task["completed_at"] = datetime.now(timezone.utc).isoformat()
+        task["updated_at"] = datetime.now(timezone.utc).isoformat()
         return task
 
 
@@ -140,12 +140,12 @@ class SkillMatchingManager:
                 "employee_id": employee_id,
                 "skills": [],
                 "experience_level": "mid",
-                "created_at": datetime.utcnow().isoformat(),
+                "created_at": datetime.now(timezone.utc).isoformat(),
             }
         emp = self._employees[employee_id]
         emp["skills"] = list(set(emp.get("skills", []) + skills))
         emp["experience_level"] = experience_level
-        emp["updated_at"] = datetime.utcnow().isoformat()
+        emp["updated_at"] = datetime.now(timezone.utc).isoformat()
         return emp
 
     def find_matches(

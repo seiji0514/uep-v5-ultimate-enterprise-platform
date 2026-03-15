@@ -5,6 +5,7 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { Box, Button, Paper, Typography } from '@mui/material';
 import { Refresh, BugReport } from '@mui/icons-material';
+import { captureException } from '../lib/sentry';
 
 interface Props {
   children: ReactNode;
@@ -27,6 +28,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('ErrorBoundary caught:', error, errorInfo);
+    captureException(error, { componentStack: errorInfo.componentStack });
   }
 
   handleRetry = () => {

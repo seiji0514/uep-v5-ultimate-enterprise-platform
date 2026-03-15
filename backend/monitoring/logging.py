@@ -6,7 +6,8 @@ import json
 import logging
 import os
 import re
-from datetime import datetime
+from datetime import datetime, timezone
+
 from typing import Any, Dict, Optional
 
 import httpx
@@ -35,7 +36,7 @@ class JsonFormatter(logging.Formatter):
 
     def format(self, record: logging.LogRecord) -> str:
         log_obj = {
-            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "timestamp": datetime.now(timezone.utc).isoformat() + "Z",
             "level": record.levelname,
             "logger": record.name,
             "message": _mask_sensitive(record.getMessage()),
@@ -74,7 +75,7 @@ class LogstashHandler(logging.Handler):
         """ログレコードをLogstashに送信"""
         try:
             log_data = {
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
                 "level": record.levelname,
                 "logger": record.name,
                 "message": record.getMessage(),

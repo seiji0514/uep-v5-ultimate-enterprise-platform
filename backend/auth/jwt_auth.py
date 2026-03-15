@@ -3,7 +3,7 @@ JWT認証モジュール
 JWTトークンの生成・検証を実装
 """
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, Optional
 
 from fastapi import Depends, HTTPException, WebSocket, WebSocketException, status
@@ -21,6 +21,7 @@ security = HTTPBearer()
 SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-change-in-production")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
+REFRESH_TOKEN_EXPIRE_DAYS = int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS", "7"))
 
 
 class JWTAuth:
@@ -77,13 +78,21 @@ class JWTAuth:
         """アクセストークンの生成"""
         to_encode = data.copy()
         if expires_delta:
-            expire = datetime.utcnow() + expires_delta
+            expire = datetime.now(timezone.utc) + expires_delta
         else:
-            expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+            expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
 
-        to_encode.update({"exp": expire, "iat": datetime.utcnow()})
+        to_encode.update({"exp": expire, "iat": datetime.now(timezone.utc), "type": "access"})
         encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
         return encoded_jwt
+
+    @staticmethod
+    def create_refresh_token(data: Dict[str, Any]) -> str:
+        """リフレッシュトークンの生成"""
+        to_encode = data.copy()
+        expire = datetime.now(timezone.utc) + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
+        to_encode.update({"exp": expire, "iat": datetime.now(timezone.utc), "type": "refresh"})
+        return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
     @staticmethod
     def decode_access_token(token: str) -> Dict[str, Any]:

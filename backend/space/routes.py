@@ -2,7 +2,7 @@
 宇宙・航空 APIエンドポイント
 衛星軌道追跡、航空宇宙システム、時空操作
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List
 
 from fastapi import APIRouter, Depends
@@ -20,7 +20,7 @@ def _satellite_tracking_list() -> List[Dict[str, Any]]:
             "orbit": "LEO",
             "altitude_km": 450,
             "status": "正常",
-            "next_pass": (datetime.utcnow() + timedelta(hours=2)).isoformat(),
+            "next_pass": (datetime.now(timezone.utc) + timedelta(hours=2)).isoformat(),
         },
         {
             "id": "SAT-002",
@@ -36,7 +36,7 @@ def _satellite_tracking_list() -> List[Dict[str, Any]]:
             "orbit": "SSO",
             "altitude_km": 800,
             "status": "監視中",
-            "next_pass": (datetime.utcnow() + timedelta(hours=5)).isoformat(),
+            "next_pass": (datetime.now(timezone.utc) + timedelta(hours=5)).isoformat(),
         },
     ]
 
@@ -65,14 +65,14 @@ def _spacetime_operations_list() -> List[Dict[str, Any]]:
             "id": "ST-001",
             "operation": "軌道マヌーバ",
             "satellite": "SAT-001",
-            "scheduled": (datetime.utcnow() + timedelta(days=3)).isoformat(),
+            "scheduled": (datetime.now(timezone.utc) + timedelta(days=3)).isoformat(),
             "status": "計画済み",
         },
         {
             "id": "ST-002",
             "operation": "デブリ回避",
             "satellite": "SAT-003",
-            "scheduled": (datetime.utcnow() + timedelta(hours=12)).isoformat(),
+            "scheduled": (datetime.now(timezone.utc) + timedelta(hours=12)).isoformat(),
             "status": "待機中",
         },
     ]

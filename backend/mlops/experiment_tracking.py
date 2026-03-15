@@ -3,7 +3,7 @@
 ML実験の追跡と管理
 """
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel
@@ -49,8 +49,8 @@ class ExperimentTracker:
             description=description,
             parameters=parameters or {},
             tags=tags or [],
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow(),
+            created_at=datetime.now(timezone.utc),
+            updated_at=datetime.now(timezone.utc),
             created_by=created_by,
         )
 
@@ -62,14 +62,14 @@ class ExperimentTracker:
         experiment = self._experiments.get(experiment_id)
         if experiment:
             experiment.parameters.update(parameters)
-            experiment.updated_at = datetime.utcnow()
+            experiment.updated_at = datetime.now(timezone.utc)
 
     def log_metrics(self, experiment_id: str, metrics: Dict[str, float]):
         """メトリクスを記録"""
         experiment = self._experiments.get(experiment_id)
         if experiment:
             experiment.metrics.update(metrics)
-            experiment.updated_at = datetime.utcnow()
+            experiment.updated_at = datetime.now(timezone.utc)
 
     def log_artifact(self, experiment_id: str, artifact_path: str):
         """アーティファクトを記録"""
@@ -77,14 +77,14 @@ class ExperimentTracker:
         if experiment:
             if artifact_path not in experiment.artifacts:
                 experiment.artifacts.append(artifact_path)
-            experiment.updated_at = datetime.utcnow()
+            experiment.updated_at = datetime.now(timezone.utc)
 
     def complete_experiment(self, experiment_id: str):
         """実験を完了"""
         experiment = self._experiments.get(experiment_id)
         if experiment:
             experiment.status = "completed"
-            experiment.updated_at = datetime.utcnow()
+            experiment.updated_at = datetime.now(timezone.utc)
 
     def get_experiment(self, experiment_id: str) -> Optional[Experiment]:
         """実験を取得"""

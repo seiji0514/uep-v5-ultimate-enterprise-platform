@@ -4,6 +4,7 @@
  */
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { authApi, UserResponse, LoginRequest } from '../api/auth';
+import { useAuditLog } from './AuditLogContext';
 
 interface AuthContextType {
   user: UserResponse | null;
@@ -28,6 +29,7 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const { log } = useAuditLog();
   const [user, setUser] = useState<UserResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -80,9 +82,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.setItem('access_token', response.access_token);
     localStorage.setItem('user', JSON.stringify(response.user));
     setUser(response.user);
+    log('login', response.user?.username);
   };
 
   const logout = () => {
+    log('logout', user?.username);
     authApi.logout();
     setUser(null);
   };

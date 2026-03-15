@@ -2,7 +2,7 @@
 公共・官公庁 APIエンドポイント
 申請・承認ワークフロー、マイナンバー連携、自治体向け
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List
 
 from fastapi import APIRouter
@@ -17,7 +17,7 @@ def _applications() -> List[Dict[str, Any]]:
             "type": "住民票",
             "applicant": "市民A",
             "status": "申請中",
-            "submitted_at": (datetime.utcnow() - timedelta(days=1)).isoformat(),
+            "submitted_at": (datetime.now(timezone.utc) - timedelta(days=1)).isoformat(),
             "office": "区役所",
         },
         {
@@ -25,7 +25,7 @@ def _applications() -> List[Dict[str, Any]]:
             "type": "戸籍抄本",
             "applicant": "市民B",
             "status": "承認済",
-            "submitted_at": (datetime.utcnow() - timedelta(days=3)).isoformat(),
+            "submitted_at": (datetime.now(timezone.utc) - timedelta(days=3)).isoformat(),
             "office": "市役所",
         },
         {
@@ -33,7 +33,7 @@ def _applications() -> List[Dict[str, Any]]:
             "type": "印鑑証明",
             "applicant": "市民C",
             "status": "差し戻し",
-            "submitted_at": (datetime.utcnow() - timedelta(days=2)).isoformat(),
+            "submitted_at": (datetime.now(timezone.utc) - timedelta(days=2)).isoformat(),
             "office": "区役所",
         },
         {
@@ -41,7 +41,7 @@ def _applications() -> List[Dict[str, Any]]:
             "type": "マイナンバーカード",
             "applicant": "市民D",
             "status": "申請中",
-            "submitted_at": (datetime.utcnow() - timedelta(hours=5)).isoformat(),
+            "submitted_at": (datetime.now(timezone.utc) - timedelta(hours=5)).isoformat(),
             "office": "市役所",
         },
         {
@@ -49,7 +49,7 @@ def _applications() -> List[Dict[str, Any]]:
             "type": "補助金申請",
             "applicant": "法人E",
             "status": "審査中",
-            "submitted_at": (datetime.utcnow() - timedelta(days=5)).isoformat(),
+            "submitted_at": (datetime.now(timezone.utc) - timedelta(days=5)).isoformat(),
             "office": "経済課",
         },
         {
@@ -57,7 +57,7 @@ def _applications() -> List[Dict[str, Any]]:
             "type": "建築確認",
             "applicant": "法人F",
             "status": "承認済",
-            "submitted_at": (datetime.utcnow() - timedelta(days=7)).isoformat(),
+            "submitted_at": (datetime.now(timezone.utc) - timedelta(days=7)).isoformat(),
             "office": "建築課",
         },
     ]
@@ -70,28 +70,28 @@ def _approval_workflow() -> List[Dict[str, Any]]:
             "title": "予算執行承認",
             "current_step": "課長承認",
             "status": "進行中",
-            "deadline": (datetime.utcnow() + timedelta(days=3)).isoformat(),
+            "deadline": (datetime.now(timezone.utc) + timedelta(days=3)).isoformat(),
         },
         {
             "id": "wf-002",
             "title": "契約締結承認",
             "current_step": "部長承認",
             "status": "進行中",
-            "deadline": (datetime.utcnow() + timedelta(days=1)).isoformat(),
+            "deadline": (datetime.now(timezone.utc) + timedelta(days=1)).isoformat(),
         },
         {
             "id": "wf-003",
             "title": "入札結果承認",
             "current_step": "完了",
             "status": "完了",
-            "deadline": (datetime.utcnow() - timedelta(days=1)).isoformat(),
+            "deadline": (datetime.now(timezone.utc) - timedelta(days=1)).isoformat(),
         },
         {
             "id": "wf-004",
             "title": "情報公開請求対応",
             "current_step": "担当確認",
             "status": "進行中",
-            "deadline": (datetime.utcnow() + timedelta(days=5)).isoformat(),
+            "deadline": (datetime.now(timezone.utc) + timedelta(days=5)).isoformat(),
         },
     ]
 

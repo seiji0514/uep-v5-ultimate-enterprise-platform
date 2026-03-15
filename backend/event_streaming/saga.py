@@ -5,7 +5,7 @@ Sagaパターン・アウトボックスパターンのサンプル実装
 import logging
 import uuid
 from abc import ABC, abstractmethod
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional
 
@@ -49,9 +49,9 @@ class Saga(BaseModel):
     def __init__(self, **data):
         super().__init__(**data)
         if self.created_at is None:
-            self.created_at = datetime.utcnow()
+            self.created_at = datetime.now(timezone.utc)
         if self.updated_at is None:
-            self.updated_at = datetime.utcnow()
+            self.updated_at = datetime.now(timezone.utc)
 
     def execute_step(
         self, step_index: int, executor: Callable[[str, Dict], Any]
@@ -121,7 +121,7 @@ class OutboxStore:
         for e in cls._events:
             if e.event_id == event_id:
                 e.published = True
-                e.published_at = datetime.utcnow()
+                e.published_at = datetime.now(timezone.utc)
                 break
 
 
@@ -138,7 +138,7 @@ def create_outbox_event(
         aggregate_id=aggregate_id,
         event_type=event_type,
         payload=payload,
-        created_at=datetime.utcnow(),
+        created_at=datetime.now(timezone.utc),
     )
     OutboxStore.save(event)
     return event

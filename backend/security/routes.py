@@ -1,7 +1,8 @@
 """
 セキュリティAPIエンドポイント
 """
-from datetime import datetime
+from datetime import datetime, timezone
+
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
@@ -155,8 +156,8 @@ async def create_policy(
         policy_type=policy_data.policy_type,
         rules=policy_data.rules,
         enabled=policy_data.enabled if hasattr(policy_data, "enabled") else True,
-        created_at=datetime.utcnow(),
-        updated_at=datetime.utcnow(),
+        created_at=datetime.now(timezone.utc),
+        updated_at=datetime.now(timezone.utc),
     )
 
     return security_policy_manager.create_policy(policy)
@@ -208,7 +209,7 @@ async def evaluate_zero_trust(
 
     request_attributes = {
         "ip": "127.0.0.1",  # 実際の実装ではリクエストから取得
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
     }
 
     allowed, reason = zero_trust_policy.evaluate_access(

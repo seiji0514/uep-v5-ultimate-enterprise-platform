@@ -194,7 +194,7 @@
   </div>
 
   <h3>デモ: UEP（ユーイーピー） v5.0</h3>
-  <p><strong>起動</strong> ①バックエンド: <code>cd C:\uep-v5-ultimate-enterprise-platform</code> → <code>.\start-backend.bat</code> ②フロントエンド: <code>.\start-frontend.bat</code>（または <code>cd frontend</code> → <code>npm install</code>（初回のみ）→ <code>npm start</code>）。フロント: <a href="http://localhost:3000">http://localhost:3000</a>（環境により3018等。kaho0525 / 0525）。本番モードで起動するため API（エーピーアイ） Docs（ドックス）は無効。クラウド: <a href="https://uep-v5-ultimate-enterprise-platform.vercel.app" target="_blank" rel="noopener">Vercel（バーセル）</a>（事前にRender（レンダー） /health で起こす）</p>
+  <p><strong>起動</strong> ①一括: <code>本番デプロイ\start-production-all.bat</code> ②個別: ターミナル1で <code>本番デプロイ\start-backend-production.bat</code>、ターミナル2で <code>本番デプロイ\start-frontend-production.bat</code>。フロント: <a href="http://localhost:3000">http://localhost:3000</a>（kaho0525 / 0525）。本番モードで起動するため API（エーピーアイ） Docs（ドックス）は無効。クラウド: <a href="https://uep-v5-ultimate-enterprise-platform.vercel.app" target="_blank" rel="noopener">Vercel（バーセル）</a>（事前にRender（レンダー） /health で起こす）</p>
   <p><strong>流れ</strong> ①ログイン→ダッシュボード（ダッシュボード）（Level（レベル） 1～5） ②5モジュール概要画面へ→▶ボタンでフルデモ開始 ③産業統合プラットフォーム・EOH（イーオーエイチ）へのリンク（ダッシュボード・サイドバー） ④インクルーシブ雇用AI（エーアイ）・Chaos Engineering（カオスエンジニアリング）・GraphQL（グラフキューエル） など</p>
 
   <h3>口頭説明: 産業統合プラットフォーム・企業横断オペレーション基盤（EOH（イーオーエイチ））（デモなし・簡素に）</h3>
@@ -212,7 +212,8 @@
   <p><span class="q">本番で使える？</span> デモ用ですが、API（エーピーアイ）設計・画面構成は本番を想定。実データ連携に置き換えればPoC（ピーオーシー）・検証に活用可能です。</p>
   <p><span class="q">サンプルデータの出どころは？</span> 製造の予知保全や金融の決済履歴など、各業種の典型的なパターンを想定して、コード内に手動で作成したダミーデータです。外部API（エーピーアイ）や公開データ、実データは使っていません。デモ用に、業種ごとに8〜10件程度を用意しています。</p>
   <p><span class="q">なぜ実データではないのか？</span> 医療は患者情報の規制、金融は決済・取引データの機密性、インクルーシブ雇用は求人データの提供元との契約が必要で、個人開発のデモでは実データの取得が難しいためです。製造はNASA（ナサ） C-MAPSS（シーマップス）など公開データで実機モードに対応済み。契約・納品・請求はもともと実データのみで運用しています。顧客PoC（ピーオーシー）では、各領域の実データ連携に置き換えて検証可能です。</p>
-  <p><span class="q">起動方法は？</span> プロジェクトルートで <code>.\start-backend.bat</code> → <code>.\start-frontend.bat</code>。UEP（ユーイーピー） ダッシュボードからもリンクで開けます。詳細はドキュメントに記載しています。</p>
+  <p><span class="q">起動方法は？</span> <code>本番デプロイ\start-production-all.bat</code> で一括起動。または個別に <code>本番デプロイ\start-backend-production.bat</code> と <code>本番デプロイ\start-frontend-production.bat</code>。UEP（ユーイーピー） ダッシュボードからもリンクで開けます。詳細は <code>本番デプロイ\本番デプロイ手順.md</code> を参照。</p>
+  <p><span class="q">開発用ではなく本番用と言ってよい？</span> 問題なし。本番モード（ENVIRONMENT=production）・本番ビルドで起動しており、事実に即している。面談では「本番モードでデモしています」「本番用のビルドで起動しています」と伝えてよい。補足が必要な場合のみ「ローカルで本番モードの構成で起動しています」と説明。</p>
   <p><span class="q">どの業種向け？</span> 製造・医療・金融・SIer（エスアイヤー）・DX（ディーエックス）・コンプライアンス（コンプライアンス）・サプライチェーン（サプライチェーン）など、複数業種をカバーしています。</p>
 </div>
 
@@ -241,7 +242,7 @@
 <div id="web-prep">
   <h2>10. Web面接の準備チェック</h2>
   <p><strong>事前</strong> カメラ・マイク・背景・照明・ネット・面接URL（ユーアールエル）確認（Google Meet（グーグルミート）予定）</p>
-  <p><strong>デモ</strong> UEP（ユーイーピー） v5.0: <code>cd C:\uep-v5-ultimate-enterprise-platform</code> → <code>.\start-backend.bat</code> → <code>.\start-frontend.bat</code> を事前実行。クラウドの場合は /health でRender（レンダー）を起こす。画面共有の練習</p>
+  <p><strong>デモ</strong> UEP（ユーイーピー） v5.0: <code>本番デプロイ\start-production-all.bat</code> を事前実行。クラウドの場合は /health でRender（レンダー）を起こす。画面共有の練習</p>
   <p><strong>書類送付</strong> メール配信エラー時は <a href="TYKソリューションズ_面談書類送付_アドバイス.html">書類送付・メールアドレス確認のアドバイス</a> を参照（電話で確認を推奨）</p>
   <p><strong>手元</strong> 職務経歴書・履歴書・障害説明書・スキルシート／本ナビ・メモ</p>
 </div>

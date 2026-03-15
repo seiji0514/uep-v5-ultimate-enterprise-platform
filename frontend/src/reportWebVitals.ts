@@ -12,4 +12,12 @@ const reportWebVitals = (onPerfEntry?: ReportHandler) => {
   }
 };
 
+/** Web Vitals をコンソール・将来はダッシュボードに送信 */
+export const sendToAnalytics: ReportHandler = (metric) => {
+  if (process.env.NODE_ENV === 'development') {
+    console.debug('[Web Vitals]', metric.name, metric.value, metric.id);
+  }
+  // 将来: ダッシュボードAPIへ送信
+};
+
 export default reportWebVitals;

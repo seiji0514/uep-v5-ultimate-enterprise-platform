@@ -3,7 +3,7 @@
 データ移行・検証
 """
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 
@@ -33,7 +33,7 @@ class LegacyMigrationManager:
             "mapping": mapping or {},
             "status": "created",
             "records_imported": 0,
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
         }
         self._jobs[job_id] = job
         return job
@@ -52,7 +52,7 @@ class LegacyMigrationManager:
             return {"success": False, "error": "Job not found"}
         job["status"] = "completed"
         job["records_imported"] = 0  # デモ用
-        job["completed_at"] = datetime.utcnow().isoformat()
+        job["completed_at"] = datetime.now(timezone.utc).isoformat()
         return {"success": True, "job": job}
 
     def validate_migration(self, job_id: str, compare_field: str) -> Dict[str, Any]:
@@ -65,7 +65,7 @@ class LegacyMigrationManager:
             "source_count": 0,
             "target_count": 0,
             "match": True,
-            "validated_at": datetime.utcnow().isoformat(),
+            "validated_at": datetime.now(timezone.utc).isoformat(),
         }
         self._validation_results.append(result)
         return {"success": True, "validation": result}

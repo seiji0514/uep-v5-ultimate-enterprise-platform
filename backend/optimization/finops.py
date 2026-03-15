@@ -3,7 +3,8 @@ FinOps - クラウドコスト可視化・予測
 補強スキル: FinOps, コスト最適化
 """
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+
 from typing import Any, Dict, List, Optional
 
 
@@ -38,7 +39,7 @@ def get_cost_summary(
                 "potential_savings_usd": 195,
             },
         ],
-        "generated_at": datetime.utcnow().isoformat(),
+        "generated_at": datetime.now(timezone.utc).isoformat(),
     }
 
 

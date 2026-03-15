@@ -3,7 +3,7 @@ DX・データ系 API
 データレイク、AI/ML、生成AI
 認証不要でデモ用サンプルデータを返す
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List
 
 from fastapi import APIRouter
@@ -18,7 +18,7 @@ def _data_lake_catalogs() -> List[Dict[str, Any]]:
             "name": "顧客データレイク",
             "size_gb": 1250,
             "records": 15000000,
-            "last_ingest": (datetime.utcnow() - timedelta(hours=1)).isoformat(),
+            "last_ingest": (datetime.now(timezone.utc) - timedelta(hours=1)).isoformat(),
             "format": "Parquet",
         },
         {
@@ -26,7 +26,7 @@ def _data_lake_catalogs() -> List[Dict[str, Any]]:
             "name": "ログアーカイブ",
             "size_gb": 3200,
             "records": 500000000,
-            "last_ingest": (datetime.utcnow() - timedelta(minutes=30)).isoformat(),
+            "last_ingest": (datetime.now(timezone.utc) - timedelta(minutes=30)).isoformat(),
             "format": "JSON",
         },
         {
@@ -34,7 +34,7 @@ def _data_lake_catalogs() -> List[Dict[str, Any]]:
             "name": "機械学習データセット",
             "size_gb": 450,
             "records": 5000000,
-            "last_ingest": (datetime.utcnow() - timedelta(days=1)).isoformat(),
+            "last_ingest": (datetime.now(timezone.utc) - timedelta(days=1)).isoformat(),
             "format": "Parquet",
         },
         {
@@ -42,7 +42,7 @@ def _data_lake_catalogs() -> List[Dict[str, Any]]:
             "name": "トランザクション履歴",
             "size_gb": 890,
             "records": 85000000,
-            "last_ingest": (datetime.utcnow() - timedelta(minutes=15)).isoformat(),
+            "last_ingest": (datetime.now(timezone.utc) - timedelta(minutes=15)).isoformat(),
             "format": "Parquet",
         },
         {
@@ -50,7 +50,7 @@ def _data_lake_catalogs() -> List[Dict[str, Any]]:
             "name": "センサーデータアーカイブ",
             "size_gb": 2100,
             "records": 1200000000,
-            "last_ingest": (datetime.utcnow() - timedelta(hours=2)).isoformat(),
+            "last_ingest": (datetime.now(timezone.utc) - timedelta(hours=2)).isoformat(),
             "format": "Parquet",
         },
         {
@@ -58,7 +58,7 @@ def _data_lake_catalogs() -> List[Dict[str, Any]]:
             "name": "Webアクセスログ",
             "size_gb": 680,
             "records": 200000000,
-            "last_ingest": (datetime.utcnow() - timedelta(minutes=5)).isoformat(),
+            "last_ingest": (datetime.now(timezone.utc) - timedelta(minutes=5)).isoformat(),
             "format": "JSON",
         },
         {
@@ -66,7 +66,7 @@ def _data_lake_catalogs() -> List[Dict[str, Any]]:
             "name": "在庫・在庫履歴",
             "size_gb": 320,
             "records": 45000000,
-            "last_ingest": (datetime.utcnow() - timedelta(hours=4)).isoformat(),
+            "last_ingest": (datetime.now(timezone.utc) - timedelta(hours=4)).isoformat(),
             "format": "Parquet",
         },
         {
@@ -74,7 +74,7 @@ def _data_lake_catalogs() -> List[Dict[str, Any]]:
             "name": "マーケティングデータ",
             "size_gb": 520,
             "records": 28000000,
-            "last_ingest": (datetime.utcnow() - timedelta(days=2)).isoformat(),
+            "last_ingest": (datetime.now(timezone.utc) - timedelta(days=2)).isoformat(),
             "format": "CSV",
         },
     ]
@@ -225,7 +225,7 @@ def _data_pipelines() -> List[Dict[str, Any]]:
             "name": "日次ログ集計",
             "schedule": "0 2 * * *",
             "status": "成功",
-            "last_run": (datetime.utcnow() - timedelta(hours=8)).isoformat(),
+            "last_run": (datetime.now(timezone.utc) - timedelta(hours=8)).isoformat(),
             "duration_min": 12,
         },
         {
@@ -233,7 +233,7 @@ def _data_pipelines() -> List[Dict[str, Any]]:
             "name": "リアルタイム取り込み",
             "schedule": "継続",
             "status": "実行中",
-            "last_run": (datetime.utcnow() - timedelta(minutes=1)).isoformat(),
+            "last_run": (datetime.now(timezone.utc) - timedelta(minutes=1)).isoformat(),
             "duration_min": 0,
         },
         {
@@ -241,7 +241,7 @@ def _data_pipelines() -> List[Dict[str, Any]]:
             "name": "週次レポート",
             "schedule": "0 9 * * 1",
             "status": "待機",
-            "last_run": (datetime.utcnow() - timedelta(days=2)).isoformat(),
+            "last_run": (datetime.now(timezone.utc) - timedelta(days=2)).isoformat(),
             "duration_min": 45,
         },
         {
@@ -249,7 +249,7 @@ def _data_pipelines() -> List[Dict[str, Any]]:
             "name": "ML学習パイプライン",
             "schedule": "0 3 * * *",
             "status": "成功",
-            "last_run": (datetime.utcnow() - timedelta(hours=5)).isoformat(),
+            "last_run": (datetime.now(timezone.utc) - timedelta(hours=5)).isoformat(),
             "duration_min": 90,
         },
         {
@@ -257,7 +257,7 @@ def _data_pipelines() -> List[Dict[str, Any]]:
             "name": "データ品質チェック",
             "schedule": "*/30 * * * *",
             "status": "実行中",
-            "last_run": (datetime.utcnow() - timedelta(minutes=5)).isoformat(),
+            "last_run": (datetime.now(timezone.utc) - timedelta(minutes=5)).isoformat(),
             "duration_min": 3,
         },
         {
@@ -265,7 +265,7 @@ def _data_pipelines() -> List[Dict[str, Any]]:
             "name": "顧客データ同期",
             "schedule": "0 1 * * *",
             "status": "成功",
-            "last_run": (datetime.utcnow() - timedelta(hours=9)).isoformat(),
+            "last_run": (datetime.now(timezone.utc) - timedelta(hours=9)).isoformat(),
             "duration_min": 25,
         },
         {
@@ -273,7 +273,7 @@ def _data_pipelines() -> List[Dict[str, Any]]:
             "name": "在庫集計",
             "schedule": "0 */6 * * *",
             "status": "成功",
-            "last_run": (datetime.utcnow() - timedelta(hours=2)).isoformat(),
+            "last_run": (datetime.now(timezone.utc) - timedelta(hours=2)).isoformat(),
             "duration_min": 8,
         },
         {
@@ -281,7 +281,7 @@ def _data_pipelines() -> List[Dict[str, Any]]:
             "name": "SLAレポート",
             "schedule": "0 8 1 * *",
             "status": "待機",
-            "last_run": (datetime.utcnow() - timedelta(days=10)).isoformat(),
+            "last_run": (datetime.now(timezone.utc) - timedelta(days=10)).isoformat(),
             "duration_min": 15,
         },
     ]

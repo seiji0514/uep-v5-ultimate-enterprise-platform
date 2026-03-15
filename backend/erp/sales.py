@@ -3,7 +3,8 @@ ERP - 販売管理
 受注・出荷・請求・売上集計
 """
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
+
 from typing import Any, Dict, List, Optional
 
 from .models import SalesOrderStatus
@@ -36,8 +37,8 @@ class SalesManager:
             "total_amount": total_amount,
             "status": SalesOrderStatus.DRAFT.value,
             "notes": notes,
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat(),
         }
         self._orders[order_id] = order
         return order
@@ -69,7 +70,7 @@ class SalesManager:
             order["shipped_at"] = shipped_at
         if invoice_no:
             order["invoice_no"] = invoice_no
-        order["updated_at"] = datetime.utcnow().isoformat()
+        order["updated_at"] = datetime.now(timezone.utc).isoformat()
         return order
 
     def get_sales_summary(self) -> Dict[str, Any]:

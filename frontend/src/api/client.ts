@@ -1,8 +1,9 @@
 /**
  * APIクライアント
- * バックエンドAPIとの通信を管理
+ * バックエンドAPIとの通信を管理（本番対応: リフレッシュトークン自動延長）
  */
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import { authApi } from './auth';
 
 export const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 
@@ -17,7 +18,6 @@ class ApiClient {
       },
     });
 
-    // リクエストインターセプター（認証トークンを追加）
     this.client.interceptors.request.use(
       (config) => {
         const token = localStorage.getItem('access_token');
@@ -26,26 +26,38 @@ class ApiClient {
         }
         return config;
       },
-      (error) => {
-        return Promise.reject(error);
-      }
+      (error) => Promise.reject(error)
     );
 
-    // レスポンスインターセプター（エラーハンドリング）
     this.client.interceptors.response.use(
       (response) => response,
-      (error) => {
-        // ネットワークエラーのログ出力
+      async (error) => {
         if (!error.response) {
           console.error('Network Error:', error.message);
           if (error.code === 'ECONNREFUSED') {
             console.error('Backend server is not running or not accessible at:', API_BASE_URL);
           }
+          return Promise.reject(error);
         }
-        
+
         if (error.response?.status === 401) {
-          // 認証エラーの場合、カスタムイベントで AuthProvider に通知（フルリロードを避ける）
+          const originalRequest = error.config;
+          if (!originalRequest._retry && localStorage.getItem('refresh_token')) {
+            originalRequest._retry = true;
+            try {
+              const tokenData = await authApi.refreshToken();
+              if (tokenData) {
+                localStorage.setItem('access_token', tokenData.access_token);
+                localStorage.setItem('user', JSON.stringify(tokenData.user));
+                originalRequest.headers.Authorization = `Bearer ${tokenData.access_token}`;
+                return this.client(originalRequest);
+              }
+            } catch {
+              // リフレッシュ失敗時はログアウト
+            }
+          }
           localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
           localStorage.removeItem('user');
           window.dispatchEvent(new CustomEvent('auth:unauthorized'));
         }

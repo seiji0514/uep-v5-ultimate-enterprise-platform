@@ -2,7 +2,8 @@
 交通 APIエンドポイント
 交通管理、航空管制、スマートシティ持続可能性プラットフォーム
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+
 from typing import Any, Dict, List
 
 from fastapi import APIRouter, Depends
@@ -70,7 +71,7 @@ def _smart_city_sustainability() -> Dict[str, Any]:
         "ev_charging_sessions": 342,
         "public_transit_ridership": 125000,
         "traffic_flow_optimization": 0.92,
-        "last_updated": datetime.utcnow().isoformat(),
+        "last_updated": datetime.now(timezone.utc).isoformat(),
     }
 
 

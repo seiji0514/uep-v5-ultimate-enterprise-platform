@@ -3,7 +3,8 @@ MLパイプラインモジュール
 MLパイプラインの設計と実装
 """
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
+
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional
 
@@ -83,8 +84,8 @@ class PipelineExecutor:
             name=name,
             description=description,
             stages=pipeline_stages,
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow(),
+            created_at=datetime.now(timezone.utc),
+            updated_at=datetime.now(timezone.utc),
             created_by=created_by,
         )
 
@@ -99,13 +100,13 @@ class PipelineExecutor:
 
         execution_id = str(uuid.uuid4())
         pipeline.status = PipelineStatus.RUNNING
-        pipeline.updated_at = datetime.utcnow()
+        pipeline.updated_at = datetime.now(timezone.utc)
 
         self._executions[execution_id] = {
             "execution_id": execution_id,
             "pipeline_id": pipeline_id,
             "status": PipelineStatus.RUNNING,
-            "started_at": datetime.utcnow(),
+            "started_at": datetime.now(timezone.utc),
             "stages": {},
         }
 
@@ -113,7 +114,7 @@ class PipelineExecutor:
         try:
             for stage in pipeline.stages:
                 stage.status = PipelineStatus.RUNNING
-                stage.started_at = datetime.utcnow()
+                stage.started_at = datetime.now(timezone.utc)
 
                 # 依存関係をチェック
                 for dep_id in stage.dependencies:
@@ -126,7 +127,7 @@ class PipelineExecutor:
                 # ステージ実行（簡易実装）
                 # 実際の実装では、各ステージタイプに応じた処理を実行
                 stage.status = PipelineStatus.SUCCESS
-                stage.completed_at = datetime.utcnow()
+                stage.completed_at = datetime.now(timezone.utc)
 
                 self._executions[execution_id]["stages"][stage.id] = {
                     "status": PipelineStatus.SUCCESS,
@@ -136,15 +137,15 @@ class PipelineExecutor:
 
             pipeline.status = PipelineStatus.SUCCESS
             self._executions[execution_id]["status"] = PipelineStatus.SUCCESS
-            self._executions[execution_id]["completed_at"] = datetime.utcnow()
+            self._executions[execution_id]["completed_at"] = datetime.now(timezone.utc)
 
         except Exception as e:
             pipeline.status = PipelineStatus.FAILED
             self._executions[execution_id]["status"] = PipelineStatus.FAILED
             self._executions[execution_id]["error"] = str(e)
-            self._executions[execution_id]["completed_at"] = datetime.utcnow()
+            self._executions[execution_id]["completed_at"] = datetime.now(timezone.utc)
 
-        pipeline.updated_at = datetime.utcnow()
+        pipeline.updated_at = datetime.now(timezone.utc)
         return self._executions[execution_id]
 
     def get_pipeline(self, pipeline_id: str) -> Optional[MLPipeline]:

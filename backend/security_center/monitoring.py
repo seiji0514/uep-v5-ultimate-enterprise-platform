@@ -2,7 +2,7 @@
 セキュリティ監視モジュール
 """
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
@@ -59,7 +59,7 @@ class SecurityMonitor:
             source=source,
             target=target,
             description=description,
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             metadata=metadata,
         )
 

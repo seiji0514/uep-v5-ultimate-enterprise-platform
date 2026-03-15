@@ -10,6 +10,7 @@ export interface LoginRequest {
 
 export interface TokenResponse {
   access_token: string;
+  refresh_token?: string;
   token_type: string;
   expires_in: number;
   user: {
@@ -37,7 +38,32 @@ export const authApi = {
    */
   async login(credentials: LoginRequest): Promise<TokenResponse> {
     const response = await apiClient.post<TokenResponse>('/api/v1/auth/login', credentials);
-    return response.data;
+    const data = response.data;
+    if (data.refresh_token) {
+      localStorage.setItem('refresh_token', data.refresh_token);
+    }
+    return data;
+  },
+
+  /**
+   * リフレッシュトークンでアクセストークンを再取得
+   */
+  async refreshToken(): Promise<TokenResponse | null> {
+    const refreshToken = localStorage.getItem('refresh_token');
+    if (!refreshToken) return null;
+    try {
+      const response = await apiClient.post<TokenResponse>('/api/v1/auth/refresh', {
+        refresh_token: refreshToken,
+      });
+      const data = response.data;
+      if (data.refresh_token) {
+        localStorage.setItem('refresh_token', data.refresh_token);
+      }
+      return data;
+    } catch {
+      localStorage.removeItem('refresh_token');
+      return null;
+    }
   },
 
   /**
@@ -63,6 +89,7 @@ export const authApi = {
    */
   logout(): void {
     localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
     localStorage.removeItem('user');
   },
 };

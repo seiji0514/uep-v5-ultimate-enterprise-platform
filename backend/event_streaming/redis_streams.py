@@ -5,7 +5,7 @@ Redis Streams クライアント
 """
 import json
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 try:
@@ -53,7 +53,7 @@ class RedisStreamsClient:
         client = self._get_client()
         payload = {
             "data": json.dumps(data) if isinstance(data, dict) else str(data),
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         }
         kwargs = {"maxlen": max_len} if max_len else {}
         return client.xadd(stream, payload, **kwargs)

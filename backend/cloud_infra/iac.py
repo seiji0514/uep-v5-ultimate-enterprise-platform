@@ -2,7 +2,8 @@
 IaC (Infrastructure as Code) モジュール
 """
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
+
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
@@ -59,8 +60,8 @@ class IaCManager:
             provider=provider,
             template_content=template_content,
             variables=variables or {},
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow(),
+            created_at=datetime.now(timezone.utc),
+            updated_at=datetime.now(timezone.utc),
             created_by=created_by,
         )
 
@@ -87,14 +88,14 @@ class IaCManager:
             "provider": template.provider.value,
             "variables": deployment_variables,
             "status": "deploying",
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
         }
 
         self._deployments[deployment_id] = deployment
 
         # デプロイ処理（簡易実装）
         deployment["status"] = "deployed"
-        deployment["completed_at"] = datetime.utcnow().isoformat()
+        deployment["completed_at"] = datetime.now(timezone.utc).isoformat()
 
         return deployment
 

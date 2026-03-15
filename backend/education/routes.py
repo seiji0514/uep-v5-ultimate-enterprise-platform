@@ -2,7 +2,8 @@
 教育 APIエンドポイント
 LMS、学習進捗、成績、教材管理
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+
 from typing import Any, Dict, List
 
 from fastapi import APIRouter
@@ -56,31 +57,31 @@ def _learning_progress() -> List[Dict[str, Any]]:
             "student_id": "S001",
             "course": "Python基礎",
             "progress": 95,
-            "last_accessed": (datetime.utcnow() - timedelta(hours=2)).isoformat(),
+            "last_accessed": (datetime.now(timezone.utc) - timedelta(hours=2)).isoformat(),
         },
         {
             "student_id": "S002",
             "course": "データ分析入門",
             "progress": 60,
-            "last_accessed": (datetime.utcnow() - timedelta(days=1)).isoformat(),
+            "last_accessed": (datetime.now(timezone.utc) - timedelta(days=1)).isoformat(),
         },
         {
             "student_id": "S003",
             "course": "AI/ML実践",
             "progress": 30,
-            "last_accessed": (datetime.utcnow() - timedelta(hours=5)).isoformat(),
+            "last_accessed": (datetime.now(timezone.utc) - timedelta(hours=5)).isoformat(),
         },
         {
             "student_id": "S004",
             "course": "Python基礎",
             "progress": 100,
-            "last_accessed": (datetime.utcnow() - timedelta(days=2)).isoformat(),
+            "last_accessed": (datetime.now(timezone.utc) - timedelta(days=2)).isoformat(),
         },
         {
             "student_id": "S005",
             "course": "セキュリティ入門",
             "progress": 45,
-            "last_accessed": (datetime.utcnow() - timedelta(hours=12)).isoformat(),
+            "last_accessed": (datetime.now(timezone.utc) - timedelta(hours=12)).isoformat(),
         },
     ]
 
@@ -92,35 +93,35 @@ def _grades() -> List[Dict[str, Any]]:
             "course": "Python基礎",
             "score": 92,
             "grade": "A",
-            "submitted_at": (datetime.utcnow() - timedelta(days=3)).isoformat(),
+            "submitted_at": (datetime.now(timezone.utc) - timedelta(days=3)).isoformat(),
         },
         {
             "student_id": "S002",
             "course": "データ分析入門",
             "score": 78,
             "grade": "B",
-            "submitted_at": (datetime.utcnow() - timedelta(days=5)).isoformat(),
+            "submitted_at": (datetime.now(timezone.utc) - timedelta(days=5)).isoformat(),
         },
         {
             "student_id": "S003",
             "course": "AI/ML実践",
             "score": 65,
             "grade": "C",
-            "submitted_at": (datetime.utcnow() - timedelta(days=1)).isoformat(),
+            "submitted_at": (datetime.now(timezone.utc) - timedelta(days=1)).isoformat(),
         },
         {
             "student_id": "S004",
             "course": "Python基礎",
             "score": 98,
             "grade": "A",
-            "submitted_at": (datetime.utcnow() - timedelta(days=7)).isoformat(),
+            "submitted_at": (datetime.now(timezone.utc) - timedelta(days=7)).isoformat(),
         },
         {
             "student_id": "S005",
             "course": "セキュリティ入門",
             "score": 88,
             "grade": "A",
-            "submitted_at": (datetime.utcnow() - timedelta(days=2)).isoformat(),
+            "submitted_at": (datetime.now(timezone.utc) - timedelta(days=2)).isoformat(),
         },
     ]
 

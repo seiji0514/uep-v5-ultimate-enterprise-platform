@@ -4,7 +4,7 @@
 """
 import os
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, Optional
 
 import httpx
@@ -78,7 +78,7 @@ async def health_check():
 
     return {
         "status": "healthy",
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "services": services,
         "retry_enabled": True,
     }
@@ -95,7 +95,7 @@ async def health_check_detailed():
     all_status = service_health_registry.get_all_status()
     return {
         "status": "healthy",
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "services": all_status or {"backend": {"status": "healthy"}},
         "healthy_count": len(service_health_registry.get_healthy_services()),
     }
@@ -196,5 +196,5 @@ async def get_stats(current_user: Dict[str, Any] = Depends(get_current_active_us
             ),
             "kibana": await _check_service("http://kibana:5601/api/status"),
         },
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
     }

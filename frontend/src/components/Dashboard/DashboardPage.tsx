@@ -2,7 +2,7 @@
  * ダッシュボードページ
  * 統合ダッシュボード・画面構成（24カラムグリッド、パネル、左寄せタイトル）
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Typography,
@@ -28,10 +28,10 @@ import {
   Satellite,
   Traffic,
   Hub,
-  OpenInNew,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useNotifications } from '../../contexts/NotificationContext';
 import { apiClient } from '../../api/client';
 
 const getIndustryUnifiedUrl = () => {
@@ -60,7 +60,7 @@ const DashboardPanel: React.FC<PanelProps> = ({ title, description, icon, path, 
   const navigate = useNavigate();
   const handleClick = () => {
     if (external) {
-      window.open(path, '_blank', 'noopener,noreferrer');
+      window.location.href = path;
     } else {
       navigate(path);
     }
@@ -100,7 +100,7 @@ const DashboardPanel: React.FC<PanelProps> = ({ title, description, icon, path, 
             </Typography>
           </Box>
           <IconButton size="small" className="panel-action" sx={{ opacity: 0.6 }} aria-hidden>
-            {external ? <OpenInNew fontSize="small" /> : <ArrowForward fontSize="small" />}
+            <ArrowForward fontSize="small" />
           </IconButton>
         </Box>
         <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.5 }}>
@@ -123,6 +123,7 @@ interface ActionItems {
 export const DashboardPage: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { addNotification } = useNotifications();
   const [actionItems, setActionItems] = useState<ActionItems | null>(null);
   const [actionItemsLoading, setActionItemsLoading] = useState(true);
 
@@ -134,6 +135,19 @@ export const DashboardPage: React.FC = () => {
       .finally(() => { if (!cancelled) setActionItemsLoading(false); });
     return () => { cancelled = true; };
   }, []);
+
+  const notifiedRef = useRef(false);
+  useEffect(() => {
+    if (!actionItems || actionItemsLoading || (actionItems.total ?? 0) === 0 || notifiedRef.current) return;
+    notifiedRef.current = true;
+    const total = actionItems.total ?? 0;
+    addNotification({
+      title: '要対応があります',
+      message: `合計 ${total} 件の要対応があります。製造・医療・金融・契約モジュールを確認してください。`,
+      severity: 'warning',
+      link: '/manufacturing',
+    });
+  }, [actionItems, actionItemsLoading, addNotification]);
 
   const panels: PanelProps[] = [
     {
@@ -279,8 +293,8 @@ export const DashboardPage: React.FC = () => {
         </Typography>
         <Paper sx={{ p: 2 }} elevation={0}>
           {actionItemsLoading ? (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <CircularProgress size={24} />
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }} aria-busy="true" aria-label="要対応データを読み込み中">
+              <CircularProgress size={24} aria-hidden />
               <Typography variant="body2" color="text.secondary">読み込み中...</Typography>
             </Box>
           ) : actionItems && (actionItems.total ?? 0) > 0 ? (

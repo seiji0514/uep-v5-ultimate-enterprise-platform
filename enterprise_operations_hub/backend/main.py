@@ -7,6 +7,13 @@
 import csv
 import io
 import os
+from pathlib import Path
+
+# .env の読み込み
+_env_file = Path(__file__).resolve().parent / ".env"
+if _env_file.exists():
+    from dotenv import load_dotenv
+    load_dotenv(_env_file)
 
 # 本番環境: 起動時に必須設定を検証
 ENVIRONMENT = os.environ.get("ENVIRONMENT", "development")

@@ -3,7 +3,7 @@
 物流、在庫、調達
 認証不要でデモ用サンプルデータを返す
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List
 
 from fastapi import APIRouter
@@ -18,7 +18,7 @@ def _logistics_shipments() -> List[Dict[str, Any]]:
             "origin": "東京倉庫",
             "destination": "大阪配送",
             "status": "配送中",
-            "eta": (datetime.utcnow() + timedelta(hours=4)).isoformat(),
+            "eta": (datetime.now(timezone.utc) + timedelta(hours=4)).isoformat(),
             "carrier": "ヤマト",
         },
         {
@@ -26,7 +26,7 @@ def _logistics_shipments() -> List[Dict[str, Any]]:
             "origin": "福岡倉庫",
             "destination": "名古屋配送",
             "status": "出荷済",
-            "eta": (datetime.utcnow() + timedelta(days=1)).isoformat(),
+            "eta": (datetime.now(timezone.utc) + timedelta(days=1)).isoformat(),
             "carrier": "佐川",
         },
         {
@@ -34,7 +34,7 @@ def _logistics_shipments() -> List[Dict[str, Any]]:
             "origin": "輸入港",
             "destination": "東京倉庫",
             "status": "通関中",
-            "eta": (datetime.utcnow() + timedelta(days=2)).isoformat(),
+            "eta": (datetime.now(timezone.utc) + timedelta(days=2)).isoformat(),
             "carrier": "船便",
         },
         {
@@ -42,7 +42,7 @@ def _logistics_shipments() -> List[Dict[str, Any]]:
             "origin": "大阪倉庫",
             "destination": "札幌配送",
             "status": "配送中",
-            "eta": (datetime.utcnow() + timedelta(hours=18)).isoformat(),
+            "eta": (datetime.now(timezone.utc) + timedelta(hours=18)).isoformat(),
             "carrier": "ヤマト",
         },
         {
@@ -50,7 +50,7 @@ def _logistics_shipments() -> List[Dict[str, Any]]:
             "origin": "名古屋倉庫",
             "destination": "横浜配送",
             "status": "出荷済",
-            "eta": (datetime.utcnow() + timedelta(hours=8)).isoformat(),
+            "eta": (datetime.now(timezone.utc) + timedelta(hours=8)).isoformat(),
             "carrier": "西濃",
         },
         {
@@ -58,7 +58,7 @@ def _logistics_shipments() -> List[Dict[str, Any]]:
             "origin": "横浜倉庫",
             "destination": "仙台配送",
             "status": "配送中",
-            "eta": (datetime.utcnow() + timedelta(hours=12)).isoformat(),
+            "eta": (datetime.now(timezone.utc) + timedelta(hours=12)).isoformat(),
             "carrier": "ヤマト",
         },
         {
@@ -66,7 +66,7 @@ def _logistics_shipments() -> List[Dict[str, Any]]:
             "origin": "東京倉庫",
             "destination": "福岡配送",
             "status": "出荷済",
-            "eta": (datetime.utcnow() + timedelta(days=2)).isoformat(),
+            "eta": (datetime.now(timezone.utc) + timedelta(days=2)).isoformat(),
             "carrier": "佐川",
         },
         {
@@ -74,7 +74,7 @@ def _logistics_shipments() -> List[Dict[str, Any]]:
             "origin": "輸入港",
             "destination": "大阪倉庫",
             "status": "通関中",
-            "eta": (datetime.utcnow() + timedelta(days=3)).isoformat(),
+            "eta": (datetime.now(timezone.utc) + timedelta(days=3)).isoformat(),
             "carrier": "船便",
         },
     ]
@@ -164,7 +164,7 @@ def _procurement_orders() -> List[Dict[str, Any]]:
             "supplier": "サプライヤーA",
             "amount": 500000,
             "status": "発注済",
-            "delivery_date": (datetime.utcnow() + timedelta(days=7)).isoformat(),
+            "delivery_date": (datetime.now(timezone.utc) + timedelta(days=7)).isoformat(),
             "items": 3,
         },
         {
@@ -172,7 +172,7 @@ def _procurement_orders() -> List[Dict[str, Any]]:
             "supplier": "サプライヤーB",
             "amount": 320000,
             "status": "入荷待ち",
-            "delivery_date": (datetime.utcnow() + timedelta(days=2)).isoformat(),
+            "delivery_date": (datetime.now(timezone.utc) + timedelta(days=2)).isoformat(),
             "items": 5,
         },
         {
@@ -180,7 +180,7 @@ def _procurement_orders() -> List[Dict[str, Any]]:
             "supplier": "サプライヤーC",
             "amount": 180000,
             "status": "入荷済",
-            "delivery_date": (datetime.utcnow() - timedelta(days=1)).isoformat(),
+            "delivery_date": (datetime.now(timezone.utc) - timedelta(days=1)).isoformat(),
             "items": 2,
         },
         {
@@ -188,7 +188,7 @@ def _procurement_orders() -> List[Dict[str, Any]]:
             "supplier": "サプライヤーD",
             "amount": 450000,
             "status": "発注済",
-            "delivery_date": (datetime.utcnow() + timedelta(days=10)).isoformat(),
+            "delivery_date": (datetime.now(timezone.utc) + timedelta(days=10)).isoformat(),
             "items": 4,
         },
         {
@@ -196,7 +196,7 @@ def _procurement_orders() -> List[Dict[str, Any]]:
             "supplier": "サプライヤーE",
             "amount": 280000,
             "status": "入荷待ち",
-            "delivery_date": (datetime.utcnow() + timedelta(days=3)).isoformat(),
+            "delivery_date": (datetime.now(timezone.utc) + timedelta(days=3)).isoformat(),
             "items": 6,
         },
         {
@@ -204,7 +204,7 @@ def _procurement_orders() -> List[Dict[str, Any]]:
             "supplier": "サプライヤーF",
             "amount": 380000,
             "status": "発注済",
-            "delivery_date": (datetime.utcnow() + timedelta(days=7)).isoformat(),
+            "delivery_date": (datetime.now(timezone.utc) + timedelta(days=7)).isoformat(),
             "items": 8,
         },
         {
@@ -212,7 +212,7 @@ def _procurement_orders() -> List[Dict[str, Any]]:
             "supplier": "サプライヤーG",
             "amount": 195000,
             "status": "入荷済",
-            "delivery_date": (datetime.utcnow() - timedelta(days=2)).isoformat(),
+            "delivery_date": (datetime.now(timezone.utc) - timedelta(days=2)).isoformat(),
             "items": 3,
         },
         {
@@ -220,7 +220,7 @@ def _procurement_orders() -> List[Dict[str, Any]]:
             "supplier": "サプライヤーH",
             "amount": 520000,
             "status": "入荷待ち",
-            "delivery_date": (datetime.utcnow() + timedelta(days=5)).isoformat(),
+            "delivery_date": (datetime.now(timezone.utc) + timedelta(days=5)).isoformat(),
             "items": 10,
         },
     ]

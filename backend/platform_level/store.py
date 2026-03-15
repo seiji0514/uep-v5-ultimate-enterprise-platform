@@ -2,7 +2,7 @@
 Level 2 プラットフォーム - インメモリストア
 """
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
 
@@ -61,7 +61,7 @@ class PlatformStore:
             "plan_id": "pro",
             "status": "active",
             "contact_email": "admin@demo.example.com",
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
             "resource_limits": {"api_calls": 100000, "storage_gb": 100},
         }
         self.tenants[t1["id"]] = t1
@@ -74,7 +74,7 @@ class PlatformStore:
             "provider_tenant_id": "tenant-001",
             "price_per_call": 0.1,
             "category": "mlops",
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
             "call_count": 1250,
         }
         self.api_listings[a1["id"]] = a1
@@ -84,7 +84,7 @@ class PlatformStore:
         plan = self.plans.get(data["plan_id"], self.plans["free"])
         data["id"] = tid
         data["status"] = "active"
-        data["created_at"] = datetime.utcnow().isoformat()
+        data["created_at"] = datetime.now(timezone.utc).isoformat()
         data["resource_limits"] = {
             "api_calls": plan["api_calls_limit"],
             "storage_gb": plan["storage_gb"],
@@ -104,7 +104,7 @@ class PlatformStore:
     def create_api_listing(self, data: dict) -> dict:
         aid = f"api-{uuid.uuid4().hex[:8]}"
         data["id"] = aid
-        data["created_at"] = datetime.utcnow().isoformat()
+        data["created_at"] = datetime.now(timezone.utc).isoformat()
         data["call_count"] = 0
         self.api_listings[aid] = data
         return data

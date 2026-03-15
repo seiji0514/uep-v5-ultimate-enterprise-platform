@@ -6,7 +6,8 @@
 import json
 import logging
 import os
-from datetime import datetime
+from datetime import datetime, timezone
+
 from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
@@ -46,7 +47,7 @@ def push_to_dlq(
         "error": error,
         "partition": partition,
         "offset": offset,
-        "created_at": datetime.utcnow().isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat(),
         "retry_count": 0,
     }
     global _dlq_store

@@ -2,7 +2,8 @@
 法務 APIエンドポイント
 契約書レビュー、規制対応、知的財産、コンプライアンス
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+
 from typing import Any, Dict, List
 
 from fastapi import APIRouter
@@ -17,35 +18,35 @@ def _contract_reviews() -> List[Dict[str, Any]]:
             "title": "業務委託契約書",
             "status": "レビュー中",
             "risk_level": "中",
-            "submitted_at": (datetime.utcnow() - timedelta(days=1)).isoformat(),
+            "submitted_at": (datetime.now(timezone.utc) - timedelta(days=1)).isoformat(),
         },
         {
             "id": "cr-002",
             "title": "NDA（秘密保持契約）",
             "status": "承認済",
             "risk_level": "低",
-            "submitted_at": (datetime.utcnow() - timedelta(days=3)).isoformat(),
+            "submitted_at": (datetime.now(timezone.utc) - timedelta(days=3)).isoformat(),
         },
         {
             "id": "cr-003",
             "title": "ライセンス契約",
             "status": "要修正",
             "risk_level": "高",
-            "submitted_at": (datetime.utcnow() - timedelta(days=2)).isoformat(),
+            "submitted_at": (datetime.now(timezone.utc) - timedelta(days=2)).isoformat(),
         },
         {
             "id": "cr-004",
             "title": "販売代理店契約",
             "status": "レビュー中",
             "risk_level": "中",
-            "submitted_at": (datetime.utcnow() - timedelta(hours=5)).isoformat(),
+            "submitted_at": (datetime.now(timezone.utc) - timedelta(hours=5)).isoformat(),
         },
         {
             "id": "cr-005",
             "title": "SaaS利用規約",
             "status": "承認済",
             "risk_level": "低",
-            "submitted_at": (datetime.utcnow() - timedelta(days=5)).isoformat(),
+            "submitted_at": (datetime.now(timezone.utc) - timedelta(days=5)).isoformat(),
         },
     ]
 
@@ -55,25 +56,25 @@ def _regulatory_items() -> List[Dict[str, Any]]:
         {
             "id": "reg-001",
             "name": "個人情報保護法",
-            "deadline": (datetime.utcnow() + timedelta(days=30)).isoformat(),
+            "deadline": (datetime.now(timezone.utc) + timedelta(days=30)).isoformat(),
             "status": "対応中",
         },
         {
             "id": "reg-002",
             "name": "電子帳簿保存法",
-            "deadline": (datetime.utcnow() + timedelta(days=60)).isoformat(),
+            "deadline": (datetime.now(timezone.utc) + timedelta(days=60)).isoformat(),
             "status": "未着手",
         },
         {
             "id": "reg-003",
             "name": "サイバーセキュリティ経営ガイドライン",
-            "deadline": (datetime.utcnow() + timedelta(days=14)).isoformat(),
+            "deadline": (datetime.now(timezone.utc) + timedelta(days=14)).isoformat(),
             "status": "対応中",
         },
         {
             "id": "reg-004",
             "name": "労働基準法 年次有給",
-            "deadline": (datetime.utcnow() + timedelta(days=90)).isoformat(),
+            "deadline": (datetime.now(timezone.utc) + timedelta(days=90)).isoformat(),
             "status": "完了",
         },
     ]
@@ -119,21 +120,21 @@ def _compliance_alerts() -> List[Dict[str, Any]]:
             "type": "契約期限",
             "title": "業務委託契約 更新期限",
             "severity": "高",
-            "due_date": (datetime.utcnow() + timedelta(days=7)).isoformat(),
+            "due_date": (datetime.now(timezone.utc) + timedelta(days=7)).isoformat(),
         },
         {
             "id": "ca-002",
             "type": "規制対応",
             "title": "個人情報保護法 社内教育",
             "severity": "中",
-            "due_date": (datetime.utcnow() + timedelta(days=14)).isoformat(),
+            "due_date": (datetime.now(timezone.utc) + timedelta(days=14)).isoformat(),
         },
         {
             "id": "ca-003",
             "type": "監査",
             "title": "内部監査 実施",
             "severity": "中",
-            "due_date": (datetime.utcnow() + timedelta(days=30)).isoformat(),
+            "due_date": (datetime.now(timezone.utc) + timedelta(days=30)).isoformat(),
         },
     ]
 

@@ -3,7 +3,8 @@
 問い合わせ管理、チケット、カスタマーサポート、チャットボット
 """
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
+
 from typing import Any, Dict, List, Optional
 
 
@@ -33,8 +34,8 @@ class TicketManager:
             "category": category or "general",
             "status": "open",
             "assigned_to": None,
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat(),
         }
         self._tickets[ticket_id] = ticket
         self._messages[ticket_id] = []
@@ -61,7 +62,7 @@ class TicketManager:
         ticket["status"] = status
         if assigned_to is not None:
             ticket["assigned_to"] = assigned_to
-        ticket["updated_at"] = datetime.utcnow().isoformat()
+        ticket["updated_at"] = datetime.now(timezone.utc).isoformat()
         return ticket
 
     def add_message(
@@ -76,10 +77,10 @@ class TicketManager:
             "message": message,
             "sender": sender,
             "is_ai": is_ai,
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
         }
         self._messages[ticket_id].append(msg)
-        self._tickets[ticket_id]["updated_at"] = datetime.utcnow().isoformat()
+        self._tickets[ticket_id]["updated_at"] = datetime.now(timezone.utc).isoformat()
         return msg
 
 
@@ -118,7 +119,7 @@ class ChatbotManager:
             "ticket_id": ticket_id,
             "customer_id": customer_id,
             "is_ai": True,
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
         }
 
 

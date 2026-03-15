@@ -3,7 +3,7 @@
 閾値調整、特徴量追加、モデルアンサンブル
 """
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 
@@ -149,7 +149,7 @@ def ensemble_detect(
         "ensemble_votes": len(anomalies),
         "ensemble_total": len(results),
         "detectors": [r.get("method") for r in results],
-        "detected_at": datetime.utcnow().isoformat(),
+        "detected_at": datetime.now(timezone.utc).isoformat(),
     }
 
 

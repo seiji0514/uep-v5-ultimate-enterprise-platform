@@ -3,7 +3,8 @@
 IaC、オーケストレーション、監視、最適化
 認証不要でデモ用サンプルデータを返す
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+
 from typing import Any, Dict, List
 
 from fastapi import APIRouter
@@ -18,7 +19,7 @@ def _iac_projects() -> List[Dict[str, Any]]:
             "name": "EKS本番クラスタ",
             "provider": "AWS",
             "status": "デプロイ済",
-            "last_deploy": (datetime.utcnow() - timedelta(hours=2)).isoformat(),
+            "last_deploy": (datetime.now(timezone.utc) - timedelta(hours=2)).isoformat(),
             "region": "ap-northeast-1",
         },
         {
@@ -26,7 +27,7 @@ def _iac_projects() -> List[Dict[str, Any]]:
             "name": "VPC基盤",
             "provider": "Terraform",
             "status": "適用中",
-            "last_deploy": (datetime.utcnow() - timedelta(days=1)).isoformat(),
+            "last_deploy": (datetime.now(timezone.utc) - timedelta(days=1)).isoformat(),
             "region": "ap-northeast-1",
         },
         {
@@ -34,7 +35,7 @@ def _iac_projects() -> List[Dict[str, Any]]:
             "name": "監視基盤",
             "provider": "AWS",
             "status": "ドリフト検知",
-            "last_deploy": (datetime.utcnow() - timedelta(days=3)).isoformat(),
+            "last_deploy": (datetime.now(timezone.utc) - timedelta(days=3)).isoformat(),
             "region": "ap-northeast-1",
         },
         {
@@ -42,7 +43,7 @@ def _iac_projects() -> List[Dict[str, Any]]:
             "name": "RDS本番DB",
             "provider": "Terraform",
             "status": "デプロイ済",
-            "last_deploy": (datetime.utcnow() - timedelta(hours=12)).isoformat(),
+            "last_deploy": (datetime.now(timezone.utc) - timedelta(hours=12)).isoformat(),
             "region": "ap-northeast-1",
         },
         {
@@ -50,7 +51,7 @@ def _iac_projects() -> List[Dict[str, Any]]:
             "name": "Lambda関数群",
             "provider": "AWS CDK",
             "status": "適用中",
-            "last_deploy": (datetime.utcnow() - timedelta(hours=6)).isoformat(),
+            "last_deploy": (datetime.now(timezone.utc) - timedelta(hours=6)).isoformat(),
             "region": "ap-northeast-1",
         },
         {
@@ -58,7 +59,7 @@ def _iac_projects() -> List[Dict[str, Any]]:
             "name": "CloudFront配信",
             "provider": "Terraform",
             "status": "デプロイ済",
-            "last_deploy": (datetime.utcnow() - timedelta(days=5)).isoformat(),
+            "last_deploy": (datetime.now(timezone.utc) - timedelta(days=5)).isoformat(),
             "region": "global",
         },
         {
@@ -66,7 +67,7 @@ def _iac_projects() -> List[Dict[str, Any]]:
             "name": "WAFルールセット",
             "provider": "AWS",
             "status": "適用中",
-            "last_deploy": (datetime.utcnow() - timedelta(hours=24)).isoformat(),
+            "last_deploy": (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat(),
             "region": "ap-northeast-1",
         },
         {
@@ -74,7 +75,7 @@ def _iac_projects() -> List[Dict[str, Any]]:
             "name": "SQS/SNS基盤",
             "provider": "Terraform",
             "status": "ドリフト検知",
-            "last_deploy": (datetime.utcnow() - timedelta(days=7)).isoformat(),
+            "last_deploy": (datetime.now(timezone.utc) - timedelta(days=7)).isoformat(),
             "region": "ap-northeast-1",
         },
     ]
@@ -88,7 +89,7 @@ def _orchestration_deployments() -> List[Dict[str, Any]]:
             "env": "production",
             "status": "Running",
             "replicas": 3,
-            "updated": (datetime.utcnow() - timedelta(minutes=30)).isoformat(),
+            "updated": (datetime.now(timezone.utc) - timedelta(minutes=30)).isoformat(),
             "namespace": "prod",
         },
         {
@@ -97,7 +98,7 @@ def _orchestration_deployments() -> List[Dict[str, Any]]:
             "env": "production",
             "status": "Running",
             "replicas": 5,
-            "updated": (datetime.utcnow() - timedelta(hours=1)).isoformat(),
+            "updated": (datetime.now(timezone.utc) - timedelta(hours=1)).isoformat(),
             "namespace": "prod",
         },
         {
@@ -106,7 +107,7 @@ def _orchestration_deployments() -> List[Dict[str, Any]]:
             "env": "staging",
             "status": "Pending",
             "replicas": 1,
-            "updated": (datetime.utcnow() - timedelta(minutes=5)).isoformat(),
+            "updated": (datetime.now(timezone.utc) - timedelta(minutes=5)).isoformat(),
             "namespace": "staging",
         },
         {
@@ -115,7 +116,7 @@ def _orchestration_deployments() -> List[Dict[str, Any]]:
             "env": "production",
             "status": "Running",
             "replicas": 2,
-            "updated": (datetime.utcnow() - timedelta(minutes=15)).isoformat(),
+            "updated": (datetime.now(timezone.utc) - timedelta(minutes=15)).isoformat(),
             "namespace": "prod",
         },
         {
@@ -124,7 +125,7 @@ def _orchestration_deployments() -> List[Dict[str, Any]]:
             "env": "staging",
             "status": "Running",
             "replicas": 1,
-            "updated": (datetime.utcnow() - timedelta(hours=2)).isoformat(),
+            "updated": (datetime.now(timezone.utc) - timedelta(hours=2)).isoformat(),
             "namespace": "staging",
         },
         {
@@ -133,7 +134,7 @@ def _orchestration_deployments() -> List[Dict[str, Any]]:
             "env": "production",
             "status": "Running",
             "replicas": 2,
-            "updated": (datetime.utcnow() - timedelta(hours=4)).isoformat(),
+            "updated": (datetime.now(timezone.utc) - timedelta(hours=4)).isoformat(),
             "namespace": "prod",
         },
         {
@@ -142,7 +143,7 @@ def _orchestration_deployments() -> List[Dict[str, Any]]:
             "env": "staging",
             "status": "Pending",
             "replicas": 1,
-            "updated": (datetime.utcnow() - timedelta(minutes=20)).isoformat(),
+            "updated": (datetime.now(timezone.utc) - timedelta(minutes=20)).isoformat(),
             "namespace": "staging",
         },
         {
@@ -151,7 +152,7 @@ def _orchestration_deployments() -> List[Dict[str, Any]]:
             "env": "production",
             "status": "Running",
             "replicas": 4,
-            "updated": (datetime.utcnow() - timedelta(minutes=45)).isoformat(),
+            "updated": (datetime.now(timezone.utc) - timedelta(minutes=45)).isoformat(),
             "namespace": "prod",
         },
     ]

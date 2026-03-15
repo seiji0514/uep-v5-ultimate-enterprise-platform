@@ -3,7 +3,7 @@ mTLS (相互TLS認証) モジュール
 サービス間通信のセキュア化
 """
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, Optional
 
 from cryptography import x509
@@ -52,8 +52,8 @@ class MTLSManager:
             .issuer_name(issuer)
             .public_key(private_key.public_key())
             .serial_number(x509.random_serial_number())
-            .not_valid_before(datetime.utcnow())
-            .not_valid_after(datetime.utcnow() + timedelta(days=validity_days))
+            .not_valid_before(datetime.now(timezone.utc))
+            .not_valid_after(datetime.now(timezone.utc) + timedelta(days=validity_days))
             .add_extension(
                 x509.BasicConstraints(ca=True, path_length=None),
                 critical=True,
@@ -114,8 +114,8 @@ class MTLSManager:
             .issuer_name(ca_cert.subject)
             .public_key(private_key.public_key())
             .serial_number(x509.random_serial_number())
-            .not_valid_before(datetime.utcnow())
-            .not_valid_after(datetime.utcnow() + timedelta(days=validity_days))
+            .not_valid_before(datetime.now(timezone.utc))
+            .not_valid_after(datetime.now(timezone.utc) + timedelta(days=validity_days))
             .add_extension(
                 x509.SubjectAlternativeName(
                     [
@@ -158,7 +158,7 @@ class MTLSManager:
             ca_cert = x509.load_pem_x509_certificate(ca_cert_pem.encode())
 
             # 証明書の有効期限をチェック
-            if cert.not_valid_after < datetime.utcnow():
+            if cert.not_valid_after < datetime.now(timezone.utc):
                 return False
 
             # CA証明書で検証（簡易実装）
