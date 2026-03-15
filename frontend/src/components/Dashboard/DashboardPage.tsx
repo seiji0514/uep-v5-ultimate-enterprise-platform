@@ -286,10 +286,10 @@ export const DashboardPage: React.FC = () => {
         </Typography>
       </Box>
 
-      {/* 要対応横断（5モジュール） */}
+      {/* 要対応横断（6モジュール） */}
       <Box component="section" sx={{ mb: 3 }}>
         <Typography variant="overline" color="text.secondary" sx={{ display: 'block', mb: 1.5 }}>
-          要対応横断（5モジュール）
+          要対応横断（6モジュール）
         </Typography>
         <Paper sx={{ p: 2 }} elevation={0}>
           {actionItemsLoading ? (

@@ -58,6 +58,7 @@ const ContractWorkflowPage = lazy(() => import('./components/ContractWorkflow/Co
 const IntegratedModulesOverviewPage = lazy(() => import('./components/IntegratedModules/IntegratedModulesOverviewPage').then((m) => ({ default: m.IntegratedModulesOverviewPage })));
 const OverviewDetailPage = lazy(() => import('./components/IntegratedModules/OverviewDetailPage').then((m) => ({ default: m.OverviewDetailPage })));
 const SupplyChainPage = lazy(() => import('./components/SupplyChain/SupplyChainPage').then((m) => ({ default: m.SupplyChainPage })));
+const FieldAgentPage = lazy(() => import('./components/FieldAgent/FieldAgentPage').then((m) => ({ default: m.FieldAgentPage })));
 
 const PageFallback = () => (
   <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 200 }}>
@@ -209,6 +210,7 @@ const AppRoutes: React.FC = () => {
         <Route path="/integrated-modules" element={<ProtectedRoute><MainLayout><IntegratedModulesOverviewPage /></MainLayout></ProtectedRoute>} />
         <Route path="/integrated-modules/detail" element={<ProtectedRoute><MainLayout><OverviewDetailPage /></MainLayout></ProtectedRoute>} />
         <Route path="/supply-chain" element={<ProtectedRoute><MainLayout><SupplyChainPage /></MainLayout></ProtectedRoute>} />
+        <Route path="/field-agent" element={<ProtectedRoute><MainLayout><FieldAgentPage /></MainLayout></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AutoPlayProvider>

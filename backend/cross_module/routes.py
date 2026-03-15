@@ -1,5 +1,5 @@
 """
-5モジュール横断・要対応集約API
+6モジュール横断・要対応集約API
 製造・医療・金融・障害者雇用・契約の要対応を集約
 """
 from typing import Any, Dict
@@ -8,14 +8,14 @@ from fastapi import APIRouter, Depends
 
 from auth.jwt_auth import get_current_active_user
 
-router = APIRouter(prefix="/api/v1/cross-module", tags=["5モジュール横断"])
+router = APIRouter(prefix="/api/v1/cross-module", tags=["6モジュール横断"])
 
 
 @router.get("/action-items")
 async def get_action_items(
     current_user: Dict[str, Any] = Depends(get_current_active_user),
 ):
-    """5モジュールの要対応を集約（UEPダッシュボード横断表示用）"""
+    """6モジュールの要対応を集約（UEPダッシュボード横断表示用）"""
     manufacturing_count = 0
     medical_count = 0
     fintech_count = 0

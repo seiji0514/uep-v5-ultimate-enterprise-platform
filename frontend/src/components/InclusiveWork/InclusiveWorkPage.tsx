@@ -45,7 +45,7 @@ function TabPanel(props: TabPanelProps) {
 }
 
 export const InclusiveWorkPage: React.FC = () => {
-  useAutoPlayNarration(5);
+  useAutoPlayNarration(3);
   const [tabValue, setTabValue] = useState(0);
   const [skills, setSkills] = useState('');
   const [chatMessage, setChatMessage] = useState('');

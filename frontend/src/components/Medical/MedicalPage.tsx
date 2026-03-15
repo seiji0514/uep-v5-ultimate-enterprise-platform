@@ -52,7 +52,7 @@ function TabPanel(props: TabPanelProps) {
 }
 
 export const MedicalPage: React.FC = () => {
-  useAutoPlayNarration(3);
+  useAutoPlayNarration(4);
   const [tabValue, setTabValue] = useState(0);
   const [aiDiagnosis, setAIDiagnosis] = useState<AIDiagnosis[]>([]);
   const [voiceResponse, setVoiceResponse] = useState<VoiceResponse[]>([]);

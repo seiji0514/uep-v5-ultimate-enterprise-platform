@@ -17,7 +17,7 @@ jobs:
   build-check:
     name: Build Check
     runs-on: ubuntu-latest
-    if: false  # 一時スキップ（Vercel/Render が各自ビルドするため）
+    if: true  # プッシュ時にフロントビルドが通ることを確認
     steps:
       - uses: actions/checkout@v4
         with:

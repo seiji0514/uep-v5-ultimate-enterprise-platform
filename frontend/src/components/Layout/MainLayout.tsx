@@ -60,6 +60,7 @@ import {
   Gavel,
   LocalShipping,
   LocalHospital,
+  SmartToy,
   Traffic,
   Assignment,
   DarkMode,
@@ -105,15 +106,17 @@ interface NavGroup {
 // 4〜5分割（企業向けデモ）
 const navGroups: NavGroup[] = [
   {
-    title: '統合基盤モジュール（5モジュール）',
+    title: '統合基盤モジュール（6モジュール）',
     icon: <Hub />,
     items: [
-      { text: '5モジュール概要', icon: <Layers />, path: '/integrated-modules' },
+      { text: '6モジュール概要', icon: <Layers />, path: '/integrated-modules' },
       { text: '製造・MLOps', icon: <PrecisionManufacturing />, path: '/manufacturing' },
+      { text: '障害者雇用', icon: <Work />, path: '/inclusive-work' },
       { text: '医療', icon: <LocalHospital />, path: '/medical' },
       { text: '金融', icon: <AccountBalance />, path: '/fintech' },
-      { text: '障害者雇用', icon: <Work />, path: '/inclusive-work' },
       { text: '契約ワークフロー', icon: <Assignment />, path: '/contract-workflow' },
+      { text: '物流・サプライチェーン', icon: <LocalShipping />, path: '/supply-chain' },
+      { text: '現場AIエージェント', icon: <SmartToy />, path: '/field-agent' },
     ],
   },
   {
@@ -132,7 +135,6 @@ const navGroups: NavGroup[] = [
       { text: '生成AI', icon: <Psychology />, path: '/generative-ai' },
       { text: '最適化・精度向上', icon: <Star />, path: '/optimization' },
       { text: 'AI支援開発', icon: <Build />, path: '/ai-dev' },
-      { text: 'インクルーシブ雇用AI', icon: <Work />, path: '/inclusive-work' },
     ],
   },
   {
@@ -186,7 +188,7 @@ const bottomItems: NavItem[] = [
   { text: '設定', icon: <Settings />, path: '/settings' },
 ];
 
-const INTEGRATED_GROUP_TITLE = '統合基盤モジュール（5モジュール）';
+const INTEGRATED_GROUP_TITLE = '統合基盤モジュール（6モジュール）';
 
 export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -195,7 +197,7 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
   const [integratedOnly, setIntegratedOnly] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
-    '統合基盤モジュール（5モジュール）': true,
+    '統合基盤モジュール（6モジュール）': true,
     'インフラ基盤': true,
     'AI・ML': true,
     '監視・セキュリティ': true,

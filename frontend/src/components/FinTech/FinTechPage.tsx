@@ -51,7 +51,7 @@ function TabPanel(props: TabPanelProps) {
 }
 
 export const FinTechPage: React.FC = () => {
-  useAutoPlayNarration(4);
+  useAutoPlayNarration(5);
   const [tabValue, setTabValue] = useState(0);
   const [payments, setPayments] = useState<PaymentType[]>([]);
   const [riskScores, setRiskScores] = useState<RiskScore[]>([]);

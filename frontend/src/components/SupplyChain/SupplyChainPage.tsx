@@ -1,5 +1,6 @@
 /**
  * サプライチェーン ページ
+ * 統合基盤モジュール（6モジュール）の1つ
  */
 import React, { useState, useEffect } from 'react';
 import {
@@ -20,12 +21,14 @@ import {
 } from '@mui/material';
 import { LocalShipping, Inventory, ShoppingBag } from '@mui/icons-material';
 import { supplyChainApi, LogisticsShipment, InventoryItem, ProcurementOrder } from '../../api/supplyChain';
+import { useAutoPlayNarration } from '../../hooks/useAutoPlayNarration';
 
 function TabPanel({ children, value, index }: { children?: React.ReactNode; index: number; value: number }) {
   return <div role="tabpanel" hidden={value !== index}>{value === index && <Box sx={{ p: 2 }}>{children}</Box>}</div>;
 }
 
 export const SupplyChainPage: React.FC = () => {
+  useAutoPlayNarration(7);
   const [tabValue, setTabValue] = useState(0);
   const [logistics, setLogistics] = useState<LogisticsShipment[]>([]);
   const [inventory, setInventory] = useState<InventoryItem[]>([]);

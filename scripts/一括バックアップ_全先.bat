@@ -57,7 +57,7 @@ if exist "%USB1%\" (
     if not exist "%DEST%" mkdir "%DEST%"
     if not exist "%DEST%\%BACKUP_DATE%" mkdir "%DEST%\%BACKUP_DATE%"
     echo コピー先: %DEST%\%BACKUP_DATE%
-    robocopy "%ROOT%" "%DEST%\%BACKUP_DATE%\uep-v5-ultimate-enterprise-platform" /E /XD node_modules venv __pycache__ .git .vscode .idea /XF *.sqlite *.db /NFL /NDL /NJH /NJS /nc /ns /np
+    robocopy "%ROOT%" "%DEST%\%BACKUP_DATE%\uep-v5-ultimate-enterprise-platform" /E /XD node_modules venv venv_wsl __pycache__ .git .vscode .idea /XF *.sqlite *.db /NFL /NDL /NJH /NJS /nc /ns /np
     if exist "%ROOT%\docs" robocopy "%ROOT%\docs" "%DEST%\%BACKUP_DATE%\docs" /E /NFL /NDL /NJH /NJS /nc /ns /np
     call "%~dp0backup_create_manifest.bat" "%DEST%" "%BACKUP_DATE%"
     echo [完了] USB 1
@@ -75,7 +75,7 @@ if exist "%USB2%\" (
     if not exist "%DEST%" mkdir "%DEST%"
     if not exist "%DEST%\%BACKUP_DATE%" mkdir "%DEST%\%BACKUP_DATE%"
     echo コピー先: %DEST%\%BACKUP_DATE%
-    robocopy "%ROOT%" "%DEST%\%BACKUP_DATE%\uep-v5-ultimate-enterprise-platform" /E /XD node_modules venv __pycache__ .git .vscode .idea /XF *.sqlite *.db /NFL /NDL /NJH /NJS /nc /ns /np
+    robocopy "%ROOT%" "%DEST%\%BACKUP_DATE%\uep-v5-ultimate-enterprise-platform" /E /XD node_modules venv venv_wsl __pycache__ .git .vscode .idea /XF *.sqlite *.db /NFL /NDL /NJH /NJS /nc /ns /np
     if exist "%ROOT%\docs" robocopy "%ROOT%\docs" "%DEST%\%BACKUP_DATE%\docs" /E /NFL /NDL /NJH /NJS /nc /ns /np
     call "%~dp0backup_create_manifest.bat" "%DEST%" "%BACKUP_DATE%"
     echo [完了] USB 2
@@ -95,7 +95,7 @@ if "%GDRIVE%"=="" (
     if not exist "%DEST%" mkdir "%DEST%"
     if not exist "%DEST%\%BACKUP_DATE%" mkdir "%DEST%\%BACKUP_DATE%"
     echo コピー先: %DEST%\%BACKUP_DATE%
-    robocopy "%ROOT%" "%DEST%\%BACKUP_DATE%\uep-v5-ultimate-enterprise-platform" /E /XD node_modules venv __pycache__ .git .vscode .idea /XF *.sqlite *.db /NFL /NDL /NJH /NJS /nc /ns /np
+    robocopy "%ROOT%" "%DEST%\%BACKUP_DATE%\uep-v5-ultimate-enterprise-platform" /E /XD node_modules venv venv_wsl __pycache__ .git .vscode .idea /XF *.sqlite *.db /NFL /NDL /NJH /NJS /nc /ns /np
     if exist "%ROOT%\docs" robocopy "%ROOT%\docs" "%DEST%\%BACKUP_DATE%\docs" /E /NFL /NDL /NJH /NJS /nc /ns /np
     call "%~dp0backup_create_manifest.bat" "%DEST%" "%BACKUP_DATE%"
     echo [完了] Google Drive
@@ -115,7 +115,7 @@ if "%EXT_DRIVE%"=="" (
     if not exist "%DEST%" mkdir "%DEST%"
     if not exist "%DEST%\%BACKUP_DATE%" mkdir "%DEST%\%BACKUP_DATE%"
     echo コピー先: %DEST%\%BACKUP_DATE%
-    robocopy "%ROOT%" "%DEST%\%BACKUP_DATE%\uep-v5-ultimate-enterprise-platform" /E /XD node_modules venv __pycache__ .git .vscode .idea /XF *.sqlite *.db /NFL /NDL /NJH /NJS /nc /ns /np
+    robocopy "%ROOT%" "%DEST%\%BACKUP_DATE%\uep-v5-ultimate-enterprise-platform" /E /XD node_modules venv venv_wsl __pycache__ .git .vscode .idea /XF *.sqlite *.db /NFL /NDL /NJH /NJS /nc /ns /np
     if exist "%ROOT%\docs" robocopy "%ROOT%\docs" "%DEST%\%BACKUP_DATE%\docs" /E /NFL /NDL /NJH /NJS /nc /ns /np
     call "%~dp0backup_create_manifest.bat" "%DEST%" "%BACKUP_DATE%"
     echo [完了] 外付けドライブ

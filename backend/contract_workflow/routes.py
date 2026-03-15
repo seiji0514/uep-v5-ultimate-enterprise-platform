@@ -1,7 +1,7 @@
 """
 契約ワークフロー API
 見積・契約・納品・請求の一気通貫（DB化・PDF出力・実データ運用）
-統合基盤モジュール（5モジュール）の1つ
+統合基盤モジュール（6モジュール）の1つ
 """
 from datetime import datetime, timedelta
 from typing import Any, Dict, List

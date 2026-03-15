@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UEP v5.0 改善前後の比較 - 面談用</title>
+  <style>
+    body { font-family: 'Segoe UI', Meiryo, sans-serif; max-width: 900px; margin: 20px auto; padding: 0 20px; line-height: 1.5; }
+    h1 { border-bottom: 2px solid #333; padding-bottom: 8px; font-size: 1.3em; }
+    h2 { margin-top: 1.5em; color: #444; font-size: 1em; }
+    table { border-collapse: collapse; width: 100%; margin: 1em 0; font-size: 0.9em; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; vertical-align: top; }
+    th { background: #f5f5f5; font-weight: 600; width: 20%; }
+    .before { background: #fff5f5; }
+    .after { background: #f5fff5; }
+    .note { color: #666; font-size: 0.85em; margin-bottom: 1em; }
+    .category { font-weight: 600; color: #333; }
+  </style>
+</head>
+<body>
+  <h1>UEP v5.0 改善前後の比較</h1>
+  <p class="note">面談用・本番化対応を含む（2026年2月〜3月）</p>
+
+  <h2>UX/UI</h2>
+  <table>
+    <tr><th>項目</th><th class="before">改善前</th><th class="after">改善後</th></tr>
+    <tr><td>サイドバー</td><td>320px固定</td><td>折りたたみ可能（72px/320px）</td></tr>
+    <tr><td>ナビゲーション</td><td>現在位置不明</td><td>パンくずリスト表示</td></tr>
+    <tr><td>テーマ</td><td>ダークのみ</td><td>ダーク/ライトモード切替、localStorage永続化</td></tr>
+    <tr><td>モバイル</td><td>検索しづらい</td><td>検索アイコン→ダイアログで最適化</td></tr>
+  </table>
+
+  <h2>機能拡張</h2>
+  <table>
+    <tr><th>項目</th><th class="before">改善前</th><th class="after">改善後</th></tr>
+    <tr><td>検索</td><td>なし</td><td>グローバル検索（GlobalSearch）</td></tr>
+    <tr><td>ナビ</td><td>なし</td><td>お気に入り・最近使ったページ（ピン留め）</td></tr>
+    <tr><td>通知</td><td>なし</td><td>通知センター、トースト通知</td></tr>
+    <tr><td>多言語</td><td>日本語のみ</td><td>i18n・言語切替対応</td></tr>
+  </table>
+
+  <h2>パフォーマンス・品質検証</h2>
+  <table>
+    <tr><th>項目</th><th class="before">改善前</th><th class="after">改善後</th></tr>
+    <tr><td>読み込み</td><td>全ページ一括</td><td>React.lazy + Suspense でルート単位コード分割</td></tr>
+    <tr><td>API</td><td>都度取得</td><td>React Query キャッシュ（staleTime 2分等）</td></tr>
+    <tr><td>計測</td><td>なし</td><td>Web Vitals 計測</td></tr>
+    <tr><td>メモリ</td><td>ビルド時不足の可能性</td><td>NODE_OPTIONS=8192、GENERATE_SOURCEMAP=false</td></tr>
+    <tr><td>負荷テスト</td><td>未実施</td><td>Locust 実施（2026年2月19日）総226リクエスト・失敗0・平均56ms</td></tr>
+  </table>
+
+  <h2>堅牢性</h2>
+  <table>
+    <tr><th>項目</th><th class="before">改善前</th><th class="after">改善後</th></tr>
+    <tr><td>エラー</td><td>個別対応</td><td>グローバルエラーバウンダリ、再試行UI</td></tr>
+    <tr><td>オフライン</td><td>未対応</td><td>Service Worker、OfflineBanner</td></tr>
+    <tr><td>空データ</td><td>表示バラバラ</td><td>EmptyState コンポーネント統一</td></tr>
+    <tr><td>ローディング</td><td>一部のみ</td><td>LoadingSkeleton、フォームバリデーション</td></tr>
+  </table>
+
+  <h2>セキュリティ・本番化</h2>
+  <table>
+    <tr><th>項目</th><th class="before">改善前</th><th class="after">改善後</th></tr>
+    <tr><td>CSP</td><td>未設定</td><td>CSP設定（index.html）、Sentry許可</td></tr>
+    <tr><td>セッション</td><td>期限切れでログアウト</td><td>リフレッシュトークン自動延長、5分前警告</td></tr>
+    <tr><td>監査</td><td>バックエンド中心</td><td>監査ログAPI永続化、login/logout記録</td></tr>
+    <tr><td>監視</td><td>なし</td><td>Sentry エラー収集、ErrorBoundary連携</td></tr>
+    <tr><td>レート制限</td><td>なし</td><td>ログイン 10回/分</td></tr>
+  </table>
+
+  <h2>アクセシビリティ</h2>
+  <table>
+    <tr><th>項目</th><th class="before">改善前</th><th class="after">改善後</th></tr>
+    <tr><td>キーボード</td><td>一部未対応</td><td>Tab・Enter・Space で操作可能</td></tr>
+    <tr><td>ARIA</td><td>不足</td><td>aria-label、aria-busy 追加</td></tr>
+    <tr><td>フォーカス</td><td>薄い</td><td>2px outline で視認しやすく</td></tr>
+  </table>
+
+  <h2>バックエンド</h2>
+  <table>
+    <tr><th>項目</th><th class="before">改善前</th><th class="after">改善後</th></tr>
+    <tr><td>datetime</td><td>utcnow()（DeprecationWarning）</td><td>datetime.now(timezone.utc) 一括置換</td></tr>
+    <tr><td>ヘルスチェック</td><td>/health のみ</td><td>/health/detailed（DB・Redis個別）、/api/v1 バージョン情報</td></tr>
+  </table>
+
+  <h2>開発者体験</h2>
+  <table>
+    <tr><th>項目</th><th class="before">改善前</th><th class="after">改善後</th></tr>
+    <tr><td>E2E</td><td>不足</td><td>dashboard.spec.ts（検索・テーマ・通知・サイドバー）</td></tr>
+    <tr><td>モック</td><td>本番API依存</td><td>MSW（REACT_APP_ENABLE_MSW=true）</td></tr>
+    <tr><td>コンポーネント</td><td>なし</td><td>Storybook（EmptyState・LoadingSkeleton）</td></tr>
+  </table>
+</body>
+</html>

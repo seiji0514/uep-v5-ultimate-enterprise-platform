@@ -32,7 +32,7 @@ const pathLabels: Record<string, string> = {
   '/manufacturing': '製造・MLOps',
   '/fintech': '金融・FinTech',
   '/contract-workflow': '契約ワークフロー',
-  '/integrated-modules': '5モジュール概要',
+  '/integrated-modules': '6モジュール概要',
   '/integrated-modules/detail': '詳細説明',
   '/energy': 'エネルギー',
   '/medical': '医療',
