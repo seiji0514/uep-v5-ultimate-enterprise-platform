@@ -36,7 +36,8 @@ ENV/
 .env.*.local
 
 # IDE
-.vscode/
+.vscode/*
+!.vscode/extensions.json
 .idea/
 *.swp
 *.swo

@@ -1,0 +1,31 @@
+# Continue.dev 設定 - Ollama 連携
+# このファイルはプロジェクトルートの .continue/ に配置
+# ユーザー設定を使う場合は ~/.continue/config.yaml にコピー
+
+name: UEP Ollama Config
+version: 0.0.1
+schema: v1
+
+# Cursor .cursorrules / AGENT_INSTRUCTIONS から移行したプロジェクトルール
+systemMessage: |
+  このプロジェクトは UEP v5.0（次世代エンタープライズ統合プラットフォーム）です。
+  7つのコアシステム（MLOps、生成AI、監視、セキュリティ、クラウド、IDOP、AI支援開発）を統合。
+  コーディング規約: PythonはPEP 8、型ヒント使用。ファイル名・関数名はスネークケース、クラス名はパスカルケース。コメントは日本語。
+  重要ファイル: README.md, PROJECT_CONTEXT.md, AGENT_INSTRUCTIONS.md, backend/main.py, docker-compose.yml
+  技術スタック: FastAPI, React, TypeScript, Docker, Kubernetes, Prometheus, Grafana
+
+models:
+  - name: DeepSeek Coder
+    provider: ollama
+    model: deepseek-coder:6.7b
+    apiBase: http://localhost:11434
+
+  - name: DeepSeek Coder 2 Lite
+    provider: ollama
+    model: deepseek-coder-v2:lite
+    apiBase: http://localhost:11434
+
+  - name: Qwen Coder
+    provider: ollama
+    model: qwen2.5-coder:7b
+    apiBase: http://localhost:11434
