@@ -15,7 +15,7 @@
 </head>
 <body>
   <h1>UEP v5.0 アーキテクチャ図</h1>
-  <p class="note">面談用・2026年3月</p>
+  <p class="note">面談用・2026年3月（3月16日更新: 6モジュール・現場AIエージェント）</p>
 
   <h2>1. システム全体構成</h2>
   <div class="mermaid">
@@ -66,7 +66,27 @@ flowchart TB
     Prometheus --> Grafana
   </div>
 
-  <h2>2. 6モジュール統合基盤（レベル別）</h2>
+  <h2>2. 6モジュール統合基盤（製造・障害者雇用・医療・金融・契約・物流・現場AIエージェント）</h2>
+  <div class="mermaid">
+flowchart LR
+    subgraph Modules["6モジュール"]
+        Mfg[製造・IoT]
+        Inc[障害者雇用]
+        Med[医療]
+        Fin[金融]
+        Con[契約]
+        Log[物流]
+    end
+    FA[現場AIエージェント]
+    Mfg --> FA
+    Med --> FA
+    Log --> FA
+    Inc --> FA
+    Fin --> FA
+    Con --> FA
+  </div>
+
+  <h2>3. 6モジュール統合基盤（レベル別）</h2>
   <div class="mermaid">
 flowchart LR
     subgraph L1["Level 1: コア"]
@@ -99,7 +119,7 @@ flowchart LR
     L1 --> L2 --> L3 --> L4 --> L5
   </div>
 
-  <h2>3. 技術スタック</h2>
+  <h2>4. 技術スタック</h2>
   <div class="mermaid">
 flowchart TB
     subgraph Frontend["フロントエンド"]
