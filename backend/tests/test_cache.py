@@ -20,7 +20,10 @@ def test_cache_set_get():
 
 
 def test_cache_expiration():
-    """キャッシュの有効期限をテスト"""
+    """キャッシュの有効期限をテスト（Redis 利用時のみ。メモリキャッシュは TTL 非対応）"""
+    if not cache_strategy.enabled:
+        pytest.skip("Redis 未接続時はメモリキャッシュを使用（TTL 非対応）")
+
     key = "expire_test"
     value = "test_value"
 

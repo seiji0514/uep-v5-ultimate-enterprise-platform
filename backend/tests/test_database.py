@@ -2,6 +2,7 @@
 データベース接続のテスト
 """
 import pytest
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from core.database import SessionLocal, get_db, init_db
@@ -11,8 +12,8 @@ def test_database_connection():
     """データベース接続をテスト"""
     db = SessionLocal()
     try:
-        # 接続テスト
-        result = db.execute("SELECT 1")
+        # 接続テスト（SQLAlchemy 2.0 では text() が必要）
+        result = db.execute(text("SELECT 1"))
         assert result.scalar() == 1
     finally:
         db.close()

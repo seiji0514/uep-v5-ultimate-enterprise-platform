@@ -110,6 +110,9 @@ from monitoring.tracing import tracing_handler
 from security.routes import router as security_router
 from security.zero_trust import zero_trust_policy
 
+# WebSocket（リアルタイム通信）
+from routes.websocket import router as websocket_router
+
 # インクルーシブ雇用AIプラットフォーム（障害者雇用マッチング + アクセシビリティ + UX評価）
 try:
     from inclusive_work.routes import router as inclusive_work_router
@@ -152,6 +155,7 @@ from manufacturing.routes import router as manufacturing_router
 from mcp_a2a.routes import router as mcp_a2a_router
 from medical.routes import router as medical_router
 from personal_accounting.routes import router as personal_accounting_router
+from pm_pl.routes import router as pm_pl_router
 
 # Level 2: プラットフォームモジュール
 from platform_level.routes import router as platform_router
@@ -395,6 +399,9 @@ app.include_router(monitoring_router)
 # セキュリティルーターを追加
 app.include_router(security_router)
 
+# WebSocketルーターを追加
+app.include_router(websocket_router)
+
 # Phase 2: コアシステム層のルーターを追加
 app.include_router(mlops_router)
 app.include_router(generative_ai_router)
@@ -419,6 +426,7 @@ app.include_router(medical_router)
 app.include_router(space_router)
 app.include_router(traffic_router)
 app.include_router(personal_accounting_router)
+app.include_router(pm_pl_router)
 app.include_router(erp_router)
 app.include_router(legacy_migration_router)
 app.include_router(public_sector_router)

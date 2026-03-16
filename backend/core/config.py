@@ -54,10 +54,12 @@ class Settings(BaseSettings):
         default=[
             "http://localhost:3000",
             "http://localhost:3018",
+            "http://localhost:3019",
             "http://localhost:3020",
             "http://localhost:8080",
             "http://127.0.0.1:3000",
             "http://127.0.0.1:3018",
+            "http://127.0.0.1:3019",
             "http://127.0.0.1:3020",
         ],
         env="CORS_ORIGINS",
