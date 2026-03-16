@@ -272,6 +272,7 @@ npm start</pre
       <li><strong>URL</strong>: http://localhost:3001</li>
       <li><strong>停止</strong>: Ctrl+C</li>
     </ul>
+    <p class="note">※ デモユーザー（kaho0525 / 0525、developer / dev123）でログイン可能です。</p>
 
     <h3>起動順序</h3>
     <ol>
@@ -550,20 +551,30 @@ cd C:\uep-v5-ultimate-enterprise-platform\fintech_platform
     <hr />
 
     <h2>7.10 個人用 PC 容量確保 起動方法</h2>
-    <p>Docker クリーンアップと Cドライブの容量確保を行うスタンドアロンツール。<strong>UEP v5.0・産業統合プラットフォーム・EOH とは無関係</strong>です。</p>
+    <p>Docker クリーンアップと Cドライブの容量確保を行うスタンドアロンツール（本番用・高性能版）。<strong>UEP v5.0・産業統合プラットフォーム・EOH とは無関係</strong>です。</p>
 
     <h3>7.10.1 スタンドアロン起動（推奨）</h3>
     <pre>
 cd C:\uep-v5-ultimate-enterprise-platform\personal-pc-cleanup
-.\start-standalone.bat</pre
-    >
-
+.\start-standalone.bat</pre>
     <ul>
       <li><strong>バックエンド</strong>: http://localhost:5002</li>
       <li><strong>フロントエンド</strong>: http://localhost:3002</li>
       <li><strong>API Docs</strong>: http://localhost:5002/docs</li>
       <li><strong>停止</strong>: Ctrl+C（各ウィンドウで）</li>
     </ul>
+
+    <h3>7.10.1.5 本番起動</h3>
+    <pre>
+cd C:\uep-v5-ultimate-enterprise-platform\personal-pc-cleanup
+.\start-production.bat</pre>
+    <ul>
+      <li><strong>バックエンド</strong>: http://localhost:5002</li>
+      <li><strong>フロントエンド</strong>: http://localhost:3002</li>
+      <li><strong>API Docs</strong>: http://localhost:5002/docs</li>
+      <li><strong>停止</strong>: Ctrl+C（各ウィンドウで）</li>
+    </ul>
+    <p class="note">※ 本番モード（--reload なし）で安定動作。ブラウザで http://localhost:3002 を開いてください。</p>
 
     <h3>7.10.2 機能</h3>
     <table>
@@ -581,15 +592,67 @@ cd C:\uep-v5-ultimate-enterprise-platform\personal-pc-cleanup
       </tr>
       <tr>
         <td>一時フォルダ</td>
-        <td>%TEMP%, ブラウザキャッシュ等の検出</td>
+        <td>%TEMP%, Chrome/Edge キャッシュ等の検出</td>
+      </tr>
+      <tr>
+        <td>Windows.old</td>
+        <td>前回の Windows アップグレードの残りを検出</td>
+      </tr>
+      <tr>
+        <td>WSL VHDX</td>
+        <td>Docker WSL2 の VHDX サイズ表示（diskpart compact で圧縮可能）</td>
+      </tr>
+    </table>
+    <p class="note">※ 並列スキャンで高速化。本番起動は 7.10.1.5 を参照。</p>
+
+    <h3>7.10.3 確保可能な容量の目安</h3>
+    <table>
+      <tr>
+        <th>対象</th>
+        <th>目安</th>
+        <th>備考</th>
+      </tr>
+      <tr>
+        <td>Docker イメージ・コンテナ</td>
+        <td>数GB〜20GB以上</td>
+        <td><code>docker system prune -a</code> で未使用分を削除（ボリュームは残す）</td>
+      </tr>
+      <tr>
+        <td>node_modules</td>
+        <td>各数百MB〜</td>
+        <td>削除後 <code>npm install</code> で再生成</td>
+      </tr>
+      <tr>
+        <td>venv, __pycache__</td>
+        <td>数百MB〜</td>
+        <td>削除後、起動・実行で再生成</td>
+      </tr>
+      <tr>
+        <td>build/, dist/, .next/</td>
+        <td>数百MB〜</td>
+        <td>ビルドで再生成</td>
+      </tr>
+      <tr>
+        <td>postgres_data, minio_data 等</td>
+        <td>数GB〜</td>
+        <td>開発用のみ削除可。本番データがある場合は削除しないこと</td>
+      </tr>
+      <tr>
+        <td>Windows.old</td>
+        <td>10〜30GB</td>
+        <td>ディスクのクリーンアップ → 以前の Windows のインストール</td>
+      </tr>
+      <tr>
+        <td>WSL VHDX</td>
+        <td>10〜50GB以上</td>
+        <td><code>wsl --shutdown</code> 後、diskpart で compact</td>
       </tr>
     </table>
 
-    <h3>7.10.3 CLI 版（run.bat）</h3>
+    <h3>7.10.4 CLI 版（run.bat）</h3>
     <pre>
 cd C:\uep-v5-ultimate-enterprise-platform\personal-pc-cleanup
-.\run.bat</pre
-    >
+.\run.bat</pre>
     <p>メニューから選択: 1.検出のみ / 2.Docker クリーンアップ / 3.Cドライブ+一時フォルダ削除 / 4.全て実行</p>
     <p class="note">詳細は <code>personal-pc-cleanup/README.md</code> および <code>docs/PC容量確保ガイド.md</code> を参照してください。</p>
 
@@ -816,7 +879,7 @@ cd C:\uep-v5-ultimate-enterprise-platform\personal-pc-cleanup
       </tr>
       <tr>
         <td>個人用 PC 容量確保</td>
-        <td>cd ...\personal-pc-cleanup → .\start-standalone.bat</td>
+        <td>cd ...\personal-pc-cleanup → .\start-standalone.bat または .\start-production.bat（本番）</td>
         <td>5002 / 3002</td>
       </tr>
     </table>

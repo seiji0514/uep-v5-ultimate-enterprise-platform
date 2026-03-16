@@ -91,3 +91,87 @@ prometheus_data/
 
 # Grafana data
 grafana_data/
+
+# ===== 公開用リポジトリ 除外（個人情報・機密） =====
+
+# 特許申請書類
+docs/極秘_特許申請書類/
+
+# 職務経歴書・障害説明書・履歴書
+docs/職務経歴書_*.md
+docs/職務経歴書_*.html
+docs/障害説明書_*.md
+docs/履歴書_*.md
+
+# 送信文・メール・書類送付
+docs/*_送信文*.md
+docs/*_送信文*.txt
+docs/*_メール本文*.md
+docs/書類送付_*.txt
+docs/書類送付_*.md
+docs/OPTERA_*.md
+
+# type 転職・求人
+docs/type_*.md
+docs/type_*.txt
+docs/type転職フェア_*.md
+docs/typeエンジニア転職フェア_*.md
+
+# 面談・面接準備
+docs/面談*.md
+docs/面談*.html
+docs/面談*.txt
+docs/面談用_*
+docs/INTERVIEW_NAV*.html
+docs/DEMO_INTERVIEW_NAV*.html
+docs/DEMO_FOR_INTERVIEW.md
+docs/事前アンケート_*.html
+docs/事前確認_*.txt
+
+# 企業別・転職サイト別
+docs/BizReach_*
+docs/Wantedly_*
+docs/Notion_ポートフォリオ_*.txt
+docs/Tech_Direct_*
+docs/スキルシート_*.html
+docs/スキルシート_*.md
+docs/BIZREACH_*
+docs/Cloud_Link_*様*
+docs/SEZO_*
+docs/TYKソリューションズ_*
+docs/ポートフォリオ_*応募用*
+docs/Google_Sites_*
+docs/RESUME_*.md
+docs/DIRECT_TYPE_*.md
+docs/C3_*.md
+docs/CAL_*.md
+docs/JOB_DRAFT_*
+docs/請求書テンプレート_*.html
+docs/選考辞退_*
+docs/*様_返信案*
+docs/*様_*追記*
+docs/Route株式会社_*
+docs/株式会社ORIGIT_*
+docs/ラスク人事部_*
+docs/VLabo_*
+docs/Amazia_Link_*
+
+# ブックマーク
+docs/chrome_bookmarks_*.md
+
+# その他個人情報
+docs/FRONTEND_IMPLEMENTATION.md
+docs/IT_REMOTE_WORKS_PROCESS.md
+docs/統合ビジネスプラットフォーム_README.md
+docs/開発スタイル事前アンケート_*.md
+docs/SELF_INTRODUCTION_AND_REASON.md
+docs/STRENGTHS_WEAKNESSES.md
+docs/FINAL_INTERVIEW_QUESTIONS.md
+docs/DEMO_NEED_ANALYSIS.md
+docs/PROJECT_COMPARISON.md
+docs/DEMONSTRATION_GUIDE_RESUME.md
+docs/DIVE_IN_デモ_*.txt
+docs/DIVE_IN_面談*.txt
+docs/DIVE_IN_書類送付*.txt
+docs/EXPERIENCE_IMPORTANCE.md
+docs/EXPERIENCE_VS_SKILLS.*

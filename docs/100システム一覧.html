@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>100システム一覧 - 小川 清志</title>
+  <style>
+    body {
+      font-family: "游ゴシック", "Yu Gothic", "メイリオ", Meiryo, sans-serif;
+      font-size: 11pt;
+      line-height: 1.6;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 24px;
+      color: #333;
+    }
+    h1 {
+      font-size: 18pt;
+      text-align: center;
+      margin-bottom: 24px;
+      border-bottom: 2px solid #333;
+      padding-bottom: 8px;
+    }
+    h2 {
+      font-size: 14pt;
+      margin-top: 28px;
+      margin-bottom: 12px;
+      background-color: #f0f0f0;
+      padding: 8px 12px;
+    }
+    p {
+      margin: 8px 0;
+    }
+    ul {
+      margin: 8px 0;
+      padding-left: 24px;
+    }
+    li {
+      margin: 6px 0;
+    }
+    a {
+      color: #0066cc;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .definition {
+      background-color: #f9f9f9;
+      padding: 12px 16px;
+      border-left: 4px solid #333;
+      margin: 16px 0;
+    }
+    .link-box {
+      margin: 12px 0;
+      padding: 10px 14px;
+      background-color: #f5f5f5;
+      border-radius: 4px;
+    }
+    .category-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+    }
+    .category-table th,
+    .category-table td {
+      border: 1px solid #333;
+      padding: 8px 12px;
+      text-align: left;
+    }
+    .category-table th {
+      background-color: #f0f0f0;
+      font-weight: bold;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #ddd;
+      margin: 24px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>100システム一覧</h1>
+
+  <div class="definition">
+    <strong>定義:</strong> 独立したモジュール・API・マイクロサービス・画面・インフラコンポーネントの合計。UEP v5.0 には、MLOps基盤、生成AI、統合セキュリティコマンドセンター、IDOP、災害対応統合コマンドセンター、ランサムウェア対策などが含まれ、Kong、Envoy、Prometheus、Grafana などのインフラコンポーネントも含みます。
+  </div>
+
+  <p><strong>立証根拠:</strong> <a href="./立証根拠.md">立証根拠.md</a>（backend/ 約40モジュール、docker-compose 17サービス。GitHub で確認可能）</p>
+
+  <div class="link-box">
+    <strong>GitHub（公開用）:</strong> <a href="https://github.com/seiji0514-public/uep-v5-ultimate-enterprise-platform" target="_blank" rel="noopener">https://github.com/seiji0514-public/uep-v5-ultimate-enterprise-platform</a>
+  </div>
+
+  <hr />
+
+  <h2>代表例（10件）</h2>
+  <ul>
+    <li>脳トレゲームシステム（ゲーム・リハビリ）</li>
+    <li>某病院 リハビリテーション認証（医療）</li>
+    <li>警察庁基準 運転試験場コース シミュレーター（交通・地理空間）</li>
+    <li>次世代エンタープライズ統合プラットフォーム v5.0 (UEP v5.0)（基盤）</li>
+    <li>統合セキュリティコントロールセンター（セキュリティ）</li>
+    <li>ランサムウェア対策システム（セキュリティ）</li>
+    <li>災害対応統合コマンドセンター（防災）</li>
+    <li>インクルーシブ雇用AI（AI・雇用）</li>
+    <li>個人会計システム（個人・経理）</li>
+    <li>企業横断オペレーション基盤 (EOH)（基盤）</li>
+  </ul>
+
+  <h2>UEP v5.0 統合内（デモ可能）</h2>
+  <ul>
+    <li>次世代エンタープライズ統合プラットフォーム v5.0 (UEP v5.0)（メイン・デモ用）</li>
+    <li>エンタープライズMLOps統合プラットフォーム（5システム統合、推論レイテンシ50%削減）</li>
+    <li>AI Universal Integration Platform (AI-UIP)（7つの核心機能統合）</li>
+    <li>統合セキュリティコマンドセンター（26機能統合）</li>
+    <li>統合開発・運用プラットフォーム (IDOP)（8システム統合、110+ API）</li>
+    <li>災害対応統合コマンドセンター（判断時間20分短縮）</li>
+    <li>ランサムウェア対策システム（異常検知精度90%以上）</li>
+    <li>インクルーシブ雇用AI（障害者雇用マッチング）</li>
+    <li>契約・納品・請求ワークフロー（実データ運用）</li>
+    <li>統合社会インフラプラットフォーム（9システム、5統合基盤）</li>
+  </ul>
+
+  <h2>インフラ・基盤コンポーネント</h2>
+  <ul>
+    <li>Kong API Gateway</li>
+    <li>Envoy Proxy</li>
+    <li>Prometheus / Grafana</li>
+    <li>MinIO</li>
+    <li>Kafka</li>
+    <li>Vault</li>
+    <li>Elasticsearch / Logstash / Kibana</li>
+    <li>Jaeger</li>
+    <li>Falco</li>
+    <li>インフラ構築専用システム (Infra Builder)</li>
+  </ul>
+
+  <h2>バックエンドモジュール（UEP v5.0 内）</h2>
+  <ul>
+    <li>auth, manufacturing, medical, fintech, inclusive_work, contract_workflow, generative_ai, mlops, cyber_defense, chaos, graphql_api, cloud_infra, security_center, idop, infra_builder, energy, space, traffic, personal_accounting, erp, event_streaming, governance 他 約30モジュール</li>
+  </ul>
+
+  <h2>スタンドアロン・個別プロジェクト</h2>
+  <ul>
+    <li>産業統合プラットフォーム（8ドメイン統合）</li>
+    <li>企業横断オペレーション基盤 (EOH)（観測・タスク・リスク一元管理）</li>
+    <li>個人会計システム（freee・マネーフォワード風）</li>
+    <li>衛星軌道計算・追跡システム（宇宙系）</li>
+    <li>AI自動音声応答システム（医療・法務・金融統合）</li>
+    <li>スマートシティ・サステナビリティプラットフォーム（交通・環境）</li>
+  </ul>
+
+  <h2>カテゴリ別内訳</h2>
+  <table class="category-table">
+    <tr>
+      <th>カテゴリ</th>
+      <th>件数</th>
+    </tr>
+    <tr>
+      <td>Python</td>
+      <td>70システム以上</td>
+    </tr>
+    <tr>
+      <td>Node.js / Web</td>
+      <td>35システム以上</td>
+    </tr>
+    <tr>
+      <td>Docker</td>
+      <td>10システム以上</td>
+    </tr>
+    <tr>
+      <td>Webサイト / Webアプリ</td>
+      <td>30サイト以上</td>
+    </tr>
+    <tr>
+      <td>医療・リハビリ系</td>
+      <td>18</td>
+    </tr>
+    <tr>
+      <td>AI・機械学習系</td>
+      <td>35</td>
+    </tr>
+    <tr>
+      <td>セキュリティ・防衛系</td>
+      <td>11</td>
+    </tr>
+    <tr>
+      <td>交通・防災系</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <td>IoT・基盤・プラットフォーム系</td>
+      <td>10</td>
+    </tr>
+    <tr>
+      <td><strong>合計</strong></td>
+      <td><strong>約138件（重複除外後）</strong></td>
+    </tr>
+  </table>
+
+</body>
+</html>
