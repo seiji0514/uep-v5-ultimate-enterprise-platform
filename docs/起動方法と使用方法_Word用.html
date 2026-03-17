@@ -70,12 +70,13 @@
   </head>
   <body>
     <h1>UEP v5.0 および 個別プラットフォーム<br />起動方法と使用方法</h1>
-    <p><strong>作成日</strong>: 2026年3月11日</p>
+    <p><strong>作成日</strong>: 2026年3月11日　<strong>更新</strong>: 2026年3月15日（複数システム起動パターン・特許申請支援・資格取得支援追記）</p>
 
     <h2>目次</h2>
     <ol>
       <li>システム構成</li>
       <li>UEP v5.0 起動方法</li>
+      <li>複数システムの起動方法（組み合わせパターン）</li>
       <li>統合セキュリティ・防衛プラットフォーム 起動方法</li>
       <li>製造・IoTプラットフォーム 起動方法</li>
       <li>医療・ヘルスケアプラットフォーム 起動方法</li>
@@ -84,6 +85,8 @@
       <li>企業横断オペレーション基盤 起動方法</li>
       <li>個人会計（スタンドアロン版）起動方法</li>
       <li>個人用 PC 容量確保 起動方法</li>
+      <li>特許申請支援システム 起動方法</li>
+      <li>資格取得支援システム 起動方法</li>
       <li>UEP v5.0 使用方法</li>
       <li>統合セキュリティ・防衛プラットフォーム 使用方法</li>
       <li>トラブルシューティング</li>
@@ -190,6 +193,26 @@
         <td>5002</td>
         <td>容量確保API（検出・削除）</td>
       </tr>
+      <tr>
+        <td>特許申請支援システム フロントエンド</td>
+        <td>3002</td>
+        <td>特許願・明細書・最終チェック・費用案内（製造・個人用PCとポート競合）</td>
+      </tr>
+      <tr>
+        <td>特許申請支援システム バックエンド</td>
+        <td>8082</td>
+        <td>特許申請API（発明メモ、チェックリスト、書類管理）</td>
+      </tr>
+      <tr>
+        <td>資格取得支援システム フロントエンド</td>
+        <td>3001</td>
+        <td>資格学習・ロードマップ・ドリル（統合セキュリティ・個人会計とポート競合）</td>
+      </tr>
+      <tr>
+        <td>資格取得支援システム バックエンド</td>
+        <td>8081</td>
+        <td>資格取得API（資格一覧、学習記録、スキルマップ）</td>
+      </tr>
     </table>
     <p class="note">※ ポート8000はWindows予約範囲（7938-8037）に含まれるため、UEPバックエンドは8080を使用します。</p>
 
@@ -223,6 +246,69 @@
       <li><strong>停止</strong>: 各ウィンドウで Ctrl+C</li>
     </ul>
     <p class="note">※ デモユーザー（kaho0525 / 0525、developer / dev123）でログイン可能です。</p>
+
+    <hr />
+
+    <h2>2.5 複数システムの起動方法（組み合わせパターン）</h2>
+    <p>本日（2026年3月15日）追記。複数システムを組み合わせて起動する際のパターンと推奨順序です。</p>
+
+    <h3>パターンA: UEP v5.0 単体（デモ・面談用・最も一般的）</h3>
+    <pre>本番デプロイ\start-production-all.bat</pre>
+    <p>バックエンド（8080）とフロントエンド（3000）を一括起動。http://localhost:3000 でダッシュボードにアクセス。</p>
+
+    <h3>パターンB: UEP + 産業統合 + EOH（3系統・ダッシュボードからリンクで連携）</h3>
+    <p>UEP ダッシュボードから産業統合プラットフォーム・企業横断オペレーション基盤（EOH）へリンクで遷移する構成です。</p>
+    <ol>
+      <li><strong>ターミナル1</strong>: <code>本番デプロイ\start-backend-production.bat</code>（UEP バックエンド）</li>
+      <li><strong>ターミナル2</strong>: <code>本番デプロイ\start-frontend-production.bat</code>（UEP フロントエンド）</li>
+      <li><strong>ターミナル3</strong>: <code>本番デプロイ\start-industry-backend-production.bat</code>（産業統合 バックエンド 9010）</li>
+      <li><strong>ターミナル4</strong>: <code>本番デプロイ\start-industry-frontend-production.bat</code>（産業統合 フロントエンド 3010）</li>
+      <li><strong>ターミナル5</strong>: <code>本番デプロイ\start-eoh-backend-production.bat</code>（EOH バックエンド 9020）</li>
+      <li><strong>ターミナル6</strong>: <code>本番デプロイ\start-eoh-frontend-production.bat</code>（EOH フロントエンド 3020）</li>
+    </ol>
+    <p><strong>アクセス</strong>: UEP http://localhost:3000 → 産業統合・EOH はサイドバー・ダッシュボードからリンクで遷移。</p>
+
+    <h3>パターンC: 個別プラットフォーム（セキュリティ・製造・医療・金融）</h3>
+    <p>UEP とは独立した個別システム。各プラットフォームを単独で起動する場合。</p>
+    <table>
+      <tr>
+        <th>システム</th>
+        <th>バックエンド</th>
+        <th>フロントエンド</th>
+        <th>ポート</th>
+      </tr>
+      <tr>
+        <td>統合セキュリティ・防衛</td>
+        <td>cd ...\security_defense_platform → .\start-backend.bat</td>
+        <td>.\start-frontend.ps1 または .\start-frontend.bat</td>
+        <td>9001 / 3001</td>
+      </tr>
+      <tr>
+        <td>製造・IoT</td>
+        <td>cd ...\manufacturing_platform → .\start-backend.bat</td>
+        <td>.\start-frontend.bat</td>
+        <td>9002 / 3002</td>
+      </tr>
+      <tr>
+        <td>医療・ヘルスケア</td>
+        <td>cd ...\medical_platform → .\start-backend.bat</td>
+        <td>.\start-frontend.bat</td>
+        <td>9003 / 3003</td>
+      </tr>
+      <tr>
+        <td>金融・FinTech</td>
+        <td>cd ...\fintech_platform → .\start-backend.bat</td>
+        <td>.\start-frontend.bat</td>
+        <td>9004 / 3004</td>
+      </tr>
+    </table>
+
+    <h3>起動順序の推奨</h3>
+    <ul>
+      <li>バックエンドを先に起動してから、フロントエンドを起動する</li>
+      <li>UEP を使う場合は、UEP 本体を先に起動してから産業統合・EOH を起動</li>
+      <li>ポート競合に注意: 同一マシンで複数起動する場合は、システム構成表（セクション1）のポートを確認</li>
+    </ul>
 
     <hr />
 
@@ -658,6 +744,63 @@ cd C:\uep-v5-ultimate-enterprise-platform\personal-pc-cleanup
 
     <hr />
 
+    <h2>7.11 特許申請支援システム 起動方法</h2>
+    <p>特許願・明細書・最終チェック・費用案内を扱う<strong>単体アプリ</strong>。UEP とは別枠。最高難易度認証・安易に開かない設計。</p>
+
+    <h3>7.11.1 バックエンドの起動</h3>
+    <pre>
+cd c:\uep-v5-ultimate-enterprise-platform\patent-support\backend
+pip install -r requirements.txt   # 初回のみ
+uvicorn main:app --port 8082</pre>
+    <ul>
+      <li><strong>URL</strong>: http://localhost:8082</li>
+      <li><strong>API Docs</strong>: http://localhost:8082/docs</li>
+      <li><strong>停止</strong>: Ctrl+C</li>
+    </ul>
+    <p class="note">本番では環境変数 PATENT_SUPPORT_USER / PATENT_SUPPORT_PASSWORD を設定。未設定時は admin / Patent-Secure-ChangeMe123!</p>
+
+    <h3>7.11.2 フロントエンドの起動</h3>
+    <p>別のターミナルで:</p>
+    <pre>
+cd c:\uep-v5-ultimate-enterprise-platform\patent-support\frontend
+npm install   # 初回のみ
+npm start</pre>
+    <ul>
+      <li><strong>URL</strong>: http://localhost:3002</li>
+      <li><strong>停止</strong>: Ctrl+C</li>
+    </ul>
+    <p class="note">※ ポート3002は製造・IoTプラットフォーム・個人用 PC 容量確保と競合。同時起動時はどれか1つのみ使用。</p>
+
+    <hr />
+
+    <h2>7.12 資格取得支援システム 起動方法</h2>
+    <p>情報処理安全確保支援士を起点に、他資格へ拡張可能な<strong>単体アプリ</strong>。UEP とは別枠。</p>
+
+    <h3>7.12.1 バックエンドの起動</h3>
+    <pre>
+cd c:\uep-v5-ultimate-enterprise-platform\qualification-support\backend
+pip install -r requirements.txt   # 初回のみ
+uvicorn main:app --reload --port 8081</pre>
+    <ul>
+      <li><strong>URL</strong>: http://localhost:8081</li>
+      <li><strong>API Docs</strong>: http://localhost:8081/docs</li>
+      <li><strong>停止</strong>: Ctrl+C</li>
+    </ul>
+
+    <h3>7.12.2 フロントエンドの起動</h3>
+    <p>別のターミナルで:</p>
+    <pre>
+cd c:\uep-v5-ultimate-enterprise-platform\qualification-support\frontend
+npm install   # 初回のみ
+npm start</pre>
+    <ul>
+      <li><strong>URL</strong>: http://localhost:3001</li>
+      <li><strong>停止</strong>: Ctrl+C</li>
+    </ul>
+    <p class="note">※ ポート3001は統合セキュリティ・防衛プラットフォーム・個人会計（スタンドアロン）と競合。同時起動時はどれか1つのみ使用。</p>
+
+    <hr />
+
     <h2>8. UEP v5.0 使用方法</h2>
 
     <h3>ログイン</h3>
@@ -882,6 +1025,16 @@ cd C:\uep-v5-ultimate-enterprise-platform\personal-pc-cleanup
         <td>cd ...\personal-pc-cleanup → .\start-standalone.bat または .\start-production.bat（本番）</td>
         <td>5002 / 3002</td>
       </tr>
+      <tr>
+        <td>特許申請支援</td>
+        <td>cd ...\patent-support\backend → uvicorn main:app --port 8082／cd ...\patent-support\frontend → npm start</td>
+        <td>8082 / 3002</td>
+      </tr>
+      <tr>
+        <td>資格取得支援</td>
+        <td>cd ...\qualification-support\backend → uvicorn main:app --port 8081／cd ...\qualification-support\frontend → npm start</td>
+        <td>8081 / 3001</td>
+      </tr>
     </table>
 
     <h3>アクセスURL一覧</h3>
@@ -961,6 +1114,22 @@ cd C:\uep-v5-ultimate-enterprise-platform\personal-pc-cleanup
       <tr>
         <td>個人用 PC 容量確保 API Docs</td>
         <td>http://localhost:5002/docs</td>
+      </tr>
+      <tr>
+        <td>特許申請支援 フロントエンド</td>
+        <td>http://localhost:3002</td>
+      </tr>
+      <tr>
+        <td>特許申請支援 API Docs</td>
+        <td>http://localhost:8082/docs</td>
+      </tr>
+      <tr>
+        <td>資格取得支援 フロントエンド</td>
+        <td>http://localhost:3001</td>
+      </tr>
+      <tr>
+        <td>資格取得支援 API Docs</td>
+        <td>http://localhost:8081/docs</td>
       </tr>
     </table>
 
